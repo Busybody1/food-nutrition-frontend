@@ -27,21 +27,21 @@ interface UsageChartProps {
   planName: string
 }
 
-const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6']
+const COLORS = ['#0AC5D7', '#0891A3', '#22C55E', '#8FE8F0', '#52525B']
 
 export function UsageChart({ data, endpointData, currentUsage, quota, planName }: UsageChartProps) {
   const usagePercentage = quota > 0 ? (currentUsage / quota) * 100 : 0
   const remainingUsage = Math.max(0, quota - currentUsage)
 
   const getTrendIcon = () => {
-    if (data.length < 2) return <Minus className="h-4 w-4 text-gray-400" />
+    if (data.length < 2) return <Minus className="h-4 w-4 text-ink-dim" />
     
     const latest = data[data.length - 1].requests
     const previous = data[data.length - 2].requests
     
     if (latest > previous) return <TrendingUp className="h-4 w-4 text-green-600" />
     if (latest < previous) return <TrendingDown className="h-4 w-4 text-red-600" />
-    return <Minus className="h-4 w-4 text-gray-400" />
+    return <Minus className="h-4 w-4 text-ink-dim" />
   }
 
   const getTrendText = () => {
@@ -64,18 +64,18 @@ export function UsageChart({ data, endpointData, currentUsage, quota, planName }
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Total Requests</p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-xs font-medium uppercase tracking-wide text-ink-dim">Total Requests</p>
+                <p className="text-2xl font-semibold text-ink tabular-nums">
                   {currentUsage.toLocaleString()}
                 </p>
                 <div className="flex items-center mt-1">
                   {getTrendIcon()}
-                  <span className="text-xs text-gray-500 ml-1">
+                  <span className="text-xs text-ink-muted ml-1">
                     {getTrendText()}
                   </span>
                 </div>
               </div>
-              <Activity className="h-8 w-8 text-blue-600" />
+              <Activity className="h-8 w-8 text-brand" />
             </div>
           </CardContent>
         </Card>

@@ -14,6 +14,8 @@ export const API_CONFIG = {
     },
     search: {
       foods: '/api/v1/search/foods',
+      suggest: '/api/v1/search/suggest',
+      barcode: '/api/v1/search/barcode',
       brands: '/api/v1/search/brands',
       categories: '/api/v1/search/categories',
       nutrients: '/api/v1/search/nutrients',

@@ -55,13 +55,8 @@ export interface LoginResponse {
   user: User;
 }
 
-export interface RegisterResponse {
-  access_token: string;
-  refresh_token: string;
-  token_type: string;
-  expires_in: number;
-  user: User;
-}
+/** Backend returns user only; client logs in after register. */
+export type RegisterResponse = User;
 
 export interface ApiKey {
   id: number;

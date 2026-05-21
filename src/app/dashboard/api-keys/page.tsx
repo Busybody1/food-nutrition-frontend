@@ -2,18 +2,21 @@
 
 import { useState, useEffect } from 'react'
 import { ApiKeyList } from '@/components/dashboard/ApiKeyList'
+import {
+  DashboardPage,
+  DashboardLoading,
+  DashboardAlert,
+} from '@/components/dashboard/dashboard-shell'
 import { useAuth } from '@/lib/hooks/use-auth'
 import { useRouter } from 'next/navigation'
-
-interface ApiKey {
-  id: number
-  name: string
-  key: string
-  is_active: boolean
-  last_used_at: string | null
-  created_at: string | null
-  usage_count?: number
-}
+import {
+  normalizeApiKeyList,
+  stashCreatedApiKeyPlaintext,
+  resolveApiKeyPlaintext,
+  removeStashedApiKeyPlaintext,
+  type ApiKeyRecord,
+  type CreatedApiKeyResult,
+} from '@/lib/api/api-keys'
 
 interface UserPlan {
   max_api_keys: number
@@ -23,7 +26,7 @@ interface UserPlan {
 export default function ApiKeysPage() {
   const { isAuthenticated, loading } = useAuth()
   const router = useRouter()
-  const [apiKeys, setApiKeys] = useState<ApiKey[]>([])
+  const [apiKeys, setApiKeys] = useState<ApiKeyRecord[]>([])
   const [userPlan, setUserPlan] = useState<UserPlan | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
@@ -57,10 +60,11 @@ export default function ApiKeysPage() {
       ])
 
       if (apiKeysResponse.success) {
-        const apiKeys = apiKeysResponse.data as ApiKey[]
-        // Ensure all API keys have valid data
-        const validApiKeys = apiKeys.filter(key => key && key.id && key.name)
-        setApiKeys(validApiKeys)
+        const keys = normalizeApiKeyList(apiKeysResponse.data).map((key) => {
+          const plaintext = resolveApiKeyPlaintext(key.id, key.key)
+          return plaintext ? { ...key, key: plaintext } : key
+        })
+        setApiKeys(keys)
       }
 
       if (profileResponse.success) {
@@ -78,23 +82,24 @@ export default function ApiKeysPage() {
     }
   }
 
-  const handleCreate = async (name: string): Promise<void> => {
-    try {
-      // Import API client
-      const { api } = await import('@/lib/api/client')
-      
-      // Create API key
-      const response = await api.apiKeys.create(name)
-      
-      if (response.success) {
-        const newApiKey = response.data as ApiKey
-        setApiKeys(prev => [newApiKey, ...prev])
-      } else {
-        throw new Error('Failed to create API key')
-      }
-    } catch (err) {
-      throw new Error(err instanceof Error ? err.message : 'Failed to create API key')
+  const handleCreate = async (name: string): Promise<CreatedApiKeyResult | void> => {
+    const { api } = await import('@/lib/api/client')
+    const response = await api.apiKeys.create(name)
+
+    if (!response.success) {
+      throw new Error('Failed to create API key')
     }
+
+    const created = normalizeApiKeyList([response.data])[0]
+    const plaintext = created ? resolveApiKeyPlaintext(created.id, created.key) : null
+    if (!created || !plaintext) {
+      throw new Error('Invalid API key response from server')
+    }
+
+    stashCreatedApiKeyPlaintext(created.id, plaintext)
+    await loadData()
+
+    return { id: created.id, name: created.name, key: plaintext }
   }
 
   const handleDelete = async (id: number): Promise<void> => {
@@ -106,50 +111,29 @@ export default function ApiKeysPage() {
       const response = await api.apiKeys.revoke(id)
       
       if (response.success) {
+        removeStashedApiKeyPlaintext(id)
         setApiKeys(prev => prev.filter(key => key.id !== id))
       } else {
         throw new Error('Failed to delete API key')
       }
     } catch (err) {
-      throw new Error(err instanceof Error ? err.message : 'Failed to delete API key')
+      const message =
+        err instanceof Error ? err.message : 'Failed to delete API key'
+      throw new Error(message)
     }
   }
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4" />
-          <p className="text-gray-600">Loading...</p>
-        </div>
-      </div>
-    )
+  if (loading || isLoading) {
+    return <DashboardLoading message="Loading API keys..." />
   }
 
   if (!isAuthenticated) {
-    return null // Will redirect
-  }
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4" />
-          <p className="text-gray-600">Loading API keys...</p>
-        </div>
-      </div>
-    )
+    return null
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md">
-            <p className="text-red-800">{error}</p>
-          </div>
-        )}
-        
+    <DashboardPage>
+        {error && <DashboardAlert variant="error">{error}</DashboardAlert>}
         <ApiKeyList
           apiKeys={apiKeys}
           onRefresh={loadData}
@@ -159,7 +143,6 @@ export default function ApiKeysPage() {
           maxKeys={userPlan?.max_api_keys || 5}
           currentKeys={apiKeys.length}
         />
-      </div>
-    </div>
+    </DashboardPage>
   )
 }

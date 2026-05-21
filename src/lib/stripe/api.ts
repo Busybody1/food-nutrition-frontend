@@ -143,7 +143,7 @@ class StripeAPI {
     amount: number
     currency?: string
   }): Promise<{ client_secret: string; payment_intent_id: string }> {
-    return this.request('/v1/billing/payment-intent', {
+    return this.request('/api/v1/billing/payment-intent', {
       method: 'POST',
       body: JSON.stringify(data),
     })

@@ -5,14 +5,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import { User, LoginRequest, RegisterRequest, LoginResponse, RegisterResponse } from '@/types/auth';
 import { apiClient } from '@/lib/api/client';
+import { clearStashedApiKeys } from '@/lib/api/api-keys';
 
-interface ApiError {
-  response?: {
-    data?: {
-      detail?: string;
-    };
-  };
-}
+import { ApiError } from '@/types/api';
 
 export interface UseAuthReturn {
   // State
@@ -97,7 +92,7 @@ export const useAuth = (): UseAuthReturn => {
       setUser(userData);
       return { success: true, user: userData };
     } catch (err: unknown) {
-      const errorMessage = (err as ApiError)?.response?.data?.detail || 'Login failed';
+      const errorMessage = err instanceof ApiError ? err.message : 'Login failed';
       setError(errorMessage);
       return { success: false, error: errorMessage };
     } finally {
@@ -105,38 +100,36 @@ export const useAuth = (): UseAuthReturn => {
     }
   }, []);
 
-  // Register function
+  // Register function (register then login per backend contract)
   const register = useCallback(async (data: RegisterRequest): Promise<{ success: boolean; error?: string; user?: User }> => {
     try {
       setLoading(true);
       setError(null);
 
-      const response = await apiClient.post<RegisterResponse>('/api/v1/auth/register', data);
-      const { access_token, refresh_token, user: userData } = response.data;
-
-      // Store tokens
-      localStorage.setItem('access_token', access_token);
-      localStorage.setItem('refresh_token', refresh_token);
-      
-      // Update API client with new token
-      apiClient.setAccessToken(access_token);
-
-      setUser(userData);
-      return { success: true, user: userData };
+      await apiClient.post<RegisterResponse>('/api/v1/auth/register', data);
+      const loginResult = await login({ email: data.email, password: data.password });
+      if (!loginResult.success) {
+        return {
+          success: false,
+          error: loginResult.error || 'Account created. Please sign in.',
+        };
+      }
+      return loginResult;
     } catch (err: unknown) {
-      const errorMessage = (err as ApiError)?.response?.data?.detail || 'Registration failed';
+      const errorMessage = err instanceof ApiError ? err.message : 'Registration failed';
       setError(errorMessage);
       return { success: false, error: errorMessage };
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [login]);
 
   // Logout function
   const logout = useCallback(() => {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
-    
+    clearStashedApiKeys();
+
     // Clear token from API client
     apiClient.setAccessToken(null);
     
@@ -179,7 +172,7 @@ export const useAuth = (): UseAuthReturn => {
       setUser(updatedUser);
       return { success: true, user: updatedUser };
     } catch (err: unknown) {
-      const errorMessage = (err as ApiError)?.response?.data?.detail || 'Profile update failed';
+      const errorMessage = err instanceof ApiError ? err.message : 'Profile update failed';
       setError(errorMessage);
       return { success: false, error: errorMessage };
     } finally {
@@ -200,7 +193,7 @@ export const useAuth = (): UseAuthReturn => {
 
       return { success: true };
     } catch (err: unknown) {
-      const errorMessage = (err as ApiError)?.response?.data?.detail || 'Password change failed';
+      const errorMessage = err instanceof ApiError ? err.message : 'Password change failed';
       setError(errorMessage);
       return { success: false, error: errorMessage };
     } finally {

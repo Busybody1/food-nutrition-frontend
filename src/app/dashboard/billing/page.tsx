@@ -8,6 +8,13 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { ErrorBoundary } from '@/components/ui/error-boundary'
 import { PaymentErrorMessage } from '@/components/ui/error-message'
+import {
+  DashboardPage,
+  DashboardPageHeader,
+  DashboardLoading,
+  DashboardAlert,
+  DashboardProgress,
+} from '@/components/dashboard/dashboard-shell'
 import { 
   CreditCard, DollarSign, 
   CheckCircle, ExternalLink, RefreshCw, Download
@@ -34,6 +41,48 @@ interface Invoice {
   created_at: string | null
 }
 
+interface UsageStats {
+  requests_this_month: number
+  monthly_quota: number
+  rate_limit_per_minute?: number
+  plan_name?: string
+}
+
+function UsageThisMonthCard({ used, limit }: { used: number; limit: number }) {
+  const safeLimit = limit > 0 ? limit : 1
+  const pct = Math.min(100, (used / safeLimit) * 100)
+  const remaining = Math.max(0, limit - used)
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Usage This Month</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div>
+            <p className="text-sm text-gray-600 mb-1">Requests Used</p>
+            <p className="text-2xl font-bold text-gray-900">{used.toLocaleString()}</p>
+            <p className="text-sm text-gray-600">of {limit.toLocaleString()} total</p>
+          </div>
+          <div>
+            <p className="text-sm text-gray-600 mb-1">Usage Percentage</p>
+            <p className="text-2xl font-bold text-gray-900">{pct.toFixed(1)}%</p>
+            <div className="mt-2">
+              <DashboardProgress value={used} max={limit} />
+            </div>
+          </div>
+          <div>
+            <p className="text-sm text-gray-600 mb-1">Remaining</p>
+            <p className="text-2xl font-bold text-gray-900">{remaining.toLocaleString()}</p>
+            <p className="text-sm text-gray-600">requests this month</p>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
+
 function BillingPageContent() {
   const { user, isAuthenticated, loading } = useAuth()
   const router = useRouter()
@@ -49,21 +98,31 @@ function BillingPageContent() {
       setIsLoading(true)
       setError('')
 
-      // Import API client
       const { api } = await import('@/lib/api/client')
-      
-      // First, get user profile to check plan
-      const profileResponse = await api.user.getProfile()
-      
+
+      const [profileResponse, usageResponse] = await Promise.all([
+        api.user.getProfile(),
+        api.usage.getUsageStats(),
+      ])
+
       if (!profileResponse.success) {
         throw new Error('Failed to load user profile')
       }
 
-      const userProfile = profileResponse.data as { plan?: { name?: string; monthly_price?: number; monthly_quota?: number } }
-      const planName = userProfile.plan?.name || 'Free'
-      const isFreePlan = planName === 'Free' || (userProfile.plan?.monthly_price || 0) === 0
+      const userProfile = profileResponse.data as {
+        plan?: { name?: string; monthly_price?: number; monthly_quota?: number }
+      }
+      const usageStats = (usageResponse.success
+        ? usageResponse.data
+        : null) as UsageStats | null
 
-      // For free plan users, create billing info from profile data only
+      const planName = userProfile.plan?.name || usageStats?.plan_name || 'Free'
+      const isFreePlan = planName === 'Free' || (userProfile.plan?.monthly_price || 0) === 0
+      const currentUsage = usageStats?.requests_this_month ?? 0
+      const usageLimit =
+        usageStats?.monthly_quota ?? userProfile.plan?.monthly_quota ?? 1000
+      const rateLimit = usageStats?.rate_limit_per_minute
+
       if (isFreePlan) {
         const billingInfo: BillingInfo = {
           user_id: user?.id || 0,
@@ -72,11 +131,12 @@ function BillingPageContent() {
           stripe_customer_id: '',
           subscription_status: 'inactive',
           next_billing_date: '',
-          current_usage: 0,
-          usage_limit: userProfile.plan?.monthly_quota || 1000
+          current_usage: currentUsage,
+          usage_limit: usageLimit,
+          rate_limit_per_minute: rateLimit,
         }
         setBillingInfo(billingInfo)
-        setInvoices([]) // No invoices for free plan
+        setInvoices([])
       } else {
         // For paid plan users, load subscription and payment methods
         try {
@@ -96,13 +156,14 @@ function BillingPageContent() {
             }
             const billingInfo: BillingInfo = {
               user_id: user?.id || 0,
-              plan_name: subscription.plan_name || 'Free',
+              plan_name: subscription.plan_name || planName,
               plan_price: subscription.monthly_price || 0,
               stripe_customer_id: subscription.stripe_customer_id || '',
               subscription_status: subscription.status || 'inactive',
               next_billing_date: subscription.current_period_end || '',
-              current_usage: 0, // This would come from usage API
-              usage_limit: subscription.monthly_quota || 1000
+              current_usage: currentUsage,
+              usage_limit: subscription.monthly_quota || usageLimit,
+              rate_limit_per_minute: rateLimit,
             }
             setBillingInfo(billingInfo)
           }
@@ -116,13 +177,14 @@ function BillingPageContent() {
           console.log('No subscription found, showing free plan:', subscriptionError)
           const billingInfo: BillingInfo = {
             user_id: user?.id || 0,
-            plan_name: 'Free',
-            plan_price: 0,
+            plan_name: planName,
+            plan_price: userProfile.plan?.monthly_price || 0,
             stripe_customer_id: '',
             subscription_status: 'inactive',
             next_billing_date: '',
-            current_usage: 0,
-            usage_limit: 1000
+            current_usage: currentUsage,
+            usage_limit: usageLimit,
+            rate_limit_per_minute: rateLimit,
           }
           setBillingInfo(billingInfo)
           setInvoices([])
@@ -239,83 +301,46 @@ function BillingPageContent() {
     return 'bg-yellow-100 text-yellow-800'
   }
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4" />
-          <p className="text-gray-600">Loading...</p>
-        </div>
-      </div>
-    )
+  if (loading || isLoading) {
+    return <DashboardLoading message="Loading billing..." />
   }
 
   if (!isAuthenticated) {
-    return null // Will redirect
-  }
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4" />
-          <p className="text-gray-600">Loading billing information...</p>
-        </div>
-      </div>
-    )
+    return null
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Billing & Subscription</h1>
-            <p className="text-gray-600">
-              {billingInfo?.plan_name === 'Free' || (billingInfo?.plan_price || 0) === 0
-                ? 'View your current plan and upgrade options'
-                : 'Manage your subscription, view invoices, and update payment methods'
-              }
-            </p>
-          </div>
-          <div className="flex items-center space-x-3">
-            <Button
-              variant="outline"
-              onClick={loadBillingData}
-              disabled={isLoading}
-              className="flex items-center"
-            >
-              <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
-              Refresh
+    <DashboardPage>
+        <DashboardPageHeader
+          title="Billing"
+          description={
+            billingInfo?.plan_name === 'Free' || (billingInfo?.plan_price || 0) === 0
+              ? 'View your plan and upgrade when you need more capacity.'
+              : 'Manage subscription, invoices, and payment methods.'
+          }
+        >
+          <Button variant="outline" size="sm" onClick={loadBillingData} disabled={isLoading} className="gap-2">
+            <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+            Refresh
+          </Button>
+          {billingInfo?.plan_name !== 'Free' && (billingInfo?.plan_price || 0) > 0 && (
+            <Button size="sm" onClick={handleManageBilling} className="gap-2">
+              <CreditCard className="h-4 w-4" />
+              Manage billing
             </Button>
-            {(billingInfo?.plan_name !== 'Free' && (billingInfo?.plan_price || 0) > 0) && (
-              <Button
-                onClick={handleManageBilling}
-                className="flex items-center"
-              >
-                <CreditCard className="h-4 w-4 mr-2" />
-                Manage Billing
-              </Button>
-            )}
-          </div>
-        </div>
+          )}
+        </DashboardPageHeader>
 
-        {/* Success Message */}
         {successMessage && (
-          <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-md">
-            <div className="flex items-center">
-              <CheckCircle className="h-5 w-5 text-green-400 mr-2" />
-              <p className="text-green-800">{successMessage}</p>
-            </div>
-          </div>
+          <DashboardAlert variant="success">
+            <span className="flex items-center gap-2">
+              <CheckCircle className="h-4 w-4 shrink-0" />
+              {successMessage}
+            </span>
+          </DashboardAlert>
         )}
 
-        {error && !billingInfo && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md">
-            <p className="text-red-800">{error}</p>
-          </div>
-        )}
+        {error && !billingInfo && <DashboardAlert variant="error">{error}</DashboardAlert>}
 
         {billingInfo ? (
           <div className="space-y-6">
@@ -379,46 +404,10 @@ function BillingPageContent() {
               </CardContent>
             </Card>
 
-            {/* Usage Summary */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Usage This Month</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div>
-                    <p className="text-sm text-gray-600 mb-1">Requests Used</p>
-                    <p className="text-2xl font-bold text-gray-900">
-                      {billingInfo.current_usage.toLocaleString()}
-                    </p>
-                    <p className="text-sm text-gray-600">
-                      of {billingInfo.usage_limit.toLocaleString()} total
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-600 mb-1">Usage Percentage</p>
-                    <p className="text-2xl font-bold text-gray-900">
-                      {((billingInfo.current_usage / billingInfo.usage_limit) * 100).toFixed(1)}%
-                    </p>
-                    <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
-                      <div 
-                        className="bg-blue-600 h-2 rounded-full" 
-                        style={{ 
-                          width: `${Math.min((billingInfo.current_usage / billingInfo.usage_limit) * 100, 100)}%` 
-                        }}
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-600 mb-1">Remaining</p>
-                    <p className="text-2xl font-bold text-gray-900">
-                      {(billingInfo.usage_limit - billingInfo.current_usage).toLocaleString()}
-                    </p>
-                    <p className="text-sm text-gray-600">requests this month</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <UsageThisMonthCard
+              used={billingInfo.current_usage}
+              limit={billingInfo.usage_limit}
+            />
 
             {/* Payment Method - Only for paid plans */}
             {(billingInfo.plan_name !== 'Free' && billingInfo.plan_price > 0) && (
@@ -698,44 +687,7 @@ function BillingPageContent() {
               </CardContent>
             </Card>
 
-            {/* Usage Summary for Free Plan */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Usage This Month</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div>
-                    <p className="text-sm text-gray-600 mb-1">Requests Used</p>
-                    <p className="text-2xl font-bold text-gray-900">
-                      0
-                    </p>
-                    <p className="text-sm text-gray-600">
-                      of 1,000 total
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-600 mb-1">Usage Percentage</p>
-                    <p className="text-2xl font-bold text-gray-900">
-                      0%
-                    </p>
-                    <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
-                      <div 
-                        className="bg-blue-600 h-2 rounded-full" 
-                        style={{ width: '0%' }}
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-600 mb-1">Remaining</p>
-                    <p className="text-2xl font-bold text-gray-900">
-                      1,000
-                    </p>
-                    <p className="text-sm text-gray-600">requests this month</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <UsageThisMonthCard used={0} limit={1000} />
 
             {/* Plan Features */}
             <Card>
@@ -859,22 +811,14 @@ function BillingPageContent() {
             </Card>
           </div>
         )}
-      </div>
-    </div>
+    </DashboardPage>
   )
 }
 
 export default function BillingPage() {
   return (
     <ErrorBoundary fallback={<PaymentErrorMessage />}>
-      <Suspense fallback={
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4" />
-            <p className="text-gray-600">Loading billing page...</p>
-          </div>
-        </div>
-      }>
+      <Suspense fallback={<DashboardLoading message="Loading billing page..." />}>
         <BillingPageContent />
       </Suspense>
     </ErrorBoundary>

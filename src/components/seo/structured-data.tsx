@@ -1,4 +1,5 @@
 import Script from 'next/script'
+import { SITE_URL, SITE_NAME, SITE_DESCRIPTION, SUPPORT_EMAIL, absoluteUrl } from '@/lib/site'
 
 interface StructuredDataProps {
   type: 'organization' | 'website' | 'api' | 'product'
@@ -10,108 +11,61 @@ export function StructuredData({ type, data }: StructuredDataProps) {
     switch (type) {
       case 'organization':
         return {
-          "@context": "https://schema.org",
-          "@type": "Organization",
-          "name": "Busybody",
-          "url": "https://busybody.com",
-          "logo": "https://busybody.com/logos/busybody-logo.png",
-          "description": "Comprehensive food and nutrition database API for developers building health and fitness applications",
-          "foundingDate": "2024",
-          "founders": [
-            {
-              "@type": "Person",
-              "name": "Sarah Chen"
-            },
-            {
-              "@type": "Person", 
-              "name": "Marcus Rodriguez"
-            }
-          ],
-          "contactPoint": {
-            "@type": "ContactPoint",
-            "telephone": "+1-555-123-4567",
-            "contactType": "customer service",
-            "email": "support@foodapi.com"
-          },
-          "sameAs": [
-            "https://twitter.com/foodapi",
-            "https://github.com/foodapi",
-            "https://linkedin.com/company/foodapi"
-          ]
+          '@context': 'https://schema.org',
+          '@type': 'Organization',
+          name: SITE_NAME,
+          url: SITE_URL,
+          logo: absoluteUrl('/logos/busybody-logo.png'),
+          description: SITE_DESCRIPTION,
+          email: SUPPORT_EMAIL,
+          sameAs: [],
         }
 
       case 'website':
         return {
-          "@context": "https://schema.org",
-          "@type": "WebSite",
-          "name": "Busybody",
-          "url": "https://busybody.com",
-          "description": "Comprehensive food and nutrition database API for developers",
-          "potentialAction": {
-            "@type": "SearchAction",
-            "target": "https://busybody.com/search?q={search_term_string}",
-            "query-input": "required name=search_term_string"
-          }
+          '@context': 'https://schema.org',
+          '@type': 'WebSite',
+          name: SITE_NAME,
+          url: SITE_URL,
+          description: SITE_DESCRIPTION,
         }
 
       case 'api':
         return {
-          "@context": "https://schema.org",
-          "@type": "SoftwareApplication",
-          "name": "Busybody",
-          "applicationCategory": "DeveloperApplication",
-          "operatingSystem": "Any",
-          "description": "Comprehensive food and nutrition database API with 900K+ food items and 28 nutrients",
-          "url": "https://busybody.com",
-          "offers": {
-            "@type": "Offer",
-            "price": "0",
-            "priceCurrency": "USD",
-            "description": "Free tier with 1,000 requests per month"
+          '@context': 'https://schema.org',
+          '@type': 'SoftwareApplication',
+          name: SITE_NAME,
+          applicationCategory: 'DeveloperApplication',
+          operatingSystem: 'Any',
+          description: SITE_DESCRIPTION,
+          url: SITE_URL,
+          offers: {
+            '@type': 'Offer',
+            price: '0',
+            priceCurrency: 'USD',
+            description: 'Free developer tier with monthly API quota',
           },
-          "featureList": [
-            "900K+ food items",
-            "28 nutrients per food",
-            "615K+ UPC codes",
-            "Advanced search capabilities",
-            "RESTful API",
-            "99.9% uptime"
-          ]
+          featureList: [
+            'Food search with match_mode and verified_only',
+            'Autocomplete suggest endpoint',
+            'Barcode lookup',
+            'REST JSON API',
+            'API key authentication',
+          ],
         }
 
       case 'product':
         return {
-          "@context": "https://schema.org",
-          "@type": "Product",
-          "name": "Busybody - Nutrition Database API",
-          "description": "Comprehensive food and nutrition database API for developers",
-          "brand": {
-            "@type": "Brand",
-            "name": "Busybody"
-          },
-          "offers": [
-            {
-              "@type": "Offer",
-              "name": "Free Plan",
-              "price": "0",
-              "priceCurrency": "USD",
-              "description": "1,000 requests per month"
-            },
-            {
-              "@type": "Offer",
-              "name": "Core Plan",
-              "price": "99",
-              "priceCurrency": "USD",
-              "description": "750,000 requests per month"
-            },
-            {
-              "@type": "Offer",
-              "name": "Plus Plan",
-              "price": "299",
-              "priceCurrency": "USD",
-              "description": "3,000,000 requests per month"
-            }
-          ]
+          '@context': 'https://schema.org',
+          '@type': 'Product',
+          name: `${SITE_NAME} — Nutrition Database API`,
+          description: SITE_DESCRIPTION,
+          brand: { '@type': 'Brand', name: SITE_NAME },
+          offers: [
+            { '@type': 'Offer', name: 'Free', price: '0', priceCurrency: 'USD' },
+            { '@type': 'Offer', name: 'Core', price: '99', priceCurrency: 'USD' },
+            { '@type': 'Offer', name: 'Plus', price: '299', priceCurrency: 'USD' },
+          ],
         }
 
       default:
@@ -123,10 +77,7 @@ export function StructuredData({ type, data }: StructuredDataProps) {
     <Script
       id={`structured-data-${type}`}
       type="application/ld+json"
-      dangerouslySetInnerHTML={{
-        __html: JSON.stringify(getStructuredData(), null, 2)
-      }}
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(getStructuredData()) }}
     />
   )
 }
-

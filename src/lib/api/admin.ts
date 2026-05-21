@@ -225,14 +225,16 @@ class AdminAPI {
   }
 
   async activateUser(userId: number): Promise<void> {
-    await this.makeRequest<void>(`${this.baseUrl}/users/${userId}/activate`, {
-      method: 'POST'
+    await this.makeRequest<void>(`${this.baseUrl}/users/${userId}/status`, {
+      method: 'PUT',
+      body: JSON.stringify({ is_active: true }),
     })
   }
 
   async deactivateUser(userId: number): Promise<void> {
-    await this.makeRequest<void>(`${this.baseUrl}/users/${userId}/deactivate`, {
-      method: 'POST'
+    await this.makeRequest<void>(`${this.baseUrl}/users/${userId}/status`, {
+      method: 'PUT',
+      body: JSON.stringify({ is_active: false }),
     })
   }
 
@@ -388,7 +390,7 @@ class AdminAPI {
 
   // Admin user access
   async getAdminUser(userId: number): Promise<AdminUser> {
-    return this.makeRequest<AdminUser>(`${this.baseUrl}/admin/users/${userId}`)
+    return this.makeRequest<AdminUser>(`${this.baseUrl}/users/${userId}`)
   }
 
   // System health

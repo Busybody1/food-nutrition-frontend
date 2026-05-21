@@ -117,7 +117,7 @@ export interface Plan {
   stripe_test_price_id?: string;
   stripe_live_price_id?: string;
   stripe_price_id?: string;
-  features?: string[];
+  features?: string[] | Record<string, unknown>;
   is_active: boolean;
   created_at?: string;
 }

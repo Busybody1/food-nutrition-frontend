@@ -3,14 +3,25 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '@/lib/hooks/use-auth'
 import { useRouter } from 'next/navigation'
-import Link from 'next/link'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { 
-  Key, BarChart3, CreditCard, Activity, 
-  TrendingUp, AlertCircle, CheckCircle, 
-  ArrowRight, RefreshCw
+import {
+  DashboardPage as DashboardShell,
+  DashboardPageHeader,
+  DashboardStatCard,
+  DashboardLoading,
+  DashboardAlert,
+  DashboardProgress,
+  DashboardQuickAction,
+  DashboardEmpty,
+} from '@/components/dashboard/dashboard-shell'
+import {
+  Key,
+  BarChart3,
+  CreditCard,
+  Activity,
+  TrendingUp,
+  RefreshCw,
 } from 'lucide-react'
 
 interface ApiKey {
@@ -54,14 +65,12 @@ export default function DashboardPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
 
-  // Redirect if not authenticated
   useEffect(() => {
     if (!loading && !isAuthenticated) {
       router.push('/auth/login')
     }
   }, [isAuthenticated, loading, router])
 
-  // Load dashboard data
   useEffect(() => {
     if (!loading && isAuthenticated) {
       loadDashboardData()
@@ -72,24 +81,20 @@ export default function DashboardPage() {
     try {
       setIsLoading(true)
       setError('')
-
-      // Import API client
       const { api } = await import('@/lib/api/client')
-      
-      // Load API keys, usage stats, and user profile
       const [apiKeysResponse, usageResponse, profileResponse] = await Promise.all([
         api.apiKeys.list(),
         api.usage.getUsageStats(),
-        api.user.getProfile()
+        api.user.getProfile(),
       ])
 
-      // Handle each response individually for better error reporting
       let apiKeys: ApiKey[] = []
       let usageStats: UsageStats = { requests_this_month: 0, monthly_quota: 1000 }
       let userProfile: UserProfile = { plan: { name: 'Free', monthly_price: 0 } }
 
       if (apiKeysResponse.success) {
-        apiKeys = apiKeysResponse.data as ApiKey[]
+        const { normalizeApiKeyList } = await import('@/lib/api/api-keys')
+        apiKeys = normalizeApiKeyList(apiKeysResponse.data) as ApiKey[]
       } else {
         throw new Error(`API Keys: ${apiKeysResponse.message || 'Failed to load API keys'}`)
       }
@@ -106,17 +111,15 @@ export default function DashboardPage() {
         throw new Error(`Profile: ${profileResponse.message || 'Failed to load profile'}`)
       }
 
-      const dashboardStats: DashboardStats = {
+      setStats({
         totalApiKeys: apiKeys.length,
-        activeApiKeys: apiKeys.filter(key => key.is_active).length,
+        activeApiKeys: apiKeys.filter((key) => key.is_active).length,
         requestsThisMonth: usageStats.requests_this_month,
         monthlyQuota: usageStats.monthly_quota,
         planName: userProfile.plan.name,
         planPrice: userProfile.plan.monthly_price,
-        recentActivity: [] // Can be implemented later with activity API
-      }
-
-      setStats(dashboardStats)
+        recentActivity: [],
+      })
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load dashboard data')
     } finally {
@@ -124,288 +127,175 @@ export default function DashboardPage() {
     }
   }
 
-  const getActivityIcon = (type: ActivityItem['type']) => {
-    switch (type) {
-      case 'api_key_created':
-        return <Key className="h-4 w-4 text-blue-600" />
-      case 'api_key_used':
-        return <Activity className="h-4 w-4 text-green-600" />
-      case 'quota_warning':
-        return <AlertCircle className="h-4 w-4 text-yellow-600" />
-      case 'payment_success':
-        return <CheckCircle className="h-4 w-4 text-green-600" />
-      default:
-        return <Activity className="h-4 w-4 text-gray-600" />
-    }
+  if (loading || isLoading) {
+    return <DashboardLoading message="Loading dashboard..." />
   }
 
-  const getActivityColor = (type: ActivityItem['type']) => {
-    switch (type) {
-      case 'api_key_created':
-        return 'bg-blue-100 text-blue-800'
-      case 'api_key_used':
-        return 'bg-green-100 text-green-800'
-      case 'quota_warning':
-        return 'bg-yellow-100 text-yellow-800'
-      case 'payment_success':
-        return 'bg-green-100 text-green-800'
-      default:
-        return 'bg-gray-100 text-gray-800'
-    }
-  }
+  if (!isAuthenticated) return null
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    })
-  }
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4" />
-          <p className="text-gray-600">Loading...</p>
-        </div>
-      </div>
-    )
-  }
-
-  if (!isAuthenticated) {
-    return null // Will redirect
-  }
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4" />
-          <p className="text-gray-600">Loading dashboard...</p>
-        </div>
-      </div>
-    )
-  }
+  const usagePct =
+    stats && stats.monthlyQuota > 0
+      ? Math.min((stats.requestsThisMonth / stats.monthlyQuota) * 100, 100)
+      : 0
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">
-            Welcome back, {user?.first_name}!
-          </h1>
-          <p className="text-gray-600">
-            Here&apos;s what&apos;s happening with your Food Nutrition Database API account.
-          </p>
-        </div>
+    <DashboardShell>
+      <DashboardPageHeader
+        title={`Welcome back${user?.first_name ? `, ${user.first_name}` : ''}`}
+        description="Monitor API usage, manage keys, and billing from one place."
+      >
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={loadDashboardData}
+          disabled={isLoading}
+          className="gap-2"
+        >
+          <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+          Refresh
+        </Button>
+      </DashboardPageHeader>
 
-        {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md">
-            <p className="text-red-800">{error}</p>
+      {error && <DashboardAlert variant="error">{error}</DashboardAlert>}
+
+      {stats && (
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+            <DashboardStatCard
+              label="API keys"
+              value={`${stats.activeApiKeys} / ${stats.totalApiKeys}`}
+              hint="Active keys"
+              icon={Key}
+              accent="brand"
+            />
+            <DashboardStatCard
+              label="This month"
+              value={stats.requestsThisMonth.toLocaleString()}
+              hint="API requests"
+              icon={BarChart3}
+              accent="green"
+            />
+            <DashboardStatCard
+              label="Quota used"
+              value={`${usagePct.toFixed(1)}%`}
+              hint={`${stats.monthlyQuota.toLocaleString()} monthly limit`}
+              icon={TrendingUp}
+              accent="purple"
+            />
+            <DashboardStatCard
+              label="Current plan"
+              value={stats.planName}
+              hint={stats.planPrice > 0 ? `$${stats.planPrice}/mo` : 'Free tier'}
+              icon={CreditCard}
+              accent="orange"
+            />
           </div>
-        )}
 
-        {stats && (
-          <div className="space-y-8">
-            {/* Stats Overview */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <Card>
-                <CardContent className="p-6">
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0">
-                      <Key className="h-8 w-8 text-blue-600" />
-                    </div>
-                    <div className="ml-4">
-                      <p className="text-sm font-medium text-gray-600">API Keys</p>
-                      <p className="text-2xl font-bold text-gray-900">
-                        {stats.activeApiKeys}/{stats.totalApiKeys}
-                      </p>
-                      <p className="text-sm text-gray-500">Active</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardContent className="p-6">
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0">
-                      <BarChart3 className="h-8 w-8 text-green-600" />
-                    </div>
-                    <div className="ml-4">
-                      <p className="text-sm font-medium text-gray-600">This Month</p>
-                      <p className="text-2xl font-bold text-gray-900">
-                        {stats.requestsThisMonth.toLocaleString()}
-                      </p>
-                      <p className="text-sm text-gray-500">API calls</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardContent className="p-6">
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0">
-                      <TrendingUp className="h-8 w-8 text-purple-600" />
-                    </div>
-                    <div className="ml-4">
-                      <p className="text-sm font-medium text-gray-600">Usage</p>
-                      <p className="text-2xl font-bold text-gray-900">
-                        {stats.monthlyQuota > 0 ? ((stats.requestsThisMonth / stats.monthlyQuota) * 100).toFixed(1) : '0.0'}%
-                      </p>
-                      <p className="text-sm text-gray-500">of quota used</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardContent className="p-6">
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0">
-                      <CreditCard className="h-8 w-8 text-orange-600" />
-                    </div>
-                    <div className="ml-4">
-                      <p className="text-sm font-medium text-gray-600">Plan</p>
-                      <p className="text-lg font-bold text-gray-900">
-                        {stats.planName}
-                      </p>
-                      <p className="text-sm text-gray-500">
-                        ${stats.planPrice}/month
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div className="dashboard-panel">
+              <div className="dashboard-panel-header">
+                <h2 className="dashboard-panel-title">Quick actions</h2>
+              </div>
+              <div className="dashboard-panel-body space-y-2">
+                <DashboardQuickAction
+                  href="/dashboard/api-keys"
+                  icon={Key}
+                  title="Manage API keys"
+                  description="Create, rotate, and revoke keys"
+                />
+                <DashboardQuickAction
+                  href="/dashboard/usage"
+                  icon={BarChart3}
+                  title="Usage analytics"
+                  description="Charts and endpoint breakdown"
+                />
+                <DashboardQuickAction
+                  href="/pricing"
+                  icon={CreditCard}
+                  title="Upgrade plan"
+                  description="Higher limits and priority support"
+                  primary
+                />
+                <DashboardQuickAction
+                  href="/dashboard/billing"
+                  icon={CreditCard}
+                  title="Billing & invoices"
+                  description="Payment methods and subscription"
+                />
+              </div>
             </div>
 
-            {/* Quick Actions */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Quick Actions</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <Link href="/dashboard/api-keys">
-                    <Button variant="outline" className="w-full justify-start">
-                      <Key className="h-4 w-4 mr-2" />
-                      Manage API Keys
-                      <ArrowRight className="h-4 w-4 ml-auto" />
-                    </Button>
-                  </Link>
-                  <Link href="/dashboard/usage">
-                    <Button variant="outline" className="w-full justify-start">
-                      <BarChart3 className="h-4 w-4 mr-2" />
-                      View Usage Analytics
-                      <ArrowRight className="h-4 w-4 ml-auto" />
-                    </Button>
-                  </Link>
-                  <Link href="/pricing">
-                    <Button variant="default" className="w-full justify-start">
-                      <CreditCard className="h-4 w-4 mr-2" />
-                      Subscribe to a Plan
-                      <ArrowRight className="h-4 w-4 ml-auto" />
-                    </Button>
-                  </Link>
-                  <Link href="/dashboard/billing">
-                    <Button variant="outline" className="w-full justify-start">
-                      <CreditCard className="h-4 w-4 mr-2" />
-                      Manage Billing
-                      <ArrowRight className="h-4 w-4 ml-auto" />
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Usage Summary</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div>
-                      <div className="flex justify-between text-sm mb-1">
-                        <span className="text-gray-600">Monthly Usage</span>
-                        <span className="text-gray-900">
-                          {stats.requestsThisMonth.toLocaleString()} / {stats.monthlyQuota.toLocaleString()}
-                        </span>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div 
-                          className="bg-blue-600 h-2 rounded-full" 
-                          style={{ 
-                            width: `${stats.monthlyQuota > 0 ? Math.min((stats.requestsThisMonth / stats.monthlyQuota) * 100, 100) : 0}%` 
-                          }}
-                        />
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4 text-sm">
-                      <div>
-                        <p className="text-gray-600">Remaining</p>
-                        <p className="font-semibold text-gray-900">
-                          {(stats.monthlyQuota - stats.requestsThisMonth).toLocaleString()}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-gray-600">Reset Date</p>
-                        <p className="font-semibold text-gray-900">
-                          {new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1)
-                            .toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                        </p>
-                      </div>
-                    </div>
+            <div className="dashboard-panel">
+              <div className="dashboard-panel-header">
+                <h2 className="dashboard-panel-title">Monthly usage</h2>
+                <span className="text-xs font-medium text-ink-muted tabular-nums">
+                  {stats.requestsThisMonth.toLocaleString()} / {stats.monthlyQuota.toLocaleString()}
+                </span>
+              </div>
+              <div className="dashboard-panel-body space-y-5">
+                <div>
+                  <div className="flex justify-between text-xs text-ink-muted mb-2">
+                    <span>Consumed</span>
+                    <span className="font-medium text-ink">{usagePct.toFixed(1)}%</span>
                   </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Recent Activity */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center justify-between">
-                  <span>Recent Activity</span>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={loadDashboardData}
-                    disabled={isLoading}
-                    className="flex items-center"
-                  >
-                    <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
-                    Refresh
-                  </Button>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {stats.recentActivity.length === 0 ? (
-                    <p className="text-gray-500 text-center py-8">No recent activity</p>
-                  ) : (
-                    stats.recentActivity.map((activity) => (
-                      <div key={activity.id} className="flex items-start space-x-3">
-                        <div className="flex-shrink-0">
-                          {getActivityIcon(activity.type)}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm text-gray-900">{activity.message}</p>
-                          <p className="text-xs text-gray-500">{formatDate(activity.timestamp)}</p>
-                        </div>
-                        <Badge className={getActivityColor(activity.type)}>
-                          {activity.type.replace('_', ' ').toUpperCase()}
-                        </Badge>
-                      </div>
-                    ))
-                  )}
+                  <DashboardProgress
+                    value={stats.requestsThisMonth}
+                    max={stats.monthlyQuota}
+                  />
                 </div>
-              </CardContent>
-            </Card>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="rounded-brand bg-surface-elevated px-4 py-3">
+                    <p className="text-xs text-ink-muted">Remaining</p>
+                    <p className="text-lg font-semibold text-ink tabular-nums mt-0.5">
+                      {Math.max(0, stats.monthlyQuota - stats.requestsThisMonth).toLocaleString()}
+                    </p>
+                  </div>
+                  <div className="rounded-brand bg-surface-elevated px-4 py-3">
+                    <p className="text-xs text-ink-muted">Resets</p>
+                    <p className="text-lg font-semibold text-ink mt-0.5">
+                      {new Date(
+                        new Date().getFullYear(),
+                        new Date().getMonth() + 1,
+                        1
+                      ).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-        )}
-      </div>
-    </div>
+
+          <div className="dashboard-panel">
+            <div className="dashboard-panel-header">
+              <h2 className="dashboard-panel-title">Recent activity</h2>
+              <Button variant="ghost" size="sm" onClick={loadDashboardData} disabled={isLoading}>
+                <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+              </Button>
+            </div>
+            <div className="dashboard-panel-body">
+              {stats.recentActivity.length === 0 ? (
+                <DashboardEmpty
+                  icon={Activity}
+                  title="No activity yet"
+                  description="API key events and usage alerts will show up here."
+                />
+              ) : (
+                <ul className="space-y-3">
+                  {stats.recentActivity.map((activity) => (
+                    <li
+                      key={activity.id}
+                      className="flex items-start justify-between gap-3 py-2 border-b border-surface-border/50 last:border-0"
+                    >
+                      <p className="text-sm text-ink">{activity.message}</p>
+                      <Badge variant="secondary">{activity.type.replace('_', ' ')}</Badge>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </DashboardShell>
   )
 }

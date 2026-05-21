@@ -4,11 +4,15 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { useState, useEffect, Suspense } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
 import { CheckCircle, Zap, Shield, Star, Crown, Building2 } from 'lucide-react'
 import { useAuth } from '@/lib/hooks/use-auth'
 import { SubscribeModal } from '@/components/stripe/SubscribeModal'
 import { stripeAPI } from '@/lib/stripe/api'
+import {
+  marketingCardClass,
+  MarketingTrustPills,
+  MarketingPageLoading,
+} from '@/components/marketing/marketing-shell'
 
 interface Plan {
   id: number
@@ -37,7 +41,9 @@ function PricingContent() {
     return backendPlans.map(plan => {
       // Parse features from JSON if available
       let features: string[] = []
-      if (plan.features && typeof plan.features === 'object') {
+      if (Array.isArray(plan.features)) {
+        features = plan.features.filter((f): f is string => typeof f === 'string')
+      } else if (plan.features && typeof plan.features === 'object') {
         // Convert features object to display strings
         const featureMap: Record<string, string> = {
           'basic_endpoints': 'Basic endpoints',
@@ -293,109 +299,78 @@ function PricingContent() {
   }
 
   const getPlanIcon = (planName: string) => {
+    const iconClass = 'h-6 w-6 text-brand-strong'
     switch (planName.toLowerCase()) {
       case 'free':
-        return <Shield className="h-6 w-6 text-gray-600" />
+        return <Shield className={iconClass} />
       case 'basic':
-        return <Zap className="h-6 w-6 text-blue-600" />
+        return <Zap className={iconClass} />
       case 'core':
-        return <Star className="h-6 w-6 text-purple-600" />
+        return <Star className={iconClass} />
       case 'plus':
-        return <Crown className="h-6 w-6 text-yellow-600" />
+        return <Crown className={iconClass} />
       case 'enterprise':
-        return <Building2 className="h-6 w-6 text-red-600" />
+        return <Building2 className={iconClass} />
       default:
-        return <Shield className="h-6 w-6 text-gray-600" />
-    }
-  }
-
-  const getPlanColor = (planName: string) => {
-    switch (planName.toLowerCase()) {
-      case 'free':
-        return 'border-gray-200'
-      case 'basic':
-        return 'border-blue-200'
-      case 'core':
-        return 'border-purple-200'
-      case 'plus':
-        return 'border-yellow-200'
-      case 'enterprise':
-        return 'border-red-200'
-      default:
-        return 'border-gray-200'
+        return <Shield className={iconClass} />
     }
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Hero Section */}
-      <section className="py-20 bg-gradient-to-br from-blue-50 to-white">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="marketing-page">
+      <section className="section-pad hero-glow">
+        <div className="container-narrow">
           <div className="text-center max-w-3xl mx-auto">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+            <h1 className="font-display text-4xl md:text-5xl text-ink mb-6">
               Simple, transparent pricing
             </h1>
-            <p className="text-xl text-gray-600 mb-8">
+            <p className="text-xl text-ink-muted mb-8">
               Choose the plan that fits your needs. All plans include our core API features 
               with no hidden fees or surprise charges.
             </p>
-            <div className="flex items-center justify-center space-x-4 text-sm text-gray-600">
-              <div className="flex items-center">
-                <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
-                <span>7-day free trial</span>
-              </div>
-              <div className="flex items-center">
-                <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
-                <span>No setup fees</span>
-              </div>
-              <div className="flex items-center">
-                <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
-                <span>Cancel anytime</span>
-              </div>
-            </div>
+            <MarketingTrustPills
+              items={['7-day free trial', 'No setup fees', 'Cancel anytime']}
+            />
           </div>
         </div>
       </section>
 
-      {/* Pricing Cards */}
-      <section className="py-20">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="section-pad bg-surface-elevated">
+        <div className="container-narrow">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
             {isLoading ? (
               // Loading state
               Array.from({ length: 5 }).map((_, index) => (
-                <Card key={index} className="border border-gray-200 animate-pulse">
+                <Card key={index} className={`${marketingCardClass} animate-pulse`}>
                   <CardHeader className="text-center pb-4">
-                    <div className="h-6 bg-gray-200 rounded mb-2"></div>
-                    <div className="h-8 bg-gray-200 rounded mb-2"></div>
-                    <div className="h-4 bg-gray-200 rounded"></div>
+                    <div className="h-6 bg-surface-elevated rounded-brand mb-2" />
+                    <div className="h-8 bg-surface-elevated rounded-brand mb-2" />
+                    <div className="h-4 bg-surface-elevated rounded-brand" />
                   </CardHeader>
                   <CardContent className="pt-0">
                     <div className="space-y-3 mb-6">
                       {Array.from({ length: 5 }).map((_, i) => (
-                        <div key={i} className="h-4 bg-gray-200 rounded"></div>
+                        <div key={i} className="h-4 bg-surface-elevated rounded-brand" />
                       ))}
                     </div>
-                    <div className="h-10 bg-gray-200 rounded"></div>
+                    <div className="h-10 bg-surface-elevated rounded-brand" />
                   </CardContent>
                 </Card>
               ))
             ) : (
               // Plans from API or fallback
               (plans.length > 0 ? plans : []).map((plan) => (
-              <Card 
-                key={plan.name} 
-                  className={`relative ${getPlanColor(plan.name)} ${
-                    plan.name === 'Core' 
-                      ? 'border-2 border-purple-500 shadow-lg scale-105' 
-                      : 'border'
-                  }`}
-                >
-                  {plan.name === 'Core' && (
-                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                      <Badge className="bg-purple-600 text-white">
-                      Most Popular
-                    </Badge>
+              <Card
+                key={plan.name}
+                className={`relative ${marketingCardClass} ${
+                  plan.name === 'Core'
+                    ? 'border-2 border-brand/40 shadow-glow ring-1 ring-brand/10 md:scale-[1.02]'
+                    : ''
+                }`}
+              >
+                {plan.name === 'Core' && (
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                    <span className="marketing-hero-badge shadow-sm">Most popular</span>
                   </div>
                 )}
                 
@@ -405,10 +380,10 @@ function PricingContent() {
                     </div>
                   <CardTitle className="text-2xl">{plan.name}</CardTitle>
                   <div className="mt-4">
-                    <span className="text-4xl font-bold text-gray-900">
+                    <span className="text-4xl font-bold text-ink">
                         ${plan.monthly_price}
                     </span>
-                      <span className="text-gray-600">/month</span>
+                      <span className="text-ink-dim">/month</span>
                   </div>
                   <CardDescription className="mt-2">
                     {plan.description}
@@ -419,8 +394,8 @@ function PricingContent() {
                   <ul className="space-y-3 mb-6">
                     {plan.features.map((feature, featureIndex) => (
                       <li key={featureIndex} className="flex items-start">
-                          <CheckCircle className="h-5 w-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
-                        <span className="text-sm text-gray-700">{feature}</span>
+                          <CheckCircle className="h-5 w-5 text-brand mr-3 mt-0.5 flex-shrink-0" />
+                        <span className="text-sm text-ink-muted">{feature}</span>
                       </li>
                     ))}
                   </ul>
@@ -461,14 +436,7 @@ function PricingContent() {
 
 export default function PricingPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4" />
-          <p className="text-gray-600">Loading pricing...</p>
-        </div>
-      </div>
-    }>
+    <Suspense fallback={<MarketingPageLoading message="Loading pricing..." />}>
       <PricingContent />
     </Suspense>
   )

@@ -1,31 +1,121 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
+import Link from 'next/link'
 import { useAuth } from '@/lib/hooks/use-auth'
 import { useRouter, usePathname } from 'next/navigation'
-import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { 
-  Home, Key, BarChart3, CreditCard, Settings, 
-  Menu, X, LogOut, User
+import {
+  LayoutDashboard,
+  Search,
+  Key,
+  BarChart3,
+  CreditCard,
+  Menu,
+  X,
+  LogOut,
+  BookOpen,
+  ExternalLink,
 } from 'lucide-react'
+import { SITE_NAME } from '@/lib/site'
+import { cn } from '@/lib/utils/cn'
 
 const navigation = [
-  { name: 'Overview', href: '/dashboard', icon: Home },
+  { name: 'Overview', href: '/dashboard', icon: LayoutDashboard },
+  { name: 'Search', href: '/dashboard/search', icon: Search },
   { name: 'API Keys', href: '/dashboard/api-keys', icon: Key },
   { name: 'Usage', href: '/dashboard/usage', icon: BarChart3 },
   { name: 'Billing', href: '/dashboard/billing', icon: CreditCard },
-  { name: 'Settings', href: '/dashboard/settings', icon: Settings },
 ]
 
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
-  const { user, logout } = useAuth()
-  const router = useRouter()
+function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname()
+
+  return (
+    <nav className="flex flex-col gap-0.5 px-3" aria-label="Dashboard">
+      {navigation.map((item) => {
+        const isActive =
+          pathname === item.href ||
+          (item.href !== '/dashboard' && pathname?.startsWith(item.href))
+        return (
+          <Link
+            key={item.name}
+            href={item.href}
+            onClick={onNavigate}
+            className={cn(
+              'dashboard-nav-link',
+              isActive && 'dashboard-nav-link-active'
+            )}
+          >
+            <item.icon className="h-[18px] w-[18px] shrink-0 opacity-80" aria-hidden />
+            {item.name}
+          </Link>
+        )
+      })}
+    </nav>
+  )
+}
+
+function SidebarBrand() {
+  return (
+    <Link href="/dashboard" className="flex items-center gap-2.5 px-5 py-1 group">
+      <Image
+        src="/logos/busybody-logo.png"
+        alt={`${SITE_NAME} logo`}
+        width={28}
+        height={28}
+        className="h-7 w-7"
+      />
+      <span className="text-sm font-semibold text-ink tracking-tight">{SITE_NAME}</span>
+    </Link>
+  )
+}
+
+function UserBlock({ onLogout }: { onLogout: () => void }) {
+  const { user } = useAuth()
+  const initials = [user?.first_name?.[0], user?.last_name?.[0]]
+    .filter(Boolean)
+    .join('')
+    .toUpperCase() || '?'
+
+  return (
+    <div className="border-t border-surface-border/60 p-3">
+      <div className="flex items-center gap-3 rounded-brand px-2 py-2">
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-muted text-xs font-semibold text-brand-strong">
+          {initials}
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="text-sm font-medium text-ink truncate">
+            {user?.first_name} {user?.last_name}
+          </p>
+          <p className="text-xs text-ink-muted truncate">{user?.email}</p>
+        </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onLogout}
+          className="h-8 w-8 p-0 text-ink-muted hover:text-ink"
+          title="Sign out"
+        >
+          <LogOut className="h-4 w-4" />
+        </Button>
+      </div>
+      <Link
+        href="/docs"
+        className="mt-1 flex items-center gap-2 rounded-brand px-3 py-2 text-xs font-medium text-ink-muted hover:bg-surface-elevated hover:text-ink transition-colors"
+      >
+        <BookOpen className="h-3.5 w-3.5" />
+        API documentation
+        <ExternalLink className="h-3 w-3 ml-auto opacity-50" />
+      </Link>
+    </div>
+  )
+}
+
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const { logout } = useAuth()
+  const router = useRouter()
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   const handleLogout = () => {
@@ -34,144 +124,65 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Mobile sidebar */}
-      <div className={`fixed inset-0 z-50 lg:hidden ${sidebarOpen ? 'block' : 'hidden'}`}>
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-75" onClick={() => setSidebarOpen(false)} />
-        <div className="relative flex-1 flex flex-col max-w-xs w-full bg-white">
-          <div className="absolute top-0 right-0 -mr-12 pt-2">
+    <div className="min-h-screen bg-surface-elevated">
+      {/* Mobile overlay */}
+      <div
+        className={cn(
+          'fixed inset-0 z-50 lg:hidden transition-opacity',
+          sidebarOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        )}
+      >
+        <div
+          className="absolute inset-0 bg-ink/20 backdrop-blur-sm"
+          onClick={() => setSidebarOpen(false)}
+          aria-hidden
+        />
+        <aside className="relative flex h-full w-[min(280px,85vw)] flex-col bg-white shadow-glass-lg">
+          <div className="flex items-center justify-between px-4 pt-5 pb-2">
+            <SidebarBrand />
             <Button
               variant="ghost"
               size="sm"
               onClick={() => setSidebarOpen(false)}
-              className="ml-1 flex h-10 w-10 items-center justify-center rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+              className="h-9 w-9 p-0"
+              aria-label="Close menu"
             >
-              <X className="h-6 w-6 text-white" />
+              <X className="h-5 w-5" />
             </Button>
           </div>
-          <div className="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
-            <div className="flex-shrink-0 flex items-center px-4">
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                <Key className="w-5 h-5 text-white" />
-              </div>
-              <span className="ml-2 text-xl font-bold text-gray-900">Food API</span>
-            </div>
-            <nav className="mt-5 px-2 space-y-1">
-              {navigation.map((item) => {
-                const isActive = pathname === item.href
-                return (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    className={`${
-                      isActive
-                        ? 'bg-blue-100 text-blue-900'
-                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                    } group flex items-center px-2 py-2 text-base font-medium rounded-md`}
-                  >
-                    <item.icon
-                      className={`${
-                        isActive ? 'text-blue-500' : 'text-gray-400 group-hover:text-gray-500'
-                      } mr-4 h-6 w-6`}
-                    />
-                    {item.name}
-                  </Link>
-                )
-              })}
-            </nav>
+          <div className="flex-1 overflow-y-auto py-4">
+            <NavLinks onNavigate={() => setSidebarOpen(false)} />
           </div>
-          <div className="flex-shrink-0 flex border-t border-gray-200 p-4">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <div className="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
-                  <User className="h-6 w-6 text-gray-600" />
-                </div>
-              </div>
-              <div className="ml-3">
-                <p className="text-base font-medium text-gray-700">{user?.first_name} {user?.last_name}</p>
-                <p className="text-sm font-medium text-gray-500">{user?.email}</p>
-              </div>
-            </div>
-          </div>
-        </div>
+          <UserBlock onLogout={handleLogout} />
+        </aside>
       </div>
 
       {/* Desktop sidebar */}
-      <div className="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0">
-        <div className="flex-1 flex flex-col min-h-0 border-r border-gray-200 bg-white">
-          <div className="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
-            <div className="flex items-center flex-shrink-0 px-4">
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                <Key className="w-5 h-5 text-white" />
-              </div>
-              <span className="ml-2 text-xl font-bold text-gray-900">Food API</span>
-            </div>
-            <nav className="mt-5 flex-1 px-2 space-y-1">
-              {navigation.map((item) => {
-                const isActive = pathname === item.href
-                return (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    className={`${
-                      isActive
-                        ? 'bg-blue-100 text-blue-900'
-                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                    } group flex items-center px-2 py-2 text-sm font-medium rounded-md`}
-                  >
-                    <item.icon
-                      className={`${
-                        isActive ? 'text-blue-500' : 'text-gray-400 group-hover:text-gray-500'
-                      } mr-3 h-6 w-6`}
-                    />
-                    {item.name}
-                  </Link>
-                )
-              })}
-            </nav>
-          </div>
-          <div className="flex-shrink-0 flex border-t border-gray-200 p-4">
-            <div className="flex items-center w-full">
-              <div className="flex-shrink-0">
-                <div className="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
-                  <User className="h-6 w-6 text-gray-600" />
-                </div>
-              </div>
-              <div className="ml-3 flex-1">
-                <p className="text-sm font-medium text-gray-700">{user?.first_name} {user?.last_name}</p>
-                <p className="text-xs font-medium text-gray-500 truncate">{user?.email}</p>
-              </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleLogout}
-                className="ml-2"
-              >
-                <LogOut className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
+      <aside className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-[240px] lg:flex-col bg-white shadow-sidebar z-30">
+        <div className="pt-6 pb-4">
+          <SidebarBrand />
         </div>
-      </div>
+        <div className="flex-1 overflow-y-auto py-2">
+          <NavLinks />
+        </div>
+        <UserBlock onLogout={handleLogout} />
+      </aside>
 
-      {/* Main content */}
-      <div className="lg:pl-64 flex flex-col flex-1">
-        {/* Top navigation */}
-        <div className="sticky top-0 z-10 lg:hidden pl-1 pt-1 sm:pl-3 sm:pt-3 bg-gray-50">
+      <div className="lg:pl-[240px] flex min-h-screen flex-col">
+        <header className="sticky top-0 z-20 flex h-14 items-center gap-3 border-b border-surface-border/60 bg-white/80 backdrop-blur-md px-4 lg:hidden">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => setSidebarOpen(true)}
-            className="-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
+            className="h-9 w-9 p-0"
+            aria-label="Open menu"
           >
-            <Menu className="h-6 w-6" />
+            <Menu className="h-5 w-5" />
           </Button>
-        </div>
+          <span className="text-sm font-semibold text-ink">Dashboard</span>
+        </header>
 
-        {/* Page content */}
-        <main className="flex-1">
-          {children}
-        </main>
+        <main className="flex-1">{children}</main>
       </div>
     </div>
   )

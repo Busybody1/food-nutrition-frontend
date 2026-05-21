@@ -1,90 +1,85 @@
-import type { Metadata } from "next"
-import { Inter } from "next/font/google"
-import "./globals.css"
-import { ConditionalLayout } from "@/components/layout/conditional-layout"
-import { StructuredData } from "@/components/seo/structured-data"
-import { StripeProvider } from "@/contexts/StripeContext"
-import { AuthProvider } from "@/contexts/AuthContext"
-import { ErrorBoundary } from "@/components/ui/error-boundary"
+import type { Metadata } from 'next'
+import { Inter, EB_Garamond } from 'next/font/google'
+import './globals.css'
+import { ConditionalLayout } from '@/components/layout/conditional-layout'
+import { StructuredData } from '@/components/seo/structured-data'
+import { StripeProvider } from '@/contexts/StripeContext'
+import { AuthProvider } from '@/contexts/AuthContext'
+import { ErrorBoundary } from '@/components/ui/error-boundary'
+import { SITE_URL, SITE_NAME, SITE_DESCRIPTION, SUPPORT_EMAIL, absoluteUrl } from '@/lib/site'
 
-const inter = Inter({ subsets: ["latin"] })
+const inter = Inter({ subsets: ['latin'], variable: '--font-sans' })
+const garamond = EB_Garamond({
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
+  variable: '--font-display',
+})
+
+const ogImage = absoluteUrl('/opengraph-image')
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: "Busybody - Comprehensive Food & Nutrition Database API",
-    template: "%s | Busybody"
+    default: `${SITE_NAME} — Food & Nutrition Database API`,
+    template: `%s | ${SITE_NAME}`,
   },
-  description: "Access comprehensive nutrition data with advanced search capabilities. Perfect for developers building health, fitness, and nutrition applications. 900K+ food items, 28 nutrients, 99.9% uptime.",
-  keywords: [
-    "food api", "nutrition api", "food database", "nutrition data", "health api", "fitness api",
-    "food search api", "nutritional information", "calorie data", "food ingredients", "diet api",
-    "health tech", "wellness api", "food tracking", "meal planning", "nutrition analysis"
-  ],
-  authors: [{ name: "Busybody Team", url: "https://busybody.com" }],
-  creator: "Busybody",
-  publisher: "Busybody",
+  description: SITE_DESCRIPTION,
+  authors: [{ name: 'BusyBody FIT LTD', url: SITE_URL }],
+  creator: SITE_NAME,
+  publisher: SITE_NAME,
   robots: {
     index: true,
     follow: true,
     googleBot: {
       index: true,
       follow: true,
-      'max-video-preview': -1,
       'max-image-preview': 'large',
       'max-snippet': -1,
     },
   },
   openGraph: {
-    type: "website",
-    locale: "en_US",
-    url: "https://busybody.com",
-    siteName: "Busybody",
-    title: "Busybody - Comprehensive Food & Nutrition Database API",
-    description: "Access comprehensive nutrition data with advanced search capabilities. Perfect for developers building health, fitness, and nutrition applications.",
+    type: 'website',
+    locale: 'en_US',
+    url: SITE_URL,
+    siteName: SITE_NAME,
+    title: `${SITE_NAME} — Food & Nutrition Database API`,
+    description: SITE_DESCRIPTION,
     images: [
       {
-        url: "/og-image.jpg",
+        url: ogImage,
         width: 1200,
         height: 630,
-        alt: "Busybody - Food & Nutrition Database API",
+        alt: `${SITE_NAME} — Nutrition API for developers`,
       },
     ],
   },
   twitter: {
-    card: "summary_large_image",
-    site: "@busybody",
-    creator: "@busybody",
-    title: "Busybody - Comprehensive Food & Nutrition Database API",
-    description: "Access comprehensive nutrition data with advanced search capabilities. Perfect for developers building health, fitness, and nutrition applications.",
-    images: ["/twitter-image.jpg"],
-  },
-  verification: {
-    google: "your-google-verification-code",
+    card: 'summary_large_image',
+    title: `${SITE_NAME} — Food & Nutrition Database API`,
+    description: SITE_DESCRIPTION,
+    images: [ogImage],
   },
   alternates: {
-    canonical: "https://busybody.com",
+    canonical: SITE_URL,
   },
-  category: "technology",
+  verification: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION
+    ? { google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION }
+    : undefined,
+  category: 'technology',
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="h-full">
+    <html lang="en" className={`h-full ${inter.variable} ${garamond.variable}`}>
       <head>
         <StructuredData type="organization" />
         <StructuredData type="website" />
       </head>
-      <body className={`${inter.className} h-full antialiased`}>
+      <body className="h-full font-sans">
         <ErrorBoundary>
           <AuthProvider>
             <StripeProvider>
-              <ConditionalLayout>
-                {children}
-              </ConditionalLayout>
+              <ConditionalLayout>{children}</ConditionalLayout>
             </StripeProvider>
           </AuthProvider>
         </ErrorBoundary>

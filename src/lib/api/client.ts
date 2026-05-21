@@ -4,6 +4,7 @@
  */
 
 import { ApiResponse, PaginatedResponse, ApiError, ApiErrorDetails } from '@/types/api';
+import { getUserFacingApiMessage } from '@/lib/api/errors';
 
 // Types
 interface RegisterData {
@@ -61,8 +62,16 @@ class ApiClient {
     }
   }
 
+  // Reload credentials from storage (Next.js module init may run before localStorage exists)
+  private syncCredentialsFromStorage(): void {
+    if (typeof window === 'undefined') return;
+    this.apiKey = localStorage.getItem('api_key');
+    this.accessToken = localStorage.getItem('access_token');
+  }
+
   // Get headers for API requests
   private getHeaders(): HeadersInit {
+    this.syncCredentialsFromStorage();
     const headers: HeadersInit = {
       'Content-Type': 'application/json',
     };
@@ -78,10 +87,36 @@ class ApiClient {
     return headers;
   }
 
+  private async tryRefreshToken(): Promise<boolean> {
+    if (typeof window === 'undefined') return false;
+    const refresh = localStorage.getItem('refresh_token');
+    if (!refresh) return false;
+    try {
+      const res = await fetch(`${this.baseURL}/api/v1/auth/refresh`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ refresh_token_value: refresh }),
+      });
+      if (!res.ok) return false;
+      const data = await res.json();
+      if (data.access_token) {
+        this.setAccessToken(data.access_token);
+        if (data.refresh_token) {
+          localStorage.setItem('refresh_token', data.refresh_token);
+        }
+        return true;
+      }
+    } catch {
+      return false;
+    }
+    return false;
+  }
+
   // Generic request method with enhanced error handling
   private async request<T>(
     endpoint: string,
-    options: RequestInit = {}
+    options: RequestInit = {},
+    retried = false
   ): Promise<ApiResponse<T>> {
     const url = `${this.baseURL}${endpoint}`;
     
@@ -94,40 +129,26 @@ class ApiClient {
         },
       });
 
+      if (response.status === 401 && !retried) {
+        const refreshed = await this.tryRefreshToken();
+        if (refreshed) {
+          return this.request<T>(endpoint, options, true);
+        }
+      }
+
+      const contentType = response.headers.get('content-type') || '';
+      if (contentType.includes('text/csv') || contentType.includes('application/octet-stream')) {
+        if (!response.ok) {
+          throw new ApiError('Export failed', response.status);
+        }
+        const blob = await response.blob();
+        return { data: blob as T, success: true, status: response.status };
+      }
+
       const data = await response.json();
 
       if (!response.ok) {
-        // Provide user-friendly error messages based on status code
-        let userMessage = data.detail || 'API request failed';
-        
-        switch (response.status) {
-          case 400:
-            userMessage = 'Invalid request. Please check your input and try again.';
-            break;
-          case 401:
-            userMessage = 'Please log in to continue.';
-            break;
-          case 403:
-            userMessage = 'You don\'t have permission to perform this action.';
-            break;
-          case 404:
-            userMessage = 'The requested resource was not found.';
-            break;
-          case 422:
-            userMessage = 'Please check your input and try again.';
-            break;
-          case 429:
-            userMessage = 'Too many requests. Please wait a moment and try again.';
-            break;
-          case 500:
-            userMessage = 'Server error. Please try again later.';
-            break;
-          case 502:
-          case 503:
-          case 504:
-            userMessage = 'Service temporarily unavailable. Please try again later.';
-            break;
-        }
+        const userMessage = getUserFacingApiMessage(response.status, data);
 
         throw new ApiError(
           userMessage,
@@ -257,6 +278,12 @@ export const api = {
     
     nutrients: (query: string, params?: Record<string, unknown>) =>
       apiClient.getPaginated('/api/v1/search/nutrients', { q: query, ...params }),
+
+    suggest: (query: string, limit = 15) =>
+      apiClient.get<Array<{ id: number; name: string; brand_name?: string }>>(
+        '/api/v1/search/suggest',
+        { q: query, limit }
+      ),
   },
 
   // Food Data
@@ -343,7 +370,7 @@ export const api = {
       apiClient.get('/api/v1/users/usage/stats'), // Fixed: /users/ (plural)
     
     exportUsageData: (timeRange: string) =>
-      apiClient.get(`/api/v1/users/usage/export?time_range=${timeRange}`, { responseType: 'blob' }), // Fixed: /users/ (plural)
+      apiClient.get<Blob>(`/api/v1/users/usage/export?time_range=${timeRange}`),
   },
 
   // Admin
@@ -357,8 +384,8 @@ export const api = {
     updateUser: (id: number, data: UpdateProfileData) =>
       apiClient.put(`/api/v1/admin/users/${id}/status`, data), // Fixed: backend uses /status endpoint
     
-    getUsage: (params?: Record<string, unknown>) =>
-      apiClient.getPaginated('/api/v1/admin/usage', params),
+    getPlatformUsage: () =>
+      apiClient.get('/api/v1/admin/platform-usage'),
     
     getAnalytics: (params?: Record<string, unknown>) =>
       apiClient.get('/api/v1/admin/analytics', params),

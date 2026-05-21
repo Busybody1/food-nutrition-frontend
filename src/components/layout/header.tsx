@@ -2,176 +2,148 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
+import { usePathname } from 'next/navigation'
 import { useState } from 'react'
-import { Button } from '@/components/ui/button'
 import { useAuth } from '@/lib/hooks/use-auth'
 import { Menu, X, User, LogOut } from 'lucide-react'
+import { SITE_NAME } from '@/lib/site'
+import { cn } from '@/lib/utils/cn'
+
+const navLinks = [
+  { href: '/docs', label: 'Documentation' },
+  { href: '/pricing', label: 'Pricing' },
+  { href: '/faq', label: 'FAQ' },
+  { href: '/contact', label: 'Contact' },
+]
 
 export function Header() {
+  const pathname = usePathname()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const { isAuthenticated, logout } = useAuth()
 
-  return (
-    <header className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between">
-          {/* Logo */}
-          <div className="flex items-center">
-            <Link href="/" className="flex items-center space-x-3">
-              <Image
-                src="/logos/busybody-logo.png"
-                alt="Busybody Logo"
-                width={32}
-                height={32}
-                className="h-8 w-8"
-                priority
-              />
-              <span className="text-xl font-bold text-gray-900">Busybody</span>
-            </Link>
-          </div>
+  const linkClass = (href: string) =>
+    cn(
+      'text-sm font-medium transition-colors relative py-1',
+      pathname === href || (href !== '/' && pathname?.startsWith(href))
+        ? 'text-brand-strong'
+        : 'text-ink-muted hover:text-ink'
+    )
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
-            <Link 
-              href="/docs" 
-              className="text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              Documentation
-            </Link>
-            <Link 
-              href="/pricing" 
-              className="text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              Pricing
-            </Link>
-            <Link 
-              href="/about" 
-              className="text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              About
-            </Link>
-            <Link 
-              href="/contact" 
-              className="text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              Contact
-            </Link>
+  return (
+    <header className="sticky top-0 z-50 w-full border-b border-surface-border/80 bg-white/85 backdrop-blur-lg">
+      <div className="container-narrow">
+        <div className="flex h-16 items-center justify-between">
+          <Link href="/" className="flex items-center gap-2.5 shrink-0">
+            <Image
+              src="/logos/busybody-logo.png"
+              alt={`${SITE_NAME} logo`}
+              width={32}
+              height={32}
+              className="h-8 w-8"
+              priority
+            />
+            <span className="text-base font-semibold text-ink tracking-tight">{SITE_NAME}</span>
+          </Link>
+
+          <nav className="hidden md:flex items-center gap-8" aria-label="Main">
+            {navLinks.map(({ href, label }) => (
+              <Link key={href} href={href} className={linkClass(href)}>
+                {label}
+              </Link>
+            ))}
           </nav>
 
-          {/* Desktop Auth Buttons */}
-          <div className="hidden md:flex items-center space-x-4">
+          <div className="hidden md:flex items-center gap-2">
             {isAuthenticated ? (
-              <div className="flex items-center space-x-4">
-                <Link href="/dashboard">
-                  <Button variant="outline" size="sm">
-                    <User className="h-4 w-4 mr-2" />
-                    Dashboard
-                  </Button>
+              <>
+                <Link href="/dashboard" className="btn-brand-outline text-sm h-9 px-4 gap-2">
+                  <User className="h-4 w-4" />
+                  Dashboard
                 </Link>
-                <Button variant="ghost" size="sm" onClick={logout}>
-                  <LogOut className="h-4 w-4 mr-2" />
-                  Logout
-                </Button>
-              </div>
+                <button type="button" onClick={logout} className="text-sm text-ink-muted hover:text-ink px-2">
+                  Sign out
+                </button>
+              </>
             ) : (
-              <div className="flex items-center space-x-4">
-                <Link href="/auth/login">
-                  <Button variant="ghost" size="sm">
-                    Sign In
-                  </Button>
+              <>
+                <Link href="/auth/login" className="text-sm font-medium text-ink-muted hover:text-ink px-3">
+                  Sign in
                 </Link>
-                <Link href="/auth/register">
-                  <Button size="sm">
-                    Get Started
-                  </Button>
+                <Link href="/auth/register" className="btn-brand text-sm h-9 px-5">
+                  Get API key
                 </Link>
-              </div>
+              </>
             )}
           </div>
 
-          {/* Mobile menu button */}
-          <div className="md:hidden">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-            >
-              {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-            </Button>
-          </div>
+          <button
+            type="button"
+            className="md:hidden text-ink p-2 rounded-brand hover:bg-surface-elevated"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            aria-label="Toggle menu"
+            aria-expanded={isMenuOpen}
+          >
+            {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
         </div>
 
-        {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="md:hidden">
-            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t border-gray-200">
+          <nav
+            className="md:hidden py-4 border-t border-surface-border/80 space-y-1 animate-fade-in"
+            aria-label="Mobile"
+          >
+            {navLinks.map(({ href, label }) => (
               <Link
-                href="/docs"
-                className="block px-3 py-2 text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md"
+                key={href}
+                href={href}
+                className={cn(
+                  'block px-3 py-2.5 rounded-brand text-sm font-medium',
+                  pathname === href ? 'bg-brand-muted text-brand-strong' : 'text-ink-muted hover:bg-surface-elevated'
+                )}
                 onClick={() => setIsMenuOpen(false)}
               >
-                Documentation
+                {label}
               </Link>
-              <Link
-                href="/pricing"
-                className="block px-3 py-2 text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Pricing
-              </Link>
-              <Link
-                href="/about"
-                className="block px-3 py-2 text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                About
-              </Link>
-              <Link
-                href="/contact"
-                className="block px-3 py-2 text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Contact
-              </Link>
+            ))}
+            <div className="pt-3 mt-2 border-t border-surface-border/60 flex flex-col gap-2 px-1">
               {isAuthenticated ? (
                 <>
                   <Link
                     href="/dashboard"
-                    className="block px-3 py-2 text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md"
+                    className="btn-brand text-sm h-10 justify-center"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     Dashboard
                   </Link>
                   <button
-                    onClick={() => {
-                      logout()
-                      setIsMenuOpen(false)
-                    }}
-                    className="block w-full text-left px-3 py-2 text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md"
+                    type="button"
+                    onClick={() => { logout(); setIsMenuOpen(false) }}
+                    className="flex items-center justify-center gap-2 text-sm text-ink-muted py-2"
                   >
-                    Logout
+                    <LogOut className="h-4 w-4" />
+                    Sign out
                   </button>
                 </>
               ) : (
                 <>
                   <Link
                     href="/auth/login"
-                    className="block px-3 py-2 text-base font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-md"
+                    className="block text-center py-2.5 text-sm text-ink-muted"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    Sign In
+                    Sign in
                   </Link>
                   <Link
                     href="/auth/register"
-                    className="block px-3 py-2 text-base font-medium text-primary-600 hover:text-primary-700 hover:bg-primary-50 rounded-md"
+                    className="btn-brand text-sm h-10 justify-center"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    Get Started
+                    Get API key
                   </Link>
                 </>
               )}
             </div>
-          </div>
+          </nav>
         )}
       </div>
     </header>

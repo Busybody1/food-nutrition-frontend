@@ -6,6 +6,12 @@ import { useAuth } from '@/lib/hooks/use-auth'
 import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import {
+  DashboardPage,
+  DashboardPageHeader,
+  DashboardLoading,
+  DashboardAlert,
+} from '@/components/dashboard/dashboard-shell'
 import { RefreshCw, Calendar, Download } from 'lucide-react'
 
 interface UsageData {
@@ -124,93 +130,44 @@ export default function UsagePage() {
     }
   }
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4" />
-          <p className="text-gray-600">Loading...</p>
-        </div>
-      </div>
-    )
+  if (loading || isLoading) {
+    return <DashboardLoading message="Loading usage analytics..." />
   }
 
   if (!isAuthenticated) {
-    return null // Will redirect
-  }
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4" />
-          <p className="text-gray-600">Loading usage data...</p>
-        </div>
-      </div>
-    )
+    return null
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Usage Analytics</h1>
-            <p className="text-gray-600">
-              Monitor your API usage, performance, and quota consumption
-            </p>
+    <DashboardPage>
+        <DashboardPageHeader
+          title="Usage analytics"
+          description="Track requests, errors, and quota consumption over time."
+        >
+          <div className="inline-flex rounded-brand border border-surface-border bg-white p-0.5">
+            {(['7d', '30d', '90d'] as const).map((range) => (
+              <Button
+                key={range}
+                variant={timeRange === range ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => setTimeRange(range)}
+                className="rounded-[10px] h-8 px-3"
+              >
+                {range === '7d' ? '7d' : range === '30d' ? '30d' : '90d'}
+              </Button>
+            ))}
           </div>
-          <div className="flex items-center space-x-3">
-            <div className="flex space-x-2">
-              <Button
-                variant={timeRange === '7d' ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setTimeRange('7d')}
-              >
-                7 Days
-              </Button>
-              <Button
-                variant={timeRange === '30d' ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setTimeRange('30d')}
-              >
-                30 Days
-              </Button>
-              <Button
-                variant={timeRange === '90d' ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setTimeRange('90d')}
-              >
-                90 Days
-              </Button>
-            </div>
-            <Button
-              variant="outline"
-              onClick={loadUsageData}
-              disabled={isLoading}
-              className="flex items-center"
-            >
-              <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
-              Refresh
-            </Button>
-            <Button
-              variant="outline"
-              onClick={handleExport}
-              disabled={isExporting}
-              className="flex items-center"
-            >
-              <Download className="h-4 w-4 mr-2" />
-              {isExporting ? 'Exporting...' : 'Export'}
-            </Button>
-          </div>
-        </div>
+          <Button variant="outline" size="sm" onClick={loadUsageData} disabled={isLoading} className="gap-2">
+            <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+            Refresh
+          </Button>
+          <Button variant="outline" size="sm" onClick={handleExport} disabled={isExporting} className="gap-2">
+            <Download className="h-4 w-4" />
+            {isExporting ? 'Exporting...' : 'Export'}
+          </Button>
+        </DashboardPageHeader>
 
-        {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md">
-            <p className="text-red-800">{error}</p>
-          </div>
-        )}
+        {error && <DashboardAlert variant="error">{error}</DashboardAlert>}
 
         {usageStats && (
           <UsageChart
@@ -222,8 +179,7 @@ export default function UsagePage() {
           />
         )}
 
-        {/* Additional Stats Cards */}
-        <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
@@ -234,7 +190,7 @@ export default function UsagePage() {
             <CardContent>
               <div className="space-y-2">
                 <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Start Date</span>
+                  <span className="text-sm text-ink-muted">Start Date</span>
                   <span className="text-sm font-medium">
                     {new Date().toLocaleDateString('en-US', { 
                       month: 'long', 
@@ -322,7 +278,6 @@ export default function UsagePage() {
             </CardContent>
           </Card>
         </div>
-      </div>
-    </div>
+    </DashboardPage>
   )
 }
