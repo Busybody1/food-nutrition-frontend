@@ -33,6 +33,7 @@ function PlanIcon({ name }: { name: string }) {
     case 'plus':
       return <Crown className={iconClass} />
     case 'enterprise':
+    case 'custom':
       return <Building2 className={iconClass} />
     default:
       return <Shield className={iconClass} />
@@ -58,7 +59,7 @@ export function PricingCard({
     : plan.name === 'Free'
       ? 'Get started free'
       : isEnterprisePlan(plan.name)
-        ? 'Contact sales'
+        ? 'Contact Sales'
         : 'Subscribe'
 
   return (

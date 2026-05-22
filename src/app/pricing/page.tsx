@@ -9,7 +9,7 @@ import { MarketingTrustPills, MarketingPageLoading } from '@/components/marketin
 import { PricingCard } from '@/components/marketing/pricing-card'
 import { PricingComparison } from '@/components/marketing/pricing-comparison'
 import { fetchPublicPlans } from '@/lib/pricing/fetch-plans'
-import type { PricingPlan } from '@/lib/pricing/plan-display'
+import { isContactSalesPlan, type PricingPlan } from '@/lib/pricing/plan-display'
 
 function PricingContent() {
   const { isAuthenticated, user } = useAuth()
@@ -96,8 +96,8 @@ function PricingContent() {
       return
     }
 
-    if (plan.name === 'Enterprise') {
-      router.push('/contact')
+    if (isContactSalesPlan(plan.name)) {
+      router.push('/contact?inquiry=enterprise')
       return
     }
 

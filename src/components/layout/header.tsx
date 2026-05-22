@@ -24,7 +24,7 @@ function isNavActive(pathname: string | null, href: string, exact?: boolean) {
   return pathname === href || pathname.startsWith(`${href}/`)
 }
 
-const HERO_BACKGROUND_PATHS = ['/', '/pricing', '/faq'] as const
+const HERO_BACKGROUND_PATHS = ['/', '/pricing', '/faq', '/contact'] as const
 
 function hasImageHero(pathname: string | null) {
   return pathname != null && HERO_BACKGROUND_PATHS.some((p) => pathname === p)

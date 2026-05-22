@@ -11,7 +11,12 @@ export interface PricingPlan {
 }
 
 export function isEnterprisePlan(name: string): boolean {
-  return name.toLowerCase() === 'enterprise'
+  const tier = name.toLowerCase()
+  return tier === 'enterprise' || tier === 'custom'
+}
+
+export function isContactSalesPlan(name: string): boolean {
+  return isEnterprisePlan(name)
 }
 
 function parseIntField(value: unknown): number {
