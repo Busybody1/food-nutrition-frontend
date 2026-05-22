@@ -8,7 +8,7 @@ export const SITE_DESCRIPTION =
   'Food and nutrition database API with advanced search, barcode lookup, and verified macros. Built for health, fitness, and meal-tracking apps.';
 
 export const SUPPORT_EMAIL =
-  process.env.NEXT_PUBLIC_SUPPORT_EMAIL || 'support@calorieapi.com';
+  process.env.NEXT_PUBLIC_SUPPORT_EMAIL || 'busybody.office@gmail.com';
 
 /** Legal / privacy contact — defaults to support email. */
 export const PRIVACY_EMAIL =
