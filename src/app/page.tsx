@@ -67,7 +67,7 @@ export default function HomePage() {
           </p>
           <div className="mt-10 flex flex-col sm:flex-row gap-3 justify-center">
             <Link href="/auth/register" className="btn-brand">
-              Get API key for Free
+              Get API Key Free
             </Link>
             <Link href="/docs" className="btn-brand-outline">
               Read documentation
