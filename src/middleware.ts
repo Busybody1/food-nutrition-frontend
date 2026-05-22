@@ -1,9 +1,14 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-/** Enforce canonical host + HTTPS from NEXT_PUBLIC_SITE_URL (e.g. https://www.calorieapi.com). */
+/**
+ * Enforces canonical URL from NEXT_PUBLIC_SITE_URL (production: https://calorieapi.com).
+ * - HTTP → HTTPS
+ * - www.calorieapi.com → calorieapi.com
+ * - Any other host → hostname from SITE_URL
+ */
 export function middleware(request: NextRequest) {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim()
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim().replace(/\/$/, '')
   if (!siteUrl) return NextResponse.next()
 
   let preferred: URL
@@ -21,8 +26,10 @@ export function middleware(request: NextRequest) {
     changed = true
   }
 
-  if (target.hostname !== preferred.hostname) {
-    target.hostname = preferred.hostname
+  const canonicalHost = preferred.hostname
+
+  if (target.hostname !== canonicalHost) {
+    target.hostname = canonicalHost
     changed = true
   }
 
