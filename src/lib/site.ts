@@ -10,7 +10,13 @@ export const SITE_TITLE =
 
 export const SITE_DESCRIPTION =
   process.env.NEXT_PUBLIC_SITE_DESCRIPTION?.trim() ||
-  'Ship meal tracking, macro logging, and barcode features faster. REST API with food search, autocomplete, verified nutrition data, and free tier for developers.';
+  'Food & nutrition REST API with search, barcode lookup, macros per 100g, and autocomplete. Free tier for developers.';
+
+export const LOGO_ALT = `${SITE_NAME} logo`;
+export const HERO_IMAGE_ALT =
+  'Healthy plant-based meals representing food and nutrition data for the Calorie API';
+
+export const OG_IMAGE_ALT = HERO_IMAGE_ALT;
 
 export const SITE_KEYWORDS = (
   process.env.NEXT_PUBLIC_SITE_KEYWORDS?.trim() ||
@@ -22,12 +28,9 @@ export const SITE_KEYWORDS = (
 
 /** Bump when replacing public/images/hero-bowl.jpg so Next/image and browsers fetch the new file. */
 export const HERO_IMAGE_VERSION =
-  process.env.NEXT_PUBLIC_HERO_IMAGE_VERSION?.trim() || '2';
+  process.env.NEXT_PUBLIC_HERO_IMAGE_VERSION?.trim() || '3';
 
 export const HERO_IMAGE_SRC = `/images/hero-bowl.jpg?v=${HERO_IMAGE_VERSION}`;
-
-export const OG_IMAGE_ALT =
-  'Healthy plant-based meals — nutrition and food database API for developers';
 
 export function absoluteUrl(path: string): string {
   const p = path.startsWith('/') ? path : `/${path}`;

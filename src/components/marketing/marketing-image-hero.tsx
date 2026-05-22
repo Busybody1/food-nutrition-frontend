@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import { ReactNode } from 'react'
-import { HERO_IMAGE_SRC } from '@/lib/site'
+import { HERO_IMAGE_SRC, HERO_IMAGE_ALT } from '@/lib/site'
 import { cn } from '@/lib/utils/cn'
 
 type MarketingImageHeroProps = {
@@ -33,10 +33,12 @@ export function MarketingImageHero({
       <div className="absolute inset-0" aria-hidden>
         <Image
           src={HERO_IMAGE_SRC}
-          alt=""
+          alt={HERO_IMAGE_ALT}
           fill
           priority
-          sizes="100vw"
+          fetchPriority="high"
+          quality={70}
+          sizes="(max-width: 768px) 100vw, (max-width: 1280px) 70vw, 1200px"
           className="hero-home__image"
         />
       </div>

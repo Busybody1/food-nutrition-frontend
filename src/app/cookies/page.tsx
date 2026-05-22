@@ -1,13 +1,13 @@
 import type { Metadata } from 'next'
 import { LegalDocumentBody, LegalPageShell } from '@/components/marketing/legal-document'
 import { COOKIES_EFFECTIVE_DATE, cookiesSections } from '@/content/legal/cookies'
-import { absoluteUrl } from '@/lib/site'
+import { buildPageMetadata } from '@/lib/metadata'
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: 'Cookie Policy',
   description: 'How Food Database API uses cookies on the developer portal.',
-  alternates: { canonical: absoluteUrl('/cookies') },
-}
+  path: '/cookies',
+})
 
 const LEGAL_DISCLAIMER =
   'These documents are templates and do not constitute legal advice. Please consult a qualified attorney.'

@@ -1,11 +1,12 @@
 import type { Metadata } from 'next'
 import { MarketingHero } from '@/components/marketing/marketing-hero'
-import { absoluteUrl } from '@/lib/site'
+import { buildPageMetadata } from '@/lib/metadata'
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: 'API Status',
-  alternates: { canonical: absoluteUrl('/api-status') },
-}
+  description: 'Service status and uptime information for the Calorie API.',
+  path: '/api-status',
+})
 
 export default function ApiStatusPage() {
   return (

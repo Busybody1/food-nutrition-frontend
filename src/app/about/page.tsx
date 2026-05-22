@@ -3,14 +3,16 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { MarketingHero } from '@/components/marketing/marketing-hero'
 import { marketingCardClass, MarketingStatStrip, MarketingCtaBand } from '@/components/marketing/marketing-shell'
+import type { Metadata } from 'next'
 import { SITE_NAME, SITE_DESCRIPTION } from '@/lib/site'
+import { buildPageMetadata } from '@/lib/metadata'
 import { Target, Award, Globe, Heart, Brain, Zap, Shield, Clock } from 'lucide-react'
 
-export const metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: `About ${SITE_NAME}`,
   description: SITE_DESCRIPTION,
-  alternates: { canonical: '/about' },
-}
+  path: '/about',
+})
 
 export default function AboutPage() {
   return (

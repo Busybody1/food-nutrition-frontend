@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 import { useAuth } from '@/lib/hooks/use-auth'
 import { Menu, X, LogOut } from 'lucide-react'
-import { SITE_NAME } from '@/lib/site'
+import { SITE_NAME, LOGO_ALT } from '@/lib/site'
 import { cn } from '@/lib/utils/cn'
 
 type NavLink = { href: string; label: string; exact?: boolean }
@@ -49,7 +49,7 @@ export function Header() {
           <span className="site-header-logo-mark">
             <Image
               src="/logos/busybody-logo.png"
-              alt=""
+              alt={LOGO_ALT}
               width={28}
               height={28}
               className="h-7 w-7 object-contain"

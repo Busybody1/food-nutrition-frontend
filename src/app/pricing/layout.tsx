@@ -1,10 +1,12 @@
-import { SITE_NAME } from '@/lib/site';
+import type { Metadata } from 'next'
+import { SITE_NAME } from '@/lib/site'
+import { buildPageMetadata } from '@/lib/metadata'
 
-export const metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: 'Pricing',
   description: `Transparent API pricing for ${SITE_NAME} — free tier, growth plans, and enterprise.`,
-  alternates: { canonical: '/pricing' },
-};
+  path: '/pricing',
+})
 
 export default function PricingLayout({ children }: { children: React.ReactNode }) {
   return children;

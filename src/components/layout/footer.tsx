@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { SITE_NAME, SUPPORT_EMAIL, absoluteUrl } from '@/lib/site'
+import { SITE_NAME, SUPPORT_EMAIL, LOGO_ALT, absoluteUrl } from '@/lib/site'
 
 const productLinks = [
   { href: '/docs', label: 'Documentation' },
@@ -23,7 +23,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-8">
           <div className="md:col-span-5">
             <Link href="/" className="inline-flex items-center gap-2.5 mb-4">
-              <Image src="/logos/busybody-logo.png" alt="" width={32} height={32} className="h-8 w-8" />
+              <Image src="/logos/busybody-logo.png" alt={LOGO_ALT} width={32} height={32} className="h-8 w-8" />
               <span className="text-base font-semibold text-ink">{SITE_NAME}</span>
             </Link>
             <p className="text-ink-muted text-sm max-w-sm leading-relaxed mb-4">

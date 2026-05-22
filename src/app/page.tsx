@@ -1,6 +1,16 @@
+import type { Metadata } from 'next'
+import dynamic from 'next/dynamic'
 import Script from 'next/script'
+import { buildPageMetadata } from '@/lib/metadata'
 import { Search, Shield, Zap, BarChart3, Code2, Database } from 'lucide-react'
-import { ApiPlayground } from '@/components/marketing/api-playground'
+const ApiPlayground = dynamic(
+  () => import('@/components/marketing/api-playground').then((m) => m.ApiPlayground),
+  {
+    loading: () => (
+      <div className="marketing-card h-[280px] animate-pulse rounded-brand" aria-hidden />
+    ),
+  }
+)
 import { FaqSection, FAQ_JSON_LD } from '@/components/marketing/faq-section'
 import { HomeHero } from '@/components/marketing/home-hero'
 import {
@@ -9,6 +19,9 @@ import {
   MarketingSectionHeader,
 } from '@/components/marketing/marketing-shell'
 import { StructuredData } from '@/components/seo/structured-data'
+import { HomeSeoContent } from '@/components/marketing/home-seo-content'
+
+export const metadata: Metadata = buildPageMetadata({ path: '/' })
 
 const features = [
   {
@@ -90,6 +103,8 @@ export default function HomePage() {
         secondaryHref="/pricing"
         secondaryLabel="View pricing"
       />
+
+      <HomeSeoContent />
 
       <FaqSection />
     </div>

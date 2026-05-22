@@ -1,11 +1,12 @@
 import type { Metadata } from 'next'
 import { MarketingHero } from '@/components/marketing/marketing-hero'
-import { absoluteUrl } from '@/lib/site'
+import { buildPageMetadata } from '@/lib/metadata'
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: 'Changelog',
-  alternates: { canonical: absoluteUrl('/changelog') },
-}
+  description: 'Release notes and API updates for the Calorie API platform.',
+  path: '/changelog',
+})
 
 const entries = [
   {

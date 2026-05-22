@@ -1,13 +1,13 @@
 import type { Metadata } from 'next'
 import { LegalDocumentBody, LegalPageShell } from '@/components/marketing/legal-document'
 import { TERMS_EFFECTIVE_DATE, termsSections } from '@/content/legal/terms'
-import { absoluteUrl } from '@/lib/site'
+import { buildPageMetadata } from '@/lib/metadata'
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: 'Terms and Conditions',
   description: 'API usage agreement governing access to Food Database API services.',
-  alternates: { canonical: absoluteUrl('/terms') },
-}
+  path: '/terms',
+})
 
 const LEGAL_DISCLAIMER =
   'These documents are templates and do not constitute legal advice. Please consult a qualified attorney.'

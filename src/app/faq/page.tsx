@@ -2,13 +2,14 @@ import type { Metadata } from 'next'
 import Script from 'next/script'
 import { FaqSection, FAQ_JSON_LD } from '@/components/marketing/faq-section'
 import { MarketingImageHero } from '@/components/marketing/marketing-image-hero'
-import { absoluteUrl, SITE_NAME } from '@/lib/site'
+import { SITE_NAME } from '@/lib/site'
+import { buildPageMetadata } from '@/lib/metadata'
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: 'FAQ',
   description: `Frequently asked questions about ${SITE_NAME} — authentication, search, pricing, and integration.`,
-  alternates: { canonical: absoluteUrl('/faq') },
-}
+  path: '/faq',
+})
 
 export default function FaqPage() {
   return (

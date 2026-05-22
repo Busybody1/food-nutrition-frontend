@@ -1,13 +1,13 @@
 import type { Metadata } from 'next'
 import { LegalDocumentBody, LegalPageShell } from '@/components/marketing/legal-document'
 import { PRIVACY_EFFECTIVE_DATE, privacySections } from '@/content/legal/privacy'
-import { absoluteUrl } from '@/lib/site'
+import { buildPageMetadata } from '@/lib/metadata'
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: 'Privacy Policy',
   description: 'How Food Database API collects, uses, and protects your personal information.',
-  alternates: { canonical: absoluteUrl('/privacy') },
-}
+  path: '/privacy',
+})
 
 const LEGAL_DISCLAIMER =
   'These documents are templates and do not constitute legal advice. Please consult a qualified attorney.'

@@ -3,7 +3,6 @@ import { Inter, EB_Garamond } from 'next/font/google'
 import './globals.css'
 import { ConditionalLayout } from '@/components/layout/conditional-layout'
 import { StructuredData } from '@/components/seo/structured-data'
-import { StripeProvider } from '@/contexts/StripeContext'
 import { AuthProvider } from '@/contexts/AuthContext'
 import { ErrorBoundary } from '@/components/ui/error-boundary'
 import {
@@ -16,11 +15,12 @@ import {
   OG_IMAGE_ALT,
 } from '@/lib/site'
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-sans' })
+const inter = Inter({ subsets: ['latin'], variable: '--font-sans', display: 'swap' })
 const garamond = EB_Garamond({
   subsets: ['latin'],
-  weight: ['400', '500', '600'],
+  weight: ['400', '600'],
   variable: '--font-display',
+  display: 'swap',
 })
 
 export const metadata: Metadata = {
@@ -67,8 +67,9 @@ export const metadata: Metadata = {
     description: SITE_DESCRIPTION,
     images: [{ url: OG_IMAGE_URL, alt: OG_IMAGE_ALT }],
   },
-  alternates: {
-    canonical: SITE_URL,
+  icons: {
+    icon: '/logos/busybody-logo.png',
+    apple: '/logos/busybody-logo.png',
   },
   verification: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION
     ? { google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION }
@@ -86,9 +87,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="h-full font-sans">
         <ErrorBoundary>
           <AuthProvider>
-            <StripeProvider>
-              <ConditionalLayout>{children}</ConditionalLayout>
-            </StripeProvider>
+            <ConditionalLayout>{children}</ConditionalLayout>
           </AuthProvider>
         </ErrorBoundary>
       </body>
