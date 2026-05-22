@@ -84,7 +84,7 @@ function ContactPageContent() {
           <MessageSquare className="h-4 w-4" aria-hidden />
           Get in touch
         </p>
-        <h1 className="font-display text-4xl md:text-5xl text-ink mb-4 text-balance">
+        <h1 className="font-display text-3xl sm:text-4xl md:text-5xl text-ink mb-4 text-balance">
           Let&apos;s build something amazing together
         </h1>
         <p className="text-lg text-ink-muted leading-relaxed max-w-xl mx-auto">

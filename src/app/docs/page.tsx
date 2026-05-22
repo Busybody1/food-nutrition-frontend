@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { SITE_NAME } from '@/lib/site'
 import { Button } from '@/components/ui/button'
@@ -8,10 +8,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import {
   BookOpen,
-  Copy,
-  Check,
   Menu,
   X,
+  ChevronRight,
   Search,
   AlertCircle,
   ArrowRight,
@@ -19,6 +18,7 @@ import {
   Zap,
   Database,
 } from 'lucide-react'
+import { DocsCodeBlock } from '@/components/docs/docs-code-block'
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '') || 'http://localhost:8000'
 const SEARCH_URL = `${API_BASE}/api/v1/search/foods`
@@ -126,6 +126,20 @@ print_r($data);
 
   const onThisPageItems = navGroups.flatMap((group) => group.items)
 
+  useEffect(() => {
+    if (!sidebarOpen) return
+    const prev = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setSidebarOpen(false)
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => {
+      document.body.style.overflow = prev
+      window.removeEventListener('keydown', onKeyDown)
+    }
+  }, [sidebarOpen])
+
   const renderNav = (onNavigate?: () => void) => (
     <nav className="space-y-6" aria-label="Documentation">
       {filteredNavGroups.map((group) => {
@@ -144,9 +158,10 @@ print_r($data);
                   <Link
                     href={item.href}
                     onClick={onNavigate}
-                    className="block text-sm text-ink-muted hover:text-brand py-1.5 leading-snug"
+                    className="docs-nav-link"
                   >
-                    {item.name}
+                    <span className="min-w-0">{item.name}</span>
+                    <ChevronRight className="docs-nav-chevron lg:hidden" aria-hidden />
                   </Link>
                 </li>
               ))}
@@ -157,33 +172,85 @@ print_r($data);
     </nav>
   )
 
+  const searchFoodsCurl = `curl "${API_BASE}/api/v1/search/foods?q=apple" \\
+  -H "X-API-Key: your_api_key_here"`
+
+  const foodDetailsCurl = `curl "${API_BASE}/api/v1/foods/12345" \\
+  -H "X-API-Key: your_api_key_here"`
+
+  const nutrientsCurl = `curl "${API_BASE}/api/v1/foods/nutrients/" \\
+  -H "X-API-Key: your_api_key_here" \\
+  -G -d "limit=50" -d "skip=0"`
+
+  const brandsCurl = `curl "${API_BASE}/api/v1/foods/brands/" \\
+  -H "X-API-Key: your_api_key_here" \\
+  -G -d "limit=100" -d "skip=0"`
+
+  const categoriesCurl = `curl "${API_BASE}/api/v1/foods/categories/" \\
+  -H "X-API-Key: your_api_key_here" \\
+  -G -d "limit=50" -d "skip=0"`
+
+  const responseExample = `{
+  "foods": [
+    {
+      "id": 12345,
+      "name": "Apple, raw",
+      "brand": "Generic",
+      "calories": 52,
+      "protein": 0.3,
+      "carbs": 13.8,
+      "fat": 0.2
+    }
+  ],
+  "total": 1,
+  "page": 1
+}`
+
   return (
     <div className="marketing-page min-h-screen">
-      <div className="w-full flex">
-        <button
-          type="button"
-          onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="lg:hidden fixed bottom-4 right-4 z-50 btn-brand shadow-glow-lg"
-          aria-label="Toggle docs menu"
-        >
-          {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-        </button>
+      <div className="docs-layout">
+        {!sidebarOpen && (
+          <button
+            type="button"
+            onClick={() => setSidebarOpen(true)}
+            className="docs-sidebar-fab"
+            aria-label="Open docs menu"
+          >
+            <Menu className="w-5 h-5" aria-hidden />
+          </button>
+        )}
 
         {sidebarOpen && (
           <button
             type="button"
-            className="lg:hidden fixed inset-0 z-40 bg-ink/20"
+            className="docs-sidebar-backdrop"
             aria-label="Close docs menu"
             onClick={() => setSidebarOpen(false)}
           />
         )}
 
         <aside
-          className={`${
-            sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-          } lg:translate-x-0 fixed lg:sticky top-16 z-50 lg:z-30 w-64 shrink-0 h-[calc(100vh-4rem)] overflow-y-auto border-r border-surface-border/80 bg-white shadow-sidebar transition-transform lg:transition-none`}
+          className={`docs-sidebar shrink-0 ${sidebarOpen ? 'docs-sidebar--open' : ''}`}
+          aria-label="Documentation navigation"
         >
-          <div className="p-5">
+          <div className="docs-sidebar__header">
+            <div className="min-w-0">
+              <p className="text-xs font-semibold uppercase tracking-wider text-brand-strong">
+                {SITE_NAME}
+              </p>
+              <p className="text-sm font-semibold text-ink truncate">Documentation</p>
+            </div>
+            <button
+              type="button"
+              className="docs-sidebar__close"
+              onClick={() => setSidebarOpen(false)}
+              aria-label="Close docs menu"
+            >
+              <X className="h-5 w-5" aria-hidden />
+            </button>
+          </div>
+
+          <div className="docs-sidebar__scroll">
             <label className="relative block mb-6">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-ink-dim" />
               <input
@@ -198,19 +265,19 @@ print_r($data);
           </div>
         </aside>
 
-        <main className="flex-1 min-w-0 px-6 sm:px-8 lg:px-10 xl:px-12 py-8 lg:py-10">
+        <main className="docs-main">
           <section id="introduction" className="mb-12 scroll-mt-24">
             <p className="marketing-section-label mb-3">Documentation</p>
-            <h1 className="font-display text-4xl text-ink mb-4">{SITE_NAME} reference</h1>
-            <p className="text-lg text-ink-muted mb-4 max-w-3xl leading-relaxed">
+            <h1 className="font-display text-3xl sm:text-4xl text-ink mb-4 text-balance">
+              {SITE_NAME} reference
+            </h1>
+            <p className="text-base sm:text-lg text-ink-muted mb-4 max-w-3xl leading-relaxed">
               Access comprehensive food nutrition data with our REST API. Search, retrieve, and
               analyze nutritional information using JSON over HTTPS.
             </p>
             <p className="text-sm text-ink-muted mb-6">
               Base URL:{' '}
-              <code className="px-2 py-1 rounded-brand bg-surface-elevated border border-surface-border text-ink font-mono text-xs">
-                {API_BASE}/api/v1
-              </code>
+              <code className="docs-inline-code">{API_BASE}/api/v1</code>
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8 max-w-3xl">
@@ -258,15 +325,15 @@ print_r($data);
 
           {/* Getting Started Steps */}
           <section id="create-account" className="mb-12 scroll-mt-24">
-            <h2 className="text-3xl font-bold text-ink mb-6">Getting Started</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-ink mb-6">Getting Started</h2>
             
             <div className="space-y-8">
               {/* Step 1: Create Account */}
-              <div className="flex items-start space-x-4">
-                <div className="marketing-step-number">
+              <div className="docs-step">
+                <div className="marketing-step-number shrink-0">
                   1
                 </div>
-                <div className="flex-1">
+                <div className="docs-step__body">
                   <h3 className="text-xl font-semibold text-ink mb-2">Create Your Account</h3>
                   <p className="text-ink-muted mb-4">
                     Sign up for a free account to access the Food API. No credit card required for the free tier.
@@ -280,11 +347,11 @@ print_r($data);
               </div>
 
               {/* Step 2: Choose Plan */}
-              <div id="choose-plan" className="flex items-start space-x-4 scroll-mt-24">
-                <div className="marketing-step-number">
+              <div id="choose-plan" className="docs-step">
+                <div className="marketing-step-number shrink-0">
                   2
                 </div>
-                <div className="flex-1">
+                <div className="docs-step__body">
                   <h3 className="text-xl font-semibold text-ink mb-2">Choose Your Plan</h3>
                   <p className="text-ink-muted mb-4">
                     Select a plan that fits your needs. Start with our free plan or upgrade for more requests and features.
@@ -340,29 +407,22 @@ print_r($data);
               </div>
 
               {/* Step 3: Get API Key */}
-              <div id="get-api-key" className="flex items-start space-x-4 scroll-mt-24">
-                <div className="marketing-step-number">
+              <div id="get-api-key" className="docs-step">
+                <div className="marketing-step-number shrink-0">
                   3
                 </div>
-                <div className="flex-1">
+                <div className="docs-step__body">
                   <h3 className="text-xl font-semibold text-ink mb-2">Get Your API Key</h3>
                   <p className="text-ink-muted mb-4">
                     After subscribing to a plan, generate your API key from the dashboard. This key authenticates your requests.
                   </p>
-                  <div className="bg-gray-900 rounded-lg p-4 mb-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm text-gray-300">Your API Key</span>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => copyToClipboard('sk_live_1234567890abcdef', 'api-key')}
-                        className="text-gray-300 hover:text-white"
-                      >
-                        {copiedCode === 'api-key' ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                      </Button>
-                    </div>
-                    <code className="text-green-400 font-mono text-sm">sk_live_1234567890abcdef</code>
-                  </div>
+                  <DocsCodeBlock
+                    title="Your API Key"
+                    code="sk_live_1234567890abcdef"
+                    copyId="api-key"
+                    copiedId={copiedCode}
+                    onCopy={copyToClipboard}
+                  />
                   <Button asChild>
                     <Link href="/dashboard">
                       <Key className="w-4 h-4 mr-2" />
@@ -373,22 +433,21 @@ print_r($data);
               </div>
 
               {/* Step 4: First Request */}
-              <div id="first-request" className="flex items-start space-x-4 scroll-mt-24">
-                <div className="marketing-step-number">
+              <div id="first-request" className="docs-step">
+                <div className="marketing-step-number shrink-0">
                   4
                 </div>
-                <div className="flex-1">
+                <div className="docs-step__body">
                   <h3 className="text-xl font-semibold text-ink mb-2">Make Your First Request</h3>
                   <p className="text-ink-muted mb-4">
                     Test your API key with a simple search request. Replace the API key with your actual key.
                   </p>
-                  
-                  {/* Language Selector */}
-                  <div className="flex space-x-2 mb-4">
+
+                  <div className="docs-lang-tabs">
                     {Object.keys(codeExamples).map((lang) => (
                       <Button
                         key={lang}
-                        variant={selectedLanguage === lang ? "default" : "outline"}
+                        variant={selectedLanguage === lang ? 'default' : 'outline'}
                         size="sm"
                         onClick={() => setSelectedLanguage(lang)}
                         className="capitalize"
@@ -398,25 +457,13 @@ print_r($data);
                     ))}
                   </div>
 
-                  {/* Code Example */}
-                  <div className="bg-gray-900 rounded-lg overflow-hidden">
-                    <div className="bg-gray-800 px-4 py-2 border-b border-gray-700 flex items-center justify-between">
-                      <span className="text-sm text-gray-300">Search for &quot;apple&quot;</span>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => copyToClipboard(codeExamples[selectedLanguage as keyof typeof codeExamples], 'first-request')}
-                        className="text-gray-300 hover:text-white"
-                      >
-                        {copiedCode === 'first-request' ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                      </Button>
-                    </div>
-                    <div className="p-4">
-                      <pre className="text-sm text-green-400 font-mono overflow-x-auto">
-                        {codeExamples[selectedLanguage as keyof typeof codeExamples]}
-                      </pre>
-                    </div>
-                  </div>
+                  <DocsCodeBlock
+                    title='Search for "apple"'
+                    code={codeExamples[selectedLanguage as keyof typeof codeExamples]}
+                    copyId="first-request"
+                    copiedId={copiedCode}
+                    onCopy={copyToClipboard}
+                  />
                 </div>
               </div>
             </div>
@@ -424,7 +471,7 @@ print_r($data);
 
           {/* Food API Endpoints */}
           <section id="search" className="mb-12 scroll-mt-24">
-            <h2 className="text-3xl font-bold text-ink mb-6">Food API Endpoints</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-ink mb-6">Food API Endpoints</h2>
             <p className="text-ink-muted mb-8">
               Our API provides comprehensive access to food nutrition data through simple REST endpoints.
             </p>
@@ -436,60 +483,34 @@ print_r($data);
                 Search for foods by name, brand, or category. Returns a list of matching foods with basic nutrition information.
               </p>
               
-              <div className="bg-gray-900 rounded-lg overflow-hidden mb-4">
-                <div className="bg-gray-800 px-4 py-2 border-b border-gray-700">
-                  <span className="text-sm text-gray-300">GET /api/v1/search/foods</span>
-                </div>
-                <div className="p-4">
-                  <pre className="text-sm text-green-400 font-mono">
-{`curl https://food-nutrition-database-cd7099c2be07.herokuapp.com/api/v1/search/foods?q=apple \\
-  -H "X-API-Key: your_api_key_here"`}
-                  </pre>
-                </div>
-              </div>
+              <DocsCodeBlock title="GET /api/v1/search/foods" code={searchFoodsCurl} />
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 min-w-0">
+                <div className="min-w-0">
                   <h4 className="font-semibold text-ink mb-2">Query Parameters</h4>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <code className="text-blue-600">q</code>
+                  <div className="space-y-0 text-sm">
+                    <div className="docs-param-row">
+                      <code className="text-blue-600 shrink-0">q</code>
                       <span className="text-ink-muted">Search query (required)</span>
                     </div>
-                    <div className="flex justify-between">
-                      <code className="text-blue-600">limit</code>
+                    <div className="docs-param-row">
+                      <code className="text-blue-600 shrink-0">limit</code>
                       <span className="text-ink-muted">Results per page (default: 20)</span>
                     </div>
-                    <div className="flex justify-between">
-                      <code className="text-blue-600">skip</code>
+                    <div className="docs-param-row">
+                      <code className="text-blue-600 shrink-0">skip</code>
                       <span className="text-ink-muted">Skip results (default: 0)</span>
                     </div>
-                    <div className="flex justify-between">
-                      <code className="text-blue-600">brand</code>
+                    <div className="docs-param-row">
+                      <code className="text-blue-600 shrink-0">brand</code>
                       <span className="text-ink-muted">Filter by brand</span>
                     </div>
                   </div>
                 </div>
-                <div>
+                <div className="min-w-0">
                   <h4 className="font-semibold text-ink mb-2">Response Example</h4>
-                  <div className="bg-gray-100 rounded p-3 text-sm">
-                    <pre className="text-gray-800">
-{`{
-  "foods": [
-    {
-      "id": 12345,
-      "name": "Apple, raw",
-      "brand": "Generic",
-      "calories": 52,
-      "protein": 0.3,
-      "carbs": 13.8,
-      "fat": 0.2
-    }
-  ],
-  "total": 1,
-  "page": 1
-}`}
-                    </pre>
+                  <div className="bg-gray-100 rounded-brand overflow-hidden max-w-full">
+                    <pre className="docs-response-pre">{responseExample}</pre>
                   </div>
                 </div>
               </div>
@@ -502,17 +523,7 @@ print_r($data);
                 Get detailed nutritional information for a specific food item by its ID.
               </p>
               
-              <div className="bg-gray-900 rounded-lg overflow-hidden mb-4">
-                <div className="bg-gray-800 px-4 py-2 border-b border-gray-700">
-                  <span className="text-sm text-gray-300">GET /api/v1/foods/&#123;id&#125;</span>
-                </div>
-                <div className="p-4">
-                  <pre className="text-sm text-green-400 font-mono">
-{`curl https://food-nutrition-database-cd7099c2be07.herokuapp.com/api/v1/foods/12345 \\
-  -H "X-API-Key: your_api_key_here"`}
-                  </pre>
-                </div>
-              </div>
+              <DocsCodeBlock title="GET /api/v1/foods/{id}" code={foodDetailsCurl} />
             </div>
 
             {/* Nutrients Endpoint */}
@@ -522,18 +533,7 @@ print_r($data);
                 Access detailed nutrient information including vitamins, minerals, and macronutrients.
               </p>
               
-              <div className="bg-gray-900 rounded-lg overflow-hidden mb-4">
-                <div className="bg-gray-800 px-4 py-2 border-b border-gray-700">
-                  <span className="text-sm text-gray-300">GET /api/v1/foods/nutrients/</span>
-                </div>
-                <div className="p-4">
-                  <pre className="text-sm text-green-400 font-mono">
-{`curl https://food-nutrition-database-cd7099c2be07.herokuapp.com/api/v1/foods/nutrients/ \\
-  -H "X-API-Key: your_api_key_here" \\
-  -G -d "limit=50" -d "skip=0"`}
-                  </pre>
-                </div>
-              </div>
+              <DocsCodeBlock title="GET /api/v1/foods/nutrients/" code={nutrientsCurl} />
             </div>
 
             {/* Brands Endpoint */}
@@ -543,18 +543,7 @@ print_r($data);
                 Retrieve brand information including company details, country of origin, and website links.
               </p>
               
-              <div className="bg-gray-900 rounded-lg overflow-hidden mb-4">
-                <div className="bg-gray-800 px-4 py-2 border-b border-gray-700">
-                  <span className="text-sm text-gray-300">GET /api/v1/foods/brands/</span>
-                </div>
-                <div className="p-4">
-                  <pre className="text-sm text-green-400 font-mono">
-{`curl https://food-nutrition-database-cd7099c2be07.herokuapp.com/api/v1/foods/brands/ \\
-  -H "X-API-Key: your_api_key_here" \\
-  -G -d "limit=100" -d "skip=0"`}
-                  </pre>
-                </div>
-              </div>
+              <DocsCodeBlock title="GET /api/v1/foods/brands/" code={brandsCurl} />
             </div>
 
             {/* Categories Endpoint */}
@@ -564,24 +553,13 @@ print_r($data);
                 Access food categories and subcategories for better organization and filtering of food items.
               </p>
               
-              <div className="bg-gray-900 rounded-lg overflow-hidden mb-4">
-                <div className="bg-gray-800 px-4 py-2 border-b border-gray-700">
-                  <span className="text-sm text-gray-300">GET /api/v1/foods/categories/</span>
-                </div>
-                <div className="p-4">
-                  <pre className="text-sm text-green-400 font-mono">
-{`curl https://food-nutrition-database-cd7099c2be07.herokuapp.com/api/v1/foods/categories/ \\
-  -H "X-API-Key: your_api_key_here" \\
-  -G -d "limit=50" -d "skip=0"`}
-                  </pre>
-                </div>
-              </div>
+              <DocsCodeBlock title="GET /api/v1/foods/categories/" code={categoriesCurl} />
             </div>
           </section>
 
           {/* Authentication */}
           <section id="api-keys" className="mb-12 scroll-mt-24">
-            <h2 className="text-3xl font-bold text-ink mb-6">Authentication</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-ink mb-6">Authentication</h2>
             <p className="text-ink-muted mb-6">
               All API requests require authentication using your API key. Include it in the request headers.
             </p>
@@ -607,25 +585,25 @@ print_r($data);
                   See <Link href="/pricing" className="text-brand-strong hover:underline">pricing</Link> for monthly quotas.
                 </p>
                 <div className="space-y-3 text-sm">
-                  <div className="flex justify-between items-center p-3 bg-gray-50 rounded">
+                  <div className="flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-center p-3 bg-gray-50 rounded min-w-0">
                     <span className="font-medium">Free</span>
-                    <Badge variant="outline">10 req/min</Badge>
+                    <Badge variant="outline" className="w-fit">10 req/min</Badge>
                   </div>
-                  <div className="flex justify-between items-center p-3 bg-gray-50 rounded">
+                  <div className="flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-center p-3 bg-gray-50 rounded min-w-0">
                     <span className="font-medium">Basic</span>
-                    <Badge variant="outline">200 req/min</Badge>
+                    <Badge variant="outline" className="w-fit">200 req/min</Badge>
                   </div>
-                  <div className="flex justify-between items-center p-3 bg-gray-50 rounded">
+                  <div className="flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-center p-3 bg-gray-50 rounded min-w-0">
                     <span className="font-medium">Core</span>
-                    <Badge variant="outline">500 req/min</Badge>
+                    <Badge variant="outline" className="w-fit">500 req/min</Badge>
                   </div>
-                  <div className="flex justify-between items-center p-3 bg-gray-50 rounded">
+                  <div className="flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-center p-3 bg-gray-50 rounded min-w-0">
                     <span className="font-medium">Plus</span>
-                    <Badge variant="outline">5,000 req/min · caching</Badge>
+                    <Badge variant="outline" className="w-fit shrink-0">5,000 req/min · caching</Badge>
                   </div>
-                  <div className="flex justify-between items-center p-3 bg-gray-50 rounded">
+                  <div className="flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-center p-3 bg-gray-50 rounded min-w-0">
                     <span className="font-medium">Enterprise</span>
-                    <Badge variant="outline">Custom (negotiated)</Badge>
+                    <Badge variant="outline" className="w-fit">Custom (negotiated)</Badge>
                   </div>
                 </div>
                 <ul className="mt-4 text-sm text-ink-muted space-y-2 list-disc pl-5">
@@ -644,21 +622,21 @@ print_r($data);
               </div>
               <div id="error-handling" className="scroll-mt-24">
                 <h3 className="text-xl font-semibold text-ink mb-4">Error Handling</h3>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <code className="text-red-600">400</code>
+                <div className="space-y-0 text-sm">
+                  <div className="docs-param-row">
+                    <code className="text-red-600 shrink-0">400</code>
                     <span className="text-ink-muted">Bad Request</span>
                   </div>
-                  <div className="flex justify-between">
-                    <code className="text-red-600">401</code>
+                  <div className="docs-param-row">
+                    <code className="text-red-600 shrink-0">401</code>
                     <span className="text-ink-muted">Unauthorized</span>
                   </div>
-                  <div className="flex justify-between">
-                    <code className="text-red-600">429</code>
+                  <div className="docs-param-row">
+                    <code className="text-red-600 shrink-0">429</code>
                     <span className="text-ink-muted">Rate Limited</span>
                   </div>
-                  <div className="flex justify-between">
-                    <code className="text-red-600">500</code>
+                  <div className="docs-param-row">
+                    <code className="text-red-600 shrink-0">500</code>
                     <span className="text-ink-muted">Server Error</span>
                   </div>
                 </div>
@@ -671,10 +649,10 @@ print_r($data);
           <footer className="border-t border-gray-200 pt-8 mt-12">
             <div className="text-center text-ink-muted">
               <p className="mb-2">Need help? Contact our support team or check our FAQ.</p>
-              <div className="flex justify-center space-x-6">
-                <Link href="/contact" className="text-blue-600 hover:text-blue-800">Support</Link>
-                <Link href="/faq" className="text-blue-600 hover:text-blue-800">FAQ</Link>
-                <Link href="/status" className="text-blue-600 hover:text-blue-800">Status</Link>
+              <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
+                <Link href="/contact" className="text-brand-strong hover:underline">Support</Link>
+                <Link href="/faq" className="text-brand-strong hover:underline">FAQ</Link>
+                <Link href="/api-status" className="text-brand-strong hover:underline">Status</Link>
               </div>
             </div>
           </footer>

@@ -41,7 +41,7 @@ export function ApiPlayground() {
   };
 
   return (
-    <div className="glass-panel overflow-hidden max-w-3xl mx-auto shadow-glass-lg">
+    <div className="glass-panel overflow-hidden max-w-3xl mx-auto w-full min-w-0 shadow-glass-lg">
       <div className="flex items-center gap-2 px-4 py-3 border-b border-surface-border/80 bg-surface-elevated">
         <span className="w-2.5 h-2.5 rounded-full bg-red-400/90" />
         <span className="w-2.5 h-2.5 rounded-full bg-amber-400/90" />
@@ -62,7 +62,7 @@ export function ApiPlayground() {
           </button>
         </div>
         {error && <p className="text-sm text-error-500">{error}</p>}
-        <pre className="marketing-code-window-body max-h-64 m-0 rounded-brand border border-surface-border bg-[#0f172a] text-slate-300">
+        <pre className="marketing-code-window-body max-h-64 m-0 rounded-brand border border-surface-border bg-[#0f172a] text-slate-300 max-w-full overflow-x-auto whitespace-pre">
           {result || `GET ${API_BASE}/api/v1/public/search/foods?q=${query}&limit=3`}
         </pre>
         <p className="text-xs text-ink-dim">

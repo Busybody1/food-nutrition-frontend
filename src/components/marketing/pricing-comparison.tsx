@@ -43,14 +43,14 @@ export function PricingComparison({ plans }: { plans: PricingPlan[] }) {
     <section className="section-pad border-t border-surface-border/60 bg-white">
       <div className="container-narrow">
         <div className="max-w-2xl mb-8">
-          <h2 className="font-display text-3xl md:text-4xl text-ink mb-3">Compare plans</h2>
+          <h2 className="font-display text-2xl sm:text-3xl md:text-4xl text-ink mb-3">Compare plans</h2>
           <p className="text-ink-muted text-sm leading-relaxed">
             All paid tiers include DDoS-oriented per-account rate limits, monthly quotas, and a
             5% distinct-food cap. Commercial apps need Plus or Enterprise.
           </p>
         </div>
 
-        <div className="overflow-x-auto rounded-brand border border-surface-border/80 bg-white shadow-glass">
+        <div className="overflow-x-auto max-w-full rounded-brand border border-surface-border/80 bg-white shadow-glass [-webkit-overflow-scrolling:touch]">
           <table className="w-full min-w-[720px] text-left border-collapse">
             <thead>
               <tr className="bg-surface-elevated border-b border-surface-border">

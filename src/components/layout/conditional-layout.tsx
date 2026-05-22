@@ -21,7 +21,7 @@ export function ConditionalLayout({ children }: ConditionalLayoutProps) {
   return (
     <div className="min-h-full flex flex-col">
       <Header />
-      <main className="flex-1">
+      <main className="flex-1 min-w-0 overflow-x-hidden">
         {children}
       </main>
       <Footer />

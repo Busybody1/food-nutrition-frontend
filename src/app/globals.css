@@ -25,7 +25,104 @@
 
 @layer components {
   .marketing-page {
-    @apply bg-surface text-ink min-h-screen;
+    @apply bg-surface text-ink min-h-screen w-full max-w-[100vw] overflow-x-hidden;
+  }
+
+  /* API docs — prevent horizontal page scroll; code scrolls inside panels */
+  .docs-layout {
+    @apply flex w-full min-w-0 max-w-full overflow-x-hidden;
+  }
+
+  .docs-main {
+    @apply flex-1 min-w-0 max-w-full overflow-x-hidden px-4 sm:px-6 lg:px-8 xl:px-10 py-6 sm:py-8 lg:py-10 pb-24 lg:pb-10;
+  }
+
+  .docs-sidebar-backdrop {
+    @apply fixed inset-0 z-[55] bg-ink/40 backdrop-blur-[2px] lg:hidden;
+  }
+
+  .docs-sidebar {
+    @apply fixed inset-y-0 left-0 z-[60] flex w-[min(20rem,88vw)] max-w-xs flex-col
+      -translate-x-full border-r border-surface-border/80 bg-white
+      shadow-[4px_0_32px_rgba(15,23,42,0.14)] transition-transform duration-300 ease-out
+      lg:sticky lg:top-16 lg:z-30 lg:w-64 lg:max-w-none lg:translate-x-0
+      lg:h-[calc(100vh-4rem)] lg:shadow-sidebar;
+  }
+
+  .docs-sidebar--open {
+    @apply translate-x-0;
+  }
+
+  .docs-sidebar__header {
+    @apply flex shrink-0 items-center justify-between gap-3 border-b border-surface-border/80
+      bg-white px-4 py-3 pt-[max(0.75rem,env(safe-area-inset-top))] lg:hidden;
+  }
+
+  .docs-sidebar__close {
+    @apply inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-brand
+      border border-surface-border bg-surface-elevated text-ink
+      hover:bg-surface-border/60 transition-colors;
+  }
+
+  .docs-sidebar__scroll {
+    @apply flex-1 overflow-y-auto overscroll-contain p-4 sm:p-5;
+  }
+
+  .docs-sidebar-fab {
+    @apply lg:hidden fixed bottom-20 right-4 z-40 btn-brand shadow-glow-lg;
+  }
+
+  .docs-nav-chevron {
+    @apply ml-auto h-4 w-4 shrink-0 text-ink-dim/70;
+  }
+
+  .docs-nav-link {
+    @apply flex items-center gap-2 rounded-lg px-2 py-2 text-sm text-ink-muted
+      hover:bg-surface-elevated hover:text-brand transition-colors;
+  }
+
+  .docs-step {
+    @apply flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4 min-w-0 scroll-mt-24;
+  }
+
+  .docs-step__body {
+    @apply flex-1 min-w-0 max-w-full;
+  }
+
+  .docs-code-panel {
+    @apply max-w-full overflow-hidden rounded-brand border border-surface-border bg-[#0f172a] mb-4;
+  }
+
+  .docs-code-panel__header {
+    @apply flex items-start justify-between gap-2 bg-[#1e293b] px-3 sm:px-4 py-2 border-b border-white/10 min-w-0;
+  }
+
+  .docs-code-panel__title {
+    @apply text-xs sm:text-sm text-slate-300 min-w-0 break-all leading-snug;
+  }
+
+  .docs-code-pre {
+    @apply block p-3 sm:p-4 text-xs sm:text-sm text-green-400 font-mono overflow-x-auto max-w-full whitespace-pre;
+  }
+
+  .docs-inline-code {
+    @apply inline-block max-w-full px-2 py-1 rounded-brand bg-surface-elevated border border-surface-border text-ink font-mono text-xs break-all;
+  }
+
+  .docs-param-row {
+    @apply flex flex-col gap-0.5 sm:flex-row sm:justify-between sm:items-baseline sm:gap-4 py-2 border-b border-surface-border/60 last:border-0 min-w-0;
+  }
+
+  .docs-lang-tabs {
+    @apply flex flex-wrap gap-2 mb-4;
+  }
+
+  .docs-response-pre {
+    @apply text-gray-800 text-xs sm:text-sm overflow-x-auto max-w-full whitespace-pre p-3 sm:p-4;
+  }
+
+  .legal-document {
+    @apply min-w-0 max-w-full overflow-x-hidden break-words;
   }
 
   .hero-glow {
@@ -246,7 +343,7 @@
   }
 
   .container-narrow {
-    @apply container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl;
+    @apply container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl min-w-0 w-full;
   }
 
   .dashboard-page {
