@@ -4,8 +4,38 @@ export const SITE_URL =
 
 export const SITE_NAME = process.env.NEXT_PUBLIC_SITE_NAME || 'Calorie API';
 
+export const SITE_TITLE =
+  process.env.NEXT_PUBLIC_SITE_TITLE?.trim() ||
+  `${SITE_NAME} — Food & Nutrition Database API`;
+
 export const SITE_DESCRIPTION =
-  'Food and nutrition database API with advanced search, barcode lookup, and verified macros. Built for health, fitness, and meal-tracking apps.';
+  process.env.NEXT_PUBLIC_SITE_DESCRIPTION?.trim() ||
+  'Ship meal tracking, macro logging, and barcode features faster. REST API with food search, autocomplete, verified nutrition data, and free tier for developers.';
+
+export const SITE_KEYWORDS = (
+  process.env.NEXT_PUBLIC_SITE_KEYWORDS?.trim() ||
+  'food nutrition API,calorie API,nutrition database API,food search API,barcode nutrition API,macro API,meal tracking API,REST food API,health app API'
+)
+  .split(',')
+  .map((k) => k.trim())
+  .filter(Boolean);
+
+/** Bump when replacing public/images/hero-bowl.jpg so Next/image and browsers fetch the new file. */
+export const HERO_IMAGE_VERSION =
+  process.env.NEXT_PUBLIC_HERO_IMAGE_VERSION?.trim() || '2';
+
+export const HERO_IMAGE_SRC = `/images/hero-bowl.jpg?v=${HERO_IMAGE_VERSION}`;
+
+export const OG_IMAGE_ALT =
+  'Healthy plant-based meals — nutrition and food database API for developers';
+
+export function absoluteUrl(path: string): string {
+  const p = path.startsWith('/') ? path : `/${path}`;
+  return `${SITE_URL}${p}`;
+}
+
+/** Social preview image (Open Graph / Twitter). */
+export const OG_IMAGE_URL = absoluteUrl(HERO_IMAGE_SRC);
 
 export const SUPPORT_EMAIL =
   process.env.NEXT_PUBLIC_SUPPORT_EMAIL || 'busybody.office@gmail.com';
@@ -39,8 +69,3 @@ export const ARBITRATION_BODY =
 export const ARBITRATION_LOCATION =
   process.env.NEXT_PUBLIC_ARBITRATION_LOCATION?.trim() ||
   'Not specified — set NEXT_PUBLIC_ARBITRATION_LOCATION';
-
-export function absoluteUrl(path: string): string {
-  const p = path.startsWith('/') ? path : `/${path}`;
-  return `${SITE_URL}${p}`;
-}

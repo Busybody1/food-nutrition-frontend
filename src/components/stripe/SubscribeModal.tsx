@@ -23,23 +23,13 @@ import {
   ExternalLink
 } from 'lucide-react'
 import { stripeAPI } from '@/lib/stripe/api'
-
-interface Plan {
-  id: number
-  name: string
-  monthly_price: number
-  description: string
-  features: string[]
-  monthly_quota: number
-  rate_limit_per_minute: number
-  stripe_test_price_id?: string
-  stripe_live_price_id?: string
-}
+import type { PricingPlan } from '@/lib/pricing/plan-display'
+import { formatQuota, formatRateLimit } from '@/lib/pricing/plan-display'
 
 interface SubscribeModalProps {
   isOpen: boolean
   onClose: () => void
-  plan: Plan | null
+  plan: PricingPlan | null
   onError: (error: string) => void
 }
 
@@ -158,11 +148,15 @@ export function SubscribeModal({
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Monthly Quota:</span>
-                  <span className="font-medium">{plan.monthly_quota.toLocaleString()} requests</span>
+                  <span className="font-medium">
+                    {formatQuota(plan.monthly_quota)} / month
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Rate Limit:</span>
-                  <span className="font-medium">{plan.rate_limit_per_minute} requests/min</span>
+                  <span className="font-medium">
+                    {formatRateLimit(plan.rate_limit_per_minute)} (per account)
+                  </span>
                 </div>
               </div>
             </CardContent>

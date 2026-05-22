@@ -6,10 +6,18 @@ import { SITE_NAME } from '@/lib/site'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { 
-  BookOpen, 
-  Copy, Check, Menu, X, ChevronDown, ChevronUp,
-  AlertCircle, ArrowRight, Key, Zap, Database
+import {
+  BookOpen,
+  Copy,
+  Check,
+  Menu,
+  X,
+  Search,
+  AlertCircle,
+  ArrowRight,
+  Key,
+  Zap,
+  Database,
 } from 'lucide-react'
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '') || 'http://localhost:8000'
@@ -19,16 +27,12 @@ export default function DocsPage() {
   const [copiedCode, setCopiedCode] = useState<string | null>(null)
   const [selectedLanguage, setSelectedLanguage] = useState('curl')
   const [sidebarOpen, setSidebarOpen] = useState(false)
-  const [expandedSection, setExpandedSection] = useState<string | null>(null)
+  const [searchQuery, setSearchQuery] = useState('')
 
   const copyToClipboard = (code: string, id: string) => {
     navigator.clipboard.writeText(code)
     setCopiedCode(id)
     setTimeout(() => setCopiedCode(null), 2000)
-  }
-
-  const toggleSection = (section: string) => {
-    setExpandedSection(expandedSection === section ? null : section)
   }
 
   const codeExamples = {
@@ -78,93 +82,152 @@ print_r($data);
 ?>`
   }
 
-  const sidebarItems = [
+  const navGroups = [
     {
       title: 'Getting Started',
+      icon: BookOpen,
       items: [
         { name: 'Introduction', href: '#introduction' },
         { name: 'Create Account', href: '#create-account' },
         { name: 'Choose Plan', href: '#choose-plan' },
         { name: 'Get API Key', href: '#get-api-key' },
-        { name: 'First Request', href: '#first-request' }
-      ]
+        { name: 'First Request', href: '#first-request' },
+      ],
     },
     {
-      title: 'Food API Endpoints',
+      title: 'Core Resources',
+      icon: Database,
       items: [
         { name: 'Search Foods', href: '#search' },
         { name: 'Food Details', href: '#food-details' },
         { name: 'Nutrients', href: '#nutrients' },
         { name: 'Brands', href: '#brands' },
-        { name: 'Categories', href: '#categories' }
-      ]
+        { name: 'Categories', href: '#categories' },
+      ],
     },
     {
-      title: 'Authentication',
+      title: 'Advanced',
+      icon: Zap,
       items: [
         { name: 'API Keys', href: '#api-keys' },
         { name: 'Rate Limits', href: '#rate-limits' },
-        { name: 'Error Handling', href: '#error-handling' }
-      ]
-    }
+        { name: 'Error Handling', href: '#error-handling' },
+      ],
+    },
   ]
+
+  const query = searchQuery.trim().toLowerCase()
+  const filteredNavGroups = navGroups
+    .map((group) => ({
+      ...group,
+      items: group.items.filter((item) => item.name.toLowerCase().includes(query)),
+    }))
+    .filter((group) => group.items.length > 0)
+
+  const onThisPageItems = navGroups.flatMap((group) => group.items)
+
+  const renderNav = (onNavigate?: () => void) => (
+    <nav className="space-y-6" aria-label="Documentation">
+      {filteredNavGroups.map((group) => {
+        const Icon = group.icon
+        return (
+          <div key={group.title}>
+            <div className="flex items-center gap-2 mb-2">
+              <Icon className="h-4 w-4 text-ink-dim shrink-0" aria-hidden />
+              <p className="text-xs font-semibold uppercase tracking-wider text-ink-dim">
+                {group.title}
+              </p>
+            </div>
+            <ul className="space-y-0.5 border-l border-surface-border pl-3 ml-1">
+              {group.items.map((item) => (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    onClick={onNavigate}
+                    className="block text-sm text-ink-muted hover:text-brand py-1.5 leading-snug"
+                  >
+                    {item.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )
+      })}
+    </nav>
+  )
 
   return (
     <div className="marketing-page min-h-screen">
-      <div className="max-w-7xl mx-auto flex">
+      <div className="w-full flex">
         <button
           type="button"
           onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="md:hidden fixed bottom-4 right-4 z-50 btn-brand shadow-glow-lg"
+          className="lg:hidden fixed bottom-4 right-4 z-50 btn-brand shadow-glow-lg"
           aria-label="Toggle docs menu"
         >
           {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
-        <aside className={`${sidebarOpen ? 'block' : 'hidden'} md:block w-64 bg-white border-r border-surface-border/80 min-h-screen sticky top-0 z-40 shadow-sidebar`}>
-          <div className="p-6">
-            <div className="space-y-6">
-              {sidebarItems.map((section, sectionIndex) => (
-                <div key={sectionIndex}>
-                  <button
-                    onClick={() => toggleSection(section.title)}
-                    className="flex items-center justify-between w-full text-left text-sm font-semibold text-ink mb-2 hover:text-brand"
-                  >
-                    {section.title}
-                    {expandedSection === section.title ? (
-                      <ChevronUp className="w-4 h-4" />
-                    ) : (
-                      <ChevronDown className="w-4 h-4" />
-                    )}
-                  </button>
-                  {expandedSection === section.title && (
-                    <div className="space-y-1 ml-4">
-                      {section.items.map((item, itemIndex) => (
-                        <Link
-                          key={itemIndex}
-                          href={item.href}
-                          className="block text-sm text-ink-muted hover:text-brand py-1"
-                        >
-                          {item.name}
-                        </Link>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
+
+        {sidebarOpen && (
+          <button
+            type="button"
+            className="lg:hidden fixed inset-0 z-40 bg-ink/20"
+            aria-label="Close docs menu"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+
+        <aside
+          className={`${
+            sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+          } lg:translate-x-0 fixed lg:sticky top-16 z-50 lg:z-30 w-64 shrink-0 h-[calc(100vh-4rem)] overflow-y-auto border-r border-surface-border/80 bg-white shadow-sidebar transition-transform lg:transition-none`}
+        >
+          <div className="p-5">
+            <label className="relative block mb-6">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-ink-dim" />
+              <input
+                type="search"
+                placeholder="Search docs..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full h-10 pl-9 pr-3 text-sm rounded-brand border border-surface-border bg-white text-ink placeholder:text-ink-dim focus:outline-none focus:ring-2 focus:ring-brand/30"
+              />
+            </label>
+            {renderNav(() => setSidebarOpen(false))}
           </div>
         </aside>
 
-        {/* Main Content */}
-        <main className="flex-1 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {/* Introduction */}
-          <section id="introduction" className="mb-12">
-            <h1 className="font-display text-4xl text-ink mb-4">{SITE_NAME} documentation</h1>
-            <p className="text-xl text-ink-muted mb-6">
-              Access comprehensive food nutrition data with our powerful REST API. 
-              Search, retrieve, and analyze nutritional information for thousands of foods.
+        <main className="flex-1 min-w-0 px-6 sm:px-8 lg:px-10 xl:px-12 py-8 lg:py-10">
+          <section id="introduction" className="mb-12 scroll-mt-24">
+            <p className="marketing-section-label mb-3">Documentation</p>
+            <h1 className="font-display text-4xl text-ink mb-4">{SITE_NAME} reference</h1>
+            <p className="text-lg text-ink-muted mb-4 max-w-3xl leading-relaxed">
+              Access comprehensive food nutrition data with our REST API. Search, retrieve, and
+              analyze nutritional information using JSON over HTTPS.
             </p>
-            
+            <p className="text-sm text-ink-muted mb-6">
+              Base URL:{' '}
+              <code className="px-2 py-1 rounded-brand bg-surface-elevated border border-surface-border text-ink font-mono text-xs">
+                {API_BASE}/api/v1
+              </code>
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8 max-w-3xl">
+              <div className="flex items-center gap-2 rounded-brand border border-surface-border px-4 py-3 text-sm text-ink-muted">
+                <Key className="h-4 w-4 text-brand shrink-0" />
+                API key auth
+              </div>
+              <div className="flex items-center gap-2 rounded-brand border border-surface-border px-4 py-3 text-sm text-ink-muted">
+                <Zap className="h-4 w-4 text-brand shrink-0" />
+                REST + JSON
+              </div>
+              <div className="flex items-center gap-2 rounded-brand border border-surface-border px-4 py-3 text-sm text-ink-muted">
+                <Database className="h-4 w-4 text-brand shrink-0" />
+                Food database
+              </div>
+            </div>
+
             <div className="marketing-callout mb-8">
               <div className="flex items-start gap-3">
                 <AlertCircle className="w-5 h-5 text-brand-strong mt-0.5 shrink-0" />
@@ -194,7 +257,7 @@ print_r($data);
           </section>
 
           {/* Getting Started Steps */}
-          <section id="create-account" className="mb-12">
+          <section id="create-account" className="mb-12 scroll-mt-24">
             <h2 className="text-3xl font-bold text-ink mb-6">Getting Started</h2>
             
             <div className="space-y-8">
@@ -217,7 +280,7 @@ print_r($data);
               </div>
 
               {/* Step 2: Choose Plan */}
-              <div className="flex items-start space-x-4">
+              <div id="choose-plan" className="flex items-start space-x-4 scroll-mt-24">
                 <div className="marketing-step-number">
                   2
                 </div>
@@ -234,9 +297,9 @@ print_r($data);
                       </CardHeader>
                       <CardContent>
                         <ul className="text-sm text-ink-muted space-y-1">
-                          <li>• 20 requests/day</li>
-                          <li>• 3 requests/minute</li>
-                          <li>• Basic endpoints</li>
+                          <li>• 1,000 requests/month</li>
+                          <li>• 10 requests/minute (per account)</li>
+                          <li>• Non-commercial use</li>
                           <li>• Community support</li>
                         </ul>
                       </CardContent>
@@ -248,9 +311,9 @@ print_r($data);
                       </CardHeader>
                       <CardContent>
                         <ul className="text-sm text-ink-muted space-y-1">
-                          <li>• 1,000 requests/day</li>
-                          <li>• 10 requests/minute</li>
-                          <li>• All endpoints</li>
+                          <li>• 100,000 requests/month</li>
+                          <li>• 200 requests/minute</li>
+                          <li>• Non-commercial use</li>
                           <li>• Email support</li>
                         </ul>
                       </CardContent>
@@ -262,9 +325,9 @@ print_r($data);
                       </CardHeader>
                       <CardContent>
                         <ul className="text-sm text-ink-muted space-y-1">
-                          <li>• 5,000 requests/day</li>
-                          <li>• 30 requests/minute</li>
-                          <li>• All features</li>
+                          <li>• 750,000 requests/month</li>
+                          <li>• 500 requests/minute</li>
+                          <li>• Non-commercial use</li>
                           <li>• Priority support</li>
                         </ul>
                       </CardContent>
@@ -277,7 +340,7 @@ print_r($data);
               </div>
 
               {/* Step 3: Get API Key */}
-              <div className="flex items-start space-x-4">
+              <div id="get-api-key" className="flex items-start space-x-4 scroll-mt-24">
                 <div className="marketing-step-number">
                   3
                 </div>
@@ -310,7 +373,7 @@ print_r($data);
               </div>
 
               {/* Step 4: First Request */}
-              <div className="flex items-start space-x-4">
+              <div id="first-request" className="flex items-start space-x-4 scroll-mt-24">
                 <div className="marketing-step-number">
                   4
                 </div>
@@ -360,7 +423,7 @@ print_r($data);
           </section>
 
           {/* Food API Endpoints */}
-          <section id="search" className="mb-12">
+          <section id="search" className="mb-12 scroll-mt-24">
             <h2 className="text-3xl font-bold text-ink mb-6">Food API Endpoints</h2>
             <p className="text-ink-muted mb-8">
               Our API provides comprehensive access to food nutrition data through simple REST endpoints.
@@ -433,7 +496,7 @@ print_r($data);
             </div>
 
             {/* Food Details Endpoint */}
-            <div className="mb-8">
+            <div id="food-details" className="mb-8 scroll-mt-24">
               <h3 className="text-xl font-semibold text-ink mb-4">Food Details</h3>
               <p className="text-ink-muted mb-4">
                 Get detailed nutritional information for a specific food item by its ID.
@@ -453,7 +516,7 @@ print_r($data);
             </div>
 
             {/* Nutrients Endpoint */}
-            <div className="mb-8">
+            <div id="nutrients" className="mb-8 scroll-mt-24">
               <h3 className="text-xl font-semibold text-ink mb-4">Nutrients</h3>
               <p className="text-ink-muted mb-4">
                 Access detailed nutrient information including vitamins, minerals, and macronutrients.
@@ -474,7 +537,7 @@ print_r($data);
             </div>
 
             {/* Brands Endpoint */}
-            <div className="mb-8">
+            <div id="brands" className="mb-8 scroll-mt-24">
               <h3 className="text-xl font-semibold text-ink mb-4">Brands</h3>
               <p className="text-ink-muted mb-4">
                 Retrieve brand information including company details, country of origin, and website links.
@@ -495,7 +558,7 @@ print_r($data);
             </div>
 
             {/* Categories Endpoint */}
-            <div className="mb-8">
+            <div id="categories" className="mb-8 scroll-mt-24">
               <h3 className="text-xl font-semibold text-ink mb-4">Categories</h3>
               <p className="text-ink-muted mb-4">
                 Access food categories and subcategories for better organization and filtering of food items.
@@ -517,7 +580,7 @@ print_r($data);
           </section>
 
           {/* Authentication */}
-          <section id="api-keys" className="mb-12">
+          <section id="api-keys" className="mb-12 scroll-mt-24">
             <h2 className="text-3xl font-bold text-ink mb-6">Authentication</h2>
             <p className="text-ink-muted mb-6">
               All API requests require authentication using your API key. Include it in the request headers.
@@ -537,24 +600,49 @@ print_r($data);
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <h3 className="text-xl font-semibold text-ink mb-4">Rate Limits</h3>
-                <div className="space-y-3">
+              <div id="rate-limits" className="scroll-mt-24">
+                <h3 className="text-xl font-semibold text-ink mb-4">Rate Limits &amp; abuse protection</h3>
+                <p className="text-sm text-ink-muted mb-4">
+                  Limits apply <strong>per account (user id)</strong>, not per IP — safe behind NAT and multi-tenant apps.
+                  See <Link href="/pricing" className="text-brand-strong hover:underline">pricing</Link> for monthly quotas.
+                </p>
+                <div className="space-y-3 text-sm">
                   <div className="flex justify-between items-center p-3 bg-gray-50 rounded">
-                    <span className="font-medium">Free Plan</span>
-                    <Badge variant="outline">3 req/min, 20/day</Badge>
+                    <span className="font-medium">Free</span>
+                    <Badge variant="outline">10 req/min</Badge>
                   </div>
                   <div className="flex justify-between items-center p-3 bg-gray-50 rounded">
-                    <span className="font-medium">Basic Plan</span>
-                    <Badge variant="outline">10 req/min, 1,000/day</Badge>
+                    <span className="font-medium">Basic</span>
+                    <Badge variant="outline">200 req/min</Badge>
                   </div>
                   <div className="flex justify-between items-center p-3 bg-gray-50 rounded">
-                    <span className="font-medium">Core Plan</span>
-                    <Badge variant="outline">30 req/min, 5,000/day</Badge>
+                    <span className="font-medium">Core</span>
+                    <Badge variant="outline">500 req/min</Badge>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-gray-50 rounded">
+                    <span className="font-medium">Plus</span>
+                    <Badge variant="outline">5,000 req/min · caching</Badge>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-gray-50 rounded">
+                    <span className="font-medium">Enterprise</span>
+                    <Badge variant="outline">Custom (negotiated)</Badge>
                   </div>
                 </div>
+                <ul className="mt-4 text-sm text-ink-muted space-y-2 list-disc pl-5">
+                  <li>
+                    <strong>5% food coverage cap:</strong> each plan may access at most 5% of distinct foods in the database per calendar month (anti-scrape).
+                  </li>
+                  <li>
+                    <strong>Commercial use</strong> requires Plus or Enterprise. Send{' '}
+                    <code className="text-xs bg-gray-100 px-1 rounded">X-API-Usage-Type: commercial</code> only when applicable.
+                  </li>
+                  <li>
+                    Plus and Enterprise GET search/food responses may be cached for 5 minutes per account (Redis).
+                  </li>
+                  <li>HTTP <code className="text-xs">429</code> rate limit · <code className="text-xs">402</code> monthly quota · <code className="text-xs">403</code> commercial or food cap</li>
+                </ul>
               </div>
-              <div>
+              <div id="error-handling" className="scroll-mt-24">
                 <h3 className="text-xl font-semibold text-ink mb-4">Error Handling</h3>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
@@ -591,6 +679,26 @@ print_r($data);
             </div>
           </footer>
         </main>
+
+        <aside className="hidden xl:block w-52 shrink-0 sticky top-16 z-20 h-[calc(100vh-4rem)] overflow-y-auto border-l border-surface-border/80 bg-white">
+          <div className="p-5">
+            <p className="text-xs font-semibold uppercase tracking-wider text-ink-dim mb-4">
+              On this page
+            </p>
+            <ul className="space-y-1">
+              {onThisPageItems.map((item) => (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    className="block text-sm text-ink-muted hover:text-brand py-1 leading-snug"
+                  >
+                    {item.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </aside>
       </div>
     </div>
   )

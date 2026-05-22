@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Script from 'next/script'
 import { FaqSection, FAQ_JSON_LD } from '@/components/marketing/faq-section'
-import { MarketingHero } from '@/components/marketing/marketing-hero'
+import { MarketingImageHero } from '@/components/marketing/marketing-image-hero'
 import { absoluteUrl, SITE_NAME } from '@/lib/site'
 
 export const metadata: Metadata = {
@@ -18,11 +18,12 @@ export default function FaqPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_JSON_LD) }}
       />
-      <MarketingHero
-        title="FAQ"
-        subtitle="Authentication, search, pricing, and integration — answered for developers."
-        compact
-      />
+      <MarketingImageHero compact centered waveTone="white">
+        <h1 className="font-display text-4xl md:text-5xl text-ink mb-4">FAQ</h1>
+        <p className="text-lg text-ink-muted leading-relaxed">
+          Authentication, search, pricing, and integration, answered for developers.
+        </p>
+      </MarketingImageHero>
       <FaqSection showIntro={false} />
     </div>
   )

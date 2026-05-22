@@ -89,8 +89,8 @@ export const termsSections: LegalSection[] = [
         items: [
           'Developing, testing, and operating applications that retrieve and display food and nutritional information',
           'Internal research, analytics, or business intelligence purposes',
-          'Building consumer-facing products that incorporate food, recipe, or nutrition functionality',
-          'Academic or non-commercial research with attribution',
+          'Building consumer-facing products that incorporate food, recipe, or nutrition functionality (Plus or Enterprise plans only for commercial production use)',
+          'Academic or non-commercial research with attribution (Free, Basic, or Core)',
         ],
       },
       { type: 'p', text: '3.2 Attribution' },
@@ -113,7 +113,7 @@ export const termsSections: LegalSection[] = [
         items: [
           'Circumvent, disable, or interfere with any security or access control features',
           'Reverse engineer, decompile, or attempt to extract the source code or underlying data of the API',
-          'Scrape, mirror, or bulk-download the entire or substantial portions of the food database',
+          'Scrape, mirror, or bulk-download the entire or substantial portions of the food database (including exceeding the monthly distinct-food coverage cap, currently 5% of the database per account)',
           'Resell, sublicense, or redistribute raw API data as a competing data product or standalone dataset',
           'Use the API to create or train machine learning models intended to replicate our database without explicit written authorization',
           'Transmit malicious code, viruses, or any harmful or disruptive data through the API',

@@ -5,147 +5,184 @@ import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 import { useAuth } from '@/lib/hooks/use-auth'
-import { Menu, X, User, LogOut } from 'lucide-react'
+import { Menu, X, LogOut } from 'lucide-react'
 import { SITE_NAME } from '@/lib/site'
 import { cn } from '@/lib/utils/cn'
 
-const navLinks = [
-  { href: '/docs', label: 'Documentation' },
+type NavLink = { href: string; label: string; exact?: boolean }
+
+const navLinks: NavLink[] = [
+  { href: '/', label: 'Home', exact: true },
   { href: '/pricing', label: 'Pricing' },
+  { href: '/docs', label: 'Docs' },
   { href: '/faq', label: 'FAQ' },
-  { href: '/contact', label: 'Contact' },
 ]
+
+function isNavActive(pathname: string | null, href: string, exact?: boolean) {
+  if (!pathname) return false
+  if (exact) return pathname === href
+  return pathname === href || pathname.startsWith(`${href}/`)
+}
+
+const HERO_BACKGROUND_PATHS = ['/', '/pricing', '/faq'] as const
+
+function hasImageHero(pathname: string | null) {
+  return pathname != null && HERO_BACKGROUND_PATHS.some((p) => pathname === p)
+}
 
 export function Header() {
   const pathname = usePathname()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const { isAuthenticated, logout } = useAuth()
+  const overImageHero = hasImageHero(pathname)
 
-  const linkClass = (href: string) =>
+  const navLinkClass = (href: string, exact?: boolean) =>
     cn(
-      'text-sm font-medium transition-colors relative py-1',
-      pathname === href || (href !== '/' && pathname?.startsWith(href))
-        ? 'text-brand-strong'
-        : 'text-ink-muted hover:text-ink'
+      'site-header-nav-link',
+      isNavActive(pathname, href, exact) && 'site-header-nav-link--active'
     )
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-surface-border/80 bg-white/85 backdrop-blur-lg">
-      <div className="container-narrow">
-        <div className="flex h-16 items-center justify-between">
-          <Link href="/" className="flex items-center gap-2.5 shrink-0">
+    <header className="site-header-shell">
+      <div className={cn('site-header-bar', overImageHero && 'site-header-bar--hero')}>
+        <Link href="/" className="site-header-brand">
+          <span className="site-header-logo-mark">
             <Image
               src="/logos/busybody-logo.png"
-              alt={`${SITE_NAME} logo`}
-              width={32}
-              height={32}
-              className="h-8 w-8"
+              alt=""
+              width={28}
+              height={28}
+              className="h-7 w-7 object-contain"
               priority
             />
-            <span className="text-base font-semibold text-ink tracking-tight">{SITE_NAME}</span>
-          </Link>
+          </span>
+          <span className="truncate text-sm font-semibold text-ink tracking-tight sm:text-base">
+            {SITE_NAME}
+          </span>
+        </Link>
 
-          <nav className="hidden md:flex items-center gap-8" aria-label="Main">
-            {navLinks.map(({ href, label }) => (
-              <Link key={href} href={href} className={linkClass(href)}>
-                {label}
+        <nav className="hidden md:flex flex-1 items-center justify-center gap-0.5" aria-label="Main">
+          {navLinks.map(({ href, label, exact }) => (
+            <Link key={href} href={href} className={navLinkClass(href, exact)}>
+              {label}
+            </Link>
+          ))}
+          {isAuthenticated && (
+            <Link href="/dashboard" className={navLinkClass('/dashboard')}>
+              Dashboard
+            </Link>
+          )}
+        </nav>
+
+        <div className="hidden md:flex items-center gap-2 shrink-0 ml-auto">
+          {isAuthenticated ? (
+            <button
+              type="button"
+              onClick={logout}
+              className="text-sm font-medium text-ink-muted hover:text-ink px-3"
+            >
+              Sign out
+            </button>
+          ) : (
+            <>
+              <Link href="/auth/login" className="text-sm font-medium text-ink-muted hover:text-ink px-3">
+                Sign in
               </Link>
-            ))}
-          </nav>
+              <Link href="/auth/register" className="site-header-cta">
+                Get API key
+              </Link>
+            </>
+          )}
+        </div>
 
-          <div className="hidden md:flex items-center gap-2">
+        <button
+          type="button"
+          className="md:hidden ml-auto text-ink p-2 rounded-full hover:bg-surface-elevated"
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          aria-label="Toggle menu"
+          aria-expanded={isMenuOpen}
+        >
+          {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+        </button>
+      </div>
+
+      {isMenuOpen && (
+        <nav
+          className="pointer-events-auto mx-auto mt-2 max-w-5xl rounded-2xl border border-white/70 bg-white/90 p-3 shadow-[0_8px_32px_rgba(15,23,42,0.1)] backdrop-blur-xl md:hidden space-y-1 animate-fade-in"
+          aria-label="Mobile"
+        >
+          {navLinks.map(({ href, label, exact }) => (
+            <Link
+              key={href}
+              href={href}
+              className={cn(
+                'block rounded-xl px-4 py-2.5 text-sm font-medium',
+                isNavActive(pathname, href, exact)
+                  ? 'bg-surface-elevated text-ink'
+                  : 'text-ink-muted hover:bg-surface-elevated/80'
+              )}
+              onClick={() => setIsMenuOpen(false)}
+            >
+              {label}
+            </Link>
+          ))}
+          {isAuthenticated && (
+            <Link
+              href="/dashboard"
+              className={cn(
+                'block rounded-xl px-4 py-2.5 text-sm font-medium',
+                isNavActive(pathname, '/dashboard')
+                  ? 'bg-surface-elevated text-ink'
+                  : 'text-ink-muted hover:bg-surface-elevated/80'
+              )}
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Dashboard
+            </Link>
+          )}
+          <div className="pt-2 mt-1 border-t border-surface-border/50 flex flex-col gap-2">
             {isAuthenticated ? (
               <>
-                <Link href="/dashboard" className="btn-brand-outline text-sm h-9 px-4 gap-2">
-                  <User className="h-4 w-4" />
+                <Link
+                  href="/dashboard"
+                  className="site-header-cta h-10 justify-center"
+                  onClick={() => setIsMenuOpen(false)}
+                >
                   Dashboard
                 </Link>
-                <button type="button" onClick={logout} className="text-sm text-ink-muted hover:text-ink px-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    logout()
+                    setIsMenuOpen(false)
+                  }}
+                  className="flex items-center justify-center gap-2 text-sm text-ink-muted py-2"
+                >
+                  <LogOut className="h-4 w-4" />
                   Sign out
                 </button>
               </>
             ) : (
               <>
-                <Link href="/auth/login" className="text-sm font-medium text-ink-muted hover:text-ink px-3">
+                <Link
+                  href="/auth/login"
+                  className="block text-center py-2.5 text-sm font-medium text-ink-muted"
+                  onClick={() => setIsMenuOpen(false)}
+                >
                   Sign in
                 </Link>
-                <Link href="/auth/register" className="btn-brand text-sm h-9 px-5">
+                <Link
+                  href="/auth/register"
+                  className="site-header-cta h-10 justify-center"
+                  onClick={() => setIsMenuOpen(false)}
+                >
                   Get API key
                 </Link>
               </>
             )}
           </div>
-
-          <button
-            type="button"
-            className="md:hidden text-ink p-2 rounded-brand hover:bg-surface-elevated"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            aria-label="Toggle menu"
-            aria-expanded={isMenuOpen}
-          >
-            {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </button>
-        </div>
-
-        {isMenuOpen && (
-          <nav
-            className="md:hidden py-4 border-t border-surface-border/80 space-y-1 animate-fade-in"
-            aria-label="Mobile"
-          >
-            {navLinks.map(({ href, label }) => (
-              <Link
-                key={href}
-                href={href}
-                className={cn(
-                  'block px-3 py-2.5 rounded-brand text-sm font-medium',
-                  pathname === href ? 'bg-brand-muted text-brand-strong' : 'text-ink-muted hover:bg-surface-elevated'
-                )}
-                onClick={() => setIsMenuOpen(false)}
-              >
-                {label}
-              </Link>
-            ))}
-            <div className="pt-3 mt-2 border-t border-surface-border/60 flex flex-col gap-2 px-1">
-              {isAuthenticated ? (
-                <>
-                  <Link
-                    href="/dashboard"
-                    className="btn-brand text-sm h-10 justify-center"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Dashboard
-                  </Link>
-                  <button
-                    type="button"
-                    onClick={() => { logout(); setIsMenuOpen(false) }}
-                    className="flex items-center justify-center gap-2 text-sm text-ink-muted py-2"
-                  >
-                    <LogOut className="h-4 w-4" />
-                    Sign out
-                  </button>
-                </>
-              ) : (
-                <>
-                  <Link
-                    href="/auth/login"
-                    className="block text-center py-2.5 text-sm text-ink-muted"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Sign in
-                  </Link>
-                  <Link
-                    href="/auth/register"
-                    className="btn-brand text-sm h-10 justify-center"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Get API key
-                  </Link>
-                </>
-              )}
-            </div>
-          </nav>
-        )}
-      </div>
+        </nav>
+      )}
     </header>
   )
 }

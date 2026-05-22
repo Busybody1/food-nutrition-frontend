@@ -23,7 +23,7 @@ const FAQ_ITEMS = [
   },
   {
     q: 'Can I use this for commercial apps?',
-    a: 'Yes, with an active subscription and compliance with our terms of service. Use Stripe checkout in the dashboard for paid plans.',
+    a: 'Commercial production use requires a Plus or Enterprise plan. Send the header X-API-Usage-Type: commercial when your app is a commercial product. Free, Basic, and Core are for non-commercial development and personal use.',
   },
 ]
 
@@ -32,7 +32,7 @@ export function FaqSection({ showIntro = true }: { showIntro?: boolean }) {
 
   return (
     <section
-      className={`section-pad ${showIntro ? 'border-t border-surface-border/60' : 'pt-0'}`}
+      className={`section-pad ${showIntro ? 'border-t border-surface-border/60' : 'pt-8 md:pt-10 -mt-1'}`}
       id="faq"
       aria-labelledby="faq-heading"
     >

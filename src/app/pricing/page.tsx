@@ -2,433 +2,172 @@
 
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useState, useEffect, Suspense } from 'react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { CheckCircle, Zap, Shield, Star, Crown, Building2 } from 'lucide-react'
 import { useAuth } from '@/lib/hooks/use-auth'
 import { SubscribeModal } from '@/components/stripe/SubscribeModal'
-import { stripeAPI } from '@/lib/stripe/api'
-import {
-  marketingCardClass,
-  MarketingTrustPills,
-  MarketingPageLoading,
-} from '@/components/marketing/marketing-shell'
-
-interface Plan {
-  id: number
-  name: string
-  monthly_price: number
-  description: string
-  features: string[]
-  monthly_quota: number
-  rate_limit_per_minute: number
-  stripe_test_price_id?: string
-  stripe_live_price_id?: string
-}
+import { MarketingImageHero } from '@/components/marketing/marketing-image-hero'
+import { MarketingTrustPills, MarketingPageLoading } from '@/components/marketing/marketing-shell'
+import { PricingCard } from '@/components/marketing/pricing-card'
+import { PricingComparison } from '@/components/marketing/pricing-comparison'
+import { fetchPublicPlans } from '@/lib/pricing/fetch-plans'
+import type { PricingPlan } from '@/lib/pricing/plan-display'
 
 function PricingContent() {
   const { isAuthenticated, user } = useAuth()
   const router = useRouter()
   const searchParams = useSearchParams()
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null)
-  const [plans, setPlans] = useState<Plan[]>([])
+  const [selectedPlan, setSelectedPlan] = useState<PricingPlan | null>(null)
+  const [plans, setPlans] = useState<PricingPlan[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const [currentSubscription, setCurrentSubscription] = useState<{ plan_id: number; plan_name: string } | null>(null)
+  const [loadError, setLoadError] = useState<string | null>(null)
+  const [currentSubscription, setCurrentSubscription] = useState<{
+    plan_id: number
+    plan_name: string
+  } | null>(null)
 
-  // Transform backend plan data to include features as string array
-  const transformPlanData = (backendPlans: Record<string, unknown>[]): Plan[] => {
-    return backendPlans.map(plan => {
-      // Parse features from JSON if available
-      let features: string[] = []
-      if (Array.isArray(plan.features)) {
-        features = plan.features.filter((f): f is string => typeof f === 'string')
-      } else if (plan.features && typeof plan.features === 'object') {
-        // Convert features object to display strings
-        const featureMap: Record<string, string> = {
-          'basic_endpoints': 'Basic endpoints',
-          'advanced_search': 'Advanced search',
-          'webhooks': 'Webhook support',
-          'analytics': 'Usage analytics',
-          'bulk_export': 'Bulk export',
-          'white_label': 'White-label options',
-          'on_premise': 'On-premise deployment',
-          'phone_support': 'Phone support',
-          'priority_support': 'Priority support',
-          'dedicated_support': 'Dedicated support',
-          'custom_integrations': 'Custom integrations',
-          'custom_features': 'Custom features'
-        }
-        
-        features = Object.entries(plan.features)
-          .filter(([, value]) => value === true)
-          .map(([key]) => featureMap[key] || key)
-          .filter(Boolean)
-      }
-      
-      // Add request limits as features
-      const monthlyQuota = typeof plan.monthly_quota === 'number' ? plan.monthly_quota : 0
-      const rateLimit = typeof plan.rate_limit_per_minute === 'number' ? plan.rate_limit_per_minute : 0
-      
-      features.unshift(`${monthlyQuota.toLocaleString()} requests/month`)
-      features.unshift(`${rateLimit} requests/minute`)
-      
-      return {
-        id: plan.id as number,
-        name: plan.name as string,
-        monthly_price: plan.monthly_price as number,
-        description: plan.description as string,
-        monthly_quota: monthlyQuota,
-        rate_limit_per_minute: rateLimit,
-        stripe_test_price_id: plan.stripe_test_price_id as string | undefined,
-        stripe_live_price_id: plan.stripe_live_price_id as string | undefined,
-        features
-      }
-    })
-  }
-
-  // Load plans and current subscription from API
   useEffect(() => {
     const loadData = async () => {
+      setLoadError(null)
       try {
-        const plansData = await stripeAPI.getPlans()
-        const transformedPlans = transformPlanData(plansData)
-        setPlans(transformedPlans)
-        
-        // Load current subscription if user is authenticated
+        setPlans(await fetchPublicPlans())
         if (isAuthenticated && user) {
           try {
             const { api } = await import('@/lib/api/client')
             const subscriptionResponse = await api.billing.getSubscription()
             if (subscriptionResponse.success) {
-              setCurrentSubscription(subscriptionResponse.data as { plan_id: number; plan_name: string })
+              setCurrentSubscription(
+                subscriptionResponse.data as { plan_id: number; plan_name: string }
+              )
             }
           } catch {
-            console.log('No current subscription found')
+            // no subscription
           }
         }
       } catch (error) {
         console.error('Failed to load plans:', error)
-        // Fallback to hardcoded plans matching backend exactly
-        setPlans([
-          {
-            id: 1,
-            name: 'Free',
-            monthly_price: 0.00,
-            description: 'Perfect for testing and small projects',
-            features: [
-              '1,000 requests/month',
-              '10 requests/minute',
-              'Basic search functionality',
-              'Community support',
-              '1 API key',
-              'Basic endpoints',
-              'JSON responses',
-            ],
-            monthly_quota: 1000,
-            rate_limit_per_minute: 10,
-          },
-          {
-            id: 2,
-            name: 'Basic',
-            monthly_price: 29.00,
-            description: 'Ideal for small applications and startups',
-            features: [
-              '100,000 requests/month',
-              '50 requests/minute',
-              'Advanced search filters',
-              'Email support',
-              '3 API keys',
-              'Usage analytics',
-              '99% SLA',
-              'Priority support',
-            ],
-            monthly_quota: 100000,
-            rate_limit_per_minute: 50,
-          },
-          {
-            id: 3,
-            name: 'Core',
-            monthly_price: 99.00,
-            description: 'Perfect for growing businesses and teams',
-            features: [
-              '750,000 requests/month',
-              '100 requests/minute',
-              'All Basic features',
-              'Priority support',
-              '10 API keys',
-              'Webhook support',
-              'Bulk export',
-              '99.5% SLA',
-            ],
-            monthly_quota: 750000,
-            rate_limit_per_minute: 100,
-          },
-          {
-            id: 4,
-            name: 'Plus',
-            monthly_price: 299.00,
-            description: 'For high-volume applications and enterprises',
-            features: [
-              '3,000,000 requests/month',
-              '300 requests/minute',
-              'All Core features',
-              'Dedicated support',
-              '25 API keys',
-              'White-label options',
-              'Advanced analytics',
-              '99.9% SLA',
-            ],
-            monthly_quota: 3000000,
-            rate_limit_per_minute: 300,
-          },
-          {
-            id: 5,
-            name: 'Enterprise',
-            monthly_price: 999.00,
-            description: 'Tailored solutions for large organizations',
-            features: [
-              'Unlimited requests',
-              'Unlimited requests/minute',
-              'All Plus features',
-              'Dedicated support',
-              '100 API keys',
-              'Phone support',
-              'Custom integrations',
-              'On-premise deployment',
-              '99.99% SLA',
-              'Custom features',
-            ],
-            monthly_quota: 999999999,
-            rate_limit_per_minute: 1000,
-          },
-        ])
+        const msg =
+          error instanceof Error ? error.message : 'Could not load plans from the API.'
+        setLoadError(msg)
+        setPlans([])
       } finally {
         setIsLoading(false)
       }
     }
-
     loadData()
   }, [isAuthenticated, user])
 
-  // Handle pre-selected plan from URL and canceled redirects
   useEffect(() => {
     const planId = searchParams.get('plan_id')
-    const canceled = searchParams.get('canceled')
-    
-    if (canceled === 'true') {
-      // Show error message for canceled checkout
-      console.log('Checkout was canceled')
-      // You could add a toast notification here
-    }
-    
-    if (planId && plans.length > 0) {
-      const plan = plans.find(p => p.id === parseInt(planId))
-      if (plan && isAuthenticated) {
+    if (planId && plans.length > 0 && isAuthenticated) {
+      const plan = plans.find((p) => p.id === parseInt(planId, 10))
+      if (plan) {
         setSelectedPlan(plan)
         setIsModalOpen(true)
       }
     }
   }, [searchParams, plans, isAuthenticated])
 
-  const handlePlanSelect = async (plan: Plan) => {
-    console.log('Plan selected:', plan.name, 'isAuthenticated:', isAuthenticated)
-    
+  const handlePlanSelect = async (plan: PricingPlan) => {
     if (!isAuthenticated) {
-      // Redirect non-logged-in users to register page
       router.push('/auth/register')
       return
     }
+    if (currentSubscription?.plan_id === plan.id) return
 
-    // Check if user already has this plan
-    if (currentSubscription && currentSubscription.plan_id === plan.id) {
-      console.log('User already has this plan')
-      return
-    }
-
-    // If user has a subscription, update it instead of creating new one
     if (currentSubscription && currentSubscription.plan_id !== plan.id) {
       try {
         const { api } = await import('@/lib/api/client')
         const response = await api.billing.updateSubscription(plan.id)
-        
-        if (response.success) {
-          router.push('/dashboard/billing')
-        } else {
-          console.error('Failed to update subscription:', response)
-        }
+        if (response.success) router.push('/dashboard/billing')
       } catch (error) {
         console.error('Error updating subscription:', error)
       }
       return
     }
 
-    // For Free plan, handle differently
     if (plan.name === 'Free') {
       try {
         const { api } = await import('@/lib/api/client')
-        const response = await api.billing.createSubscription(plan.id)
-        
-        if (response.success) {
-          router.push('/dashboard/billing')
-        } else {
-          console.error('Failed to update to Free plan:', response)
-          router.push('/dashboard/billing')
-        }
+        await api.billing.createSubscription(plan.id)
       } catch (error) {
         console.error('Error updating to Free plan:', error)
-        router.push('/dashboard/billing')
       }
+      router.push('/dashboard/billing')
       return
     }
 
-    // For Enterprise plan, redirect to contact page
     if (plan.name === 'Enterprise') {
       router.push('/contact')
       return
     }
 
-    // For new paid plans, open subscribe modal
     setSelectedPlan(plan)
     setIsModalOpen(true)
   }
 
-
-  const handleModalError = (error: string) => {
-    console.error('Subscription error:', error)
-  }
-
-  const getPlanIcon = (planName: string) => {
-    const iconClass = 'h-6 w-6 text-brand-strong'
-    switch (planName.toLowerCase()) {
-      case 'free':
-        return <Shield className={iconClass} />
-      case 'basic':
-        return <Zap className={iconClass} />
-      case 'core':
-        return <Star className={iconClass} />
-      case 'plus':
-        return <Crown className={iconClass} />
-      case 'enterprise':
-        return <Building2 className={iconClass} />
-      default:
-        return <Shield className={iconClass} />
-    }
-  }
+  const displayPlans = plans
 
   return (
     <div className="marketing-page">
-      <section className="section-pad hero-glow">
-        <div className="container-narrow">
-          <div className="text-center max-w-3xl mx-auto">
-            <h1 className="font-display text-4xl md:text-5xl text-ink mb-6">
-              Simple, transparent pricing
-            </h1>
-            <p className="text-xl text-ink-muted mb-8">
-              Choose the plan that fits your needs. All plans include our core API features 
-              with no hidden fees or surprise charges.
-            </p>
-            <MarketingTrustPills
-              items={['7-day free trial', 'No setup fees', 'Cancel anytime']}
-            />
-          </div>
+      <MarketingImageHero compact centered waveTone="elevated">
+        <h1 className="font-display text-4xl md:text-5xl text-ink mb-4">
+          Simple, transparent pricing
+        </h1>
+        <p className="text-lg text-ink-muted mb-8 max-w-2xl mx-auto">
+          Per-account rate limits, monthly quotas, and anti-scrape protections built in.
+          Commercial production use starts on Plus.
+        </p>
+        <MarketingTrustPills
+          items={[
+            'Live limits from your plan',
+            '5% food coverage cap',
+            'Cancel anytime',
+          ]}
+        />
+      </MarketingImageHero>
+
+      <section className="pt-10 md:pt-12 pb-12 md:pb-20 bg-surface-elevated -mt-1">
+        <div className="container-narrow flex flex-col items-center">
+          {isLoading ? (
+            <div className="flex w-full max-w-5xl flex-wrap justify-center gap-5 pt-6">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="h-[280px] w-full max-w-[340px] rounded-brand border border-surface-border bg-white p-6 animate-pulse sm:max-w-[340px] lg:flex-[0_1_calc(33.333%-0.875rem)] lg:max-w-[320px]"
+                />
+              ))}
+            </div>
+          ) : loadError ? (
+            <p className="text-sm text-red-600 pt-6 text-center max-w-md">{loadError}</p>
+          ) : displayPlans.length === 0 ? (
+            <p className="text-sm text-ink-muted pt-6">No plans available.</p>
+          ) : (
+            <div className="flex w-full max-w-5xl flex-wrap justify-center gap-5 pt-6">
+              {displayPlans.map((plan) => (
+                <div
+                  key={plan.id}
+                  className="w-full max-w-[340px] sm:max-w-[340px] lg:max-w-[320px] lg:flex-[0_1_calc(33.333%-0.875rem)]"
+                >
+                  <PricingCard
+                    plan={plan}
+                    isPopular={plan.name === 'Plus'}
+                    isCurrent={currentSubscription?.plan_id === plan.id}
+                    onSelect={() => handlePlanSelect(plan)}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
-      <section className="section-pad bg-surface-elevated">
-        <div className="container-narrow">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
-            {isLoading ? (
-              // Loading state
-              Array.from({ length: 5 }).map((_, index) => (
-                <Card key={index} className={`${marketingCardClass} animate-pulse`}>
-                  <CardHeader className="text-center pb-4">
-                    <div className="h-6 bg-surface-elevated rounded-brand mb-2" />
-                    <div className="h-8 bg-surface-elevated rounded-brand mb-2" />
-                    <div className="h-4 bg-surface-elevated rounded-brand" />
-                  </CardHeader>
-                  <CardContent className="pt-0">
-                    <div className="space-y-3 mb-6">
-                      {Array.from({ length: 5 }).map((_, i) => (
-                        <div key={i} className="h-4 bg-surface-elevated rounded-brand" />
-                      ))}
-                    </div>
-                    <div className="h-10 bg-surface-elevated rounded-brand" />
-                  </CardContent>
-                </Card>
-              ))
-            ) : (
-              // Plans from API or fallback
-              (plans.length > 0 ? plans : []).map((plan) => (
-              <Card
-                key={plan.name}
-                className={`relative ${marketingCardClass} ${
-                  plan.name === 'Core'
-                    ? 'border-2 border-brand/40 shadow-glow ring-1 ring-brand/10 md:scale-[1.02]'
-                    : ''
-                }`}
-              >
-                {plan.name === 'Core' && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <span className="marketing-hero-badge shadow-sm">Most popular</span>
-                  </div>
-                )}
-                
-                <CardHeader className="text-center pb-4">
-                    <div className="flex justify-center mb-2">
-                      {getPlanIcon(plan.name)}
-                    </div>
-                  <CardTitle className="text-2xl">{plan.name}</CardTitle>
-                  <div className="mt-4">
-                    <span className="text-4xl font-bold text-ink">
-                        ${plan.monthly_price}
-                    </span>
-                      <span className="text-ink-dim">/month</span>
-                  </div>
-                  <CardDescription className="mt-2">
-                    {plan.description}
-                  </CardDescription>
-                </CardHeader>
+      {!isLoading && <PricingComparison plans={displayPlans} />}
 
-                <CardContent className="pt-0">
-                  <ul className="space-y-3 mb-6">
-                    {plan.features.map((feature, featureIndex) => (
-                      <li key={featureIndex} className="flex items-start">
-                          <CheckCircle className="h-5 w-5 text-brand mr-3 mt-0.5 flex-shrink-0" />
-                        <span className="text-sm text-ink-muted">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-
-                    <Button 
-                      variant={plan.name === 'Free' ? 'outline' : 'default'}
-                      className="w-full"
-                      onClick={() => handlePlanSelect(plan)}
-                      disabled={!!(currentSubscription && currentSubscription.plan_id === plan.id)}
-                    >
-                      {currentSubscription && currentSubscription.plan_id === plan.id 
-                        ? 'Current Plan' 
-                        : plan.name === 'Free' 
-                          ? 'Get Started Free' 
-                          : plan.name === 'Enterprise'
-                            ? 'Contact Sales'
-                            : 'Subscribe Now'
-                      }
-                    </Button>
-                </CardContent>
-              </Card>
-              ))
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* Subscribe Modal */}
       <SubscribeModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         plan={selectedPlan}
-        onError={handleModalError}
+        onError={(error) => console.error('Subscription error:', error)}
       />
     </div>
   )

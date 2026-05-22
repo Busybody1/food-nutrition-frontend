@@ -6,7 +6,15 @@ import { StructuredData } from '@/components/seo/structured-data'
 import { StripeProvider } from '@/contexts/StripeContext'
 import { AuthProvider } from '@/contexts/AuthContext'
 import { ErrorBoundary } from '@/components/ui/error-boundary'
-import { SITE_URL, SITE_NAME, SITE_DESCRIPTION, SUPPORT_EMAIL, absoluteUrl } from '@/lib/site'
+import {
+  SITE_URL,
+  SITE_NAME,
+  SITE_TITLE,
+  SITE_DESCRIPTION,
+  SITE_KEYWORDS,
+  OG_IMAGE_URL,
+  OG_IMAGE_ALT,
+} from '@/lib/site'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' })
 const garamond = EB_Garamond({
@@ -15,15 +23,14 @@ const garamond = EB_Garamond({
   variable: '--font-display',
 })
 
-const ogImage = absoluteUrl('/opengraph-image')
-
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${SITE_NAME} — Food & Nutrition Database API`,
+    default: SITE_TITLE,
     template: `%s | ${SITE_NAME}`,
   },
   description: SITE_DESCRIPTION,
+  keywords: SITE_KEYWORDS,
   authors: [{ name: 'BusyBody FIT LTD', url: SITE_URL }],
   creator: SITE_NAME,
   publisher: SITE_NAME,
@@ -42,22 +49,23 @@ export const metadata: Metadata = {
     locale: 'en_US',
     url: SITE_URL,
     siteName: SITE_NAME,
-    title: `${SITE_NAME} — Food & Nutrition Database API`,
+    title: SITE_TITLE,
     description: SITE_DESCRIPTION,
     images: [
       {
-        url: ogImage,
+        url: OG_IMAGE_URL,
         width: 1200,
         height: 630,
-        alt: `${SITE_NAME} — Nutrition API for developers`,
+        alt: OG_IMAGE_ALT,
+        type: 'image/jpeg',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: `${SITE_NAME} — Food & Nutrition Database API`,
+    title: SITE_TITLE,
     description: SITE_DESCRIPTION,
-    images: [ogImage],
+    images: [{ url: OG_IMAGE_URL, alt: OG_IMAGE_ALT }],
   },
   alternates: {
     canonical: SITE_URL,
