@@ -12,6 +12,7 @@ import {
 type PageMetaInput = {
   title?: string
   description?: string
+  keywords?: string[]
   path: string
   noIndex?: boolean
 }
@@ -19,23 +20,26 @@ type PageMetaInput = {
 export function buildPageMetadata({
   title,
   description,
+  keywords,
   path,
   noIndex = false,
 }: PageMetaInput): Metadata {
   const canonical = absoluteUrl(path)
   const pageTitle = title ? `${title} | ${SITE_NAME}` : SITE_TITLE
   const pageDescription = description ?? SITE_DESCRIPTION
+  const pageKeywords = keywords?.length ? keywords : [...SITE_KEYWORDS]
 
-  const titleMeta: Metadata['title'] = title
-    ? { absolute: pageTitle }
-    : path === '/'
+  const titleMeta: Metadata['title'] =
+    path === '/' && !title
       ? { absolute: SITE_TITLE }
-      : { absolute: SITE_TITLE }
+      : title
+        ? { absolute: pageTitle }
+        : { absolute: SITE_TITLE }
 
   return {
     title: titleMeta,
     description: pageDescription,
-    keywords: SITE_KEYWORDS,
+    keywords: pageKeywords,
     alternates: { canonical },
     openGraph: {
       type: 'website',

@@ -1,16 +1,15 @@
 import type { Metadata } from 'next'
 import { MarketingHero } from '@/components/marketing/marketing-hero'
-import { buildPageMetadata } from '@/lib/metadata'
+import { buildPublicPageMetadata } from '@/lib/build-public-metadata'
+import { PublicPageSchema } from '@/components/seo/public-page-schema'
+import { ApiStatusSeoContent } from '@/components/seo/public-page-seo-content'
 
-export const metadata: Metadata = buildPageMetadata({
-  title: 'API Status',
-  description: 'Service status and uptime information for the Calorie API.',
-  path: '/api-status',
-})
+export const metadata: Metadata = buildPublicPageMetadata('/api-status')
 
 export default function ApiStatusPage() {
   return (
     <div className="marketing-page">
+      <PublicPageSchema path="/api-status" pageName="API Status" />
       <MarketingHero
         title="API status"
         subtitle="Core API and search endpoints. Check here for maintenance windows and incidents."
@@ -24,12 +23,14 @@ export default function ApiStatusPage() {
               All systems operational
             </span>
             <p className="mt-6 text-sm text-ink-muted leading-relaxed">
-              Search, suggest, and authentication services are running normally. Subscribe to
-              updates via your account dashboard or contact support for enterprise SLAs.
+              Search, suggest, barcode lookup, and authentication services are running normally.
+              Subscribe to updates via your account dashboard or contact support for enterprise SLAs.
             </p>
           </div>
         </div>
       </section>
+
+      <ApiStatusSeoContent />
     </div>
   )
 }

@@ -1,27 +1,19 @@
 import type { Metadata } from 'next'
-import dynamic from 'next/dynamic'
-import Script from 'next/script'
-import { buildPageMetadata } from '@/lib/metadata'
+import { buildPublicPageMetadata } from '@/lib/build-public-metadata'
+import { FAQ_JSON_LD } from '@/lib/faq-data'
 import { Search, Shield, Zap, BarChart3, Code2, Database } from 'lucide-react'
-const ApiPlayground = dynamic(
-  () => import('@/components/marketing/api-playground').then((m) => m.ApiPlayground),
-  {
-    loading: () => (
-      <div className="marketing-card h-[280px] animate-pulse rounded-brand" aria-hidden />
-    ),
-  }
-)
-import { FaqSection, FAQ_JSON_LD } from '@/components/marketing/faq-section'
+import { LazyApiPlayground } from '@/components/marketing/lazy-api-playground'
+import { FaqSection } from '@/components/marketing/faq-section'
 import { HomeHero } from '@/components/marketing/home-hero'
 import {
   MarketingFeatureCard,
   MarketingCtaBand,
   MarketingSectionHeader,
 } from '@/components/marketing/marketing-shell'
-import { StructuredData } from '@/components/seo/structured-data'
+import { StructuredData, JsonLdScript } from '@/components/seo/structured-data'
 import { HomeSeoContent } from '@/components/marketing/home-seo-content'
 
-export const metadata: Metadata = buildPageMetadata({ path: '/' })
+export const metadata: Metadata = buildPublicPageMetadata('/')
 
 const features = [
   {
@@ -59,14 +51,6 @@ const features = [
 export default function HomePage() {
   return (
     <div className="marketing-page">
-      <StructuredData type="api" />
-      <StructuredData type="product" />
-      <Script
-        id="faq-jsonld"
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_JSON_LD) }}
-      />
-
       <HomeHero />
 
       <section className="section-pad bg-surface-elevated -mt-1" id="demo">
@@ -76,7 +60,7 @@ export default function HomePage() {
             title="Try the API in seconds"
             description="Run a real search against our public demo endpoint, no signup required."
           />
-          <ApiPlayground />
+          <LazyApiPlayground />
         </div>
       </section>
 
@@ -107,6 +91,10 @@ export default function HomePage() {
       <HomeSeoContent />
 
       <FaqSection />
+
+      <StructuredData type="api" />
+      <StructuredData type="product" />
+      <JsonLdScript id="faq-jsonld" data={FAQ_JSON_LD} />
     </div>
   )
 }

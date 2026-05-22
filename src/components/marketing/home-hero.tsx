@@ -22,10 +22,10 @@ export function HomeHero() {
         suggest, and verified nutrition data, built for production health apps.
       </p>
       <div className="mt-8 md:mt-10 flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
-        <Link href="/auth/register" className="btn-brand">
+        <Link href="/auth/register" prefetch={false} className="btn-brand">
           Get API Key Free
         </Link>
-        <Link href="/docs" className="btn-brand-outline">
+        <Link href="/docs" prefetch={false} className="btn-brand-outline">
           Read documentation
         </Link>
       </div>

@@ -1,20 +1,19 @@
 import type { Metadata } from 'next'
 import { LegalDocumentBody, LegalPageShell } from '@/components/marketing/legal-document'
 import { PRIVACY_EFFECTIVE_DATE, privacySections } from '@/content/legal/privacy'
-import { buildPageMetadata } from '@/lib/metadata'
+import { buildPublicPageMetadata } from '@/lib/build-public-metadata'
+import { PublicPageSchema } from '@/components/seo/public-page-schema'
 
-export const metadata: Metadata = buildPageMetadata({
-  title: 'Privacy Policy',
-  description: 'How Food Database API collects, uses, and protects your personal information.',
-  path: '/privacy',
-})
+export const metadata: Metadata = buildPublicPageMetadata('/privacy')
 
 const LEGAL_DISCLAIMER =
   'These documents are templates and do not constitute legal advice. Please consult a qualified attorney.'
 
 export default function PrivacyPage() {
   return (
-    <LegalPageShell
+    <>
+      <PublicPageSchema path="/privacy" pageName="Privacy Policy" />
+      <LegalPageShell
       title="Privacy Policy"
       tagline="Your Privacy, Our Commitment"
       effectiveDate={PRIVACY_EFFECTIVE_DATE}
@@ -22,5 +21,6 @@ export default function PrivacyPage() {
     >
       <LegalDocumentBody sections={privacySections} />
     </LegalPageShell>
+    </>
   )
 }

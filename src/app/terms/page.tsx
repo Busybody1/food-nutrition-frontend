@@ -1,20 +1,19 @@
 import type { Metadata } from 'next'
 import { LegalDocumentBody, LegalPageShell } from '@/components/marketing/legal-document'
 import { TERMS_EFFECTIVE_DATE, termsSections } from '@/content/legal/terms'
-import { buildPageMetadata } from '@/lib/metadata'
+import { buildPublicPageMetadata } from '@/lib/build-public-metadata'
+import { PublicPageSchema } from '@/components/seo/public-page-schema'
 
-export const metadata: Metadata = buildPageMetadata({
-  title: 'Terms and Conditions',
-  description: 'API usage agreement governing access to Food Database API services.',
-  path: '/terms',
-})
+export const metadata: Metadata = buildPublicPageMetadata('/terms')
 
 const LEGAL_DISCLAIMER =
   'These documents are templates and do not constitute legal advice. Please consult a qualified attorney.'
 
 export default function TermsPage() {
   return (
-    <LegalPageShell
+    <>
+      <PublicPageSchema path="/terms" pageName="Terms of Service" />
+      <LegalPageShell
       title="Terms and Conditions"
       tagline="API Usage Agreement"
       effectiveDate={TERMS_EFFECTIVE_DATE}
@@ -22,5 +21,6 @@ export default function TermsPage() {
     >
       <LegalDocumentBody sections={termsSections} />
     </LegalPageShell>
+    </>
   )
 }

@@ -1,20 +1,19 @@
 import type { Metadata } from 'next'
 import { LegalDocumentBody, LegalPageShell } from '@/components/marketing/legal-document'
 import { COOKIES_EFFECTIVE_DATE, cookiesSections } from '@/content/legal/cookies'
-import { buildPageMetadata } from '@/lib/metadata'
+import { buildPublicPageMetadata } from '@/lib/build-public-metadata'
+import { PublicPageSchema } from '@/components/seo/public-page-schema'
 
-export const metadata: Metadata = buildPageMetadata({
-  title: 'Cookie Policy',
-  description: 'How Food Database API uses cookies on the developer portal.',
-  path: '/cookies',
-})
+export const metadata: Metadata = buildPublicPageMetadata('/cookies')
 
 const LEGAL_DISCLAIMER =
   'These documents are templates and do not constitute legal advice. Please consult a qualified attorney.'
 
 export default function CookiesPage() {
   return (
-    <LegalPageShell
+    <>
+      <PublicPageSchema path="/cookies" pageName="Cookie Policy" />
+      <LegalPageShell
       title="Cookie Policy"
       tagline="Understanding How We Use Cookies"
       effectiveDate={COOKIES_EFFECTIVE_DATE}
@@ -22,5 +21,6 @@ export default function CookiesPage() {
     >
       <LegalDocumentBody sections={cookiesSections} />
     </LegalPageShell>
+    </>
   )
 }

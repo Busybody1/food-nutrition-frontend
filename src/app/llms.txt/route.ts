@@ -29,12 +29,21 @@ See ${SITE_URL}/pricing for Free, Core, and Plus tiers with monthly quotas.
 ## Documentation
 ${SITE_URL}/docs
 
+## Public pages
+- ${SITE_URL}/pricing — API plans, quotas, and enterprise
+- ${SITE_URL}/faq — authentication, search, commercial use
+- ${SITE_URL}/about — mission and platform overview
+- ${SITE_URL}/contact — support and sales
+- ${SITE_URL}/api-status — service health
+- ${SITE_URL}/changelog — release notes
+
 ## Support
 ${SUPPORT_EMAIL}
 
 ## Legal
 ${SITE_URL}/privacy
 ${SITE_URL}/terms
+${SITE_URL}/cookies
 `;
 
   return new NextResponse(body, {

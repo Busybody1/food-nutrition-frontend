@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { getCanonicalRedirectUrl } from '@/lib/canonical-redirect';
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const redirectUrl = getCanonicalRedirectUrl({
     pathname: request.nextUrl.pathname,
     search: request.nextUrl.search,

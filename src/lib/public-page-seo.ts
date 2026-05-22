@@ -1,0 +1,126 @@
+import { SITE_NAME } from '@/lib/site'
+
+export type PublicPagePath =
+  | '/'
+  | '/pricing'
+  | '/docs'
+  | '/faq'
+  | '/about'
+  | '/contact'
+  | '/api-status'
+  | '/changelog'
+  | '/privacy'
+  | '/terms'
+  | '/cookies'
+
+export type PageSeoConfig = {
+  title?: string
+  description: string
+  keywords: string[]
+}
+
+/** Per-route SEO copy — unique titles/descriptions for crawlers and AI indexes. */
+export const PUBLIC_PAGE_SEO: Record<PublicPagePath, PageSeoConfig> = {
+  '/': {
+    description:
+      'Food & nutrition REST API with search, barcode lookup, macros per 100g, and autocomplete. Free tier for developers.',
+    keywords: [
+      'food nutrition API',
+      'calorie API',
+      'nutrition database API',
+      'food search API',
+      'barcode nutrition API',
+      'macro API',
+      'meal tracking API',
+    ],
+  },
+  '/pricing': {
+    title: 'Pricing',
+    description:
+      'Nutrition API pricing: Free developer tier, Core and Plus plans with monthly quotas, rate limits, and enterprise custom volume.',
+    keywords: [
+      'nutrition API pricing',
+      'food API plans',
+      'calorie API cost',
+      'API rate limits',
+      'enterprise nutrition API',
+    ],
+  },
+  '/docs': {
+    title: 'API Documentation',
+    description:
+      'Integrate the Calorie API: authentication, food search, barcode lookup, suggest, rate limits, and code examples in curl, JavaScript, and Python.',
+    keywords: [
+      'nutrition API documentation',
+      'food API reference',
+      'REST API guide',
+      'barcode lookup API',
+      'food search API docs',
+    ],
+  },
+  '/faq': {
+    title: 'FAQ',
+    description:
+      'Answers about Calorie API authentication, food search, pricing tiers, commercial use, rate limits, and integration for health apps.',
+    keywords: [
+      'nutrition API FAQ',
+      'food API questions',
+      'API authentication help',
+      'commercial API license',
+    ],
+  },
+  '/about': {
+    title: `About ${SITE_NAME}`,
+    description:
+      'Learn how Calorie API helps developers ship meal tracking, macro logging, and barcode features with reliable nutrition data.',
+    keywords: [
+      'about Calorie API',
+      'nutrition data platform',
+      'food database for developers',
+    ],
+  },
+  '/contact': {
+    title: 'Contact',
+    description:
+      'Contact Calorie API for technical support, sales, and enterprise plans. We respond within one business day.',
+    keywords: [
+      'Calorie API support',
+      'nutrition API sales',
+      'enterprise API contact',
+    ],
+  },
+  '/api-status': {
+    title: 'API Status',
+    description:
+      'Live status for Calorie API search, suggest, barcode, and authentication services. Uptime and maintenance information.',
+    keywords: ['API status', 'nutrition API uptime', 'service health'],
+  },
+  '/changelog': {
+    title: 'Changelog',
+    description:
+      'Release notes for Calorie API: search features, rate limits, dashboard updates, and platform improvements.',
+    keywords: ['API changelog', 'nutrition API updates', 'release notes'],
+  },
+  '/privacy': {
+    title: 'Privacy Policy',
+    description:
+      'How Calorie API collects, uses, stores, and protects personal data for developers and dashboard users.',
+    keywords: ['privacy policy', 'API data protection', 'GDPR nutrition API'],
+  },
+  '/terms': {
+    title: 'Terms of Service',
+    description:
+      'Terms of service for using the Calorie API, developer portal, billing, and acceptable use of nutrition data.',
+    keywords: ['terms of service', 'API terms', 'acceptable use'],
+  },
+  '/cookies': {
+    title: 'Cookie Policy',
+    description:
+      'Cookie and tracking technologies used on the Calorie API marketing site and developer dashboard.',
+    keywords: ['cookie policy', 'website cookies', 'tracking disclosure'],
+  },
+}
+
+export function getPublicPageSeo(path: PublicPagePath): PageSeoConfig {
+  return PUBLIC_PAGE_SEO[path]
+}

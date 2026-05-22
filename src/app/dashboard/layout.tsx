@@ -60,13 +60,15 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
 function SidebarBrand() {
   return (
     <Link href="/dashboard" className="flex items-center gap-2.5 px-5 py-1 group">
-      <Image
-        src="/logos/busybody-logo.png"
-        alt={`${SITE_NAME} logo`}
-        width={28}
-        height={28}
-        className="h-7 w-7"
-      />
+      <span className="relative block h-7 w-7 shrink-0">
+        <Image
+          src="/logos/busybody-logo.png"
+          alt={`${SITE_NAME} logo`}
+          fill
+          sizes="28px"
+          className="object-contain"
+        />
+      </span>
       <span className="text-sm font-semibold text-ink tracking-tight">{SITE_NAME}</span>
     </Link>
   )

@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input'
 import { MarketingImageHero } from '@/components/marketing/marketing-image-hero'
 import { marketingCardClass } from '@/components/marketing/marketing-shell'
 import { SUPPORT_EMAIL } from '@/lib/site'
+import { submitContactForm } from '@/lib/contact/submit-contact'
 import {
   Mail,
   Send,
@@ -30,6 +31,8 @@ function ContactPageContent() {
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
+  const [honeypot, setHoneypot] = useState('')
 
   useEffect(() => {
     const inquiry = searchParams.get('inquiry')
@@ -50,15 +53,29 @@ function ContactPageContent() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setSubmitError(null)
     setIsSubmitting(true)
-    await new Promise((r) => setTimeout(r, 1500))
-    setIsSubmitting(false)
-    setIsSubmitted(true)
+    try {
+      await submitContactForm({
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        company: formData.company.trim() || undefined,
+        subject: formData.subject.trim(),
+        message: formData.message.trim(),
+        inquiry_type: formData.inquiryType,
+        website: honeypot,
+      })
+      setIsSubmitted(true)
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message : 'Could not send your message.')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const labelClass = 'block text-sm font-medium text-ink mb-1.5'
   const fieldClass =
-    'w-full bg-white border-surface-border text-ink rounded-brand focus:border-brand focus:ring-brand h-11'
+    'w-full border border-surface-border bg-white text-ink rounded-brand px-3 transition-colors focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand/40 h-11'
 
   return (
     <div className="marketing-page">
@@ -71,7 +88,7 @@ function ContactPageContent() {
           Let&apos;s build something amazing together
         </h1>
         <p className="text-lg text-ink-muted leading-relaxed max-w-xl mx-auto">
-          Questions about the API, custom volume, or enterprise plans — we typically respond within
+          Questions about the API, custom volume, or enterprise plans, we typically respond within
           one business day.
         </p>
       </MarketingImageHero>
@@ -151,12 +168,38 @@ function ContactPageContent() {
                     <p className="text-ink-muted mb-6 max-w-sm mx-auto">
                       Thanks for reaching out. We&apos;ll reply within one business day.
                     </p>
-                    <Button variant="outline" onClick={() => setIsSubmitted(false)}>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setIsSubmitted(false)
+                        setSubmitError(null)
+                      }}
+                    >
                       Send another message
                     </Button>
                   </div>
                 ) : (
                   <form onSubmit={handleSubmit} className="space-y-5">
+                    <div className="sr-only" aria-hidden>
+                      <label htmlFor="website">Website</label>
+                      <input
+                        id="website"
+                        name="website"
+                        type="text"
+                        tabIndex={-1}
+                        autoComplete="off"
+                        value={honeypot}
+                        onChange={(e) => setHoneypot(e.target.value)}
+                      />
+                    </div>
+                    {submitError && (
+                      <p
+                        className="rounded-brand border border-red-200/80 bg-red-50 px-4 py-3 text-sm text-red-800"
+                        role="alert"
+                      >
+                        {submitError}
+                      </p>
+                    )}
                     <div className="grid sm:grid-cols-2 gap-4">
                       <div>
                         <label htmlFor="name" className={labelClass}>

@@ -1,13 +1,16 @@
 import type { Metadata } from 'next'
-import { SITE_NAME } from '@/lib/site'
-import { buildPageMetadata } from '@/lib/metadata'
+import { buildPublicPageMetadata } from '@/lib/build-public-metadata'
+import { PublicPageSchema } from '@/components/seo/public-page-schema'
+import { PricingSeoContent } from '@/components/seo/public-page-seo-content'
 
-export const metadata: Metadata = buildPageMetadata({
-  title: 'Pricing',
-  description: `Transparent API pricing for ${SITE_NAME} — free tier, growth plans, and enterprise.`,
-  path: '/pricing',
-})
+export const metadata: Metadata = buildPublicPageMetadata('/pricing')
 
 export default function PricingLayout({ children }: { children: React.ReactNode }) {
-  return children;
+  return (
+    <>
+      <PublicPageSchema path="/pricing" pageName="Pricing" includeProduct />
+      {children}
+      <PricingSeoContent />
+    </>
+  )
 }

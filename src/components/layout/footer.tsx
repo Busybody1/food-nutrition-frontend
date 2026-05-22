@@ -9,6 +9,8 @@ const productLinks = [
   { href: '/changelog', label: 'Changelog' },
 ]
 
+const navPrefetch = { prefetch: false } as const
+
 const legalLinks = [
   { href: '/privacy', label: 'Privacy' },
   { href: '/terms', label: 'Terms' },
@@ -22,8 +24,16 @@ export function Footer() {
       <div className="container-narrow py-14 md:py-16">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-8">
           <div className="md:col-span-5">
-            <Link href="/" className="inline-flex items-center gap-2.5 mb-4">
-              <Image src="/logos/busybody-logo.png" alt={LOGO_ALT} width={32} height={32} className="h-8 w-8" />
+            <Link href="/" className="inline-flex items-center gap-2.5 mb-4" {...navPrefetch}>
+              <span className="relative block h-8 w-8 shrink-0">
+                <Image
+                  src="/logos/busybody-logo.png"
+                  alt={LOGO_ALT}
+                  fill
+                  sizes="32px"
+                  className="object-contain"
+                />
+              </span>
               <span className="text-base font-semibold text-ink">{SITE_NAME}</span>
             </Link>
             <p className="text-ink-muted text-sm max-w-sm leading-relaxed mb-4">
@@ -43,7 +53,7 @@ export function Footer() {
             <ul className="space-y-2.5">
               {productLinks.map(({ href, label }) => (
                 <li key={href}>
-                  <Link href={href} className="text-sm text-ink-muted hover:text-brand-strong transition-colors">
+                  <Link href={href} prefetch={false} className="text-sm text-ink-muted hover:text-brand-strong transition-colors">
                     {label}
                   </Link>
                 </li>
@@ -56,7 +66,7 @@ export function Footer() {
             <ul className="space-y-2.5">
               {legalLinks.map(({ href, label }) => (
                 <li key={href}>
-                  <Link href={href} className="text-sm text-ink-muted hover:text-brand-strong transition-colors">
+                  <Link href={href} prefetch={false} className="text-sm text-ink-muted hover:text-brand-strong transition-colors">
                     {label}
                   </Link>
                 </li>

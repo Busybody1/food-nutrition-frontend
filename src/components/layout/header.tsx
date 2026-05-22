@@ -26,6 +26,8 @@ function isNavActive(pathname: string | null, href: string, exact?: boolean) {
 
 const HERO_BACKGROUND_PATHS = ['/', '/pricing', '/faq', '/contact'] as const
 
+const navPrefetch = { prefetch: false } as const
+
 function hasImageHero(pathname: string | null) {
   return pathname != null && HERO_BACKGROUND_PATHS.some((p) => pathname === p)
 }
@@ -45,14 +47,14 @@ export function Header() {
   return (
     <header className="site-header-shell">
       <div className={cn('site-header-bar', overImageHero && 'site-header-bar--hero')}>
-        <Link href="/" className="site-header-brand">
+        <Link href="/" className="site-header-brand" {...navPrefetch}>
           <span className="site-header-logo-mark">
             <Image
               src="/logos/busybody-logo.png"
               alt={LOGO_ALT}
-              width={28}
-              height={28}
-              className="h-7 w-7 object-contain"
+              fill
+              sizes="40px"
+              className="object-contain p-2"
               priority
             />
           </span>
@@ -63,12 +65,12 @@ export function Header() {
 
         <nav className="hidden md:flex flex-1 items-center justify-center gap-0.5" aria-label="Main">
           {navLinks.map(({ href, label, exact }) => (
-            <Link key={href} href={href} className={navLinkClass(href, exact)}>
+            <Link key={href} href={href} className={navLinkClass(href, exact)} {...navPrefetch}>
               {label}
             </Link>
           ))}
           {isAuthenticated && (
-            <Link href="/dashboard" className={navLinkClass('/dashboard')}>
+            <Link href="/dashboard" className={navLinkClass('/dashboard')} {...navPrefetch}>
               Dashboard
             </Link>
           )}
@@ -85,10 +87,10 @@ export function Header() {
             </button>
           ) : (
             <>
-              <Link href="/auth/login" className="text-sm font-medium text-ink-muted hover:text-ink px-3">
+              <Link href="/auth/login" className="text-sm font-medium text-ink-muted hover:text-ink px-3" {...navPrefetch}>
                 Sign in
               </Link>
-              <Link href="/auth/register" className="site-header-cta">
+              <Link href="/auth/register" className="site-header-cta" {...navPrefetch}>
                 Get API key
               </Link>
             </>
@@ -115,6 +117,7 @@ export function Header() {
             <Link
               key={href}
               href={href}
+              {...navPrefetch}
               className={cn(
                 'block rounded-xl px-4 py-2.5 text-sm font-medium',
                 isNavActive(pathname, href, exact)
@@ -129,6 +132,7 @@ export function Header() {
           {isAuthenticated && (
             <Link
               href="/dashboard"
+              {...navPrefetch}
               className={cn(
                 'block rounded-xl px-4 py-2.5 text-sm font-medium',
                 isNavActive(pathname, '/dashboard')
@@ -145,6 +149,7 @@ export function Header() {
               <>
                 <Link
                   href="/dashboard"
+                  {...navPrefetch}
                   className="site-header-cta h-10 justify-center"
                   onClick={() => setIsMenuOpen(false)}
                 >
@@ -166,6 +171,7 @@ export function Header() {
               <>
                 <Link
                   href="/auth/login"
+                  {...navPrefetch}
                   className="block text-center py-2.5 text-sm font-medium text-ink-muted"
                   onClick={() => setIsMenuOpen(false)}
                 >
@@ -173,6 +179,7 @@ export function Header() {
                 </Link>
                 <Link
                   href="/auth/register"
+                  {...navPrefetch}
                   className="site-header-cta h-10 justify-center"
                   onClick={() => setIsMenuOpen(false)}
                 >

@@ -22,15 +22,15 @@ export function HomeSeoContent() {
           </p>
           <p>
             Explore the{' '}
-            <Link href="/docs" className="text-brand-strong font-medium hover:underline">
+            <Link href="/docs" prefetch={false} className="text-brand-strong font-medium hover:underline">
               API documentation
             </Link>
             , compare{' '}
-            <Link href="/pricing" className="text-brand-strong font-medium hover:underline">
+            <Link href="/pricing" prefetch={false} className="text-brand-strong font-medium hover:underline">
               pricing plans
             </Link>
             , or read answers on the{' '}
-            <Link href="/faq" className="text-brand-strong font-medium hover:underline">
+            <Link href="/faq" prefetch={false} className="text-brand-strong font-medium hover:underline">
               FAQ page
             </Link>
             . For standards on nutrition labeling, see the{' '}

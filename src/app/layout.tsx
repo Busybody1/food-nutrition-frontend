@@ -15,12 +15,20 @@ import {
   OG_IMAGE_ALT,
 } from '@/lib/site'
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-sans', display: 'swap' })
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-sans',
+  display: 'swap',
+  adjustFontFallback: true,
+  preload: false,
+})
 const garamond = EB_Garamond({
   subsets: ['latin'],
-  weight: ['400', '600'],
+  weight: ['600'],
   variable: '--font-display',
   display: 'swap',
+  adjustFontFallback: true,
+  preload: false,
 })
 
 export const metadata: Metadata = {
@@ -69,7 +77,6 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: '/logos/busybody-logo.png',
-    apple: '/logos/busybody-logo.png',
   },
   verification: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION
     ? { google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION }
@@ -80,16 +87,14 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`h-full ${inter.variable} ${garamond.variable}`}>
-      <head>
-        <StructuredData type="organization" />
-        <StructuredData type="website" />
-      </head>
       <body className="h-full font-sans">
         <ErrorBoundary>
           <AuthProvider>
             <ConditionalLayout>{children}</ConditionalLayout>
           </AuthProvider>
         </ErrorBoundary>
+        <StructuredData type="organization" />
+        <StructuredData type="website" />
       </body>
     </html>
   )

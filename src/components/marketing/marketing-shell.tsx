@@ -81,11 +81,11 @@ export function MarketingCtaBand({
         <h2 className="font-display text-3xl md:text-4xl text-ink mb-4 text-balance">{title}</h2>
         <p className="text-ink-muted max-w-lg mx-auto mb-8 leading-relaxed">{description}</p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <Link href={primaryHref} className="btn-brand">
+          <Link href={primaryHref} prefetch={false} className="btn-brand">
             {primaryLabel}
           </Link>
           {secondaryHref && secondaryLabel && (
-            <Link href={secondaryHref} className="btn-brand-outline">
+            <Link href={secondaryHref} prefetch={false} className="btn-brand-outline">
               {secondaryLabel}
             </Link>
           )}

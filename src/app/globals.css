@@ -137,7 +137,7 @@
   }
 
   .site-header-logo-mark {
-    @apply flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white p-2 ring-1 ring-surface-border/50;
+    @apply relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white ring-1 ring-surface-border/50;
   }
 
   .site-header-cta {
@@ -196,6 +196,18 @@
   .marketing-faq-trigger {
     @apply w-full flex items-center justify-between text-left gap-4 py-1 font-medium text-ink
       hover:text-brand-strong transition-colors;
+  }
+
+  .marketing-faq-summary {
+    list-style: none;
+  }
+
+  .marketing-faq-summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .marketing-faq-item[open] .marketing-faq-chevron {
+    @apply rotate-180;
   }
 
   .marketing-code-window {

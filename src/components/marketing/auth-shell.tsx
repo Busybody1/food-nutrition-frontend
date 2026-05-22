@@ -17,13 +17,15 @@ export function AuthShell({
       <div className="max-w-md w-full space-y-8 relative z-10">
         <div className="text-center">
           <Link href="/" className="inline-flex items-center gap-2.5 group">
-            <Image
-              src="/logos/busybody-logo.png"
-              alt={`${SITE_NAME} logo`}
-              width={40}
-              height={40}
-              className="h-10 w-10"
-            />
+            <span className="relative block h-10 w-10 shrink-0">
+              <Image
+                src="/logos/busybody-logo.png"
+                alt={`${SITE_NAME} logo`}
+                fill
+                sizes="40px"
+                className="object-contain"
+              />
+            </span>
             <span className="font-semibold text-lg text-ink tracking-tight">{SITE_NAME}</span>
           </Link>
           <h1 className="mt-8 font-display text-3xl text-ink tracking-tight">{title}</h1>

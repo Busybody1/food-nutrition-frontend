@@ -1,12 +1,10 @@
 import type { Metadata } from 'next'
 import { MarketingHero } from '@/components/marketing/marketing-hero'
-import { buildPageMetadata } from '@/lib/metadata'
+import { buildPublicPageMetadata } from '@/lib/build-public-metadata'
+import { PublicPageSchema } from '@/components/seo/public-page-schema'
+import { ChangelogSeoContent } from '@/components/seo/public-page-seo-content'
 
-export const metadata: Metadata = buildPageMetadata({
-  title: 'Changelog',
-  description: 'Release notes and API updates for the Calorie API platform.',
-  path: '/changelog',
-})
+export const metadata: Metadata = buildPublicPageMetadata('/changelog')
 
 const entries = [
   {
@@ -29,6 +27,7 @@ const entries = [
 export default function ChangelogPage() {
   return (
     <div className="marketing-page">
+      <PublicPageSchema path="/changelog" pageName="Changelog" />
       <MarketingHero title="Changelog" subtitle="Product updates, API changes, and platform improvements." compact />
       <section className="pb-20 md:pb-28 -mt-4">
         <div className="container-narrow max-w-2xl">
@@ -45,6 +44,8 @@ export default function ChangelogPage() {
           </ul>
         </div>
       </section>
+
+      <ChangelogSeoContent />
     </div>
   )
 }

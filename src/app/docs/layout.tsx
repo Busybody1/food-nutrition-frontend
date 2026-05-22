@@ -1,13 +1,18 @@
 import type { Metadata } from 'next'
-import { SITE_NAME } from '@/lib/site'
-import { buildPageMetadata } from '@/lib/metadata'
+import { buildPublicPageMetadata } from '@/lib/build-public-metadata'
+import { PublicPageSchema } from '@/components/seo/public-page-schema'
+import { DocsSeoContent } from '@/components/seo/public-page-seo-content'
+import { StructuredData } from '@/components/seo/structured-data'
 
-export const metadata: Metadata = buildPageMetadata({
-  title: 'API Documentation',
-  description: `Integrate ${SITE_NAME}: authentication, search, barcode lookup, rate limits, and code examples.`,
-  path: '/docs',
-})
+export const metadata: Metadata = buildPublicPageMetadata('/docs')
 
 export default function DocsLayout({ children }: { children: React.ReactNode }) {
-  return children;
+  return (
+    <>
+      <PublicPageSchema path="/docs" pageName="Documentation" />
+      <StructuredData type="api" />
+      {children}
+      <DocsSeoContent />
+    </>
+  )
 }
