@@ -67,7 +67,7 @@ export default function HomePage() {
           </p>
           <div className="mt-10 flex flex-col sm:flex-row gap-3 justify-center">
             <Link href="/auth/register" className="btn-brand">
-              Get API key — free
+              Get API key for Free
             </Link>
             <Link href="/docs" className="btn-brand-outline">
               Read documentation
@@ -90,7 +90,7 @@ export default function HomePage() {
           <MarketingSectionHeader
             label="Live demo"
             title="Try the API in seconds"
-            description="Run a real search against our public demo endpoint — no signup required."
+            description="Run a real search against our public demo endpoint, no signup required."
           />
           <ApiPlayground />
         </div>
