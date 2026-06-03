@@ -17,13 +17,24 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode
 }) {
-  const { user, isAdmin, isSuperAdmin, hasPermission } = useAdmin()
+  const { user, isAdmin, isSuperAdmin, hasPermission, isLoading } = useAdmin()
   const router = useRouter()
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   const handleLogout = () => {
     // In a real app, you'd call logout from the auth hook
     router.push('/')
+  }
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <Shield className="w-16 h-16 text-gray-400 mx-auto mb-4 animate-pulse" />
+          <p className="text-gray-600">Verifying admin access...</p>
+        </div>
+      </div>
+    )
   }
 
   if (!isAdmin) {

@@ -31,39 +31,70 @@ const ADMIN_PERMISSIONS = {
   UPDATE_USERS: 'admin:users:update',
   DELETE_USERS: 'admin:users:delete',
   MANAGE_USER_STATUS: 'admin:users:status',
-  
+
   // Analytics
   VIEW_ANALYTICS: 'admin:analytics:view',
   EXPORT_DATA: 'admin:analytics:export',
-  
+
   // Monitoring
   VIEW_MONITORING: 'admin:monitoring:view',
   MANAGE_ALERTS: 'admin:monitoring:alerts',
   VIEW_LOGS: 'admin:monitoring:logs',
-  
+
   // Settings
   VIEW_SETTINGS: 'admin:settings:view',
   UPDATE_SETTINGS: 'admin:settings:update',
   SYSTEM_ACTIONS: 'admin:system:actions',
-  
+
   // Billing
   VIEW_BILLING: 'admin:billing:view',
   MANAGE_BILLING: 'admin:billing:manage',
-  
+
   // API Management
   VIEW_API_KEYS: 'admin:api:view',
   MANAGE_API_KEYS: 'admin:api:manage',
   VIEW_RATE_LIMITS: 'admin:api:rate_limits',
-  
+
   // Reports
   VIEW_REPORTS: 'admin:reports:view',
   GENERATE_REPORTS: 'admin:reports:generate'
 } as const
 
+const DEFAULT_ADMIN_PERMISSIONS = Object.values(ADMIN_PERMISSIONS)
+
+function buildAdminUser(
+  authUser: NonNullable<ReturnType<typeof useAuth>['user']>,
+  profile?: Partial<AdminUserResponse>
+): AdminUser {
+  const permissions =
+    profile?.permissions && profile.permissions.length > 0
+      ? profile.permissions
+      : DEFAULT_ADMIN_PERMISSIONS
+
+  return {
+    id: authUser.id,
+    email: authUser.email,
+    first_name: authUser.first_name,
+    last_name: authUser.last_name,
+    company_name: authUser.company_name,
+    is_active: true,
+    is_admin: true,
+    email_verified: authUser.email_verified,
+    created_at: authUser.created_at,
+    plan_name: profile?.plan_name,
+    is_super_admin: profile?.is_super_admin ?? false,
+    permissions,
+  }
+}
+
+function buildHasPermission(permissions: string[]) {
+  return (permission: string): boolean => permissions.includes(permission)
+}
+
 export function useAdmin(): AdminAuthState {
-  const { user: authUser, isAuthenticated: authIsAuthenticated } = useAuth()
+  const { user: authUser, isAuthenticated: authIsAuthenticated, loading: authLoading } = useAuth()
   const router = useRouter()
-  
+
   const [adminState, setAdminState] = useState<AdminAuthState>({
     user: null,
     isAuthenticated: false,
@@ -73,77 +104,87 @@ export function useAdmin(): AdminAuthState {
     hasPermission: () => false
   })
 
-  // Check if user has admin privileges
   const checkAdminAccess = useCallback(async () => {
-    if (!authIsAuthenticated || !authUser) {
-      setAdminState(prev => ({
-        ...prev,
-        user: null,
-        isAuthenticated: false,
-        isLoading: false,
-        isAdmin: false,
-        isSuperAdmin: false,
-        hasPermission: () => false
-      }))
+    if (authLoading) {
+      setAdminState(prev => ({ ...prev, isLoading: true }))
       return
     }
 
-    try {
-      // Import admin API
-      const { adminAPI } = await import('@/lib/api/admin')
-      
-      // Check admin access via API
-      const adminResponse = await adminAPI.getAdminUser(authUser.id) as AdminUserResponse
-      const adminUser: AdminUser = {
-        ...adminResponse,
-        is_super_admin: adminResponse.is_super_admin || false,
-        permissions: adminResponse.permissions || []
-      }
-
-      const hasPermission = (permission: string): boolean => {
-        return adminUser.permissions.includes(permission)
-      }
-
+    if (!authIsAuthenticated || !authUser) {
       setAdminState({
-        user: adminUser,
-        isAuthenticated: true,
-        isLoading: false,
-        isAdmin: adminUser.is_admin,
-        isSuperAdmin: adminUser.is_super_admin,
-        hasPermission
-      })
-
-    } catch (error) {
-      console.error('Failed to check admin access:', error)
-      setAdminState(prev => ({
-        ...prev,
         user: null,
         isAuthenticated: false,
         isLoading: false,
         isAdmin: false,
         isSuperAdmin: false,
         hasPermission: () => false
-      }))
+      })
+      return
     }
-  }, [authIsAuthenticated, authUser])
+
+    if (!authUser.is_admin) {
+      setAdminState({
+        user: null,
+        isAuthenticated: true,
+        isLoading: false,
+        isAdmin: false,
+        isSuperAdmin: false,
+        hasPermission: () => false
+      })
+      return
+    }
+
+    const adminUser = buildAdminUser(authUser)
+    const permissions = adminUser.permissions
+
+    setAdminState({
+      user: adminUser,
+      isAuthenticated: true,
+      isLoading: false,
+      isAdmin: true,
+      isSuperAdmin: adminUser.is_super_admin,
+      hasPermission: buildHasPermission(permissions)
+    })
+
+    try {
+      const { adminAPI } = await import('@/lib/api/admin')
+      const profile = await adminAPI.getAdminUser(authUser.id) as AdminUserResponse
+      const enrichedUser = buildAdminUser(authUser, profile)
+      setAdminState({
+        user: enrichedUser,
+        isAuthenticated: true,
+        isLoading: false,
+        isAdmin: true,
+        isSuperAdmin: enrichedUser.is_super_admin,
+        hasPermission: buildHasPermission(enrichedUser.permissions)
+      })
+    } catch (error) {
+      console.warn('Admin profile enrichment failed; using session admin access:', error)
+    }
+  }, [authLoading, authIsAuthenticated, authUser])
 
   useEffect(() => {
     checkAdminAccess()
   }, [checkAdminAccess])
 
-  // Redirect to login if not authenticated
   useEffect(() => {
-    if (!adminState.isLoading && !adminState.isAuthenticated) {
-      router.push('/auth/login')
-    }
-  }, [adminState.isLoading, adminState.isAuthenticated, router])
+    if (authLoading || adminState.isLoading) return
 
-  // Redirect to dashboard if not admin
-  useEffect(() => {
-    if (!adminState.isLoading && adminState.isAuthenticated && !adminState.isAdmin) {
+    if (!authIsAuthenticated) {
+      router.push('/auth/login')
+      return
+    }
+
+    if (!adminState.isAdmin) {
       router.push('/dashboard')
     }
-  }, [adminState.isLoading, adminState.isAuthenticated, adminState.isAdmin, router])
+  }, [
+    authLoading,
+    authIsAuthenticated,
+    adminState.isLoading,
+    adminState.isAdmin,
+    router
+  ])
 
   return adminState
 }
@@ -157,22 +198,22 @@ export function useAdminPermission(permission: string): boolean {
 // Hook for admin-only components
 export function useRequireAdmin() {
   const { isAdmin, isLoading } = useAdmin()
-  
+
   if (!isLoading && !isAdmin) {
     throw new Error('Admin access required')
   }
-  
+
   return { isAdmin, isLoading }
 }
 
 // Hook for super admin-only components
 export function useRequireSuperAdmin() {
   const { isSuperAdmin, isLoading } = useAdmin()
-  
+
   if (!isLoading && !isSuperAdmin) {
     throw new Error('Super admin access required')
   }
-  
+
   return { isSuperAdmin, isLoading }
 }
 
