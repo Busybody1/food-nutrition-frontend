@@ -1,4 +1,26 @@
-import { API_CONFIG } from '@/lib/config/api'
+import { apiClient } from '@/lib/api/client'
+
+const BASE = '/api/v1/admin'
+
+async function adminGet<T>(path: string, params?: Record<string, unknown>): Promise<T> {
+  const res = await apiClient.get<T>(`${BASE}${path}`, params)
+  return res.data
+}
+
+async function adminPost<T>(path: string, data?: unknown): Promise<T> {
+  const res = await apiClient.post<T>(`${BASE}${path}`, data)
+  return res.data
+}
+
+async function adminPut<T>(path: string, data?: unknown): Promise<T> {
+  const res = await apiClient.put<T>(`${BASE}${path}`, data)
+  return res.data
+}
+
+async function adminPatch<T>(path: string, data?: unknown): Promise<T> {
+  const res = await apiClient.patch<T>(`${BASE}${path}`, data)
+  return res.data
+}
 
 export interface AdminUser {
   id: number
@@ -10,6 +32,7 @@ export interface AdminUser {
   is_admin: boolean
   email_verified: boolean
   created_at: string
+  plan_id?: number
   plan_name?: string
   last_login?: string
   plan_price?: number
@@ -31,52 +54,44 @@ export interface AdminStats {
   systemUptime: number
 }
 
-export interface UsageAnalytics {
-  totalRequests: number
-  requestsToday: number
-  requestsThisWeek: number
-  requestsThisMonth: number
-  requestsThisYear: number
-  averageResponseTime: number
-  errorRate: number
-  uniqueUsers: number
-  topEndpoints: Array<{
+export interface AdminAnalytics {
+  total_users: number
+  active_users: number
+  total_requests: number
+  avg_response_time_ms: number
+  error_rate_percent: number
+  top_endpoints: Array<{
     endpoint: string
-    requests: number
-    percentage: number
+    request_count: number
+    avg_response_time: number
+    error_count: number
   }>
-  topUsers: Array<{
-    user: string
-    requests: number
-    plan: string
+  top_users: Array<{
+    email: string
+    first_name?: string
+    last_name?: string
+    request_count: number
+    avg_response_time: number
   }>
-  hourlyData: Array<{
-    hour: number
-    requests: number
-  }>
-  dailyData: Array<{
+  daily_usage: Array<{
     date: string
     requests: number
-    users: number
+    errors: number
+    avg_response_time: number
+    active_users: number
   }>
-  monthlyData: Array<{
-    month: string
-    requests: number
-    revenue: number
-  }>
-  yearlyData: Array<{
-    year: number
-    requests: number
-    revenue: number
-  }>
+  hourly_pattern: Array<{ hour: number; requests: number; avg_response_time: number }>
+  response_time_distribution: Array<{ response_time_range: string; count: number }>
+  status_code_distribution: Array<{ status_code: number; count: number }>
+  time_range: string
 }
 
-export interface SystemStatus {
-  overall: 'healthy' | 'warning' | 'critical'
-  uptime: number
-  responseTime: number
-  errorRate: number
-  throughput: number
+export interface SystemSettingRow {
+  setting_key: string
+  setting_value: string
+  setting_type: string
+  description?: string
+  updated_at?: string
 }
 
 export interface ServiceStatus {
@@ -85,7 +100,7 @@ export interface ServiceStatus {
   uptime: number
   responseTime: number
   lastCheck: string
-  description: string
+  description?: string
 }
 
 export interface Alert {
@@ -107,19 +122,6 @@ export interface LogEntry {
   details?: Record<string, unknown>
 }
 
-export interface SystemSettings {
-  maintenanceMode: boolean
-  apiRateLimit: number
-  maxUsers: number
-  defaultPlan: string
-  emailNotifications: boolean
-  slackWebhook: string
-  backupFrequency: string
-  logRetention: number
-  securityLevel: 'low' | 'medium' | 'high'
-  allowedOrigins: string[]
-}
-
 export interface EnvironmentInfo {
   nodeVersion: string
   databaseVersion: string
@@ -128,284 +130,209 @@ export interface EnvironmentInfo {
   memoryUsage: string
   diskUsage: string
   lastBackup: string
+  activeSubscriptions?: number
+  requestsToday?: number
+  errorRateToday?: number
+  systemLoad?: number
+}
+
+export interface ApiRequestRow {
+  id: number
+  user_id?: number
+  email?: string
+  api_key_id?: number
+  endpoint: string
+  method: string
+  status_code: number
+  response_time_ms: number
+  ip_address?: string
+  created_at: string
+}
+
+export interface AdminPlan {
+  id: number
+  name: string
+  description?: string
+  monthly_price?: number
+  monthly_quota?: number
+  rate_limit_per_minute?: number
+  is_active: boolean
+  plan_tier?: string
+  max_api_keys?: number
+  stripe_price_id?: string
+}
+
+export interface AuditEntry {
+  id: number
+  admin_user_id: number
+  admin_email?: string
+  action: string
+  target_type?: string
+  target_id?: string
+  metadata?: Record<string, unknown>
+  ip_address?: string
+  created_at: string
+}
+
+export interface UserUsagePayload {
+  user_id: number
+  time_range: string
+  summary: Record<string, number>
+  daily: Array<{ date: string; requests: number; errors: number }>
+  by_endpoint: Array<{ endpoint: string; requests: number; avg_response_time: number }>
+  status_mix: Array<{ status_code: number; count: number }>
 }
 
 class AdminAPI {
-  private baseUrl = '/api/v1/admin' // Fixed: added /api prefix
-
-  private async makeRequest<T>(
-    endpoint: string,
-    options: RequestInit = {}
-  ): Promise<T> {
-    const url = `${API_CONFIG.baseURL}${endpoint}`
-    
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-    }
-
-    // Handle existing headers from options
-    if (options.headers) {
-      if (Array.isArray(options.headers)) {
-        options.headers.forEach(([key, value]) => {
-          headers[key] = value
-        })
-      } else if (options.headers instanceof Headers) {
-        options.headers.forEach((value, key) => {
-          headers[key] = value
-        })
-      } else {
-        Object.entries(options.headers).forEach(([key, value]) => {
-          if (typeof value === 'string') {
-            headers[key] = value
-          }
-        })
-      }
-    }
-
-    // Add authentication headers if available
-    const token = localStorage.getItem('access_token')
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`
-    }
-
-    const response = await fetch(url, {
-      ...options,
-      headers,
-    })
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}))
-      throw new Error(
-        errorData.detail || 
-        errorData.message || 
-        `API Error: ${response.status} ${response.statusText}`
-      )
-    }
-
-    return response.json()
-  }
-
-  // User Management
-  async getUsers(params?: {
-    search?: string
-    status?: 'all' | 'active' | 'inactive'
-    plan?: 'all' | 'free' | 'basic' | 'core' | 'plus' | 'custom'
-    sortBy?: 'created_at' | 'last_login' | 'total_requests' | 'email'
-    sortOrder?: 'asc' | 'desc'
-    limit?: number
-    skip?: number
-  }): Promise<{ users: AdminUser[]; total: number }> {
-    const queryParams = new URLSearchParams()
-    if (params) {
-      Object.entries(params).forEach(([key, value]) => {
-        if (value !== undefined) {
-          queryParams.append(key, value.toString())
-        }
-      })
-    }
-    const url = `${this.baseUrl}/users${queryParams.toString() ? `?${queryParams.toString()}` : ''}`
-    return this.makeRequest<{ users: AdminUser[]; total: number }>(url)
+  async getUsers(params?: Record<string, unknown>): Promise<{ users: AdminUser[]; total: number }> {
+    return adminGet('/users', params)
   }
 
   async getUser(userId: number): Promise<AdminUser> {
-    return this.makeRequest<AdminUser>(`${this.baseUrl}/users/${userId}`)
+    return adminGet(`/users/${userId}`)
   }
 
-  async updateUser(userId: number, data: Partial<AdminUser>): Promise<AdminUser> {
-    return this.makeRequest<AdminUser>(`${this.baseUrl}/users/${userId}`, {
-      method: 'PUT',
-      body: JSON.stringify(data)
-    })
+  async getAdminUser(userId: number): Promise<AdminUser> {
+    return this.getUser(userId)
   }
 
-  async deleteUser(userId: number): Promise<void> {
-    await this.makeRequest<void>(`${this.baseUrl}/users/${userId}`, {
-      method: 'DELETE'
-    })
+  async patchUser(
+    userId: number,
+    data: { is_active?: boolean; is_admin?: boolean; plan_id?: number }
+  ): Promise<{ message: string }> {
+    return adminPatch(`/users/${userId}`, data)
   }
 
   async activateUser(userId: number): Promise<void> {
-    await this.makeRequest<void>(`${this.baseUrl}/users/${userId}/status`, {
-      method: 'PUT',
-      body: JSON.stringify({ is_active: true }),
-    })
+    await adminPut(`/users/${userId}/status`, { is_active: true })
   }
 
   async deactivateUser(userId: number): Promise<void> {
-    await this.makeRequest<void>(`${this.baseUrl}/users/${userId}/status`, {
-      method: 'PUT',
-      body: JSON.stringify({ is_active: false }),
-    })
+    await adminPut(`/users/${userId}/status`, { is_active: false })
   }
 
-  async bulkAction(action: string, userIds: number[]): Promise<void> {
-    await this.makeRequest<void>(`${this.baseUrl}/users/bulk-action`, {
-      method: 'POST',
-      body: JSON.stringify({
-        action,
-        user_ids: userIds
-      })
-    })
+  async getUserUsage(userId: number, timeRange = '30d'): Promise<UserUsagePayload> {
+    return adminGet(`/users/${userId}/usage`, { time_range: timeRange })
   }
 
-  // Dashboard Stats
-  async getDashboardStats(): Promise<AdminStats> {
-    return this.makeRequest<AdminStats>(`${this.baseUrl}/platform-usage`)
+  async getUserRequests(userId: number, limit = 50): Promise<{ requests: ApiRequestRow[] }> {
+    return adminGet(`/users/${userId}/requests`, { limit })
   }
 
-  async getRecentActivity(limit: number = 10): Promise<Record<string, unknown>[]> {
-    const url = `${this.baseUrl}/analytics?limit=${limit}`
-    return this.makeRequest<Record<string, unknown>[]>(url)
+  async getUserApiKeys(userId: number): Promise<{ api_keys: Array<Record<string, unknown>> }> {
+    return adminGet(`/users/${userId}/api-keys`)
   }
 
-  // Analytics
-  async getUsageAnalytics(timeRange: 'daily' | 'monthly' | 'yearly'): Promise<UsageAnalytics> {
-    const url = `${this.baseUrl}/analytics?time_range=${timeRange}`
-    return this.makeRequest<UsageAnalytics>(url)
-  }
-
-  async getTopEndpoints(limit: number = 10): Promise<Record<string, unknown>[]> {
-    const url = `${this.baseUrl}/analytics?limit=${limit}`
-    return this.makeRequest<Record<string, unknown>[]>(url)
-  }
-
-  async getTopUsers(limit: number = 10): Promise<Record<string, unknown>[]> {
-    const url = `${this.baseUrl}/analytics?limit=${limit}`
-    return this.makeRequest<Record<string, unknown>[]>(url)
-  }
-
-  // Monitoring
-  async getSystemStatus(): Promise<SystemStatus> {
-    return this.makeRequest<SystemStatus>(`${this.baseUrl}/system-info`)
-  }
-
-  async getServicesStatus(): Promise<ServiceStatus[]> {
-    return this.makeRequest<ServiceStatus[]>(`${this.baseUrl}/system-info`)
-  }
-
-  async getAlerts(resolved?: boolean): Promise<Alert[]> {
-    const url = `${this.baseUrl}/system-info${resolved !== undefined ? `?resolved=${resolved}` : ''}`
-    return this.makeRequest<Alert[]>(url)
-  }
-
-  async getLogs(params?: {
-    level?: string
-    service?: string
-    limit?: number
-    offset?: number
-  }): Promise<{ logs: LogEntry[]; total: number }> {
-    const queryParams = new URLSearchParams()
-    if (params) {
-      Object.entries(params).forEach(([key, value]) => {
-        if (value !== undefined) {
-          queryParams.append(key, value.toString())
-        }
-      })
-    }
-    const url = `${this.baseUrl}/system-info${queryParams.toString() ? `?${queryParams.toString()}` : ''}`
-    return this.makeRequest<{ logs: LogEntry[]; total: number }>(url)
-  }
-
-  async resolveAlert(alertId: string): Promise<void> {
-    await this.makeRequest<void>(`${this.baseUrl}/monitoring/alerts/${alertId}/resolve`, {
-      method: 'POST'
-    })
-  }
-
-  // Analytics
-  async getAnalytics(params?: {
-    timeRange?: '7d' | '30d' | '90d' | '1y'
-    startDate?: string
-    endDate?: string
-  }): Promise<UsageAnalytics> {
-    const queryParams = new URLSearchParams()
-    if (params) {
-      Object.entries(params).forEach(([key, value]) => {
-        if (value !== undefined) {
-          queryParams.append(key, value.toString())
-        }
-      })
-    }
-    const url = `${this.baseUrl}/analytics${queryParams.toString() ? `?${queryParams.toString()}` : ''}`
-    return this.makeRequest<UsageAnalytics>(url)
+  async revokeUserApiKey(userId: number, keyId: number): Promise<{ message: string }> {
+    return adminPost(`/users/${userId}/api-keys/${keyId}/revoke`)
   }
 
   async getSystemMetrics(): Promise<AdminStats> {
-    return this.makeRequest<AdminStats>(`${this.baseUrl}/metrics`)
+    return adminGet('/metrics')
   }
 
-  // Settings
-  async getSystemSettings(): Promise<SystemSettings> {
-    return this.makeRequest<SystemSettings>(`${this.baseUrl}/settings`)
+  async getAnalytics(timeRange: '7d' | '30d' | '90d' | '1y' = '7d'): Promise<AdminAnalytics> {
+    return adminGet('/analytics', { time_range: timeRange })
   }
 
-  async updateSystemSettings(settings: Partial<SystemSettings>): Promise<SystemSettings> {
-    return this.makeRequest<SystemSettings>(`${this.baseUrl}/settings`, {
-      method: 'PUT',
-      body: JSON.stringify(settings)
-    })
+  async getApiRequests(params?: Record<string, unknown>): Promise<{ requests: ApiRequestRow[] }> {
+    return adminGet('/requests', params)
+  }
+
+  async getPlans(): Promise<{ plans: AdminPlan[] }> {
+    return adminGet('/plans')
+  }
+
+  async patchPlan(
+    planId: number,
+    data: { monthly_quota?: number; rate_limit_per_minute?: number; is_active?: boolean; description?: string }
+  ): Promise<{ message: string }> {
+    return adminPatch(`/plans/${planId}`, data)
+  }
+
+  async getPlanFeatures(planId: number): Promise<{ features: Array<Record<string, unknown>> }> {
+    return adminGet(`/plans/${planId}/features`)
+  }
+
+  async upsertPlanFeature(
+    planId: number,
+    data: { feature_name: string; feature_value?: boolean; feature_limit?: number | null }
+  ): Promise<{ message: string }> {
+    return adminPut(`/plans/${planId}/features`, data)
+  }
+
+  async getSubscriptions(params?: Record<string, unknown>): Promise<{ subscriptions: Array<Record<string, unknown>> }> {
+    return adminGet('/subscriptions', params)
+  }
+
+  async getRevenueSummary(): Promise<Record<string, unknown>> {
+    return adminGet('/revenue/summary')
+  }
+
+  async getRevenueTimeseries(months = 12): Promise<{ timeseries: Array<Record<string, unknown>> }> {
+    return adminGet('/revenue/timeseries', { months })
+  }
+
+  async getAuditLog(params?: Record<string, unknown>): Promise<{ entries: AuditEntry[] }> {
+    return adminGet('/audit-log', params)
+  }
+
+  async getAnnouncementEmailStatus(): Promise<{
+    resend_configured: boolean
+    smtp_configured: boolean
+    provider: 'resend' | 'smtp' | 'none'
+    from_email?: string | null
+  }> {
+    return adminGet('/announcements/status')
+  }
+
+  async sendAnnouncement(data: {
+    subject: string
+    body_html: string
+    recipient_mode: 'all' | 'active' | 'plan'
+    plan_id?: number
+    limit?: number
+  }): Promise<{
+    message: string
+    sent: number
+    failed?: number
+    total_recipients: number
+    provider?: string
+  }> {
+    return adminPost('/announcements/email', data)
+  }
+
+  async getAnnouncementHistory(limit = 20): Promise<{ announcements: Array<Record<string, unknown>> }> {
+    return adminGet('/announcements/history', { limit })
+  }
+
+  async getSystemSettings(): Promise<SystemSettingRow[]> {
+    return adminGet('/settings')
+  }
+
+  async updateSystemSetting(settingKey: string, settingValue: string): Promise<SystemSettingRow> {
+    return adminPut(`/settings/${settingKey}`, { setting_value: settingValue })
+  }
+
+  async setMaintenanceMode(enabled: boolean): Promise<{ message: string }> {
+    return adminPost('/maintenance', { maintenance_mode: enabled })
   }
 
   async getEnvironmentInfo(): Promise<EnvironmentInfo> {
-    return this.makeRequest<EnvironmentInfo>(`${this.baseUrl}/environment`)
+    return adminGet('/environment')
   }
 
-  // System Actions
-  async restartService(serviceName: string): Promise<void> {
-    await this.makeRequest<void>(`${this.baseUrl}/system/restart`, {
-      method: 'POST',
-      body: JSON.stringify({ service: serviceName })
-    })
-  }
-
-  async clearCache(): Promise<void> {
-    await this.makeRequest<void>(`${this.baseUrl}/system/clear-cache`, {
-      method: 'POST'
-    })
-  }
-
-  async createBackup(): Promise<{ backupId: string; message: string }> {
-    return this.makeRequest<{ backupId: string; message: string }>(`${this.baseUrl}/system/backup`, {
-      method: 'POST'
-    })
-  }
-
-  async exportData(format: 'csv' | 'json' | 'xlsx'): Promise<Blob> {
-    const url = `${this.baseUrl}/export?format=${format}`
-    return this.makeRequest<Blob>(url)
-  }
-
-  // Health Checks
-  async healthCheck(): Promise<{ status: string; timestamp: string; services: Record<string, unknown>[] }> {
-    return this.makeRequest<{ status: string; timestamp: string; services: Record<string, unknown>[] }>(`${this.baseUrl}/health`)
-  }
-
-  async databaseHealth(): Promise<{ status: string; latency: number; connections: number }> {
-    return this.makeRequest<{ status: string; latency: number; connections: number }>(`${this.baseUrl}/health/database`)
-  }
-
-  async redisHealth(): Promise<{ status: string; latency: number; memory: string }> {
-    return this.makeRequest<{ status: string; latency: number; memory: string }>(`${this.baseUrl}/health/redis`)
-  }
-
-  // Admin user access
-  async getAdminUser(userId: number): Promise<AdminUser> {
-    return this.makeRequest<AdminUser>(`${this.baseUrl}/users/${userId}`)
-  }
-
-  // System health
   async getSystemHealth(): Promise<{
-    services: ServiceStatus[];
-    alerts: Alert[];
-    logs: LogEntry[];
+    services: ServiceStatus[]
+    alerts: Alert[]
+    logs: LogEntry[]
   }> {
-    return this.makeRequest<{
-      services: ServiceStatus[];
-      alerts: Alert[];
-      logs: LogEntry[];
-    }>(`${this.baseUrl}/system/health`)
+    return adminGet('/system/health')
   }
 
+  async getPlatformUsage(): Promise<Record<string, unknown>> {
+    return adminGet('/platform-usage')
+  }
 }
 
 export const adminAPI = new AdminAPI()

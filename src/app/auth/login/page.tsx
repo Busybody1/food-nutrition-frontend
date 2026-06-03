@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { AuthShell } from '@/components/marketing/auth-shell'
 import { useAuth } from '@/lib/hooks/use-auth'
+import { getPostLoginPath } from '@/lib/auth/post-login-path'
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
 
 export default function LoginPage() {
@@ -16,14 +17,14 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
 
-  const { login, isAuthenticated, loading } = useAuth()
+  const { login, isAuthenticated, loading, user } = useAuth()
   const router = useRouter()
 
   useEffect(() => {
-    if (!loading && isAuthenticated) {
-      router.push('/dashboard')
+    if (!loading && isAuthenticated && user) {
+      router.push(getPostLoginPath(user))
     }
-  }, [isAuthenticated, loading, router])
+  }, [isAuthenticated, loading, user, router])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -33,7 +34,7 @@ export default function LoginPage() {
     try {
       const result = await login({ email, password })
       if (result.success) {
-        router.push('/dashboard')
+        router.push(getPostLoginPath(result.user))
       } else {
         setError(result.error || 'Login failed')
       }

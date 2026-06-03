@@ -19,6 +19,7 @@ import {
   Database,
 } from 'lucide-react'
 import { DocsCodeBlock } from '@/components/docs/docs-code-block'
+import { MarketingImageHero } from '@/components/marketing/marketing-image-hero'
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '') || 'http://localhost:8000'
 const SEARCH_URL = `${API_BASE}/api/v1/search/foods`
@@ -207,8 +208,21 @@ print_r($data);
 }`
 
   return (
-    <div className="marketing-page min-h-screen">
-      <div className="docs-layout">
+    <div className="marketing-page docs-page min-h-screen">
+      <MarketingImageHero compact centered waveTone="white">
+        <p className="marketing-hero-badge mb-4 inline-flex">Documentation</p>
+        <h1 className="font-display text-4xl md:text-5xl text-ink mb-4 text-balance">
+          {SITE_NAME} reference
+        </h1>
+        <p className="text-lg text-ink-muted max-w-2xl mx-auto">
+          Search, retrieve, and analyze nutritional information with our REST API over HTTPS.
+        </p>
+        <p className="mt-4 text-sm text-ink-muted">
+          Base URL: <code className="docs-inline-code">{API_BASE}/api/v1</code>
+        </p>
+      </MarketingImageHero>
+
+      <div className="docs-layout bg-white -mt-1">
         {!sidebarOpen && (
           <button
             type="button"
@@ -266,20 +280,7 @@ print_r($data);
         </aside>
 
         <main className="docs-main">
-          <section id="introduction" className="mb-12 scroll-mt-24">
-            <p className="marketing-section-label mb-3">Documentation</p>
-            <h1 className="font-display text-3xl sm:text-4xl text-ink mb-4 text-balance">
-              {SITE_NAME} reference
-            </h1>
-            <p className="text-base sm:text-lg text-ink-muted mb-4 max-w-3xl leading-relaxed">
-              Access comprehensive food nutrition data with our REST API. Search, retrieve, and
-              analyze nutritional information using JSON over HTTPS.
-            </p>
-            <p className="text-sm text-ink-muted mb-6">
-              Base URL:{' '}
-              <code className="docs-inline-code">{API_BASE}/api/v1</code>
-            </p>
-
+          <section id="introduction" className="mb-12 scroll-mt-[calc(var(--site-header-offset)+1rem)]">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8 max-w-3xl">
               <div className="flex items-center gap-2 rounded-brand border border-surface-border px-4 py-3 text-sm text-ink-muted">
                 <Key className="h-4 w-4 text-brand shrink-0" />
@@ -658,7 +659,7 @@ print_r($data);
           </footer>
         </main>
 
-        <aside className="hidden xl:block w-52 shrink-0 sticky top-16 z-20 h-[calc(100vh-4rem)] overflow-y-auto border-l border-surface-border/80 bg-white">
+        <aside className="hidden xl:block w-52 shrink-0 sticky top-[var(--site-header-offset)] z-20 h-[calc(100vh-var(--site-header-offset))] overflow-y-auto border-l border-surface-border/80 bg-white">
           <div className="p-5">
             <p className="text-xs font-semibold uppercase tracking-wider text-ink-dim mb-4">
               On this page

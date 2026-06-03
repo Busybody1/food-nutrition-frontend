@@ -10,9 +10,7 @@ type MarketingHeroProps = {
 
 export function MarketingHero({ badge, title, subtitle, children, compact }: MarketingHeroProps) {
   return (
-    <section
-      className={`hero-glow relative overflow-hidden ${compact ? 'py-16 md:py-20' : 'section-pad'}`}
-    >
+    <section className={compact ? 'hero-glow py-16 md:py-20' : 'hero-glow section-pad'}>
       <div className="container-narrow text-center max-w-4xl mx-auto relative z-10">
         {badge && <p className="marketing-hero-badge mb-6">{badge}</p>}
         <h1 className="font-display text-4xl sm:text-5xl md:text-6xl text-ink mb-6 text-balance leading-[1.08] tracking-tight">

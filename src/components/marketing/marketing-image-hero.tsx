@@ -48,14 +48,14 @@ export function MarketingImageHero({
 
       <div
         className={cn(
-          'container-narrow relative z-10 flex min-h-[inherit] items-center',
+          'container-narrow relative z-10 flex min-h-[inherit] items-center pt-[var(--site-header-offset)]',
           centered && 'justify-center'
         )}
       >
         <div
           className={cn(
             'w-full',
-            compact ? 'py-14 md:py-20' : 'py-20 md:py-28 lg:py-32',
+            compact ? 'py-10 md:py-14' : 'pt-10 md:pt-14 lg:pt-16 pb-20 md:pb-28 lg:pb-32',
             centered
               ? 'max-w-2xl mx-auto text-center'
               : 'max-w-xl lg:max-w-2xl text-center lg:text-left'

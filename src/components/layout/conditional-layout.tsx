@@ -11,19 +11,18 @@ interface ConditionalLayoutProps {
 export function ConditionalLayout({ children }: ConditionalLayoutProps) {
   const pathname = usePathname()
   
-  // Don't show header and footer for dashboard pages
-  const isDashboardPage = pathname?.startsWith('/dashboard')
-  
-  if (isDashboardPage) {
+  // App shells provide their own chrome (no marketing header/footer)
+  const isAppShell =
+    pathname?.startsWith('/dashboard') || pathname?.startsWith('/admin')
+
+  if (isAppShell) {
     return <>{children}</>
   }
   
   return (
-    <div className="min-h-full flex flex-col">
+    <div className="site-layout">
       <Header />
-      <main className="flex-1 min-w-0 overflow-x-hidden">
-        {children}
-      </main>
+      <main className="site-layout__main">{children}</main>
       <Footer />
     </div>
   )

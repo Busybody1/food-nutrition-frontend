@@ -1,46 +1,36 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { 
+import {
   BarChart3,
-  Users, Activity, Zap, Clock, Database, Globe, RefreshCw
+  Users,
+  Activity,
+  Zap,
+  Clock,
+  Database,
 } from 'lucide-react'
 
-import { apiClient } from '@/lib/api/client'
-
-interface AnalyticsData {
-  time_range: string
-  total_users: number
-  active_users: number
-  total_requests: number
-  avg_response_time_ms: number
-  error_rate_percent: number
-  top_endpoints: Array<{
-    endpoint: string
-    request_count: number
-    avg_response_time: number
-    error_count: number
-  }>
-  top_users: Array<{
-    email: string
-    first_name: string
-    last_name: string
-    request_count: number
-    avg_response_time: number
-  }>
-  daily_usage: Array<{
-    date: string
-    requests: number
-    errors: number
-    avg_response_time: number
-    active_users: number
-  }>
-}
+import { adminAPI, AdminAnalytics } from '@/lib/api/admin'
+import { AdminLineChart, AdminPieChart } from '@/components/admin/admin-charts'
+import { formatCount, formatMs, formatPercent, toNumber } from '@/lib/utils/format'
+import {
+  AdminPage,
+  AdminPageHeader,
+  AdminPageBody,
+  AdminStatGrid,
+  DashboardStatCard,
+  AdminPanel,
+  AdminPanelHeader,
+  AdminPanelBody,
+  AdminTimeRangeToggle,
+  AdminRefreshButton,
+  DashboardLoading,
+  DashboardAlert,
+  DashboardEmpty,
+} from '@/components/admin/admin-ui'
 
 export default function AnalyticsDashboard() {
-  const [analyticsData, setAnalyticsData] = useState<AnalyticsData | null>(null)
+  const [analyticsData, setAnalyticsData] = useState<AdminAnalytics | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string>('')
   const [timeRange, setTimeRange] = useState<'7d' | '30d' | '90d' | '1y'>('7d')
@@ -50,16 +40,11 @@ export default function AnalyticsDashboard() {
     try {
       setIsLoading(true)
       setError('')
-      
-      const response = await apiClient.get<AnalyticsData>('/api/v1/admin/analytics', {
-        time_range: timeRange
-      })
-      
-      setAnalyticsData(response.data)
+      const data = await adminAPI.getAnalytics(timeRange)
+      setAnalyticsData(data)
       setLastUpdated(new Date())
-    } catch (error) {
-      console.error('Failed to load analytics data:', error)
-      setError(error instanceof Error ? error.message : 'Failed to load analytics data')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load analytics data')
     } finally {
       setIsLoading(false)
     }
@@ -67,323 +52,209 @@ export default function AnalyticsDashboard() {
 
   useEffect(() => {
     loadAnalyticsData()
-    
-    // Auto-refresh every 30 seconds
     const interval = setInterval(loadAnalyticsData, 30000)
     return () => clearInterval(interval)
   }, [loadAnalyticsData])
 
-  // Simple chart component for daily usage
-  const SimpleChart = ({ data }: { data: AnalyticsData['daily_usage'] }) => {
-    if (!data || data.length === 0) return null
-    
-    const maxRequests = Math.max(...data.map(d => d.requests))
-    
-    return (
-      <div className="h-80 flex items-end space-x-1 p-4">
-        {data.map((day, index) => (
-          <div key={index} className="flex flex-col items-center flex-1">
-            <div
-              className="bg-blue-500 w-full rounded-t"
-              style={{ 
-                height: `${(day.requests / maxRequests) * 200}px`,
-                minHeight: '4px'
-              }}
-              title={`${day.date}: ${day.requests} requests`}
-            />
-            <div className="text-xs text-gray-500 mt-2 transform -rotate-45 origin-left">
-              {new Date(day.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-            </div>
-          </div>
-        ))}
-      </div>
-    )
-  }
+  const dailyChartData =
+    analyticsData?.daily_usage?.map((d) => ({
+      date: new Date(d.date).toLocaleDateString('en', { month: 'short', day: 'numeric' }),
+      requests: toNumber(d.requests),
+    })) ?? []
 
-  if (isLoading) {
-    return (
-      <div className="space-y-6">
-        <div className="animate-pulse">
-          <div className="h-8 bg-gray-200 rounded w-1/4 mb-6"></div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className="h-32 bg-gray-200 rounded-lg"></div>
-            ))}
-          </div>
-        </div>
-      </div>
-    )
-  }
+  const latencyPie =
+    analyticsData?.response_time_distribution?.map((d) => ({
+      name: d.response_time_range,
+      value: toNumber(d.count),
+    })) ?? []
 
-  if (error) {
+  const statusPie =
+    analyticsData?.status_code_distribution?.map((d) => ({
+      name: String(d.status_code),
+      value: toNumber(d.count),
+    })) ?? []
+
+  if (isLoading && !analyticsData) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-center">
-          <div className="text-red-600 mb-2">Error loading analytics data</div>
-          <div className="text-sm text-gray-600">{error}</div>
-        </div>
-      </div>
+      <AdminPage>
+        <DashboardLoading message="Loading analytics…" />
+      </AdminPage>
     )
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Usage Analytics</h1>
-          <p className="text-gray-600 mt-2">
-            Monitor API usage, user activity, and system performance
-            {lastUpdated && (
-              <span className="text-sm text-gray-500 ml-2">
-                • Last updated: {lastUpdated.toLocaleTimeString()}
-              </span>
+    <AdminPage>
+      <AdminPageHeader
+        title="Analytics"
+        description={
+          lastUpdated
+            ? `Platform metrics · updated ${lastUpdated.toLocaleTimeString()}`
+            : 'Monitor API usage, latency, and errors.'
+        }
+        actions={
+          <div className="flex flex-wrap items-center gap-2">
+            <AdminTimeRangeToggle
+              value={timeRange}
+              options={[
+                { value: '7d' as const, label: '7d' },
+                { value: '30d' as const, label: '30d' },
+                { value: '90d' as const, label: '90d' },
+                { value: '1y' as const, label: '1y' },
+              ]}
+              onChange={setTimeRange}
+            />
+            <AdminRefreshButton onClick={loadAnalyticsData} loading={isLoading} />
+          </div>
+        }
+      />
+
+      {error && <DashboardAlert variant="error">{error}</DashboardAlert>}
+
+      <AdminPageBody>
+        <AdminStatGrid>
+          <DashboardStatCard
+            label="Total requests"
+            value={formatCount(analyticsData?.total_requests ?? 0)}
+            hint={`Last ${timeRange}`}
+            icon={Activity}
+            accent="brand"
+          />
+          <DashboardStatCard
+            label="Active users"
+            value={formatCount(analyticsData?.active_users ?? 0)}
+            hint={`${formatCount(analyticsData?.total_users ?? 0)} total`}
+            icon={Users}
+            accent="green"
+          />
+          <DashboardStatCard
+            label="Avg response"
+            value={`${formatMs(analyticsData?.avg_response_time_ms)}ms`}
+            hint="Average latency"
+            icon={Clock}
+            accent="purple"
+          />
+          <DashboardStatCard
+            label="Error rate"
+            value={`${formatPercent(analyticsData?.error_rate_percent)}%`}
+            hint={
+              toNumber(analyticsData?.error_rate_percent) < 5 ? 'Healthy' : 'Needs attention'
+            }
+            icon={Zap}
+            accent="orange"
+          />
+        </AdminStatGrid>
+
+        <AdminPanel>
+          <AdminPanelHeader title="Daily usage trends" icon={BarChart3} />
+          <AdminPanelBody>
+            {dailyChartData.length > 0 ? (
+              <AdminLineChart data={dailyChartData} xKey="date" yKey="requests" height={280} />
+            ) : (
+              <DashboardEmpty
+                icon={BarChart3}
+                title="No usage data yet"
+                description="Charts populate as API requests are recorded."
+              />
             )}
-          </p>
-        </div>
-        <div className="flex items-center space-x-3">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={loadAnalyticsData}
-            disabled={isLoading}
-          >
-            <RefreshCw className={`w-4 h-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
-            Refresh
-          </Button>
-          <div className="flex items-center space-x-2">
-            <Button
-              variant={timeRange === '7d' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setTimeRange('7d')}
-            >
-              7 Days
-            </Button>
-            <Button
-              variant={timeRange === '30d' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setTimeRange('30d')}
-            >
-              30 Days
-            </Button>
-            <Button
-              variant={timeRange === '90d' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setTimeRange('90d')}
-            >
-              90 Days
-            </Button>
-            <Button
-              variant={timeRange === '1y' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setTimeRange('1y')}
-            >
-              1 Year
-            </Button>
-          </div>
-        </div>
-      </div>
+          </AdminPanelBody>
+        </AdminPanel>
 
-      {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <Activity className="w-6 h-6 text-blue-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Total Requests</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {analyticsData?.total_requests.toLocaleString() || '0'}
-                </p>
-                <p className="text-sm text-gray-600">
-                  Last {timeRange}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center">
-              <div className="p-2 bg-green-100 rounded-lg">
-                <Users className="w-6 h-6 text-green-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Active Users</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {analyticsData?.active_users.toLocaleString() || '0'}
-                </p>
-                <p className="text-sm text-gray-600">
-                  {analyticsData?.total_users.toLocaleString() || '0'} total users
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center">
-              <div className="p-2 bg-purple-100 rounded-lg">
-                <Clock className="w-6 h-6 text-purple-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Avg Response Time</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {analyticsData?.avg_response_time_ms.toFixed(1) || '0'}ms
-                </p>
-                <p className="text-sm text-gray-600">
-                  Average latency
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center">
-              <div className="p-2 bg-red-100 rounded-lg">
-                <Zap className="w-6 h-6 text-red-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Error Rate</p>
-                <p className="text-2xl font-bold text-gray-900">        
-                  {(analyticsData?.error_rate_percent || 0).toFixed(2)}%        
-                </p>
-                <p className="text-sm text-gray-600">
-                  {(analyticsData?.error_rate_percent || 0) < 5 ? 'Excellent' : 'Needs attention'}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Usage Chart */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Daily Usage Trends</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {analyticsData?.daily_usage && analyticsData.daily_usage.length > 0 ? (
-            <SimpleChart data={analyticsData.daily_usage} />
-          ) : (
-            <div className="h-80 bg-gray-50 rounded-lg flex items-center justify-center">
-              <div className="text-center">
-                <BarChart3 className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-500 text-lg">No data available</p>
-                <p className="text-sm text-gray-400">
-                  Usage data will appear here once API requests are made
-                </p>
-              </div>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Top Endpoints and Users */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Top Endpoints */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <Database className="w-5 h-5 mr-2" />
-              Top Endpoints
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {analyticsData?.top_endpoints && analyticsData.top_endpoints.length > 0 ? (
-                analyticsData.top_endpoints.map((endpoint, index) => {
-                  const maxRequests = Math.max(...analyticsData.top_endpoints.map(e => e.request_count))
-                  const percentage = (endpoint.request_count / maxRequests) * 100
-                  
-                  return (
-                    <div key={index} className="flex items-center justify-between">
-                      <div className="flex-1">
-                        <p className="text-sm font-medium text-gray-900">{endpoint.endpoint}</p>
-                        <div className="w-full bg-gray-200 rounded-full h-2 mt-1">
-                          <div
-                            className="bg-blue-600 h-2 rounded-full"
-                            style={{ width: `${percentage}%` }}
-                          ></div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <AdminPanel>
+            <AdminPanelHeader title="Top endpoints" icon={Database} />
+            <AdminPanelBody>
+              <div className="space-y-4">
+                {analyticsData?.top_endpoints?.length ? (
+                  analyticsData.top_endpoints.map((endpoint, index) => {
+                    const maxRequests = Math.max(
+                      ...analyticsData.top_endpoints.map((e) => toNumber(e.request_count))
+                    )
+                    const requestCount = toNumber(endpoint.request_count)
+                    const pct = maxRequests > 0 ? (requestCount / maxRequests) * 100 : 0
+                    return (
+                      <div key={index} className="space-y-1.5">
+                        <div className="flex justify-between gap-3 text-sm">
+                          <p className="font-mono text-xs text-ink truncate flex-1">
+                            {endpoint.endpoint}
+                          </p>
+                          <span className="tabular-nums font-medium shrink-0">
+                            {formatCount(requestCount)}
+                          </span>
                         </div>
-                      </div>
-                      <div className="ml-4 text-right">
-                        <p className="text-sm font-medium text-gray-900">
-                          {endpoint.request_count.toLocaleString()}
+                        <div className="dashboard-progress-track h-1.5">
+                          <div
+                            className="dashboard-progress-fill bg-brand"
+                            style={{ width: `${pct}%` }}
+                          />
+                        </div>
+                        <p className="text-xs text-ink-muted">
+                          {formatMs(endpoint.avg_response_time)} avg
                         </p>
-                        <p className="text-xs text-gray-500">
-                          {endpoint.avg_response_time.toFixed(1)}ms avg
+                      </div>
+                    )
+                  })
+                ) : (
+                  <p className="text-sm text-ink-muted text-center py-6">No endpoint data</p>
+                )}
+              </div>
+            </AdminPanelBody>
+          </AdminPanel>
+
+          <AdminPanel>
+            <AdminPanelHeader title="Top users" icon={Users} />
+            <AdminPanelBody>
+              <div className="space-y-3">
+                {analyticsData?.top_users?.length ? (
+                  analyticsData.top_users.map((user, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center justify-between gap-4 py-2 border-b border-surface-border/50 last:border-0"
+                    >
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium text-ink truncate">
+                          {[user.first_name, user.last_name].filter(Boolean).join(' ') || user.email}
                         </p>
+                        <p className="text-xs text-ink-muted truncate">{user.email}</p>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <p className="text-sm font-semibold tabular-nums">
+                          {formatCount(user.request_count)}
+                        </p>
+                        <p className="text-xs text-ink-muted">requests</p>
                       </div>
                     </div>
-                  )
-                })
-              ) : (
-                <p className="text-gray-500 text-center py-4">No endpoint data available</p>
-              )}
-            </div>
-          </CardContent>
-        </Card>
+                  ))
+                ) : (
+                  <p className="text-sm text-ink-muted text-center py-6">No user data</p>
+                )}
+              </div>
+            </AdminPanelBody>
+          </AdminPanel>
+        </div>
 
-        {/* Top Users */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <Users className="w-5 h-5 mr-2" />
-              Top Users
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {analyticsData?.top_users && analyticsData.top_users.length > 0 ? (
-                analyticsData.top_users.map((user, index) => (
-                  <div key={index} className="flex items-center justify-between">
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-gray-900">
-                        {user.first_name} {user.last_name}
-                      </p>
-                      <p className="text-xs text-gray-500">{user.email}</p>
-                    </div>
-                    <div className="ml-4 text-right">
-                      <p className="text-sm font-medium text-gray-900">
-                        {user.request_count.toLocaleString()}
-                      </p>
-                      <p className="text-xs text-gray-500">requests</p>
-                    </div>
-                  </div>
-                ))
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <AdminPanel>
+            <AdminPanelHeader title="Response time distribution" />
+            <AdminPanelBody>
+              {latencyPie.length > 0 ? (
+                <AdminPieChart data={latencyPie} nameKey="name" valueKey="value" />
               ) : (
-                <p className="text-gray-500 text-center py-4">No user data available</p>
+                <DashboardEmpty icon={Clock} title="No latency data" />
               )}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Geographic Distribution Placeholder */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center">
-            <Globe className="w-5 h-5 mr-2" />
-            Geographic Distribution
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="h-64 bg-gray-50 rounded-lg flex items-center justify-center">
-            <div className="text-center">
-              <Globe className="w-12 h-12 text-gray-400 mx-auto mb-2" />
-              <p className="text-gray-500">Geographic distribution chart</p>
-              <p className="text-sm text-gray-400">Integration with analytics service</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+            </AdminPanelBody>
+          </AdminPanel>
+          <AdminPanel>
+            <AdminPanelHeader title="Status code distribution" />
+            <AdminPanelBody>
+              {statusPie.length > 0 ? (
+                <AdminPieChart data={statusPie} nameKey="name" valueKey="value" />
+              ) : (
+                <DashboardEmpty icon={Activity} title="No status data" />
+              )}
+            </AdminPanelBody>
+          </AdminPanel>
+        </div>
+      </AdminPageBody>
+    </AdminPage>
   )
 }

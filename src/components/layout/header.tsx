@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 import { useAuth } from '@/lib/hooks/use-auth'
+import { getDashboardPath, isDashboardPathActive } from '@/lib/auth/post-login-path'
 import { Menu, X, LogOut } from 'lucide-react'
 import { SITE_NAME, LOGO_ALT } from '@/lib/site'
 import { cn } from '@/lib/utils/cn'
@@ -24,19 +25,14 @@ function isNavActive(pathname: string | null, href: string, exact?: boolean) {
   return pathname === href || pathname.startsWith(`${href}/`)
 }
 
-const HERO_BACKGROUND_PATHS = ['/', '/pricing', '/faq', '/contact'] as const
-
 const navPrefetch = { prefetch: false } as const
-
-function hasImageHero(pathname: string | null) {
-  return pathname != null && HERO_BACKGROUND_PATHS.some((p) => pathname === p)
-}
 
 export function Header() {
   const pathname = usePathname()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const { isAuthenticated, logout } = useAuth()
-  const overImageHero = hasImageHero(pathname)
+  const { user, isAuthenticated, logout } = useAuth()
+  const dashboardHref = getDashboardPath(user)
+  const dashboardActive = isDashboardPathActive(pathname, user)
 
   const navLinkClass = (href: string, exact?: boolean) =>
     cn(
@@ -46,7 +42,7 @@ export function Header() {
 
   return (
     <header className="site-header-shell">
-      <div className={cn('site-header-bar', overImageHero && 'site-header-bar--hero')}>
+      <div className="site-header-bar site-header-bar--hero">
         <Link href="/" className="site-header-brand" {...navPrefetch}>
           <span className="site-header-logo-mark">
             <Image
@@ -70,7 +66,11 @@ export function Header() {
             </Link>
           ))}
           {isAuthenticated && (
-            <Link href="/dashboard" className={navLinkClass('/dashboard')} {...navPrefetch}>
+            <Link
+              href={dashboardHref}
+              className={cn('site-header-nav-link', dashboardActive && 'site-header-nav-link--active')}
+              {...navPrefetch}
+            >
               Dashboard
             </Link>
           )}
@@ -131,11 +131,11 @@ export function Header() {
           ))}
           {isAuthenticated && (
             <Link
-              href="/dashboard"
+              href={dashboardHref}
               {...navPrefetch}
               className={cn(
                 'block rounded-xl px-4 py-2.5 text-sm font-medium',
-                isNavActive(pathname, '/dashboard')
+                dashboardActive
                   ? 'bg-surface-elevated text-ink'
                   : 'text-ink-muted hover:bg-surface-elevated/80'
               )}
@@ -148,7 +148,7 @@ export function Header() {
             {isAuthenticated ? (
               <>
                 <Link
-                  href="/dashboard"
+                  href={dashboardHref}
                   {...navPrefetch}
                   className="site-header-cta h-10 justify-center"
                   onClick={() => setIsMenuOpen(false)}

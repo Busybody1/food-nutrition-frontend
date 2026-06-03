@@ -24,7 +24,7 @@ interface ServiceStatus {
   uptime: number
   responseTime: number
   lastCheck: string
-  description: string
+  description?: string
 }
 
 interface Alert {
@@ -65,30 +65,50 @@ export default function APIMonitoring() {
 
   const loadMonitoringData = async () => {
     try {
-      // Import admin API
       const { adminAPI } = await import('@/lib/api/admin')
-      
-      // Load system metrics
-      const systemMetricsResponse = await adminAPI.getSystemMetrics()
-      const systemStatus: SystemStatus = {
-        overall: 'healthy', // Default to healthy
-        uptime: systemMetricsResponse.systemUptime || 99.9,
-        responseTime: systemMetricsResponse.averageResponseTime || 145,
-        errorRate: systemMetricsResponse.errorRate || 0.02,
-        throughput: 1250 // Default throughput value
+
+      const [metricsResult, healthResult, envResult] = await Promise.allSettled([
+        adminAPI.getSystemMetrics(),
+        adminAPI.getSystemHealth(),
+        adminAPI.getEnvironmentInfo(),
+      ])
+
+      if (metricsResult.status === 'rejected' && healthResult.status === 'rejected') {
+        const reason = metricsResult.reason ?? healthResult.reason
+        throw reason instanceof Error ? reason : new Error('Failed to load monitoring data')
       }
 
-      // Load system health data
-      const healthResponse = await adminAPI.getSystemHealth()
-      const services: ServiceStatus[] = healthResponse.services || []
+      const metrics =
+        metricsResult.status === 'fulfilled' ? metricsResult.value : null
+      const health =
+        healthResult.status === 'fulfilled' ? healthResult.value : null
+      const env =
+        envResult.status === 'fulfilled' ? envResult.value : null
 
-      const alerts: Alert[] = healthResponse.alerts || []
+      const errorRatePercent =
+        metrics?.errorRate != null ? metrics.errorRate * 100 : env?.errorRateToday ?? 0
+      const throughput =
+        env?.requestsToday != null
+          ? Math.max(1, Math.round(Number(env.requestsToday) / (24 * 60)))
+          : 0
 
-      const logs: LogEntry[] = healthResponse.logs || []
-      setSystemStatus(systemStatus)
-      setServices(services)
-      setAlerts(alerts)
-      setLogs(logs)
+      const serviceStatuses = health?.services ?? []
+      const overallFromServices = serviceStatuses.some((s) => s.status === 'critical')
+        ? 'critical'
+        : serviceStatuses.some((s) => s.status === 'warning')
+          ? 'warning'
+          : 'healthy'
+
+      setSystemStatus({
+        overall: overallFromServices,
+        uptime: metrics?.systemUptime ?? 99.9,
+        responseTime: metrics?.averageResponseTime ?? 0,
+        errorRate: errorRatePercent,
+        throughput,
+      })
+      setServices(serviceStatuses)
+      setAlerts(health?.alerts ?? [])
+      setLogs(health?.logs ?? [])
     } catch (error) {
       console.error('Failed to load monitoring data:', error)
     } finally {

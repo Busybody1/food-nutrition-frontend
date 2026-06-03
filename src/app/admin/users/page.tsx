@@ -1,16 +1,40 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { 
   Search, Edit, 
   Eye, Ban, CheckCircle, Mail, Calendar,
-  Users, UserPlus, Download
+  Users
 } from 'lucide-react'
-import { AdminUser } from '@/lib/api/admin'
+import { adminAPI, AdminUser, ApiRequestRow, UserUsagePayload } from '@/lib/api/admin'
+import { AdminLineChart } from '@/components/admin/admin-charts'
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import { formatCount } from '@/lib/utils/format'
+import {
+  AdminPage,
+  AdminPageHeader,
+  AdminStatGrid,
+  DashboardStatCard,
+  AdminPanel,
+  AdminPanelHeader,
+  AdminPanelBody,
+  AdminFilterField,
+  AdminTableWrap,
+  AdminTable,
+  AdminRefreshButton,
+  DashboardLoading,
+  DashboardAlert,
+  DashboardEmpty,
+} from '@/components/admin/admin-ui'
 
 interface UserFilters {
   search: string
@@ -26,6 +50,16 @@ export default function UserManagement() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string>('')
   const [selectedUsers, setSelectedUsers] = useState<number[]>([])
+  const [actionError, setActionError] = useState<string>('')
+  const [detailUser, setDetailUser] = useState<AdminUser | null>(null)
+  const [detailOpen, setDetailOpen] = useState(false)
+  const [detailLoading, setDetailLoading] = useState(false)
+  const [detailEditMode, setDetailEditMode] = useState(false)
+  const [editIsActive, setEditIsActive] = useState(true)
+  const [savingDetail, setSavingDetail] = useState(false)
+  const [userUsage, setUserUsage] = useState<UserUsagePayload | null>(null)
+  const [userRequests, setUserRequests] = useState<ApiRequestRow[]>([])
+  const [userKeys, setUserKeys] = useState<Array<Record<string, unknown>>>([])
   const [filters, setFilters] = useState<UserFilters>({
     search: '',
     status: 'all',
@@ -98,30 +132,91 @@ export default function UserManagement() {
   }, [applyFilters])
 
 
-  const handleUserAction = async (userId: number, action: string) => {
+  const openUserDetail = async (userId: number, editMode: boolean) => {
     try {
-      // Import admin API
+      setActionError('')
+      setDetailLoading(true)
+      setDetailEditMode(editMode)
+      setDetailOpen(true)
+      const user = await adminAPI.getUser(userId)
+      const [usage, reqs, keys] = await Promise.all([
+        adminAPI.getUserUsage(userId, '30d'),
+        adminAPI.getUserRequests(userId, 15),
+        adminAPI.getUserApiKeys(userId),
+      ])
+      setDetailUser(user)
+      setUserUsage(usage)
+      setUserRequests(reqs.requests)
+      setUserKeys(keys.api_keys)
+      setEditIsActive(user.is_active)
+    } catch (err) {
+      console.error('Failed to load user details:', err)
+      setActionError(err instanceof Error ? err.message : 'Failed to load user details')
+      setDetailOpen(false)
+    } finally {
+      setDetailLoading(false)
+    }
+  }
+
+  const closeUserDetail = () => {
+    setDetailOpen(false)
+    setDetailUser(null)
+    setDetailEditMode(false)
+    setUserUsage(null)
+    setUserRequests([])
+    setUserKeys([])
+  }
+
+  const saveUserDetail = async () => {
+    if (!detailUser) return
+    try {
+      setSavingDetail(true)
+      setActionError('')
       const { adminAPI } = await import('@/lib/api/admin')
-      
+      if (editIsActive) {
+        await adminAPI.activateUser(detailUser.id)
+      } else {
+        await adminAPI.deactivateUser(detailUser.id)
+      }
+      closeUserDetail()
+      await loadUsers()
+    } catch (err) {
+      console.error('Failed to update user:', err)
+      setActionError(err instanceof Error ? err.message : 'Failed to update user')
+    } finally {
+      setSavingDetail(false)
+    }
+  }
+
+  const handleUserAction = async (userId: number, action: string) => {
+    if (action === 'view') {
+      await openUserDetail(userId, false)
+      return
+    }
+    if (action === 'edit') {
+      await openUserDetail(userId, true)
+      return
+    }
+
+    try {
+      setActionError('')
+      const { adminAPI } = await import('@/lib/api/admin')
+
       switch (action) {
         case 'activate':
-          await adminAPI.updateUser(userId, { is_active: true })
+          await adminAPI.activateUser(userId)
           break
         case 'deactivate':
-          await adminAPI.updateUser(userId, { is_active: false })
-          break
-        case 'delete':
-          await adminAPI.deleteUser(userId)
+          await adminAPI.deactivateUser(userId)
           break
         default:
           throw new Error(`Unknown action: ${action}`)
       }
-      
-      // Reload users after action
+
       await loadUsers()
-    } catch (error) {
-      console.error(`Failed to ${action} user:`, error)
-      setError(error instanceof Error ? error.message : `Failed to ${action} user`)
+    } catch (err) {
+      console.error(`Failed to ${action} user:`, err)
+      setActionError(err instanceof Error ? err.message : `Failed to ${action} user`)
     }
   }
 
@@ -129,29 +224,25 @@ export default function UserManagement() {
     if (selectedUsers.length === 0) return
     
     try {
-      // Import admin API
+      setActionError('')
       const { adminAPI } = await import('@/lib/api/admin')
-      
+
       switch (action) {
         case 'activate':
-          await Promise.all(selectedUsers.map(id => adminAPI.updateUser(id, { is_active: true })))
+          await Promise.all(selectedUsers.map((id) => adminAPI.activateUser(id)))
           break
         case 'deactivate':
-          await Promise.all(selectedUsers.map(id => adminAPI.updateUser(id, { is_active: false })))
-          break
-        case 'delete':
-          await Promise.all(selectedUsers.map(id => adminAPI.deleteUser(id)))
+          await Promise.all(selectedUsers.map((id) => adminAPI.deactivateUser(id)))
           break
         default:
           throw new Error(`Unknown bulk action: ${action}`)
       }
-      
-      // Clear selection and reload users
+
       setSelectedUsers([])
       await loadUsers()
-    } catch (error) {
-      console.error(`Failed to ${action} users:`, error)
-      setError(error instanceof Error ? error.message : `Failed to ${action} users`)
+    } catch (err) {
+      console.error(`Failed to ${action} users:`, err)
+      setActionError(err instanceof Error ? err.message : `Failed to ${action} users`)
     }
   }
 
@@ -172,118 +263,63 @@ export default function UserManagement() {
     }
   }
 
-  if (isLoading) {
+  if (isLoading && users.length === 0) {
     return (
-      <div className="space-y-6">
-        <div className="animate-pulse">
-          <div className="h-8 bg-gray-200 rounded w-1/4 mb-6"></div>
-          <div className="h-64 bg-gray-200 rounded-lg"></div>
-        </div>
-      </div>
-    )
-  }
-
-  if (error) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-center">
-          <div className="text-red-600 mb-2">Error loading users</div>
-          <div className="text-sm text-gray-600">{error}</div>
-        </div>
-      </div>
+      <AdminPage>
+        <DashboardLoading message="Loading users…" />
+      </AdminPage>
     )
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">User Management</h1>
-          <p className="text-gray-600 mt-2">
-            Manage user accounts, subscriptions, and access permissions
-          </p>
-        </div>
-        <div className="flex items-center space-x-3">
-          <Button variant="outline" className="flex items-center">
-            <Download className="w-4 h-4 mr-2" />
-            Export
-          </Button>
-          <Button className="flex items-center">
-            <UserPlus className="w-4 h-4 mr-2" />
-            Add User
-          </Button>
-        </div>
-      </div>
+    <AdminPage>
+      <AdminPageHeader
+        title="Users"
+        description="Search accounts, review usage, revoke API keys, and toggle access."
+        actions={<AdminRefreshButton onClick={loadUsers} loading={isLoading} />}
+      />
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <Users className="w-6 h-6 text-blue-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Total Users</p>
-                <p className="text-2xl font-bold text-gray-900">{users.length}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+      {error && users.length === 0 && (
+        <DashboardAlert variant="error">{error}</DashboardAlert>
+      )}
 
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center">
-              <div className="p-2 bg-green-100 rounded-lg">
-                <CheckCircle className="w-6 h-6 text-green-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Active Users</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {users.filter(u => u.is_active).length}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+      {actionError && <DashboardAlert variant="error">{actionError}</DashboardAlert>}
 
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center">
-              <div className="p-2 bg-purple-100 rounded-lg">
-                <Mail className="w-6 h-6 text-purple-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">New This Month</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {users.filter(u => new Date(u.created_at) > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)).length}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+      <AdminStatGrid className="mb-6">
+        <DashboardStatCard label="Total users" value={users.length} icon={Users} accent="brand" />
+        <DashboardStatCard
+          label="Active"
+          value={users.filter((u) => u.is_active).length}
+          icon={CheckCircle}
+          accent="green"
+        />
+        <DashboardStatCard
+          label="New this month"
+          value={
+            users.filter(
+              (u) => new Date(u.created_at) > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+            ).length
+          }
+          icon={Mail}
+          accent="purple"
+        />
+        <DashboardStatCard
+          label="Logged in (7d)"
+          value={
+            users.filter(
+              (u) =>
+                u.last_login &&
+                new Date(u.last_login) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+            ).length
+          }
+          icon={Calendar}
+          accent="orange"
+        />
+      </AdminStatGrid>
 
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center">
-              <div className="p-2 bg-orange-100 rounded-lg">
-                <Calendar className="w-6 h-6 text-orange-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Last 7 Days</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {users.filter(u => u.last_login && new Date(u.last_login) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)).length}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Filters and Search */}
-      <Card>
-        <CardContent className="p-6">
+      <AdminPanel className="mb-6">
+        <AdminPanelHeader title="Search & filter" icon={Search} />
+        <AdminPanelBody>
           <div className="flex flex-col lg:flex-row gap-4">
             <div className="flex-1">
               <div className="relative">
@@ -338,51 +374,34 @@ export default function UserManagement() {
               </select>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </AdminPanelBody>
+      </AdminPanel>
 
-      {/* Users Table */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle>
-              Users ({filteredUsers.length})
-            </CardTitle>
-            {selectedUsers.length > 0 && (
-              <div className="flex items-center space-x-2">
-                <span className="text-sm text-gray-600">
-                  {selectedUsers.length} selected
-                </span>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleBulkAction('activate')}
-                >
+      <AdminPanel>
+        <AdminPanelHeader
+          title={`Users (${filteredUsers.length})`}
+          icon={Users}
+          actions={
+            selectedUsers.length > 0 ? (
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-ink-muted">{selectedUsers.length} selected</span>
+                <Button variant="outline" size="sm" onClick={() => handleBulkAction('activate')}>
                   Activate
                 </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleBulkAction('deactivate')}
-                >
+                <Button variant="outline" size="sm" onClick={() => handleBulkAction('deactivate')}>
                   Deactivate
                 </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleBulkAction('delete')}
-                  className="text-red-600 hover:text-red-700"
-                >
-                  Delete
-                </Button>
               </div>
-            )}
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+            ) : undefined
+          }
+        />
+        {filteredUsers.length === 0 ? (
+          <DashboardEmpty icon={Users} title="No users match your filters" />
+        ) : (
+          <AdminPanelBody noPadding>
+            <AdminTableWrap>
+              <AdminTable>
+                <thead>
                 <tr>
                   <th className="px-6 py-3 text-left">
                     <input
@@ -463,9 +482,9 @@ export default function UserManagement() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       <div>
-                        <div className="font-medium">{(user.requests_this_month || 0).toLocaleString()}</div>
+                        <div className="font-medium">{formatCount(user.requests_this_month)}</div>
                         <div className="text-xs text-gray-500">
-                          {(user.total_requests || 0).toLocaleString()} total
+                          {formatCount(user.total_requests)} total
                         </div>
                         <div className="text-xs text-gray-400">
                           {user.api_keys_count || 0} API keys
@@ -518,10 +537,154 @@ export default function UserManagement() {
                   </tr>
                 ))}
               </tbody>
-            </table>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+              </AdminTable>
+            </AdminTableWrap>
+          </AdminPanelBody>
+        )}
+      </AdminPanel>
+
+      <Dialog open={detailOpen} onOpenChange={(open) => !open && closeUserDetail()}>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>
+              {detailEditMode ? 'Edit user' : 'User details'}
+            </DialogTitle>
+          </DialogHeader>
+
+          {detailLoading ? (
+            <p className="text-sm text-ink-muted py-6 text-center">Loading user...</p>
+          ) : detailUser ? (
+            <div className="space-y-4 text-sm">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <p className="text-xs font-medium uppercase tracking-wide text-ink-dim">Name</p>
+                  <p className="text-ink">
+                    {detailUser.first_name || '—'} {detailUser.last_name || ''}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs font-medium uppercase tracking-wide text-ink-dim">Email</p>
+                  <p className="text-ink break-all">{detailUser.email}</p>
+                </div>
+                <div>
+                  <p className="text-xs font-medium uppercase tracking-wide text-ink-dim">Company</p>
+                  <p className="text-ink">{detailUser.company_name || '—'}</p>
+                </div>
+                <div>
+                  <p className="text-xs font-medium uppercase tracking-wide text-ink-dim">Plan</p>
+                  <p className="text-ink">{detailUser.plan_name || 'Unknown'}</p>
+                </div>
+                <div>
+                  <p className="text-xs font-medium uppercase tracking-wide text-ink-dim">Created</p>
+                  <p className="text-ink">
+                    {new Date(detailUser.created_at).toLocaleDateString()}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs font-medium uppercase tracking-wide text-ink-dim">Last login</p>
+                  <p className="text-ink">
+                    {detailUser.last_login
+                      ? new Date(detailUser.last_login).toLocaleString()
+                      : 'Never'}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap gap-2">
+                <Badge className={detailUser.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}>
+                  {detailUser.is_active ? 'Active' : 'Inactive'}
+                </Badge>
+                {detailUser.is_admin && (
+                  <Badge className="bg-purple-100 text-purple-800">Admin</Badge>
+                )}
+                {detailUser.email_verified && (
+                  <Badge className="bg-blue-100 text-blue-800">Email verified</Badge>
+                )}
+              </div>
+
+              {detailEditMode && (
+                <label className="flex items-center gap-2 pt-2 border-t border-surface-border/60">
+                  <input
+                    type="checkbox"
+                    checked={editIsActive}
+                    onChange={(e) => setEditIsActive(e.target.checked)}
+                    className="rounded border-gray-300"
+                  />
+                  <span className="text-ink">Account active</span>
+                </label>
+              )}
+
+              {userUsage && userUsage.daily.length > 0 && (
+                <div className="pt-4 border-t border-surface-border/60">
+                  <p className="text-xs font-medium uppercase tracking-wide text-ink-dim mb-2">Usage (30d)</p>
+                  <AdminLineChart
+                    data={userUsage.daily.map((d) => ({
+                      date: new Date(d.date).toLocaleDateString('en', { month: 'short', day: 'numeric' }),
+                      requests: d.requests,
+                    }))}
+                    xKey="date"
+                    yKey="requests"
+                    height={160}
+                  />
+                </div>
+              )}
+
+              {userKeys.length > 0 && (
+                <div className="pt-4 border-t border-surface-border/60">
+                  <p className="text-xs font-medium uppercase tracking-wide text-ink-dim mb-2">API keys</p>
+                  <ul className="space-y-2">
+                    {userKeys.map((k) => (
+                      <li key={String(k.id)} className="flex justify-between items-center text-xs">
+                        <span>{String(k.name || k.id)}</span>
+                        {k.is_active ? (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={async () => {
+                              if (!detailUser) return
+                              await adminAPI.revokeUserApiKey(detailUser.id, Number(k.id))
+                              const keys = await adminAPI.getUserApiKeys(detailUser.id)
+                              setUserKeys(keys.api_keys)
+                            }}
+                          >
+                            Revoke
+                          </Button>
+                        ) : (
+                          <Badge variant="outline">Revoked</Badge>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {userRequests.length > 0 && (
+                <div className="pt-4 border-t border-surface-border/60">
+                  <p className="text-xs font-medium uppercase tracking-wide text-ink-dim mb-2">Recent calls</p>
+                  <ul className="space-y-1 max-h-32 overflow-y-auto font-mono text-xs">
+                    {userRequests.map((r) => (
+                      <li key={r.id} className="text-ink-muted">
+                        {r.status_code} {r.method} {r.endpoint}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          ) : null}
+
+          <DialogFooter>
+            <Button variant="outline" onClick={closeUserDetail}>
+              Close
+            </Button>
+            {detailEditMode && detailUser && (
+              <Button onClick={saveUserDetail} disabled={savingDetail}>
+                {savingDetail ? 'Saving...' : 'Save changes'}
+              </Button>
+            )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </AdminPage>
   )
 }

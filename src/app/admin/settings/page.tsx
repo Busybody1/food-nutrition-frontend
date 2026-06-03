@@ -13,6 +13,17 @@ import {
   ToggleLeft, Hash, Type, Code
 } from 'lucide-react'
 import { apiClient } from '@/lib/api/client'
+import { adminAPI } from '@/lib/api/admin'
+import {
+  AdminPage,
+  AdminPageHeader,
+  AdminPanel,
+  AdminPanelHeader,
+  AdminPanelBody,
+  AdminRefreshButton,
+  DashboardLoading,
+  DashboardAlert,
+} from '@/components/admin/admin-ui'
 
 interface SystemSetting {
   setting_key: string
@@ -164,50 +175,50 @@ export default function AdminSettingsPage() {
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
-        <div className="animate-pulse">
-          <div className="h-8 bg-gray-200 rounded w-1/4 mb-6"></div>
-          <div className="space-y-4">
-            {[...Array(5)].map((_, i) => (
-              <div key={i} className="h-24 bg-gray-200 rounded-lg"></div>
-            ))}
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  if (error) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-center">
-          <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
-          <div className="text-red-600 mb-2">Error loading settings</div>
-          <div className="text-sm text-gray-600 mb-4">{error}</div>
-          <Button onClick={loadSettings} variant="outline">
-            <RefreshCw className="w-4 h-4 mr-2" />
-            Try Again
-          </Button>
-        </div>
-      </div>
+      <AdminPage>
+        <DashboardLoading message="Loading settings…" />
+      </AdminPage>
     )
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">System Settings</h1>
-          <p className="text-gray-600 mt-2">
-            Manage system configuration and feature flags
-          </p>
-        </div>
-        <Button onClick={loadSettings} variant="outline">
-          <RefreshCw className="w-4 h-4 mr-2" />
-          Refresh
-        </Button>
-      </div>
+    <AdminPage>
+      <AdminPageHeader
+        title="Settings"
+        description="Feature flags, rate limits, and maintenance mode."
+        actions={<AdminRefreshButton onClick={loadSettings} />}
+      />
+
+      {error && (
+        <DashboardAlert variant="error">
+          {error}
+          <Button variant="outline" size="sm" className="ml-3" onClick={loadSettings}>
+            Retry
+          </Button>
+        </DashboardAlert>
+      )}
+
+      {settings.find((s) => s.setting_key === 'maintenance_mode') && (
+        <AdminPanel className="mb-6 border-amber-200/80 bg-amber-50/40">
+          <AdminPanelBody className="flex items-center justify-between gap-4 !py-5">
+            <div>
+              <h3 className="font-semibold text-ink">Maintenance mode</h3>
+              <p className="text-sm text-ink-muted">
+                When enabled, non-admin API traffic receives 503. Admin routes stay available.
+              </p>
+            </div>
+            <Switch
+              checked={
+                settings.find((s) => s.setting_key === 'maintenance_mode')?.setting_value === 'true'
+              }
+              onCheckedChange={async (checked) => {
+                await adminAPI.updateSystemSetting('maintenance_mode', checked ? 'true' : 'false')
+                await loadSettings()
+              }}
+            />
+          </AdminPanelBody>
+        </AdminPanel>
+      )}
 
       {/* Settings List */}
       <div className="space-y-4">
@@ -300,6 +311,6 @@ export default function AdminSettingsPage() {
           </CardContent>
         </Card>
       )}
-    </div>
+    </AdminPage>
   )
 }
