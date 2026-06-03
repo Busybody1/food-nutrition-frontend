@@ -1,6 +1,9 @@
 import { MetadataRoute } from 'next'
 import { SITE_URL } from '@/lib/site'
 
+/** Static sitemap for crawlers (baked at build from NEXT_PUBLIC_SITE_URL). */
+export const dynamic = 'force-static'
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = SITE_URL
   const now = new Date()
@@ -19,7 +22,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   ]
 
   return publicPaths.map(({ path, priority, changeFrequency }) => ({
-    url: `${base}${path}`,
+    url: path ? `${base}${path}` : `${base}/`,
     lastModified: now,
     changeFrequency,
     priority,
