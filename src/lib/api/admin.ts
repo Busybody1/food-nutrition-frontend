@@ -310,7 +310,7 @@ class AdminAPI {
     message: string
     user_id: number
     request_id: number
-    reused_existing_link: boolean
+    reused_existing_send: boolean
     provider?: string
   }> {
     return adminPost(`/users/${userId}/feedback-email`)

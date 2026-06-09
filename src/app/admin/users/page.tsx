@@ -226,9 +226,9 @@ export default function UserManagement() {
       setActionError('')
       const result = await adminAPI.sendUserFeedbackEmail(feedbackTarget.id)
       setFeedbackSuccess(
-        result.reused_existing_link
-          ? `Feedback email resent to ${feedbackTarget.email} (existing link reused).`
-          : `Feedback email sent to ${feedbackTarget.email}.`
+        result.reused_existing_send
+          ? `Feedback email resent to ${feedbackTarget.email}.`
+          : `Feedback email sent to ${feedbackTarget.email}. They can reply directly to the message.`
       )
       setFeedbackTarget(null)
     } catch (err) {
@@ -725,13 +725,13 @@ export default function UserManagement() {
           {feedbackTarget && (
             <div className="space-y-3 text-sm text-ink-muted">
               <p>
-                Send a branded email to{' '}
+                Send a plain-text email to{' '}
                 <span className="font-medium text-ink">{feedbackTarget.email}</span> asking for
                 feedback on the Food Nutrition API.
               </p>
               <p>
-                The email includes a personal link to a short survey. Responses are saved in the
-                database for review.
+                The user replies directly to that email (no web form). Replies go to your configured
+                support inbox via Reply-To.
               </p>
             </div>
           )}
