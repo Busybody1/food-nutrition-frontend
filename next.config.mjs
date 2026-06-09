@@ -1,5 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  async redirects() {
+    return [
+      { source: '/signup', destination: '/auth/register', permanent: true },
+      { source: '/login', destination: '/auth/login', permanent: true },
+      { source: '/register', destination: '/auth/register', permanent: true },
+    ];
+  },
   experimental: {
     optimizePackageImports: ['lucide-react'],
   },

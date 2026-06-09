@@ -38,6 +38,54 @@ export function buildWebPageJsonLd({
   }
 }
 
+export function buildArticleJsonLd({
+  title,
+  description,
+  path,
+  datePublished,
+  dateModified,
+  image,
+}: {
+  title: string
+  description: string
+  path: string
+  datePublished?: string | null
+  dateModified?: string | null
+  image?: string | null
+}) {
+  const url = absoluteUrl(path)
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: title,
+    description,
+    mainEntityOfPage: { '@type': 'WebPage', '@id': url },
+    url,
+    ...(datePublished ? { datePublished } : {}),
+    dateModified: dateModified || datePublished || undefined,
+    author: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
+    publisher: {
+      '@type': 'Organization',
+      name: SITE_NAME,
+      url: SITE_URL,
+      logo: { '@type': 'ImageObject', url: absoluteUrl('/logos/busybody-logo.png') },
+    },
+    ...(image ? { image: [image] } : {}),
+  }
+}
+
+export function buildFaqJsonLd(items: { question: string; answer: string }[]) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: items.map((item) => ({
+      '@type': 'Question',
+      name: item.question,
+      acceptedAnswer: { '@type': 'Answer', text: item.answer },
+    })),
+  }
+}
+
 export function buildContactPageJsonLd(description: string) {
   return {
     '@context': 'https://schema.org',

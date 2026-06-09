@@ -57,6 +57,7 @@ ${SITE_URL}/docs
 
 ## Public pages
 - ${SITE_URL}/pricing — API plans, quotas, and enterprise
+- ${SITE_URL}/blog — developer guides on calorie APIs, nutrition data, and integrations
 - ${SITE_URL}/faq — authentication, search, commercial use, serving data
 - ${SITE_URL}/about — mission and platform overview
 - ${SITE_URL}/contact — support and sales

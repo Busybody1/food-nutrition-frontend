@@ -19,6 +19,7 @@ import {
   Layers,
   Mail,
   FileSearch,
+  FileText,
   List,
   ChevronRight,
 } from 'lucide-react'
@@ -51,6 +52,7 @@ const NAV_SECTIONS = [
     label: 'Operations',
     items: [
       { name: 'Announcements', href: '/admin/announcements', icon: Mail, permission: 'admin:settings:update' },
+      { name: 'Blog', href: '/admin/blog', icon: FileText, permission: 'admin:settings:update' },
       { name: 'Audit log', href: '/admin/audit', icon: FileSearch, permission: 'admin:monitoring:view' },
       { name: 'Settings', href: '/admin/settings', icon: Settings, permission: 'admin:settings:view' },
       { name: 'Monitoring', href: '/admin/monitoring', icon: Activity, permission: 'admin:monitoring:view' },
@@ -66,6 +68,7 @@ const PAGE_TITLES: Record<string, string> = {
   '/admin/plans': 'Plans',
   '/admin/billing': 'Billing',
   '/admin/announcements': 'Announcements',
+  '/admin/blog': 'Blog',
   '/admin/audit': 'Audit log',
   '/admin/settings': 'Settings',
   '/admin/monitoring': 'Monitoring',

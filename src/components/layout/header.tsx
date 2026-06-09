@@ -16,6 +16,7 @@ const navLinks: NavLink[] = [
   { href: '/', label: 'Home', exact: true },
   { href: '/pricing', label: 'Pricing' },
   { href: '/docs', label: 'Docs' },
+  { href: '/blog', label: 'Blog' },
   { href: '/faq', label: 'FAQ' },
 ]
 

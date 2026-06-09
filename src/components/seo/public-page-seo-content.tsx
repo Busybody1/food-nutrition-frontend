@@ -36,9 +36,10 @@ export function DocsSeoContent() {
       </p>
       <p>
         Start with a free account to generate keys in the dashboard, or try the public demo on the{' '}
-        <SeoInlineLink href="/">homepage</SeoInlineLink> before you integrate. For quotas and billing,
-        see <SeoInlineLink href="/pricing">pricing</SeoInlineLink> and monitor usage in your
-        developer dashboard.
+        <SeoInlineLink href="/">homepage</SeoInlineLink> before you integrate. Read our{' '}
+        <SeoInlineLink href="/blog">developer blog</SeoInlineLink> for calorie API guides, or see{' '}
+        <SeoInlineLink href="/pricing">pricing</SeoInlineLink> and monitor usage in your developer
+        dashboard.
       </p>
     </MarketingSeoSection>
   )
@@ -55,7 +56,8 @@ export function AboutSeoContent() {
       <p>
         Whether you are building a fitness app, corporate wellness portal, or AI meal coach, you get
         the same REST API, rate-limited for fairness and documented for production. Explore{' '}
-        <SeoInlineLink href="/docs">API documentation</SeoInlineLink>, review{' '}
+        <SeoInlineLink href="/docs">API documentation</SeoInlineLink>, read the{' '}
+        <SeoInlineLink href="/blog">blog</SeoInlineLink>, review{' '}
         <SeoInlineLink href="/pricing">plans</SeoInlineLink>, or{' '}
         <SeoInlineLink href="/contact">get in touch</SeoInlineLink> with our team.
       </p>
@@ -95,7 +97,8 @@ export function FaqSeoIntro() {
       </p>
       <p>
         Below are answers on authentication, pricing tiers, commercial use, and search behavior. For
-        step-by-step integration, visit the <SeoInlineLink href="/docs">API docs</SeoInlineLink>.
+        step-by-step integration, visit the <SeoInlineLink href="/docs">API docs</SeoInlineLink> or
+        the <SeoInlineLink href="/blog">blog</SeoInlineLink> for in-depth guides.
       </p>
     </MarketingSeoSection>
   )
@@ -111,7 +114,25 @@ export function ApiStatusSeoContent() {
       </p>
       <p>
         For incident history and release notes, see the <SeoInlineLink href="/changelog">changelog</SeoInlineLink>.
-        Enterprise customers with SLA requirements should <SeoInlineLink href="/contact">contact support</SeoInlineLink>.
+        Integration guides live on the <SeoInlineLink href="/blog">blog</SeoInlineLink>. Enterprise
+        customers with SLA requirements should <SeoInlineLink href="/contact">contact support</SeoInlineLink>.
+      </p>
+    </MarketingSeoSection>
+  )
+}
+
+export function BlogSeoContent() {
+  return (
+    <MarketingSeoSection title="Food & nutrition API guides for developers">
+      <p>
+        The {SITE_NAME} blog covers calorie APIs, nutrition data integration, barcode lookup, macro
+        tracking, and how to choose a food database API for production apps. Each article targets
+        real developer search queries with code examples and comparison tables.
+      </p>
+      <p>
+        New to the platform? Start with <SeoInlineLink href="/docs">API documentation</SeoInlineLink>,{' '}
+        compare <SeoInlineLink href="/pricing">plans</SeoInlineLink>, or{' '}
+        <SeoInlineLink href="/auth/register">create a free account</SeoInlineLink> to get your API key.
       </p>
     </MarketingSeoSection>
   )

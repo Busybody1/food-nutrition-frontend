@@ -1,12 +1,9 @@
 import type { Metadata } from 'next'
-import { buildPageMetadata } from '@/lib/metadata'
 
-export const metadata: Metadata = buildPageMetadata({
-  title: 'Account',
-  description: 'Sign in or create an account for the Calorie API developer dashboard.',
-  path: '/auth/login',
-  noIndex: true,
-})
+/** Shared auth shell — per-route canonicals live in login/register layouts. */
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+}
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return children

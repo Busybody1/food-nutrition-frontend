@@ -9,6 +9,7 @@ export type PublicPagePath =
   | '/contact'
   | '/api-status'
   | '/changelog'
+  | '/blog'
   | '/privacy'
   | '/terms'
   | '/cookies'
@@ -100,6 +101,18 @@ export const PUBLIC_PAGE_SEO: Record<PublicPagePath, PageSeoConfig> = {
     description:
       'Release notes for Calorie API: search features, rate limits, dashboard updates, and platform improvements.',
     keywords: ['API changelog', 'nutrition API updates', 'release notes'],
+  },
+  '/blog': {
+    title: 'Blog',
+    description:
+      'Developer guides on the food & nutrition API: calorie data, macros, barcode lookup, integrations, and how to build calorie tracker apps.',
+    keywords: [
+      'calorie API blog',
+      'food nutrition API guides',
+      'how to get calorie data from api',
+      'nutrition API tutorials',
+      'food data api json',
+    ],
   },
   '/privacy': {
     title: 'Privacy Policy',

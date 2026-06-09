@@ -183,6 +183,42 @@ export interface UserUsagePayload {
   status_mix: Array<{ status_code: number; count: number }>
 }
 
+export interface AdminBlogFaqItem {
+  question: string
+  answer: string
+}
+
+export interface AdminBlogPost {
+  id: number
+  slug: string
+  title: string
+  excerpt?: string | null
+  content: string
+  meta_title?: string | null
+  meta_description?: string | null
+  keywords?: string | null
+  cover_image_url?: string | null
+  faq: AdminBlogFaqItem[]
+  status: 'draft' | 'published'
+  author_user_id?: number | null
+  published_at?: string | null
+  created_at?: string | null
+  updated_at?: string | null
+}
+
+export interface BlogPostInput {
+  slug: string
+  title: string
+  excerpt?: string
+  content: string
+  meta_title?: string
+  meta_description?: string
+  keywords?: string
+  cover_image_url?: string
+  faq: AdminBlogFaqItem[]
+  status: 'draft' | 'published'
+}
+
 class AdminAPI {
   async getUsers(params?: Record<string, unknown>): Promise<{ users: AdminUser[]; total: number }> {
     return adminGet('/users', params)
@@ -350,6 +386,31 @@ class AdminAPI {
 
   async getPlatformUsage(): Promise<Record<string, unknown>> {
     return adminGet('/platform-usage')
+  }
+
+  async getBlogPosts(params?: {
+    status?: 'draft' | 'published'
+    skip?: number
+    limit?: number
+  }): Promise<{ posts: AdminBlogPost[]; count: number }> {
+    return adminGet('/blog', params)
+  }
+
+  async getBlogPost(postId: number): Promise<AdminBlogPost> {
+    return adminGet(`/blog/${postId}`)
+  }
+
+  async createBlogPost(data: BlogPostInput): Promise<AdminBlogPost> {
+    return adminPost('/blog', data)
+  }
+
+  async updateBlogPost(postId: number, data: Partial<BlogPostInput>): Promise<AdminBlogPost> {
+    return adminPatch(`/blog/${postId}`, data)
+  }
+
+  async deleteBlogPost(postId: number): Promise<{ message: string; id: number }> {
+    const res = await apiClient.delete<{ message: string; id: number }>(`${BASE}/blog/${postId}`)
+    return res.data
   }
 }
 
