@@ -76,14 +76,10 @@ export default function UsagePage() {
 
       if (endpointResponse.success) {
         setEndpointData(endpointResponse.data as EndpointUsage[])
-      } else {
-        console.warn('Failed to load endpoint data:', endpointResponse.message)
       }
 
       if (statsResponse.success) {
         setUsageStats(statsResponse.data as UsageStats)
-      } else {
-        console.warn('Failed to load usage stats:', statsResponse.message)
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load usage data')

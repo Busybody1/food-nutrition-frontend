@@ -172,9 +172,8 @@ function BillingPageContent() {
             const invoices = invoicesResponse.data as Invoice[]
             setInvoices(invoices)
           }
-        } catch (subscriptionError) {
+        } catch {
           // If subscription API fails, fall back to free plan
-          console.log('No subscription found, showing free plan:', subscriptionError)
           const billingInfo: BillingInfo = {
             user_id: user?.id || 0,
             plan_name: planName,
@@ -242,14 +241,10 @@ function BillingPageContent() {
   }
 
   const handleUpgrade = () => {
-    console.log('Upgrade button clicked - redirecting to pricing page')
-    // Navigate to pricing page
     router.push('/pricing')
   }
 
   const handleUpgradeToPlan = (planId: number) => {
-    console.log('Upgrade to plan clicked - redirecting to pricing page for plan:', planId)
-    // Navigate to pricing page with plan pre-selected
     router.push(`/pricing?plan_id=${planId}`)
   }
 

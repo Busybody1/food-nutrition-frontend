@@ -119,7 +119,6 @@ export default function UserManagement() {
       
       setUsers(response.users)
     } catch (error) {
-      console.error('Failed to load users:', error)
       setError(error instanceof Error ? error.message : 'Failed to load users')
     } finally {
       setIsLoading(false)
@@ -153,7 +152,6 @@ export default function UserManagement() {
       setUserKeys(keys.api_keys)
       setEditIsActive(user.is_active)
     } catch (err) {
-      console.error('Failed to load user details:', err)
       setActionError(err instanceof Error ? err.message : 'Failed to load user details')
       setDetailOpen(false)
     } finally {
@@ -184,7 +182,6 @@ export default function UserManagement() {
       closeUserDetail()
       await loadUsers()
     } catch (err) {
-      console.error('Failed to update user:', err)
       setActionError(err instanceof Error ? err.message : 'Failed to update user')
     } finally {
       setSavingDetail(false)
@@ -218,7 +215,6 @@ export default function UserManagement() {
 
       await loadUsers()
     } catch (err) {
-      console.error(`Failed to ${action} user:`, err)
       setActionError(err instanceof Error ? err.message : `Failed to ${action} user`)
     }
   }
@@ -263,7 +259,6 @@ export default function UserManagement() {
       setSelectedUsers([])
       await loadUsers()
     } catch (err) {
-      console.error(`Failed to ${action} users:`, err)
       setActionError(err instanceof Error ? err.message : `Failed to ${action} users`)
     }
   }

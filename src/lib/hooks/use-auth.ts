@@ -48,19 +48,12 @@ export const useAuth = (): UseAuthReturn => {
       try {
         const token = localStorage.getItem('access_token');
         if (token) {
-          console.log('Found token, verifying with /api/v1/auth/me');
-          // Verify token and get user data
           const response = await apiClient.get<User>('/api/v1/auth/me');
-          console.log('Auth me response:', response.data);
           if (response.data) {
             setUser(response.data);
           }
-        } else {
-          console.log('No token found in localStorage');
         }
-      } catch (error) {
-        console.log('Token verification failed:', error);
-        // Token is invalid, clear it
+      } catch {
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
       } finally {
@@ -79,8 +72,6 @@ export const useAuth = (): UseAuthReturn => {
 
       const response = await apiClient.post<LoginResponse>('/api/v1/auth/login', credentials);
       const { access_token, refresh_token, user: userData } = response.data;
-
-      console.log('Login response user data:', userData);
 
       // Store tokens
       localStorage.setItem('access_token', access_token);

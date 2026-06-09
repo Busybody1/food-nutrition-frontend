@@ -158,8 +158,8 @@ export function useAdmin(): AdminAuthState {
         isSuperAdmin: enrichedUser.is_super_admin,
         hasPermission: buildHasPermission(enrichedUser.permissions)
       })
-    } catch (error) {
-      console.warn('Admin profile enrichment failed; using session admin access:', error)
+    } catch {
+      // Profile enrichment is optional; session admin access is sufficient.
     }
   }, [authLoading, authIsAuthenticated, authUser])
 
