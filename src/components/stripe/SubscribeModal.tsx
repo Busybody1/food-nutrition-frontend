@@ -119,7 +119,7 @@ export function SubscribeModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-md bg-white">
+      <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             {getPlanIcon(plan.name)}
