@@ -60,6 +60,9 @@ export default function UserManagement() {
   const [userUsage, setUserUsage] = useState<UserUsagePayload | null>(null)
   const [userRequests, setUserRequests] = useState<ApiRequestRow[]>([])
   const [userKeys, setUserKeys] = useState<Array<Record<string, unknown>>>([])
+  const [feedbackTarget, setFeedbackTarget] = useState<AdminUser | null>(null)
+  const [sendingFeedback, setSendingFeedback] = useState(false)
+  const [feedbackSuccess, setFeedbackSuccess] = useState<string>('')
   const [filters, setFilters] = useState<UserFilters>({
     search: '',
     status: 'all',
@@ -220,6 +223,25 @@ export default function UserManagement() {
     }
   }
 
+  const handleSendFeedbackEmail = async () => {
+    if (!feedbackTarget) return
+    try {
+      setSendingFeedback(true)
+      setActionError('')
+      const result = await adminAPI.sendUserFeedbackEmail(feedbackTarget.id)
+      setFeedbackSuccess(
+        result.reused_existing_link
+          ? `Feedback email resent to ${feedbackTarget.email} (existing link reused).`
+          : `Feedback email sent to ${feedbackTarget.email}.`
+      )
+      setFeedbackTarget(null)
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : 'Failed to send feedback email')
+    } finally {
+      setSendingFeedback(false)
+    }
+  }
+
   const handleBulkAction = async (action: string) => {
     if (selectedUsers.length === 0) return
     
@@ -284,6 +306,9 @@ export default function UserManagement() {
       )}
 
       {actionError && <DashboardAlert variant="error">{actionError}</DashboardAlert>}
+      {feedbackSuccess && (
+        <DashboardAlert variant="success">{feedbackSuccess}</DashboardAlert>
+      )}
 
       <AdminStatGrid className="mb-6">
         <DashboardStatCard label="Total users" value={users.length} icon={Users} accent="brand" />
@@ -527,6 +552,17 @@ export default function UserManagement() {
                         <Button
                           variant="ghost"
                           size="sm"
+                          title="Send feedback request email"
+                          onClick={() => {
+                            setFeedbackSuccess('')
+                            setFeedbackTarget(user)
+                          }}
+                        >
+                          <Mail className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
                           onClick={() => handleUserAction(user.id, user.is_active ? 'deactivate' : 'activate')}
                           className={user.is_active ? 'text-red-600 hover:text-red-700' : 'text-green-600 hover:text-green-700'}
                         >
@@ -682,6 +718,35 @@ export default function UserManagement() {
                 {savingDetail ? 'Saving...' : 'Save changes'}
               </Button>
             )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!feedbackTarget} onOpenChange={(open) => !open && setFeedbackTarget(null)}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Send feedback request</DialogTitle>
+          </DialogHeader>
+          {feedbackTarget && (
+            <div className="space-y-3 text-sm text-ink-muted">
+              <p>
+                Send a branded email to{' '}
+                <span className="font-medium text-ink">{feedbackTarget.email}</span> asking for
+                feedback on the Food Nutrition API.
+              </p>
+              <p>
+                The email includes a personal link to a short survey. Responses are saved in the
+                database for review.
+              </p>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setFeedbackTarget(null)} disabled={sendingFeedback}>
+              Cancel
+            </Button>
+            <Button onClick={handleSendFeedbackEmail} disabled={sendingFeedback}>
+              {sendingFeedback ? 'Sending…' : 'Send email'}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

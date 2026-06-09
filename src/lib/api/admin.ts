@@ -306,6 +306,24 @@ class AdminAPI {
     return adminGet('/announcements/history', { limit })
   }
 
+  async sendUserFeedbackEmail(userId: number): Promise<{
+    message: string
+    user_id: number
+    request_id: number
+    reused_existing_link: boolean
+    provider?: string
+  }> {
+    return adminPost(`/users/${userId}/feedback-email`)
+  }
+
+  async getFeedbackSubmissions(params?: {
+    user_id?: number
+    skip?: number
+    limit?: number
+  }): Promise<{ feedback: Array<Record<string, unknown>>; count: number }> {
+    return adminGet('/feedback', params)
+  }
+
   async getSystemSettings(): Promise<SystemSettingRow[]> {
     return adminGet('/settings')
   }
