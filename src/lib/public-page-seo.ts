@@ -23,6 +23,7 @@ export type PageSeoConfig = {
 /** Per-route SEO copy — unique titles/descriptions for crawlers and AI indexes. */
 export const PUBLIC_PAGE_SEO: Record<PublicPagePath, PageSeoConfig> = {
   '/': {
+    title: 'Food & Nutrition API for Developers',
     description:
       'Food & nutrition REST API with search, barcode lookup, macros per 100g, and autocomplete. Free tier for developers.',
     keywords: [

@@ -6,7 +6,7 @@ export const SITE_NAME = process.env.NEXT_PUBLIC_SITE_NAME || 'Calorie API';
 
 export const SITE_TITLE =
   process.env.NEXT_PUBLIC_SITE_TITLE?.trim() ||
-  `${SITE_NAME} — Food & Nutrition Database API`;
+  `Food & Nutrition API for Developers | ${SITE_NAME}`;
 
 export const SITE_DESCRIPTION =
   process.env.NEXT_PUBLIC_SITE_DESCRIPTION?.trim() ||
