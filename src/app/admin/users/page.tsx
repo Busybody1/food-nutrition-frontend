@@ -730,8 +730,9 @@ export default function UserManagement() {
                 feedback on the Food Nutrition API.
               </p>
               <p>
-                The user replies directly to that email (no web form). Replies go to your configured
-                support inbox via Reply-To.
+                The user replies directly to that email (no web form). Replies go to your
+                Resend receiving address (<code className="text-xs">*.resend.app</code>) and
+                are forwarded to Discord when inbound webhooks are configured.
               </p>
             </div>
           )}
