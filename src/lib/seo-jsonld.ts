@@ -1,4 +1,32 @@
-import { SITE_NAME, SITE_URL, absoluteUrl } from '@/lib/site'
+import {
+  OG_IMAGE_URL,
+  SITE_DESCRIPTION,
+  SITE_NAME,
+  SITE_URL,
+  absoluteUrl,
+} from '@/lib/site'
+import { buildPricingProductJsonLdFromInput } from '@/lib/pricing-product-jsonld'
+
+const PRICING_PLANS = [
+  { name: 'Free', price: '0' },
+  { name: 'Basic', price: '29' },
+  { name: 'Core', price: '99' },
+  { name: 'Plus', price: '299' },
+] as const
+
+/** Product JSON-LD for pricing pages — satisfies Google Product/Offer required fields. */
+export function buildPricingProductJsonLd() {
+  return buildPricingProductJsonLdFromInput({
+    siteName: SITE_NAME,
+    siteUrl: SITE_URL,
+    siteDescription: SITE_DESCRIPTION,
+    imageUrl: OG_IMAGE_URL,
+    pricingUrl: absoluteUrl('/pricing'),
+    termsUrl: absoluteUrl('/terms'),
+    plans: PRICING_PLANS,
+    priceValidUntil: `${new Date().getFullYear() + 1}-12-31`,
+  })
+}
 
 export type BreadcrumbItem = { name: string; path: string }
 

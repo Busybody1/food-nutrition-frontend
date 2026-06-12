@@ -1,3 +1,4 @@
+import { buildPricingProductJsonLd } from '@/lib/seo-jsonld'
 import { SITE_URL, SITE_NAME, SITE_DESCRIPTION, SUPPORT_EMAIL, absoluteUrl } from '@/lib/site'
 
 interface StructuredDataProps {
@@ -58,18 +59,7 @@ function getStructuredData(type: StructuredDataProps['type'], data?: Record<stri
       }
 
     case 'product':
-      return {
-        '@context': 'https://schema.org',
-        '@type': 'Product',
-        name: `${SITE_NAME} — Nutrition Database API`,
-        description: SITE_DESCRIPTION,
-        brand: { '@type': 'Brand', name: SITE_NAME },
-        offers: [
-          { '@type': 'Offer', name: 'Free', price: '0', priceCurrency: 'USD' },
-          { '@type': 'Offer', name: 'Core', price: '99', priceCurrency: 'USD' },
-          { '@type': 'Offer', name: 'Plus', price: '299', priceCurrency: 'USD' },
-        ],
-      }
+      return buildPricingProductJsonLd()
 
     default:
       return data || {}
