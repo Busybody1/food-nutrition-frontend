@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter, EB_Garamond } from 'next/font/google'
 import './globals.css'
+import { GoogleAnalytics } from '@/components/analytics/google-analytics'
 import { ConditionalLayout } from '@/components/layout/conditional-layout'
 import { StructuredData } from '@/components/seo/structured-data'
 import { AuthProvider } from '@/contexts/AuthContext'
@@ -88,6 +89,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`h-full ${inter.variable} ${garamond.variable}`}>
       <body className="h-full font-sans">
+        <GoogleAnalytics />
         <ErrorBoundary>
           <AuthProvider>
             <ConditionalLayout>{children}</ConditionalLayout>
