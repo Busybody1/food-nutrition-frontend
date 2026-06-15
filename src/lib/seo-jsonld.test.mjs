@@ -5,7 +5,7 @@ import { buildPricingProductJsonLdFromInput } from './pricing-product-jsonld.ts'
 const INPUT = {
   siteName: 'Calorie API',
   siteUrl: 'https://calorieapi.com',
-  siteDescription: 'Food & nutrition REST API.',
+  siteDescription: 'Nutrition & food REST API.',
   imageUrl: 'https://calorieapi.com/images/hero-bowl.jpg',
   pricingUrl: 'https://calorieapi.com/pricing',
   termsUrl: 'https://calorieapi.com/terms',

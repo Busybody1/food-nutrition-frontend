@@ -6,21 +6,21 @@ export const SITE_NAME = process.env.NEXT_PUBLIC_SITE_NAME || 'Calorie API';
 
 export const SITE_TITLE =
   process.env.NEXT_PUBLIC_SITE_TITLE?.trim() ||
-  `Food & Nutrition API for Developers | ${SITE_NAME}`;
+  `Nutrition & Food API for Developers | ${SITE_NAME}`;
 
 export const SITE_DESCRIPTION =
   process.env.NEXT_PUBLIC_SITE_DESCRIPTION?.trim() ||
-  'Food & nutrition REST API with search, barcode lookup, macros per 100g, and autocomplete. Free tier for developers.';
+  'Nutrition & food REST API with search, barcode lookup, macros per 100g, and autocomplete. Free tier for developers.';
 
 export const LOGO_ALT = `${SITE_NAME} logo`;
 export const HERO_IMAGE_ALT =
-  'Healthy plant-based meals representing food and nutrition data for the Calorie API';
+  'Healthy plant-based meals representing nutrition and food data for the Calorie API';
 
 export const OG_IMAGE_ALT = HERO_IMAGE_ALT;
 
 export const SITE_KEYWORDS = (
   process.env.NEXT_PUBLIC_SITE_KEYWORDS?.trim() ||
-  'food nutrition API,calorie API,nutrition database API,food search API,barcode nutrition API,macro API,meal tracking API,REST food API,health app API'
+  'food API,nutrition & food API,calorie API,nutrition database API,food search API,barcode nutrition API,macro API,meal tracking API,REST food API,health app API'
 )
   .split(',')
   .map((k) => k.trim())

@@ -7,7 +7,7 @@ export function GET() {
 > ${SITE_DESCRIPTION}
 
 ## Overview
-${SITE_NAME} is a REST API for food and nutrition data. Developers use API keys (X-API-Key header) or JWT from the dashboard to power meal logging, macro tracking, barcode scanning, and autocomplete in health and fitness apps.
+${SITE_NAME} is a REST API for nutrition and food data. Developers use API keys (X-API-Key header) or JWT from the dashboard to power meal logging, macro tracking, barcode scanning, and autocomplete in health and fitness apps.
 
 ## Food database
 - Approximately 4 million food records spanning global cuisines and regional products — not limited to Western or US-only catalogs.

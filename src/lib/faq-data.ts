@@ -1,7 +1,7 @@
 export const FAQ_ITEMS = [
   {
     q: 'What is Calorie API?',
-    a: 'Calorie API is a REST API for food and nutrition data: search, autocomplete, barcode lookup, and macro nutrients per 100g. It is designed for health, fitness, and meal-tracking applications.',
+    a: 'Calorie API is a REST API for nutrition and food data: search, autocomplete, barcode lookup, and macro nutrients per 100g. It is designed for health, fitness, and meal-tracking applications.',
   },
   {
     q: 'How do I authenticate requests?',

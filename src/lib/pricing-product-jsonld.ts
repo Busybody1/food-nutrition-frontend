@@ -84,7 +84,7 @@ export function buildPricingProductJsonLdFromInput(input: PricingProductJsonLdIn
   return {
     '@context': 'https://schema.org',
     '@type': 'Product',
-    name: `${input.siteName} — Nutrition Database API`,
+    name: `${input.siteName} — Nutrition & Food Database API`,
     description: input.siteDescription,
     url: input.pricingUrl,
     image: [input.imageUrl],

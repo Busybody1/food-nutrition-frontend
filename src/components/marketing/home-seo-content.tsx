@@ -6,12 +6,12 @@ export function HomeSeoContent() {
     <section className="section-pad bg-white border-t border-surface-border/60">
       <div className="container-narrow max-w-3xl">
         <h2 className="font-display text-2xl md:text-3xl text-ink mb-4">
-          Why teams choose our food &amp; nutrition database API
+          Why teams choose our nutrition &amp; food database API
         </h2>
         <div className="space-y-4 text-ink-muted leading-relaxed">
           <p>
             {SITE_NAME} is built for developers shipping meal tracking, macro logging, and barcode
-            scan features in production health apps. The ultimate food and nutrition database API
+            scan features in production health apps. The ultimate nutrition and food database API
             combines fast search, autocomplete suggest, and verified macro data per 100g so your
             product can log meals accurately without maintaining a private food catalog.
           </p>

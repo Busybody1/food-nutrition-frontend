@@ -23,11 +23,12 @@ export type PageSeoConfig = {
 /** Per-route SEO copy — unique titles/descriptions for crawlers and AI indexes. */
 export const PUBLIC_PAGE_SEO: Record<PublicPagePath, PageSeoConfig> = {
   '/': {
-    title: 'Food & Nutrition API for Developers',
+    title: 'Nutrition & Food API for Developers',
     description:
-      'Food & nutrition REST API with search, barcode lookup, macros per 100g, and autocomplete. Free tier for developers.',
+      'Nutrition & food REST API with search, barcode lookup, macros per 100g, and autocomplete. Free tier for developers.',
     keywords: [
-      'food nutrition API',
+      'food API',
+      'nutrition & food API',
       'calorie API',
       'nutrition database API',
       'food search API',
@@ -106,10 +107,11 @@ export const PUBLIC_PAGE_SEO: Record<PublicPagePath, PageSeoConfig> = {
   '/blog': {
     title: 'Blog',
     description:
-      'Developer guides on the food & nutrition API: calorie data, macros, barcode lookup, integrations, and how to build calorie tracker apps.',
+      'Developer guides on the nutrition & food API: calorie data, macros, barcode lookup, integrations, and how to build calorie tracker apps.',
     keywords: [
       'calorie API blog',
-      'food nutrition API guides',
+      'nutrition & food API guides',
+      'food API guides',
       'how to get calorie data from api',
       'nutrition API tutorials',
       'food data api json',

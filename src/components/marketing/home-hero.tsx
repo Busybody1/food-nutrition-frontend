@@ -12,10 +12,10 @@ export function HomeHero() {
   return (
     <MarketingImageHero waveTone="elevated">
       <p className="marketing-hero-badge mb-6 lg:mb-8 inline-flex">
-        Nutrition API for developers
+        Nutrition &amp; food API for developers
       </p>
       <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-[3.25rem] xl:text-[3.5rem] text-ink leading-[1.05] tracking-tight text-balance">
-        The ultimate food &amp; nutrition database API
+        The ultimate nutrition &amp; food database API
       </h1>
       <p className="mt-5 md:mt-6 text-lg md:text-xl text-ink-muted leading-relaxed">
         Ship meal tracking, macro logging, and barcode scan features faster with search,

@@ -5,7 +5,7 @@ export function PricingSeoContent() {
   return (
     <MarketingSeoSection title="Nutrition API plans for every stage">
       <p>
-        {SITE_NAME} pricing is built for developers evaluating a food and nutrition database API,
+        {SITE_NAME} pricing is built for developers evaluating a nutrition and food database API,
         from hobby projects on the free tier to commercial meal-tracking apps on Plus. Each plan
         includes monthly request quotas, per-minute rate limits, and access to search, suggest, and
         barcode endpoints.
@@ -28,7 +28,7 @@ export function PricingSeoContent() {
 
 export function DocsSeoContent() {
   return (
-    <MarketingSeoSection title="Developer documentation for food & nutrition APIs">
+    <MarketingSeoSection title="Developer documentation for nutrition & food APIs">
       <p>
         This reference covers how to authenticate with API keys, search foods with multi-word queries
         and verified filters, run autocomplete suggest, and resolve products by UPC barcode. All
@@ -86,7 +86,7 @@ export function ContactSeoContent() {
 export function FaqSeoIntro() {
   return (
     <MarketingSeoSection
-      title="Common questions about our food & nutrition API"
+      title="Common questions about our nutrition & food API"
       className="section-pad pt-8 md:pt-10 -mt-1 border-t-0"
       id="faq-seo-intro"
     >
@@ -123,7 +123,7 @@ export function ApiStatusSeoContent() {
 
 export function BlogSeoContent() {
   return (
-    <MarketingSeoSection title="Food & nutrition API guides for developers">
+    <MarketingSeoSection title="Nutrition & food API guides for developers">
       <p>
         The {SITE_NAME} blog covers calorie APIs, nutrition data integration, barcode lookup, macro
         tracking, and how to choose a food database API for production apps. Each article targets

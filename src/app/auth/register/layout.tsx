@@ -3,7 +3,7 @@ import { buildPageMetadata } from '@/lib/metadata'
 
 export const metadata: Metadata = buildPageMetadata({
   title: 'Create account',
-  description: 'Create a free Calorie API developer account. Get your API key and start integrating food nutrition data.',
+  description: 'Create a free Calorie API developer account. Get your API key and start integrating nutrition and food data.',
   path: '/auth/register',
   noIndex: true,
 })

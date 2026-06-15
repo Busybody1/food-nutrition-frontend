@@ -357,7 +357,7 @@ export function BlogEditor({ mode, initialPost }: Props) {
                   className={`${textareaClass} min-h-[60px]`}
                   value={keywords}
                   onChange={(e) => setKeywords(e.target.value)}
-                  placeholder="calorie api for developers, food nutrition api"
+                  placeholder="food API, nutrition & food API, calorie api for developers"
                 />
               </div>
               <div>

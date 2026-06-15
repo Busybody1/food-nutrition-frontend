@@ -25,7 +25,7 @@ export default async function BlogIndexPage() {
       <PublicPageSchema path="/blog" pageName="Blog" />
       <MarketingHero
         title="Calorie API Blog"
-        subtitle="Developer guides on nutrition data, calorie APIs, macros, and building food-powered apps."
+        subtitle="Developer guides on nutrition & food APIs, calorie data, macros, and building food-powered apps."
         compact
       />
 

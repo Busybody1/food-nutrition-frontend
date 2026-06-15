@@ -474,7 +474,7 @@ print_r($data);
           <section id="search" className="mb-12 scroll-mt-24">
             <h2 className="text-2xl sm:text-3xl font-bold text-ink mb-6">Food API Endpoints</h2>
             <p className="text-ink-muted mb-8">
-              Our API provides comprehensive access to food nutrition data through simple REST endpoints.
+              Our API provides comprehensive access to nutrition and food data through simple REST endpoints.
             </p>
 
             {/* Search Endpoint */}
