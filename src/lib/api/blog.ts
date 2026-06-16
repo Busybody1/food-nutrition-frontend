@@ -16,8 +16,11 @@ export interface BlogListItem {
   slug: string
   title: string
   excerpt?: string | null
+  meta_description?: string | null
+  keywords?: string | null
   cover_image_url?: string | null
   published_at?: string | null
+  updated_at?: string | null
 }
 
 export interface BlogPost {
@@ -54,8 +57,8 @@ async function blogFetch<T>(path: string): Promise<T | null> {
   }
 }
 
-export async function getBlogPosts(): Promise<BlogListItem[]> {
-  const posts = await blogFetch<BlogListItem[]>('')
+export async function getBlogPosts(limit = 100): Promise<BlogListItem[]> {
+  const posts = await blogFetch<BlogListItem[]>(`?limit=${limit}`)
   return posts ?? []
 }
 

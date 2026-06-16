@@ -4,8 +4,8 @@ import {
   SITE_NAME,
   SITE_URL,
   absoluteUrl,
-} from '@/lib/site'
-import { buildPricingProductJsonLdFromInput } from '@/lib/pricing-product-jsonld'
+} from './site.ts'
+import { buildPricingProductJsonLdFromInput } from './pricing-product-jsonld.ts'
 
 const PRICING_PLANS = [
   { name: 'Free', price: '0' },
@@ -66,13 +66,15 @@ export function buildWebPageJsonLd({
   }
 }
 
-export function buildArticleJsonLd({
+export function buildBlogPostingJsonLd({
   title,
   description,
   path,
   datePublished,
   dateModified,
   image,
+  keywords,
+  wordCount,
 }: {
   title: string
   description: string
@@ -80,15 +82,25 @@ export function buildArticleJsonLd({
   datePublished?: string | null
   dateModified?: string | null
   image?: string | null
+  keywords?: string[] | null
+  wordCount?: number
 }) {
   const url = absoluteUrl(path)
+  const keywordText =
+    keywords?.filter(Boolean).join(', ') ||
+    undefined
+
   return {
     '@context': 'https://schema.org',
-    '@type': 'Article',
+    '@type': 'BlogPosting',
+    '@id': url,
     headline: title,
     description,
     mainEntityOfPage: { '@type': 'WebPage', '@id': url },
     url,
+    inLanguage: 'en-US',
+    isAccessibleForFree: true,
+    articleSection: 'Developer guides',
     ...(datePublished ? { datePublished } : {}),
     dateModified: dateModified || datePublished || undefined,
     author: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
@@ -99,6 +111,31 @@ export function buildArticleJsonLd({
       logo: { '@type': 'ImageObject', url: absoluteUrl('/logos/busybody-logo.png') },
     },
     ...(image ? { image: [image] } : {}),
+    ...(keywordText ? { keywords: keywordText } : {}),
+    ...(wordCount && wordCount > 0 ? { wordCount } : {}),
+  }
+}
+
+/** @deprecated Use buildBlogPostingJsonLd */
+export function buildArticleJsonLd(args: Parameters<typeof buildBlogPostingJsonLd>[0]) {
+  return buildBlogPostingJsonLd(args)
+}
+
+export function buildBlogItemListJsonLd(
+  posts: { slug: string; title: string }[]
+) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: `${SITE_NAME} Blog`,
+    itemListOrder: 'https://schema.org/ItemListOrderDescending',
+    numberOfItems: posts.length,
+    itemListElement: posts.map((post, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: post.title,
+      url: absoluteUrl(`/blog/${post.slug}`),
+    })),
   }
 }
 

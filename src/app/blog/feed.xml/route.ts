@@ -1,16 +1,16 @@
 import { NextResponse } from 'next/server'
 import { getBlogPosts } from '@/lib/api/blog'
-import { buildLlmsTxt } from '@/lib/blog-discovery'
+import { buildBlogRssXml } from '@/lib/blog-discovery'
 
 export const revalidate = 300
 
 export async function GET() {
   const posts = await getBlogPosts()
-  const body = buildLlmsTxt(posts)
+  const xml = buildBlogRssXml(posts)
 
-  return new NextResponse(body, {
+  return new NextResponse(xml, {
     headers: {
-      'Content-Type': 'text/plain; charset=utf-8',
+      'Content-Type': 'application/rss+xml; charset=utf-8',
       'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
     },
   })

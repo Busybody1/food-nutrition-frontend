@@ -2,11 +2,24 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { MarketingHero } from '@/components/marketing/marketing-hero'
 import { buildPublicPageMetadata } from '@/lib/build-public-metadata'
+import { JsonLdScript } from '@/components/seo/structured-data'
 import { PublicPageSchema } from '@/components/seo/public-page-schema'
 import { getBlogPosts } from '@/lib/api/blog'
 import { BlogSeoContent } from '@/components/seo/public-page-seo-content'
+import { buildBlogItemListJsonLd } from '@/lib/seo-jsonld'
+import { absoluteUrl } from '@/lib/site'
 
-export const metadata: Metadata = buildPublicPageMetadata('/blog')
+const blogMetadata = buildPublicPageMetadata('/blog')
+
+export const metadata: Metadata = {
+  ...blogMetadata,
+  alternates: {
+    ...blogMetadata.alternates,
+    types: {
+      'application/rss+xml': [{ url: absoluteUrl('/blog/feed.xml'), title: 'Calorie API Blog RSS' }],
+    },
+  },
+}
 
 export const revalidate = 300
 
@@ -19,10 +32,15 @@ function formatDate(value?: string | null): string | null {
 
 export default async function BlogIndexPage() {
   const posts = await getBlogPosts()
+  const blogItemListJsonLd = buildBlogItemListJsonLd(posts)
 
   return (
     <div className="marketing-page">
-      <PublicPageSchema path="/blog" pageName="Blog" />
+      <PublicPageSchema
+        path="/blog"
+        pageName="Blog"
+        extraJsonLd={[blogItemListJsonLd]}
+      />
       <MarketingHero
         title="Calorie API Blog"
         subtitle="Developer guides on nutrition & food APIs, calorie data, macros, and building food-powered apps."

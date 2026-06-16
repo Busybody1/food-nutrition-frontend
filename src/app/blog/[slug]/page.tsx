@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation'
 import { buildPageMetadata } from '@/lib/metadata'
 import { JsonLdScript } from '@/components/seo/structured-data'
 import {
-  buildArticleJsonLd,
+  buildBlogPostingJsonLd,
   buildBreadcrumbJsonLd,
   buildFaqJsonLd,
 } from '@/lib/seo-jsonld'
@@ -69,13 +69,15 @@ export default async function BlogArticlePage({ params }: PageProps) {
   const published = formatDate(post.published_at)
   const image = post.cover_image_url || OG_IMAGE_URL
 
-  const articleJsonLd = buildArticleJsonLd({
+  const articleJsonLd = buildBlogPostingJsonLd({
     title: post.meta_title || post.title,
     description: post.meta_description || post.excerpt || post.title,
     path,
     datePublished: post.published_at,
     dateModified: post.updated_at,
     image,
+    keywords: splitKeywords(post.keywords),
+    wordCount: post.content.trim().split(/\s+/).filter(Boolean).length,
   })
   const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     { name: 'Home', path: '/' },
