@@ -4,8 +4,12 @@ import {
   SITE_NAME,
   SITE_URL,
   absoluteUrl,
-} from './site.ts'
-import { buildPricingProductJsonLdFromInput } from './pricing-product-jsonld.ts'
+} from '@/lib/site'
+import { buildPricingProductJsonLdFromInput } from '@/lib/pricing-product-jsonld'
+import {
+  buildBlogItemListJsonLdFromInput,
+  buildBlogPostingJsonLdFromInput,
+} from '@/lib/blog-jsonld-format'
 
 const PRICING_PLANS = [
   { name: 'Free', price: '0' },
@@ -66,54 +70,18 @@ export function buildWebPageJsonLd({
   }
 }
 
-export function buildBlogPostingJsonLd({
-  title,
-  description,
-  path,
-  datePublished,
-  dateModified,
-  image,
-  keywords,
-  wordCount,
-}: {
-  title: string
-  description: string
-  path: string
-  datePublished?: string | null
-  dateModified?: string | null
-  image?: string | null
-  keywords?: string[] | null
-  wordCount?: number
-}) {
-  const url = absoluteUrl(path)
-  const keywordText =
-    keywords?.filter(Boolean).join(', ') ||
-    undefined
-
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'BlogPosting',
-    '@id': url,
-    headline: title,
-    description,
-    mainEntityOfPage: { '@type': 'WebPage', '@id': url },
-    url,
-    inLanguage: 'en-US',
-    isAccessibleForFree: true,
-    articleSection: 'Developer guides',
-    ...(datePublished ? { datePublished } : {}),
-    dateModified: dateModified || datePublished || undefined,
-    author: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
-    publisher: {
-      '@type': 'Organization',
-      name: SITE_NAME,
-      url: SITE_URL,
-      logo: { '@type': 'ImageObject', url: absoluteUrl('/logos/busybody-logo.png') },
+export function buildBlogPostingJsonLd(
+  args: Parameters<typeof buildBlogPostingJsonLdFromInput>[1]
+) {
+  return buildBlogPostingJsonLdFromInput(
+    {
+      siteName: SITE_NAME,
+      siteUrl: SITE_URL,
+      logoUrl: absoluteUrl('/logos/busybody-logo.png'),
+      absoluteUrl,
     },
-    ...(image ? { image: [image] } : {}),
-    ...(keywordText ? { keywords: keywordText } : {}),
-    ...(wordCount && wordCount > 0 ? { wordCount } : {}),
-  }
+    args
+  )
 }
 
 /** @deprecated Use buildBlogPostingJsonLd */
@@ -121,22 +89,16 @@ export function buildArticleJsonLd(args: Parameters<typeof buildBlogPostingJsonL
   return buildBlogPostingJsonLd(args)
 }
 
-export function buildBlogItemListJsonLd(
-  posts: { slug: string; title: string }[]
-) {
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'ItemList',
-    name: `${SITE_NAME} Blog`,
-    itemListOrder: 'https://schema.org/ItemListOrderDescending',
-    numberOfItems: posts.length,
-    itemListElement: posts.map((post, index) => ({
-      '@type': 'ListItem',
-      position: index + 1,
-      name: post.title,
-      url: absoluteUrl(`/blog/${post.slug}`),
-    })),
-  }
+export function buildBlogItemListJsonLd(posts: { slug: string; title: string }[]) {
+  return buildBlogItemListJsonLdFromInput(
+    {
+      siteName: SITE_NAME,
+      siteUrl: SITE_URL,
+      logoUrl: absoluteUrl('/logos/busybody-logo.png'),
+      absoluteUrl,
+    },
+    posts
+  )
 }
 
 export function buildFaqJsonLd(items: { question: string; answer: string }[]) {
