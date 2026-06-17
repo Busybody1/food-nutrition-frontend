@@ -8,7 +8,7 @@ import {
   buildBreadcrumbJsonLd,
   buildFaqJsonLd,
 } from '@/lib/seo-jsonld'
-import { OG_IMAGE_URL } from '@/lib/site'
+import { OG_IMAGE_URL, FOOD_DATABASE_SIZE_LABEL } from '@/lib/site'
 import { MarkdownContent } from '@/components/blog/markdown-content'
 import { getBlogPost, getBlogSlugs } from '@/lib/api/blog'
 
@@ -137,7 +137,7 @@ export default async function BlogArticlePage({ params }: PageProps) {
           <div className="marketing-callout mt-12">
             <h2 className="text-lg font-semibold text-ink mb-2">Start building with the Calorie API</h2>
             <p className="text-sm text-ink-muted mb-4">
-              Get a free API key and access 1M+ foods with search, barcode lookup, and full macro data.
+              Get a free API key and access {FOOD_DATABASE_SIZE_LABEL} with search, barcode lookup, and full macro data.
             </p>
             <div className="flex flex-wrap gap-3">
               <Link href="/auth/register" className="site-header-cta" prefetch={false}>

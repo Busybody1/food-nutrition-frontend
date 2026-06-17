@@ -29,6 +29,10 @@ export const SITE_KEYWORDS = (
   .map((k) => k.trim())
   .filter(Boolean);
 
+/** Marketing label for catalog size — override with NEXT_PUBLIC_FOOD_DATABASE_SIZE. */
+export const FOOD_DATABASE_SIZE_LABEL =
+  process.env.NEXT_PUBLIC_FOOD_DATABASE_SIZE?.trim() || '4M+ foods';
+
 /** Bump when replacing public/images/hero-bowl.jpg so Next/image and browsers fetch the new file. */
 export const HERO_IMAGE_VERSION =
   process.env.NEXT_PUBLIC_HERO_IMAGE_VERSION?.trim() || '3';

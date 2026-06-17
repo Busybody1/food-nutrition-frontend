@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { SITE_NAME } from '@/lib/site'
+import { SITE_NAME, FOOD_DATABASE_SIZE_LABEL } from '@/lib/site'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -315,7 +315,7 @@ print_r($data);
                   <div className="flex flex-wrap gap-2 mb-4">
                     <Badge variant="secondary" className="gap-1">
                       <Database className="w-3 h-3" />
-                      50,000+ foods
+                      {FOOD_DATABASE_SIZE_LABEL}
                     </Badge>
                     <Badge variant="secondary" className="gap-1">
                       <Zap className="w-3 h-3" />
