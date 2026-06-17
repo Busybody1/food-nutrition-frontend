@@ -572,11 +572,8 @@ print_r($data);
                   </div>
 
                   <p className="text-sm text-ink-muted mt-4">
-                    <code className="docs-inline-code">source</code> is{' '}
-                    <code className="docs-inline-code">database</code> for catalog hits or{' '}
-                    <code className="docs-inline-code">openfoodfacts</code> when the fallback provider
-                    returns the product. Open Food Facts raw payloads include thousands of metadata
-                    fields; this endpoint strips that down to logging-ready nutrition data.
+                    Open Food Facts raw payloads include thousands of metadata fields; this endpoint
+                    strips that down to logging-ready product and nutrition data.
                   </p>
                 </div>
                 <div className="min-w-0">

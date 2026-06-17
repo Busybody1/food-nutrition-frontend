@@ -19,7 +19,7 @@ export default function PlaygroundPage() {
           Try {SITE_NAME} endpoints live
         </h1>
         <p className="text-lg text-ink-muted max-w-2xl mx-auto">
-          Test search, suggest, barcode lookup, and food details against rate-limited public demo routes — no API key
+          Test search, suggest, barcode lookup, and food details against rate-limited public demo routes, no API key
           required.
         </p>
         <p className="mt-4 text-sm text-ink-muted">
