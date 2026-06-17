@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
-import { FileText, Plus, ExternalLink } from 'lucide-react'
+import { FileText, Plus, ExternalLink, Trash2, Loader2 } from 'lucide-react'
 import { adminAPI, type AdminBlogPost } from '@/lib/api/admin'
 import { useAdmin } from '@/lib/hooks/use-admin'
 import { Badge } from '@/components/ui/badge'
@@ -29,6 +29,9 @@ export default function AdminBlogPage() {
   const [posts, setPosts] = useState<AdminBlogPost[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null)
+  const [deletingId, setDeletingId] = useState<number | null>(null)
+  const [deleteError, setDeleteError] = useState<string | null>(null)
 
   const loadPosts = useCallback(async () => {
     try {
@@ -46,6 +49,20 @@ export default function AdminBlogPage() {
   useEffect(() => {
     loadPosts()
   }, [loadPosts])
+
+  const handleDelete = async (postId: number) => {
+    setDeletingId(postId)
+    setDeleteError(null)
+    try {
+      await adminAPI.deleteBlogPost(postId)
+      setPosts((prev) => prev.filter((p) => p.id !== postId))
+      setConfirmDeleteId(null)
+    } catch (e) {
+      setDeleteError(e instanceof Error ? e.message : 'Failed to delete post')
+    } finally {
+      setDeletingId(null)
+    }
+  }
 
   return (
     <AdminPage>
@@ -65,6 +82,7 @@ export default function AdminBlogPage() {
       />
 
       {error && <DashboardAlert variant="error">{error}</DashboardAlert>}
+      {deleteError && <DashboardAlert variant="error">{deleteError}</DashboardAlert>}
       {!canManage && (
         <DashboardAlert variant="warning">
           You do not have permission to manage blog posts.
@@ -99,23 +117,60 @@ export default function AdminBlogPage() {
                     /blog/{post.slug} · updated {formatDate(post.updated_at)}
                   </p>
                 </div>
+
                 <div className="flex items-center gap-3 shrink-0">
-                  {post.status === 'published' && (
-                    <Link
-                      href={`/blog/${post.slug}`}
-                      target="_blank"
-                      className="text-ink-dim hover:text-ink"
-                      aria-label="View live"
-                    >
-                      <ExternalLink className="h-4 w-4" />
-                    </Link>
-                  )}
+                  {/* View — opens the public blog post in a new tab */}
+                  <Link
+                    href={`/blog/${post.slug}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-sm text-ink-muted hover:text-ink transition-colors"
+                  >
+                    <ExternalLink className="h-3.5 w-3.5" />
+                    View
+                  </Link>
+
                   <Link
                     href={`/admin/blog/${post.id}`}
                     className="text-sm font-medium text-brand-strong hover:text-brand"
                   >
                     Edit
                   </Link>
+
+                  {canManage && (
+                    confirmDeleteId === post.id ? (
+                      <span className="inline-flex items-center gap-1.5">
+                        <span className="text-xs text-ink-muted">Delete?</span>
+                        <button
+                          type="button"
+                          onClick={() => handleDelete(post.id)}
+                          disabled={deletingId === post.id}
+                          className="inline-flex items-center gap-1 text-xs font-medium text-red-600 hover:text-red-700 disabled:opacity-50"
+                        >
+                          {deletingId === post.id
+                            ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                            : 'Yes'}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setConfirmDeleteId(null)}
+                          className="text-xs text-ink-muted hover:text-ink"
+                        >
+                          Cancel
+                        </button>
+                      </span>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => setConfirmDeleteId(post.id)}
+                        className="inline-flex items-center gap-1 text-sm text-ink-muted hover:text-red-600 transition-colors"
+                        aria-label="Delete post"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                        Delete
+                      </button>
+                    )
+                  )}
                 </div>
               </div>
             ))
