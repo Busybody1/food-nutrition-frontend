@@ -4,6 +4,7 @@ import { SITE_NAME, SUPPORT_EMAIL, LOGO_ALT, absoluteUrl } from '@/lib/site'
 
 const productLinks = [
   { href: '/docs', label: 'Documentation' },
+  { href: '/playground', label: 'API Playground' },
   { href: '/pricing', label: 'Pricing' },
   { href: '/blog', label: 'Blog' },
   { href: '/api-status', label: 'API status' },

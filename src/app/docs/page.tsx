@@ -17,9 +17,11 @@ import {
   Key,
   Zap,
   Database,
+  FlaskConical,
 } from 'lucide-react'
 import { DocsCodeBlock } from '@/components/docs/docs-code-block'
 import { MarketingImageHero } from '@/components/marketing/marketing-image-hero'
+import { BARCODE_LOOKUP_EXAMPLE_JSON, BARCODE_LOOKUP_FIELDS } from '@/lib/docs/barcode-lookup'
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '') || 'http://localhost:8000'
 const SEARCH_URL = `${API_BASE}/api/v1/search/foods`
@@ -93,6 +95,7 @@ print_r($data);
         { name: 'Choose Plan', href: '#choose-plan' },
         { name: 'Get API Key', href: '#get-api-key' },
         { name: 'First Request', href: '#first-request' },
+        { name: 'API Playground', href: '/playground' },
       ],
     },
     {
@@ -100,6 +103,7 @@ print_r($data);
       icon: Database,
       items: [
         { name: 'Search Foods', href: '#search' },
+        { name: 'Barcode Lookup', href: '#barcode-lookup' },
         { name: 'Food Details', href: '#food-details' },
         { name: 'Nutrients', href: '#nutrients' },
         { name: 'Brands', href: '#brands' },
@@ -190,6 +194,9 @@ print_r($data);
   const categoriesCurl = `curl "${API_BASE}/api/v1/foods/categories/" \\
   -H "X-API-Key: your_api_key_here" \\
   -G -d "limit=50" -d "skip=0"`
+
+  const barcodeLookupCurl = `curl "${API_BASE}/api/v1/search/barcode/3017620422003" \\
+  -H "X-API-Key: your_api_key_here"`
 
   const responseExample = `{
   "foods": [
@@ -305,7 +312,7 @@ print_r($data);
                     Get started in minutes with our comprehensive food database API.
                     Create an account, choose a plan, get your API key, and start making requests.
                   </p>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-2 mb-4">
                     <Badge variant="secondary" className="gap-1">
                       <Database className="w-3 h-3" />
                       50,000+ foods
@@ -319,6 +326,13 @@ print_r($data);
                       Easy integration
                     </Badge>
                   </div>
+                  <Button variant="outline" asChild>
+                    <Link href="/playground">
+                      <FlaskConical className="w-4 h-4 mr-2" />
+                      Open API playground
+                      <ArrowRight className="w-4 h-4 ml-2" />
+                    </Link>
+                  </Button>
                 </div>
               </div>
             </div>
@@ -512,6 +526,63 @@ print_r($data);
                   <h4 className="font-semibold text-ink mb-2">Response Example</h4>
                   <div className="bg-gray-100 rounded-brand overflow-hidden max-w-full">
                     <pre className="docs-response-pre">{responseExample}</pre>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Barcode Lookup */}
+            <div id="barcode-lookup" className="mb-8 scroll-mt-24">
+              <h3 className="text-xl font-semibold text-ink mb-4">Barcode Lookup</h3>
+              <p className="text-ink-muted mb-4">
+                Resolve a UPC or EAN barcode to product and nutrition data. The API checks the local
+                food database first. When no match is found, it falls back to{' '}
+                <a
+                  href="https://world.openfoodfacts.net"
+                  className="text-brand-strong hover:underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Open Food Facts
+                </a>{' '}
+                and returns only the fields needed for logging: product details, serving size, macros
+                per 100 g (and per serving when available), and micronutrients when present.
+              </p>
+
+              <DocsCodeBlock title="GET /api/v1/search/barcode/{upc}" code={barcodeLookupCurl} />
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 min-w-0 mt-6">
+                <div className="min-w-0">
+                  <h4 className="font-semibold text-ink mb-2">Path Parameters</h4>
+                  <div className="space-y-0 text-sm">
+                    <div className="docs-param-row">
+                      <code className="text-blue-600 shrink-0">upc</code>
+                      <span className="text-ink-muted">UPC/EAN barcode (digits; dashes are stripped)</span>
+                    </div>
+                  </div>
+
+                  <h4 className="font-semibold text-ink mb-2 mt-6">Response fields</h4>
+                  <div className="space-y-0 text-sm">
+                    {BARCODE_LOOKUP_FIELDS.map((item) => (
+                      <div key={item.field} className="docs-param-row">
+                        <code className="text-blue-600 shrink-0">{item.field}</code>
+                        <span className="text-ink-muted">{item.description}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <p className="text-sm text-ink-muted mt-4">
+                    <code className="docs-inline-code">source</code> is{' '}
+                    <code className="docs-inline-code">database</code> for catalog hits or{' '}
+                    <code className="docs-inline-code">openfoodfacts</code> when the fallback provider
+                    returns the product. Open Food Facts raw payloads include thousands of metadata
+                    fields; this endpoint strips that down to logging-ready nutrition data.
+                  </p>
+                </div>
+                <div className="min-w-0">
+                  <h4 className="font-semibold text-ink mb-2">Response Example (Nutella)</h4>
+                  <div className="bg-gray-100 rounded-brand overflow-hidden max-w-full">
+                    <pre className="docs-response-pre">{BARCODE_LOOKUP_EXAMPLE_JSON}</pre>
                   </div>
                 </div>
               </div>

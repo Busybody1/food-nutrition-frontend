@@ -4,6 +4,7 @@ export type PublicPagePath =
   | '/'
   | '/pricing'
   | '/docs'
+  | '/playground'
   | '/faq'
   | '/about'
   | '/contact'
@@ -59,6 +60,18 @@ export const PUBLIC_PAGE_SEO: Record<PublicPagePath, PageSeoConfig> = {
       'REST API guide',
       'barcode lookup API',
       'food search API docs',
+    ],
+  },
+  '/playground': {
+    title: 'API Playground',
+    description:
+      'Try Calorie API endpoints live: food search, autocomplete suggest, barcode lookup, and food details. Rate-limited public demo — no API key required.',
+    keywords: [
+      'nutrition API playground',
+      'food API demo',
+      'barcode API test',
+      'try food API',
+      'REST API sandbox',
     ],
   },
   '/faq': {

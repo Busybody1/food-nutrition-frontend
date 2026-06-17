@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { Loader2 } from 'lucide-react';
 import { SITE_URL } from '@/lib/site';
 
@@ -46,7 +47,7 @@ export function ApiPlayground() {
         <span className="w-2.5 h-2.5 rounded-full bg-red-400/90" />
         <span className="w-2.5 h-2.5 rounded-full bg-amber-400/90" />
         <span className="w-2.5 h-2.5 rounded-full bg-emerald-400/90" />
-        <span className="ml-2 text-xs text-ink-dim font-mono">Public demo — rate limited by IP</span>
+        <span className="ml-2 text-xs text-ink-dim font-mono">Public demo</span>
       </div>
       <div className="p-6 space-y-4">
         <div className="flex flex-col sm:flex-row gap-3">
@@ -66,7 +67,11 @@ export function ApiPlayground() {
           {result || `GET ${API_BASE}/api/v1/public/search/foods?q=${query}&limit=3`}
         </pre>
         <p className="text-xs text-ink-dim">
-          Production keys and higher limits:{' '}
+          Try search, suggest, barcode, and food details in the{' '}
+          <Link href="/playground" className="text-brand-strong hover:underline">
+            full API playground
+          </Link>
+          . Production keys:{' '}
           <a href={`${SITE_URL}/auth/register`} className="text-brand-strong hover:underline">
             create a free account
           </a>

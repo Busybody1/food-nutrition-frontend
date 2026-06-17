@@ -12,6 +12,7 @@ export const metadata: Metadata = buildPageMetadata({
 const helpfulLinks = [
   { href: '/', label: 'Home' },
   { href: '/docs', label: 'API documentation' },
+  { href: '/playground', label: 'API playground' },
   { href: '/pricing', label: 'Pricing' },
   { href: '/blog', label: 'Blog' },
   { href: '/faq', label: 'FAQ' },
