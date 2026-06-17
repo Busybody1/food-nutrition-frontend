@@ -4,17 +4,20 @@ export type PlaygroundParam = {
   placeholder?: string
   defaultValue?: string
   required?: boolean
-  type?: 'text' | 'number'
+  type?: 'text' | 'number' | 'select'
+  options?: { value: string; label: string }[]
 }
 
 export type PlaygroundEndpoint = {
   id: string
   name: string
   description: string
-  method: 'GET'
+  method: 'GET' | 'POST'
   /** Path under `/api/v1/public`, may include `{param}` segments. */
   pathTemplate: string
   params: PlaygroundParam[]
+  /** Default JSON body string for POST endpoints. */
+  defaultBody?: string
 }
 
 export const PUBLIC_DEMO_RATE_LIMIT = {
@@ -73,6 +76,88 @@ export const PLAYGROUND_ENDPOINTS: PlaygroundEndpoint[] = [
       { key: 'food_id', label: 'Food ID', placeholder: '12345', defaultValue: '12345', required: true, type: 'number' },
     ],
   },
+  {
+    id: 'calc-macros',
+    name: 'Macro calculator',
+    description:
+      'Calculate BMR, TDEE, and daily macro targets (protein, carbs, fat) from body stats using the Mifflin-St Jeor formula.',
+    method: 'GET',
+    pathTemplate: '/calc/macros',
+    params: [
+      { key: 'age', label: 'Age', placeholder: '28', defaultValue: '28', required: true, type: 'number' },
+      {
+        key: 'gender',
+        label: 'Gender',
+        required: true,
+        type: 'select',
+        defaultValue: 'male',
+        options: [
+          { value: 'male', label: 'Male' },
+          { value: 'female', label: 'Female' },
+        ],
+      },
+      { key: 'weight_kg', label: 'Weight (kg)', placeholder: '80', defaultValue: '80', required: true, type: 'number' },
+      { key: 'height_cm', label: 'Height (cm)', placeholder: '178', defaultValue: '178', required: true, type: 'number' },
+      {
+        key: 'activity',
+        label: 'Activity level',
+        required: true,
+        type: 'select',
+        defaultValue: 'moderately_active',
+        options: [
+          { value: 'sedentary', label: 'Sedentary' },
+          { value: 'lightly_active', label: 'Lightly active' },
+          { value: 'moderately_active', label: 'Moderately active' },
+          { value: 'very_active', label: 'Very active' },
+          { value: 'extra_active', label: 'Extra active' },
+        ],
+      },
+      {
+        key: 'goal',
+        label: 'Goal',
+        required: true,
+        type: 'select',
+        defaultValue: 'maintain',
+        options: [
+          { value: 'lose', label: 'Lose weight' },
+          { value: 'maintain', label: 'Maintain' },
+          { value: 'gain', label: 'Gain muscle' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'calc-portion',
+    name: 'Portion scaler',
+    description:
+      'Scale a food\'s nutrition to any gram amount. Enter a food ID from search and the number of grams to get exact macros for that serving.',
+    method: 'GET',
+    pathTemplate: '/calc/portion',
+    params: [
+      { key: 'food_id', label: 'Food ID', placeholder: '12345', defaultValue: '12345', required: true, type: 'number' },
+      { key: 'grams', label: 'Grams', placeholder: '150', defaultValue: '150', required: true, type: 'number' },
+    ],
+  },
+  {
+    id: 'calc-recipe',
+    name: 'Recipe analyzer',
+    description:
+      'Post a list of ingredients (food_id + grams each) and get total and per-serving macros for the full recipe.',
+    method: 'POST',
+    pathTemplate: '/calc/recipe',
+    params: [],
+    defaultBody: JSON.stringify(
+      {
+        servings: 4,
+        ingredients: [
+          { food_id: 12345, grams: 300 },
+          { food_id: 67890, grams: 200 },
+        ],
+      },
+      null,
+      2
+    ),
+  },
 ]
 
 export function buildPlaygroundUrl(
@@ -112,4 +197,8 @@ export function initialParamValues(endpoint: PlaygroundEndpoint): Record<string,
   return Object.fromEntries(
     endpoint.params.map((param) => [param.key, param.defaultValue ?? ''])
   )
+}
+
+export function initialBody(endpoint: PlaygroundEndpoint): string {
+  return endpoint.defaultBody ?? ''
 }

@@ -9,6 +9,7 @@ import {
   PUBLIC_DEMO_RATE_LIMIT,
   buildPlaygroundUrl,
   initialParamValues,
+  initialBody,
   type PlaygroundEndpoint,
 } from '@/lib/playground/endpoints'
 import { cn } from '@/lib/utils/cn'
@@ -19,6 +20,9 @@ export function ApiPlaygroundPage() {
   const [activeId, setActiveId] = useState(PLAYGROUND_ENDPOINTS[0].id)
   const [valuesByEndpoint, setValuesByEndpoint] = useState<Record<string, Record<string, string>>>(() =>
     Object.fromEntries(PLAYGROUND_ENDPOINTS.map((endpoint) => [endpoint.id, initialParamValues(endpoint)]))
+  )
+  const [bodyByEndpoint, setBodyByEndpoint] = useState<Record<string, string>>(() =>
+    Object.fromEntries(PLAYGROUND_ENDPOINTS.map((endpoint) => [endpoint.id, initialBody(endpoint)]))
   )
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -31,6 +35,7 @@ export function ApiPlaygroundPage() {
   )
 
   const values = valuesByEndpoint[activeEndpoint.id] ?? initialParamValues(activeEndpoint)
+  const body = bodyByEndpoint[activeEndpoint.id] ?? initialBody(activeEndpoint)
 
   const requestUrl = useMemo(
     () => buildPlaygroundUrl(API_BASE, activeEndpoint, values),
@@ -44,13 +49,32 @@ export function ApiPlaygroundPage() {
     }))
   }
 
+  const setBody = (value: string) => {
+    setBodyByEndpoint((prev) => ({ ...prev, [activeEndpoint.id]: value }))
+  }
+
   const runRequest = async () => {
     setLoading(true)
     setError(null)
     setStatusCode(null)
 
     try {
-      const res = await fetch(requestUrl)
+      const isPost = activeEndpoint.method === 'POST'
+
+      if (isPost) {
+        try {
+          JSON.parse(body)
+        } catch {
+          setError('Invalid JSON body. Fix the syntax and try again.')
+          setLoading(false)
+          return
+        }
+      }
+
+      const res = await fetch(requestUrl, {
+        method: activeEndpoint.method,
+        ...(isPost && { headers: { 'Content-Type': 'application/json' }, body }),
+      })
       const text = await res.text()
       setStatusCode(res.status)
 
@@ -112,6 +136,8 @@ export function ApiPlaygroundPage() {
           endpoint={activeEndpoint}
           values={values}
           onChange={setParamValue}
+          body={body}
+          onBodyChange={setBody}
           requestUrl={requestUrl}
           loading={loading}
           onRun={runRequest}
@@ -186,6 +212,8 @@ type EndpointPanelProps = {
   endpoint: PlaygroundEndpoint
   values: Record<string, string>
   onChange: (key: string, value: string) => void
+  body: string
+  onBodyChange: (value: string) => void
   requestUrl: string
   loading: boolean
   onRun: () => void
@@ -198,6 +226,8 @@ function EndpointPanel({
   endpoint,
   values,
   onChange,
+  body,
+  onBodyChange,
   requestUrl,
   loading,
   onRun,
@@ -205,6 +235,11 @@ function EndpointPanel({
   statusCode,
   result,
 }: EndpointPanelProps) {
+  const isPost = endpoint.method === 'POST'
+  const methodColors = isPost
+    ? 'text-blue-700 bg-blue-50'
+    : 'text-emerald-700 bg-emerald-50'
+
   return (
     <div className="space-y-6">
       <div>
@@ -215,30 +250,63 @@ function EndpointPanel({
 
       <div className="glass-panel overflow-hidden shadow-glass-lg">
         <div className="flex items-center gap-2 px-4 py-3 border-b border-surface-border/80 bg-surface-elevated">
-          <span className="text-xs font-mono font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">
+          <span className={cn('text-xs font-mono font-semibold px-2 py-0.5 rounded', methodColors)}>
             {endpoint.method}
           </span>
           <span className="text-xs text-ink-dim font-mono truncate">{requestUrl.replace(API_BASE, '')}</span>
         </div>
 
         <div className="p-6 space-y-4">
-          <div className="grid sm:grid-cols-2 gap-4">
-            {endpoint.params.map((param) => (
-              <label key={param.key} className="block text-sm">
-                <span className="font-medium text-ink mb-1.5 block">
-                  {param.label}
-                  {param.required ? ' *' : ''}
-                </span>
-                <input
-                  type={param.type === 'number' ? 'number' : 'text'}
-                  className="w-full h-10 rounded-brand border border-surface-border px-3 text-ink placeholder:text-ink-dim focus:outline-none focus:ring-2 focus:ring-brand/30"
-                  value={values[param.key] ?? ''}
-                  placeholder={param.placeholder}
-                  onChange={(event) => onChange(param.key, event.target.value)}
-                />
-              </label>
-            ))}
-          </div>
+          {isPost ? (
+            <label className="block text-sm">
+              <span className="font-medium text-ink mb-1.5 block">Request body (JSON)</span>
+              <textarea
+                className="w-full rounded-brand border border-surface-border px-3 py-2 text-sm font-mono text-ink placeholder:text-ink-dim focus:outline-none focus:ring-2 focus:ring-brand/30 resize-y"
+                rows={10}
+                value={body}
+                onChange={(event) => onBodyChange(event.target.value)}
+                spellCheck={false}
+              />
+            </label>
+          ) : (
+            <div className="grid sm:grid-cols-2 gap-4">
+              {endpoint.params.map((param) =>
+                param.type === 'select' ? (
+                  <label key={param.key} className="block text-sm">
+                    <span className="font-medium text-ink mb-1.5 block">
+                      {param.label}
+                      {param.required ? ' *' : ''}
+                    </span>
+                    <select
+                      className="w-full h-10 rounded-brand border border-surface-border px-3 text-ink bg-white focus:outline-none focus:ring-2 focus:ring-brand/30"
+                      value={values[param.key] ?? ''}
+                      onChange={(event) => onChange(param.key, event.target.value)}
+                    >
+                      {param.options?.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                ) : (
+                  <label key={param.key} className="block text-sm">
+                    <span className="font-medium text-ink mb-1.5 block">
+                      {param.label}
+                      {param.required ? ' *' : ''}
+                    </span>
+                    <input
+                      type={param.type === 'number' ? 'number' : 'text'}
+                      className="w-full h-10 rounded-brand border border-surface-border px-3 text-ink placeholder:text-ink-dim focus:outline-none focus:ring-2 focus:ring-brand/30"
+                      value={values[param.key] ?? ''}
+                      placeholder={param.placeholder}
+                      onChange={(event) => onChange(param.key, event.target.value)}
+                    />
+                  </label>
+                )
+              )}
+            </div>
+          )}
 
           <button type="button" className="btn-brand inline-flex items-center gap-2" onClick={onRun} disabled={loading}>
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />}
@@ -264,7 +332,7 @@ function EndpointPanel({
               )}
             </div>
             <pre className="marketing-code-window-body max-h-[28rem] m-0 rounded-brand border border-surface-border bg-[#0f172a] text-slate-300 max-w-full overflow-auto whitespace-pre">
-              {result || `GET ${requestUrl}`}
+              {result || `${endpoint.method} ${requestUrl}`}
             </pre>
           </div>
         </div>
