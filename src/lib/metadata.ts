@@ -7,6 +7,7 @@ import {
   OG_IMAGE_URL,
   OG_IMAGE_ALT,
   absoluteUrl,
+  ogImageMimeType,
 } from '@/lib/site'
 
 type PageMetaInput = {
@@ -53,7 +54,7 @@ export function buildPageMetadata({
           width: 1200,
           height: 630,
           alt: OG_IMAGE_ALT,
-          type: 'image/jpeg',
+          type: ogImageMimeType(OG_IMAGE_URL),
         },
       ],
     },

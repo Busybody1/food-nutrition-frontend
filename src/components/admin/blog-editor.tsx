@@ -365,7 +365,7 @@ export function BlogEditor({ mode, initialPost }: Props) {
                 <Input
                   value={coverImageUrl}
                   onChange={(e) => setCoverImageUrl(e.target.value)}
-                  placeholder="https://… (used for Open Graph)"
+                  placeholder="https://… (optional article cover — not used for link previews)"
                 />
               </div>
             </AdminPanelBody>

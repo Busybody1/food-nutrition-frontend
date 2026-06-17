@@ -16,7 +16,10 @@ export const LOGO_ALT = `${SITE_NAME} logo`;
 export const HERO_IMAGE_ALT =
   'Healthy plant-based meals representing nutrition and food data for the Calorie API';
 
-export const OG_IMAGE_ALT = HERO_IMAGE_ALT;
+/** Alt text for link previews (Open Graph / Twitter) — all pages share one image. */
+export const OG_IMAGE_ALT =
+  process.env.NEXT_PUBLIC_OG_IMAGE_ALT?.trim() ||
+  `${SITE_NAME} — accurate nutrition data for developers`;
 
 export const SITE_KEYWORDS = (
   process.env.NEXT_PUBLIC_SITE_KEYWORDS?.trim() ||
@@ -37,8 +40,31 @@ export function absoluteUrl(path: string): string {
   return `${SITE_URL}${p}`;
 }
 
-/** Social preview image (Open Graph / Twitter). */
-export const OG_IMAGE_URL = absoluteUrl(HERO_IMAGE_SRC);
+/** Default social preview asset under /public. Override entirely with NEXT_PUBLIC_OG_IMAGE_URL. */
+export const DEFAULT_OG_IMAGE_PATH = '/images/bg-banner.png';
+
+/** Bump when replacing the default OG file so crawlers fetch the new image. */
+export const OG_IMAGE_VERSION =
+  process.env.NEXT_PUBLIC_OG_IMAGE_VERSION?.trim() || '1';
+
+function resolveOgImageUrl(): string {
+  const envOverride = process.env.NEXT_PUBLIC_OG_IMAGE_URL?.trim();
+  if (envOverride) {
+    return envOverride.startsWith('http') ? envOverride : absoluteUrl(envOverride);
+  }
+  return absoluteUrl(`${DEFAULT_OG_IMAGE_PATH}?v=${OG_IMAGE_VERSION}`);
+}
+
+/** Social preview image (Open Graph / Twitter) — one image for all shared links. */
+export const OG_IMAGE_URL = resolveOgImageUrl();
+
+export function ogImageMimeType(url: string): string {
+  const path = url.split('?')[0].toLowerCase();
+  if (path.endsWith('.png')) return 'image/png';
+  if (path.endsWith('.webp')) return 'image/webp';
+  if (path.endsWith('.gif')) return 'image/gif';
+  return 'image/jpeg';
+}
 
 export const SUPPORT_EMAIL =
   process.env.NEXT_PUBLIC_SUPPORT_EMAIL || 'busybody.office@gmail.com';

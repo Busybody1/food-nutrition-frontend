@@ -14,6 +14,7 @@ import {
   SITE_KEYWORDS,
   OG_IMAGE_URL,
   OG_IMAGE_ALT,
+  ogImageMimeType,
 } from '@/lib/site'
 
 const inter = Inter({
@@ -66,7 +67,7 @@ export const metadata: Metadata = {
         width: 1200,
         height: 630,
         alt: OG_IMAGE_ALT,
-        type: 'image/jpeg',
+        type: ogImageMimeType(OG_IMAGE_URL),
       },
     ],
   },

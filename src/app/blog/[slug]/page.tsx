@@ -8,7 +8,7 @@ import {
   buildBreadcrumbJsonLd,
   buildFaqJsonLd,
 } from '@/lib/seo-jsonld'
-import { absoluteUrl, OG_IMAGE_URL } from '@/lib/site'
+import { OG_IMAGE_URL } from '@/lib/site'
 import { MarkdownContent } from '@/components/blog/markdown-content'
 import { getBlogPost, getBlogSlugs } from '@/lib/api/blog'
 
@@ -67,7 +67,7 @@ export default async function BlogArticlePage({ params }: PageProps) {
 
   const path = `/blog/${post.slug}`
   const published = formatDate(post.published_at)
-  const image = post.cover_image_url || OG_IMAGE_URL
+  const image = OG_IMAGE_URL
 
   const articleJsonLd = buildBlogPostingJsonLd({
     title: post.meta_title || post.title,
