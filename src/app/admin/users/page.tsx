@@ -37,15 +37,19 @@ import {
 } from '@/components/admin/admin-ui'
 
 interface UserFilters {
-  search: string
   status: 'all' | 'active' | 'inactive'
   plan: 'all' | 'free' | 'basic' | 'core' | 'plus' | 'custom'
   sortBy: 'created_at' | 'last_login' | 'total_requests' | 'email'
   sortOrder: 'asc' | 'desc'
 }
 
+const PAGE_SIZE = 20
+const FETCH_LIMIT = 100
+const SEARCH_DEBOUNCE_MS = 300
+
 export default function UserManagement() {
-  const PAGE_SIZE = 20
+  const [searchInput, setSearchInput] = useState('')
+  const [debouncedSearch, setDebouncedSearch] = useState('')
   const [users, setUsers] = useState<AdminUser[]>([])
   const [filteredUsers, setFilteredUsers] = useState<AdminUser[]>([])
   const [currentPage, setCurrentPage] = useState(1)
@@ -66,35 +70,20 @@ export default function UserManagement() {
   const [sendingFeedback, setSendingFeedback] = useState(false)
   const [feedbackSuccess, setFeedbackSuccess] = useState<string>('')
   const [filters, setFilters] = useState<UserFilters>({
-    search: '',
     status: 'all',
     plan: 'all',
     sortBy: 'created_at',
     sortOrder: 'desc'
   })
 
+  useEffect(() => {
+    const timer = window.setTimeout(() => setDebouncedSearch(searchInput.trim()), SEARCH_DEBOUNCE_MS)
+    return () => window.clearTimeout(timer)
+  }, [searchInput])
+
   const applyFilters = useCallback(() => {
     let filtered = [...users]
 
-    // Search filter
-    if (filters.search) {
-      const searchLower = filters.search.toLowerCase()
-      filtered = filtered.filter(user => 
-        user.email.toLowerCase().includes(searchLower) ||
-        (user.first_name?.toLowerCase().includes(searchLower) ?? false) ||
-        (user.last_name?.toLowerCase().includes(searchLower) ?? false) ||
-        (user.company_name?.toLowerCase().includes(searchLower) ?? false)
-      )
-    }
-
-    // Status filter
-    if (filters.status !== 'all') {
-      filtered = filtered.filter(user => 
-        filters.status === 'active' ? user.is_active : !user.is_active
-      )
-    }
-
-    // Plan filter
     if (filters.plan !== 'all') {
       filtered = filtered.filter(user => 
         user.plan_name?.toLowerCase().includes(filters.plan) ?? false
@@ -129,12 +118,11 @@ export default function UserManagement() {
       setIsLoading(true)
       setError('')
       
-      // Import admin API
-      const { adminAPI } = await import('@/lib/api/admin')
-      
       const response = await adminAPI.getUsers({
         skip: 0,
-        limit: 500
+        limit: FETCH_LIMIT,
+        search: debouncedSearch || undefined,
+        status: filters.status === 'all' ? undefined : filters.status
       })
       
       setUsers(response.users)
@@ -143,7 +131,7 @@ export default function UserManagement() {
     } finally {
       setIsLoading(false)
     }
-  }, [])
+  }, [debouncedSearch, filters.status])
 
   useEffect(() => {
     loadUsers()
@@ -155,7 +143,7 @@ export default function UserManagement() {
 
   useEffect(() => {
     setCurrentPage(1)
-  }, [filters.search, filters.status, filters.plan, filters.sortBy, filters.sortOrder])
+  }, [debouncedSearch, filters.status, filters.plan, filters.sortBy, filters.sortOrder])
 
   useEffect(() => {
     const totalPages = Math.max(1, Math.ceil(filteredUsers.length / PAGE_SIZE))
@@ -383,8 +371,8 @@ export default function UserManagement() {
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                 <Input
                   placeholder="Search users by name, email, or company..."
-                  value={filters.search}
-                  onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
                   className="pl-10"
                 />
               </div>
