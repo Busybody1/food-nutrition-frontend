@@ -45,8 +45,10 @@ interface UserFilters {
 }
 
 export default function UserManagement() {
+  const PAGE_SIZE = 20
   const [users, setUsers] = useState<AdminUser[]>([])
   const [filteredUsers, setFilteredUsers] = useState<AdminUser[]>([])
+  const [currentPage, setCurrentPage] = useState(1)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string>('')
   const [selectedUsers, setSelectedUsers] = useState<number[]>([])
@@ -99,6 +101,26 @@ export default function UserManagement() {
       )
     }
 
+    filtered.sort((a, b) => {
+      const direction = filters.sortOrder === 'asc' ? 1 : -1
+
+      if (filters.sortBy === 'email') {
+        return (a.email || '').localeCompare(b.email || '') * direction
+      }
+
+      if (filters.sortBy === 'total_requests') {
+        const aValue = a.total_requests || 0
+        const bValue = b.total_requests || 0
+        return (aValue - bValue) * direction
+      }
+
+      const aDateRaw = filters.sortBy === 'last_login' ? a.last_login : a.created_at
+      const bDateRaw = filters.sortBy === 'last_login' ? b.last_login : b.created_at
+      const aDate = aDateRaw ? new Date(aDateRaw).getTime() : 0
+      const bDate = bDateRaw ? new Date(bDateRaw).getTime() : 0
+      return (aDate - bDate) * direction
+    })
+
     setFilteredUsers(filtered)
   }, [users, filters])
 
@@ -112,9 +134,7 @@ export default function UserManagement() {
       
       const response = await adminAPI.getUsers({
         skip: 0,
-        limit: 100,
-        search: filters.search,
-        status: filters.status === 'all' ? undefined : filters.status
+        limit: 500
       })
       
       setUsers(response.users)
@@ -123,7 +143,7 @@ export default function UserManagement() {
     } finally {
       setIsLoading(false)
     }
-  }, [filters])
+  }, [])
 
   useEffect(() => {
     loadUsers()
@@ -132,6 +152,23 @@ export default function UserManagement() {
   useEffect(() => {
     applyFilters()
   }, [applyFilters])
+
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [filters.search, filters.status, filters.plan, filters.sortBy, filters.sortOrder])
+
+  useEffect(() => {
+    const totalPages = Math.max(1, Math.ceil(filteredUsers.length / PAGE_SIZE))
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages)
+    }
+  }, [currentPage, filteredUsers.length])
+
+  const totalPages = Math.max(1, Math.ceil(filteredUsers.length / PAGE_SIZE))
+  const pageStart = (currentPage - 1) * PAGE_SIZE
+  const pageUsers = filteredUsers.slice(pageStart, pageStart + PAGE_SIZE)
+  const pageSelectedCount = pageUsers.filter((user) => selectedUsers.includes(user.id)).length
+  const allPageUsersSelected = pageUsers.length > 0 && pageSelectedCount === pageUsers.length
 
 
   const openUserDetail = async (userId: number, editMode: boolean) => {
@@ -426,12 +463,16 @@ export default function UserManagement() {
                   <th className="px-6 py-3 text-left">
                     <input
                       type="checkbox"
-                      checked={selectedUsers.length === filteredUsers.length && filteredUsers.length > 0}
+                      checked={allPageUsersSelected}
                       onChange={(e) => {
                         if (e.target.checked) {
-                          setSelectedUsers(filteredUsers.map(u => u.id))
+                          setSelectedUsers((prev) => {
+                            const ids = new Set(prev)
+                            pageUsers.forEach((user) => ids.add(user.id))
+                            return Array.from(ids)
+                          })
                         } else {
-                          setSelectedUsers([])
+                          setSelectedUsers((prev) => prev.filter((id) => !pageUsers.some((u) => u.id === id)))
                         }
                       }}
                       className="rounded border-gray-300"
@@ -458,7 +499,7 @@ export default function UserManagement() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {filteredUsers.map((user) => (
+                {pageUsers.map((user) => (
                   <tr key={user.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <input
@@ -570,6 +611,33 @@ export default function UserManagement() {
               </tbody>
               </AdminTable>
             </AdminTableWrap>
+            <div className="flex items-center justify-between px-6 py-4 border-t border-surface-border/60">
+              <p className="text-sm text-ink-muted">
+                Showing {filteredUsers.length === 0 ? 0 : pageStart + 1}-
+                {Math.min(pageStart + PAGE_SIZE, filteredUsers.length)} of {filteredUsers.length}
+              </p>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                  disabled={currentPage === 1}
+                >
+                  Previous
+                </Button>
+                <span className="text-sm text-ink-muted">
+                  Page {currentPage} of {totalPages}
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+                  disabled={currentPage === totalPages}
+                >
+                  Next
+                </Button>
+              </div>
+            </div>
           </AdminPanelBody>
         )}
       </AdminPanel>
