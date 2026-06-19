@@ -92,9 +92,9 @@ export default async function BlogArticlePage({ params }: PageProps) {
       <JsonLdScript id={`breadcrumb-blog-${post.slug}`} data={breadcrumbJsonLd} />
       {faqJsonLd && <JsonLdScript id={`faq-${post.slug}`} data={faqJsonLd} />}
 
-      <article className="section-pad">
+      <article className="blog-article-wrap">
         <div className="container-narrow max-w-3xl">
-          <nav className="mb-6 text-sm text-ink-muted" aria-label="Breadcrumb">
+          <nav className="mb-8 text-sm text-ink-muted" aria-label="Breadcrumb">
             <Link href="/blog" className="hover:text-ink" prefetch={false}>
               Blog
             </Link>
