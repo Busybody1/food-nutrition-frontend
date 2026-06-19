@@ -2,6 +2,8 @@ import Link from 'next/link'
 import { ArrowRight, BookOpen, Key, Play, Rss, Sparkles } from 'lucide-react'
 import type { BlogListItem } from '@/lib/api/blog'
 import { FOOD_DATABASE_SIZE_LABEL } from '@/lib/site'
+import { BlogSearchForm } from '@/components/blog/blog-search-form'
+import { BlogPagination } from '@/components/blog/blog-pagination'
 
 function formatDate(value?: string | null): string | null {
   if (!value) return null
@@ -15,12 +17,6 @@ function readingMinutes(excerpt?: string | null): number {
   return Math.max(3, Math.min(12, Math.round(words / 40) + 4))
 }
 
-function topicLabel(keywords?: string | null): string | null {
-  if (!keywords) return null
-  const first = keywords.split(',')[0]?.trim()
-  return first || null
-}
-
 function BlogPostCard({
   post,
   featured = false,
@@ -29,7 +25,6 @@ function BlogPostCard({
   featured?: boolean
 }) {
   const published = formatDate(post.published_at)
-  const topic = topicLabel(post.keywords)
   const minutes = readingMinutes(post.excerpt)
 
   return (
@@ -38,11 +33,6 @@ function BlogPostCard({
       className={featured ? 'blog-post-card blog-post-card--featured group' : 'blog-post-card group'}
       prefetch={false}
     >
-      <div className="blog-post-card__meta">
-        {topic && <span className="blog-post-card__topic">{topic}</span>}
-        {published && <time dateTime={post.published_at ?? undefined}>{published}</time>}
-        <span className="blog-post-card__read">{minutes} min read</span>
-      </div>
       <h2 className={featured ? 'blog-post-card__title blog-post-card__title--featured' : 'blog-post-card__title'}>
         {post.title}
       </h2>
@@ -51,10 +41,16 @@ function BlogPostCard({
           {post.excerpt}
         </p>
       )}
-      <span className="blog-post-card__cta">
-        Read article
-        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
-      </span>
+      <div className="blog-post-card__footer">
+        <span className="blog-post-card__cta">
+          Read article
+          <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
+        </span>
+        <div className="blog-post-card__meta">
+          {published && <time dateTime={post.published_at ?? undefined}>{published}</time>}
+          <span className="blog-post-card__read">{minutes} min read</span>
+        </div>
+      </div>
     </Link>
   )
 }
@@ -103,8 +99,24 @@ function BlogSidebar() {
   )
 }
 
-export function BlogIndex({ posts }: { posts: BlogListItem[] }) {
-  const [featured, ...rest] = posts
+export function BlogIndex({
+  posts,
+  total,
+  page,
+  pageSize,
+  query,
+}: {
+  posts: BlogListItem[]
+  total: number
+  page: number
+  pageSize: number
+  query?: string
+}) {
+  const totalPages = Math.max(1, Math.ceil(total / pageSize))
+  const showFeatured = page === 1 && !query && posts.length > 0
+  const featured = showFeatured ? posts[0] : null
+  const gridPosts = showFeatured ? posts.slice(1) : posts
+  const isSearch = Boolean(query?.trim())
 
   return (
     <>
@@ -124,9 +136,15 @@ export function BlogIndex({ posts }: { posts: BlogListItem[] }) {
               Open playground
             </Link>
           </div>
-          {posts.length > 0 && (
+          {total > 0 && (
             <p className="blog-index-hero__count">
-              {posts.length} articles
+              {total} {total === 1 ? 'article' : 'articles'}
+              {isSearch && query ? (
+                <>
+                  <span className="blog-index-hero__dot" aria-hidden />
+                  matching &ldquo;{query}&rdquo;
+                </>
+              ) : null}
               <span className="blog-index-hero__dot" aria-hidden />
               <Link href="/blog/feed.xml" className="blog-index-hero__rss" prefetch={false}>
                 RSS
@@ -138,8 +156,21 @@ export function BlogIndex({ posts }: { posts: BlogListItem[] }) {
 
       <section className="blog-index-body">
         <div className="container-narrow">
+          <BlogSearchForm defaultQuery={query ?? ''} />
+
           {posts.length === 0 ? (
-            <p className="text-center text-ink-muted py-16">No articles published yet. Check back soon.</p>
+            <div className="blog-index-empty">
+              <p className="text-ink-muted">
+                {isSearch
+                  ? `No articles found for "${query}". Try a different keyword.`
+                  : 'No articles published yet. Check back soon.'}
+              </p>
+              {isSearch && (
+                <Link href="/blog" className="text-brand-strong font-medium hover:text-brand mt-3 inline-block">
+                  View all articles
+                </Link>
+              )}
+            </div>
           ) : (
             <div className="blog-index-layout">
               <div className="blog-index-main">
@@ -150,11 +181,13 @@ export function BlogIndex({ posts }: { posts: BlogListItem[] }) {
                   </div>
                 )}
 
-                {rest.length > 0 && (
+                {gridPosts.length > 0 && (
                   <>
-                    <p className="marketing-section-label mb-4 md:mb-5">All articles</p>
+                    <p className="marketing-section-label mb-4 md:mb-5">
+                      {isSearch ? 'Search results' : featured ? 'More articles' : 'All articles'}
+                    </p>
                     <ul className="blog-index-grid">
-                      {rest.map((post) => (
+                      {gridPosts.map((post) => (
                         <li key={post.slug}>
                           <BlogPostCard post={post} />
                         </li>
@@ -162,6 +195,14 @@ export function BlogIndex({ posts }: { posts: BlogListItem[] }) {
                     </ul>
                   </>
                 )}
+
+                <BlogPagination
+                  page={page}
+                  totalPages={totalPages}
+                  total={total}
+                  pageSize={pageSize}
+                  query={query}
+                />
               </div>
 
               <BlogSidebar />

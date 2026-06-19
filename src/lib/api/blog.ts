@@ -23,6 +23,14 @@ export interface BlogListItem {
   updated_at?: string | null
 }
 
+export interface BlogListPage {
+  items: BlogListItem[]
+  total: number
+  limit: number
+  skip: number
+  q?: string | null
+}
+
 export interface BlogPost {
   slug: string
   title: string
@@ -42,6 +50,8 @@ export interface BlogSlug {
   updated_at?: string | null
 }
 
+export const BLOG_PAGE_SIZE = 12
+
 async function blogFetch<T>(path: string): Promise<T | null> {
   try {
     const res = await fetch(`${API_BASE_URL}/api/v1/public/blog${path}`, {
@@ -57,9 +67,49 @@ async function blogFetch<T>(path: string): Promise<T | null> {
   }
 }
 
+function normalizeListResponse(
+  raw: BlogListPage | BlogListItem[] | null,
+  limit: number,
+  skip: number,
+  q?: string
+): BlogListPage {
+  if (!raw) {
+    return { items: [], total: 0, limit, skip, q: q ?? null }
+  }
+  if (Array.isArray(raw)) {
+    return { items: raw, total: raw.length, limit, skip, q: q ?? null }
+  }
+  return {
+    items: raw.items ?? [],
+    total: raw.total ?? raw.items?.length ?? 0,
+    limit: raw.limit ?? limit,
+    skip: raw.skip ?? skip,
+    q: raw.q ?? q ?? null,
+  }
+}
+
+export async function getBlogPostsPage(options?: {
+  limit?: number
+  skip?: number
+  q?: string
+}): Promise<BlogListPage> {
+  const limit = options?.limit ?? BLOG_PAGE_SIZE
+  const skip = options?.skip ?? 0
+  const params = new URLSearchParams({
+    limit: String(limit),
+    skip: String(skip),
+  })
+  const q = options?.q?.trim()
+  if (q) params.set('q', q.slice(0, 100))
+
+  const raw = await blogFetch<BlogListPage | BlogListItem[]>(`?${params.toString()}`)
+  return normalizeListResponse(raw, limit, skip, q)
+}
+
+/** Fetch up to `limit` posts (used by RSS, llms.txt, and other full feeds). */
 export async function getBlogPosts(limit = 100): Promise<BlogListItem[]> {
-  const posts = await blogFetch<BlogListItem[]>(`?limit=${limit}`)
-  return posts ?? []
+  const page = await getBlogPostsPage({ limit, skip: 0 })
+  return page.items
 }
 
 export async function getBlogPost(slug: string): Promise<BlogPost | null> {

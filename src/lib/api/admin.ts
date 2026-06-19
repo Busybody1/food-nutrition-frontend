@@ -392,7 +392,8 @@ class AdminAPI {
     status?: 'draft' | 'published'
     skip?: number
     limit?: number
-  }): Promise<{ posts: AdminBlogPost[]; count: number }> {
+    q?: string
+  }): Promise<{ posts: AdminBlogPost[]; count: number; limit?: number; skip?: number; q?: string | null }> {
     return adminGet('/blog', params)
   }
 
