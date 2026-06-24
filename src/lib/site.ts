@@ -6,11 +6,11 @@ export const SITE_NAME = process.env.NEXT_PUBLIC_SITE_NAME || 'Calorie API';
 
 export const SITE_TITLE =
   process.env.NEXT_PUBLIC_SITE_TITLE?.trim() ||
-  `Nutrition & Food API for Developers | ${SITE_NAME}`;
+  `Food Calorie API for Developers | ${SITE_NAME}`;
 
 export const SITE_DESCRIPTION =
   process.env.NEXT_PUBLIC_SITE_DESCRIPTION?.trim() ||
-  'Nutrition & food REST API with search, barcode lookup, macros per 100g, and autocomplete. Free tier for developers.';
+  'Food calorie API for developers: REST search, barcode lookup, macros per 100g, and autocomplete across our food database API. Free tier for nutrition apps.';
 
 export const LOGO_ALT = `${SITE_NAME} logo`;
 export const HERO_IMAGE_ALT =
@@ -23,7 +23,7 @@ export const OG_IMAGE_ALT =
 
 export const SITE_KEYWORDS = (
   process.env.NEXT_PUBLIC_SITE_KEYWORDS?.trim() ||
-  'food API,nutrition & food API,calorie API,nutrition database API,food search API,barcode nutrition API,macro API,meal tracking API,REST food API,health app API'
+  'food calorie api,food API,nutrition API,food database API,calorie API,nutrition database API,food search API,barcode nutrition API,macro API,meal tracking API'
 )
   .split(',')
   .map((k) => k.trim())

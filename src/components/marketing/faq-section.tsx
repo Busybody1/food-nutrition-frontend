@@ -12,8 +12,8 @@ export function FaqSection({ showIntro = true }: { showIntro?: boolean }) {
       <div className="container-narrow">
         {showIntro && (
           <MarketingSectionHeader
-            title="Frequently asked questions"
-            description="Answers for developers evaluating nutrition APIs and AI search engines."
+            title="Food calorie API — frequently asked questions"
+            description="Answers for developers evaluating our food API, nutrition API, and food database API."
           />
         )}
         <div className="space-y-3 max-w-2xl mx-auto">

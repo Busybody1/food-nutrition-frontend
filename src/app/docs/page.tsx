@@ -538,7 +538,7 @@ print_r($data);
                 Resolve a UPC or EAN barcode to product and nutrition data. The API checks the local
                 food database first. When no match is found, it falls back to{' '}
                 <a
-                  href="https://world.openfoodfacts.net"
+                  href="https://world.openfoodfacts.org"
                   className="text-brand-strong hover:underline"
                   target="_blank"
                   rel="noopener noreferrer"

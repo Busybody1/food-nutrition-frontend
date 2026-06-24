@@ -18,18 +18,18 @@ export const metadata: Metadata = buildPublicPageMetadata('/')
 const features = [
   {
     icon: Search,
-    title: 'Advanced food search',
-    description: 'Multi-word matching, verified filters, suggest, and barcode lookup in one API.',
+    title: 'Food API search',
+    description: 'Multi-word matching, verified filters, suggest, and barcode lookup in one food API.',
   },
   {
     icon: Database,
-    title: 'Rich nutrition data',
-    description: 'Macros per 100g, full nutrient arrays, and serving metadata for logging apps.',
+    title: 'Nutrition API data',
+    description: 'Macros per 100g, full nutrient arrays, and serving metadata from our food database API.',
   },
   {
     icon: Zap,
-    title: 'Fast & cached',
-    description: 'Redis-backed caching and indexed Postgres search for low-latency responses.',
+    title: 'Fast food database API',
+    description: 'Redis-backed caching and indexed Postgres search for low-latency calorie API responses.',
   },
   {
     icon: Shield,
@@ -43,7 +43,7 @@ const features = [
   },
   {
     icon: Code2,
-    title: 'Developer-first',
+    title: 'Developer-first nutrition API',
     description: 'OpenAPI docs, predictable JSON, and a public playground to try before you sign up.',
   },
 ]
@@ -57,8 +57,8 @@ export default function HomePage() {
         <div className="container-narrow">
           <MarketingSectionHeader
             label="Live demo"
-            title="Try the API in seconds"
-            description="Run a real search against our public demo endpoint, no signup required."
+            title="Try our food calorie API live"
+            description="Run a real search against our public food API demo endpoint — no signup required."
           />
           <LazyApiPlayground />
         </div>
@@ -68,8 +68,8 @@ export default function HomePage() {
         <div className="container-narrow">
           <MarketingSectionHeader
             label="Platform"
-            title="Built for modern health products"
-            description="Everything you need to integrate nutrition data into mobile, web, and AI workflows."
+            title="Food database API for modern health products"
+            description="Everything you need to integrate nutrition API data into mobile, web, and AI workflows."
           />
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
             {features.map((f) => (

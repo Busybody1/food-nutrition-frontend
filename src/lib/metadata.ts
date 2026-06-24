@@ -26,16 +26,16 @@ export function buildPageMetadata({
   noIndex = false,
 }: PageMetaInput): Metadata {
   const canonical = absoluteUrl(path)
-  const pageTitle = title ? `${title} | ${SITE_NAME}` : SITE_TITLE
+  const pageTitle =
+    path === '/'
+      ? SITE_TITLE
+      : title
+        ? `${title} | ${SITE_NAME}`
+        : SITE_TITLE
   const pageDescription = description ?? SITE_DESCRIPTION
   const pageKeywords = keywords?.length ? keywords : [...SITE_KEYWORDS]
 
-  const titleMeta: Metadata['title'] =
-    path === '/' && !title
-      ? { absolute: SITE_TITLE }
-      : title
-        ? { absolute: pageTitle }
-        : { absolute: SITE_TITLE }
+  const titleMeta: Metadata['title'] = { absolute: pageTitle }
 
   return {
     title: titleMeta,

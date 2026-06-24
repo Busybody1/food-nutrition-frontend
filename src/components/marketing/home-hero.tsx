@@ -12,14 +12,14 @@ export function HomeHero() {
   return (
     <MarketingImageHero waveTone="elevated">
       <p className="marketing-hero-badge mb-6 lg:mb-8 inline-flex">
-        Nutrition &amp; food API for developers
+        Food calorie API for developers
       </p>
       <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-[3.25rem] xl:text-[3.5rem] text-ink leading-[1.05] tracking-tight text-balance">
-        The ultimate nutrition &amp; food database API
+        Food Calorie API for production health apps
       </h1>
       <p className="mt-5 md:mt-6 text-lg md:text-xl text-ink-muted leading-relaxed">
-        Ship meal tracking, macro logging, and barcode scan features faster with search,
-        suggest, and verified nutrition data, built for production health apps.
+        Ship meal tracking, macro logging, and barcode scan features faster with our nutrition API,
+        food database API, and verified calorie data built for production health apps.
       </p>
       <div className="mt-8 md:mt-10 flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
         <Link href="/auth/register" prefetch={false} className="btn-brand">

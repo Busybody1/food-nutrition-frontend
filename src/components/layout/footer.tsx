@@ -39,8 +39,8 @@ export function Footer() {
               <span className="text-base font-semibold text-ink">{SITE_NAME}</span>
             </Link>
             <p className="text-ink-muted text-sm max-w-sm leading-relaxed mb-4">
-              Nutrition and food database API with search, suggest, barcode lookup, and developer
-              dashboards. Powered by BusyBody FIT LTD.
+              Food calorie API with search, suggest, barcode lookup, and developer dashboards.
+              Powered by BusyBody FIT LTD.
             </p>
             <a
               href={`mailto:${SUPPORT_EMAIL}`}
