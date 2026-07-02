@@ -1,5 +1,5 @@
 import { JsonLdScript } from '@/components/seo/structured-data'
-import { StructuredData } from '@/components/seo/structured-data'
+import { PricingProductSchema } from '@/components/seo/pricing-product-schema'
 import {
   buildBreadcrumbJsonLd,
   buildWebPageJsonLd,
@@ -46,7 +46,7 @@ export function PublicPageSchema({
           data={data}
         />
       ))}
-      {includeProduct && <StructuredData type="product" />}
+      {includeProduct && <PricingProductSchema />}
     </>
   )
 }

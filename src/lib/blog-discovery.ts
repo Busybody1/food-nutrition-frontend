@@ -9,8 +9,10 @@ import {
 import {
   buildBlogRssXmlFromInput,
   buildLlmsTxtFromInput,
+  type BlogDiscoveryPricingPlan,
   type BlogDiscoverySite,
 } from '@/lib/blog-discovery-format'
+import { fetchPublicPlans } from '@/lib/pricing/fetch-plans'
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
@@ -32,7 +34,22 @@ export function buildBlogRssXml(posts: BlogListItem[]): string {
   return buildBlogRssXmlFromInput(posts, discoverySite())
 }
 
+async function loadPricingPlans(): Promise<BlogDiscoveryPricingPlan[] | undefined> {
+  try {
+    const plans = await fetchPublicPlans()
+    return plans.map((plan) => ({
+      name: plan.name,
+      monthly_price: plan.monthly_price,
+      monthly_quota: plan.monthly_quota,
+      rate_limit_per_minute: plan.rate_limit_per_minute,
+    }))
+  } catch {
+    return undefined
+  }
+}
+
 /** llms.txt body with a dynamic catalog of published blog posts. */
-export function buildLlmsTxt(posts: BlogListItem[]): string {
-  return buildLlmsTxtFromInput(posts, discoverySite())
+export async function buildLlmsTxt(posts: BlogListItem[]): Promise<string> {
+  const pricingPlans = await loadPricingPlans()
+  return buildLlmsTxtFromInput(posts, discoverySite(), pricingPlans)
 }

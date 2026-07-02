@@ -159,7 +159,9 @@ export interface AdminPlan {
   is_active: boolean
   plan_tier?: string
   max_api_keys?: number
-  stripe_price_id?: string
+  stripe_price_id?: string | null
+  stripe_test_price_id?: string | null
+  stripe_live_price_id?: string | null
 }
 
 export interface AuditEntry {
@@ -281,7 +283,16 @@ class AdminAPI {
 
   async patchPlan(
     planId: number,
-    data: { monthly_quota?: number; rate_limit_per_minute?: number; is_active?: boolean; description?: string }
+    data: {
+      monthly_quota?: number
+      rate_limit_per_minute?: number
+      is_active?: boolean
+      description?: string
+      monthly_price?: number
+      stripe_price_id?: string | null
+      stripe_test_price_id?: string | null
+      stripe_live_price_id?: string | null
+    }
   ): Promise<{ message: string }> {
     return adminPatch(`/plans/${planId}`, data)
   }

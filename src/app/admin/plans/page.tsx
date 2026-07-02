@@ -21,13 +21,22 @@ import {
   DashboardEmpty,
 } from '@/components/admin/admin-ui'
 
+function formatPlanPriceLabel(price?: number): string {
+  if (price === undefined || price === null) return '$0'
+  return `$${price}`
+}
+
 export default function AdminPlansPage() {
   const { hasPermission } = useAdmin()
   const canEdit = hasPermission('admin:settings:update')
   const [plans, setPlans] = useState<AdminPlan[]>([])
   const [selected, setSelected] = useState<AdminPlan | null>(null)
+  const [monthlyPrice, setMonthlyPrice] = useState('')
   const [quota, setQuota] = useState('')
   const [rateLimit, setRateLimit] = useState('')
+  const [stripePriceId, setStripePriceId] = useState('')
+  const [stripeTestPriceId, setStripeTestPriceId] = useState('')
+  const [stripeLivePriceId, setStripeLivePriceId] = useState('')
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
@@ -48,8 +57,12 @@ export default function AdminPlansPage() {
 
   const selectPlan = (p: AdminPlan) => {
     setSelected(p)
+    setMonthlyPrice(String(p.monthly_price ?? ''))
     setQuota(String(p.monthly_quota ?? ''))
     setRateLimit(String(p.rate_limit_per_minute ?? ''))
+    setStripePriceId(p.stripe_price_id ?? '')
+    setStripeTestPriceId(p.stripe_test_price_id ?? '')
+    setStripeLivePriceId(p.stripe_live_price_id ?? '')
     setSuccess('')
   }
 
@@ -59,13 +72,21 @@ export default function AdminPlansPage() {
     setError('')
     setSuccess('')
     try {
-      await adminAPI.patchPlan(selected.id, {
-        monthly_quota: quota ? Number(quota) : undefined,
-        rate_limit_per_minute: rateLimit ? Number(rateLimit) : undefined,
+      const payload: Parameters<typeof adminAPI.patchPlan>[1] = {
         is_active: selected.is_active,
-      })
+      }
+      if (monthlyPrice !== '') payload.monthly_price = Number(monthlyPrice)
+      if (quota !== '') payload.monthly_quota = Number(quota)
+      if (rateLimit !== '') payload.rate_limit_per_minute = Number(rateLimit)
+      payload.stripe_price_id = stripePriceId.trim() || null
+      payload.stripe_test_price_id = stripeTestPriceId.trim() || null
+      payload.stripe_live_price_id = stripeLivePriceId.trim() || null
+
+      await adminAPI.patchPlan(selected.id, payload)
       const refreshed = await adminAPI.getPlans()
       setPlans(refreshed.plans)
+      const updated = refreshed.plans.find((p) => p.id === selected.id)
+      if (updated) selectPlan(updated)
       setSuccess('Plan updated successfully')
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Save failed')
@@ -86,7 +107,7 @@ export default function AdminPlansPage() {
     <AdminPage>
       <AdminPageHeader
         title="Plans & quotas"
-        description="Adjust monthly quotas and rate limits. Pricing and Stripe IDs cannot be changed here."
+        description="Manage plan pricing, Stripe price IDs, monthly quotas, and rate limits."
       />
 
       {error && <DashboardAlert variant="error">{error}</DashboardAlert>}
@@ -131,8 +152,8 @@ export default function AdminPlansPage() {
                         </Badge>
                       </div>
                       <p className="text-xs text-ink-muted mt-2">
-                        ${p.monthly_price ?? 0}/mo · quota {formatCount(p.monthly_quota ?? 0)} ·{' '}
-                        {p.rate_limit_per_minute ?? '—'}/min
+                        {formatPlanPriceLabel(p.monthly_price)}/mo · quota{' '}
+                        {formatCount(p.monthly_quota ?? 0)} · {p.rate_limit_per_minute ?? '—'}/min
                       </p>
                     </button>
                   ))
@@ -145,16 +166,21 @@ export default function AdminPlansPage() {
                 <>
                   <AdminPanelHeader title={`Edit ${selected.name}`} />
                   <AdminPanelBody className="space-y-5">
-                    <div className="rounded-brand bg-surface-elevated/80 border border-surface-border/60 px-4 py-3">
-                      <p className="text-xs font-medium uppercase tracking-wide text-ink-dim">
-                        Monthly price (read-only)
-                      </p>
-                      <p className="text-xl font-semibold text-ink mt-1">
-                        ${selected.monthly_price ?? 0}
-                        <span className="text-sm font-normal text-ink-muted">/month</span>
-                      </p>
-                    </div>
                     <div className="grid sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="text-xs font-medium text-ink-dim block mb-1.5">
+                          Monthly price (USD)
+                        </label>
+                        <Input
+                          value={monthlyPrice}
+                          onChange={(e) => setMonthlyPrice(e.target.value)}
+                          disabled={!canEdit}
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          placeholder="0.00"
+                        />
+                      </div>
                       <div>
                         <label className="text-xs font-medium text-ink-dim block mb-1.5">
                           Monthly quota
@@ -178,6 +204,50 @@ export default function AdminPlansPage() {
                         />
                       </div>
                     </div>
+
+                    <div className="space-y-3 pt-1 border-t border-surface-border/60">
+                      <p className="text-xs font-medium uppercase tracking-wide text-ink-dim pt-3">
+                        Stripe price IDs
+                      </p>
+                      <div>
+                        <label className="text-xs font-medium text-ink-dim block mb-1.5">
+                          Legacy price ID (fallback)
+                        </label>
+                        <Input
+                          value={stripePriceId}
+                          onChange={(e) => setStripePriceId(e.target.value)}
+                          disabled={!canEdit}
+                          placeholder="price_..."
+                        />
+                      </div>
+                      <div>
+                        <label className="text-xs font-medium text-ink-dim block mb-1.5">
+                          Test mode price ID
+                        </label>
+                        <Input
+                          value={stripeTestPriceId}
+                          onChange={(e) => setStripeTestPriceId(e.target.value)}
+                          disabled={!canEdit}
+                          placeholder="price_..."
+                        />
+                      </div>
+                      <div>
+                        <label className="text-xs font-medium text-ink-dim block mb-1.5">
+                          Live mode price ID
+                        </label>
+                        <Input
+                          value={stripeLivePriceId}
+                          onChange={(e) => setStripeLivePriceId(e.target.value)}
+                          disabled={!canEdit}
+                          placeholder="price_..."
+                        />
+                      </div>
+                      <p className="text-xs text-ink-muted">
+                        Checkout uses test or live IDs based on your Stripe secret key. Clear a field
+                        to remove the stored ID.
+                      </p>
+                    </div>
+
                     {canEdit && (
                       <div className="flex flex-wrap gap-2 pt-2">
                         <Button onClick={save} disabled={saving}>
@@ -196,7 +266,7 @@ export default function AdminPlansPage() {
                 <DashboardEmpty
                   icon={Layers}
                   title="Select a plan"
-                  description="Choose a plan from the list to view and edit quota settings."
+                  description="Choose a plan from the list to view and edit pricing settings."
                 />
               )}
             </AdminPanel>

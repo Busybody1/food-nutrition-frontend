@@ -22,6 +22,14 @@ import {
 import { DocsCodeBlock } from '@/components/docs/docs-code-block'
 import { MarketingImageHero } from '@/components/marketing/marketing-image-hero'
 import { BARCODE_LOOKUP_EXAMPLE_JSON, BARCODE_LOOKUP_FIELDS } from '@/lib/docs/barcode-lookup'
+import { fetchPublicPlans } from '@/lib/pricing/fetch-plans'
+import {
+  formatPlanPrice,
+  formatQuota,
+  formatRateLimit,
+  getPlanCardHighlights,
+  type PricingPlan,
+} from '@/lib/pricing/plan-display'
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '') || 'http://localhost:8000'
 const SEARCH_URL = `${API_BASE}/api/v1/search/foods`
@@ -31,6 +39,13 @@ export default function DocsPage() {
   const [selectedLanguage, setSelectedLanguage] = useState('curl')
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
+  const [pricingPlans, setPricingPlans] = useState<PricingPlan[]>([])
+
+  useEffect(() => {
+    fetchPublicPlans()
+      .then((plans) => setPricingPlans(plans.filter((p) => p.name.toLowerCase() !== 'custom')))
+      .catch(() => setPricingPlans([]))
+  }, [])
 
   const copyToClipboard = (code: string, id: string) => {
     navigator.clipboard.writeText(code)
@@ -372,48 +387,39 @@ print_r($data);
                     Select a plan that fits your needs. Start with our free plan or upgrade for more requests and features.
                   </p>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <Card>
-                      <CardHeader className="pb-2">
-                        <CardTitle className="text-lg">Free</CardTitle>
-                        <p className="text-2xl font-bold text-green-600">$0<span className="text-sm font-normal text-gray-500">/month</span></p>
-                      </CardHeader>
-                      <CardContent>
-                        <ul className="text-sm text-ink-muted space-y-1">
-                          <li>• 1,000 requests/month</li>
-                          <li>• 10 requests/minute (per account)</li>
-                          <li>• Non-commercial use</li>
-                          <li>• Community support</li>
-                        </ul>
-                      </CardContent>
-                    </Card>
-                    <Card>
-                      <CardHeader className="pb-2">
-                        <CardTitle className="text-lg">Basic</CardTitle>
-                        <p className="text-2xl font-bold text-blue-600">$29<span className="text-sm font-normal text-gray-500">/month</span></p>
-                      </CardHeader>
-                      <CardContent>
-                        <ul className="text-sm text-ink-muted space-y-1">
-                          <li>• 100,000 requests/month</li>
-                          <li>• 200 requests/minute</li>
-                          <li>• Non-commercial use</li>
-                          <li>• Email support</li>
-                        </ul>
-                      </CardContent>
-                    </Card>
-                    <Card>
-                      <CardHeader className="pb-2">
-                        <CardTitle className="text-lg">Core</CardTitle>
-                        <p className="text-2xl font-bold text-purple-600">$99<span className="text-sm font-normal text-gray-500">/month</span></p>
-                      </CardHeader>
-                      <CardContent>
-                        <ul className="text-sm text-ink-muted space-y-1">
-                          <li>• 750,000 requests/month</li>
-                          <li>• 500 requests/minute</li>
-                          <li>• Non-commercial use</li>
-                          <li>• Priority support</li>
-                        </ul>
-                      </CardContent>
-                    </Card>
+                    {(pricingPlans.length > 0
+                      ? pricingPlans.slice(0, 3)
+                      : []
+                    ).map((plan) => {
+                      const { amount, suffix } = formatPlanPrice(plan)
+                      const highlights = getPlanCardHighlights(
+                        plan.name,
+                        plan.monthly_quota,
+                        plan.rate_limit_per_minute
+                      )
+                      return (
+                        <Card key={plan.id}>
+                          <CardHeader className="pb-2">
+                            <CardTitle className="text-lg">{plan.name}</CardTitle>
+                            <p className="text-2xl font-bold text-brand">
+                              {amount}
+                              {suffix && (
+                                <span className="text-sm font-normal text-gray-500">{suffix}</span>
+                              )}
+                            </p>
+                          </CardHeader>
+                          <CardContent>
+                            <ul className="text-sm text-ink-muted space-y-1">
+                              <li>• {formatQuota(plan.monthly_quota)} requests/month</li>
+                              <li>• {formatRateLimit(plan.rate_limit_per_minute)} (per account)</li>
+                              {highlights.slice(2, 4).map((item) => (
+                                <li key={item}>• {item}</li>
+                              ))}
+                            </ul>
+                          </CardContent>
+                        </Card>
+                      )
+                    })}
                   </div>
                   <Button variant="outline" asChild className="mt-4">
                     <Link href="/pricing">View All Plans</Link>

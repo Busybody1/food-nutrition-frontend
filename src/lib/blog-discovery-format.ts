@@ -8,6 +8,13 @@ export type BlogDiscoveryPost = {
   updated_at?: string | null
 }
 
+export type BlogDiscoveryPricingPlan = {
+  name: string
+  monthly_price: number
+  monthly_quota: number
+  rate_limit_per_minute: number
+}
+
 export type BlogDiscoverySite = {
   siteName: string
   siteDescription: string
@@ -85,9 +92,52 @@ ${items}
 `
 }
 
+function formatDiscoveryPlanPrice(plan: BlogDiscoveryPricingPlan): string {
+  const tier = plan.name.toLowerCase()
+  if (tier === 'enterprise' || tier === 'custom') return 'Custom'
+  return `$${plan.monthly_price}`
+}
+
+function formatDiscoveryQuota(quota: number): string {
+  if (quota <= 0) return 'See pricing page'
+  return quota.toLocaleString('en-US')
+}
+
+function formatDiscoveryRateLimit(rpm: number): string {
+  if (rpm <= 0) return 'Custom'
+  return `${rpm}/min`
+}
+
+function commercialUseLabel(name: string): string {
+  const tier = name.toLowerCase()
+  if (tier === 'free') return 'No (dev & personal only)'
+  if (tier === 'plus') return 'Yes — production apps'
+  if (tier === 'enterprise' || tier === 'custom') return 'Yes — SLA, phone support'
+  return 'No'
+}
+
+const FALLBACK_PRICING_ROWS: BlogDiscoveryPricingPlan[] = [
+  { name: 'Free', monthly_price: 0, monthly_quota: 1000, rate_limit_per_minute: 10 },
+  { name: 'Basic', monthly_price: 29, monthly_quota: 100_000, rate_limit_per_minute: 200 },
+  { name: 'Core', monthly_price: 99, monthly_quota: 750_000, rate_limit_per_minute: 500 },
+  { name: 'Plus', monthly_price: 299, monthly_quota: 0, rate_limit_per_minute: 5000 },
+  { name: 'Enterprise', monthly_price: 0, monthly_quota: 0, rate_limit_per_minute: 0 },
+]
+
+function buildPricingTableRows(plans?: BlogDiscoveryPricingPlan[]): string {
+  const rows = plans?.length ? plans : FALLBACK_PRICING_ROWS
+  return rows
+    .map(
+      (plan) =>
+        `| ${plan.name} | ${formatDiscoveryPlanPrice(plan)} | ${formatDiscoveryQuota(plan.monthly_quota)} | ${formatDiscoveryRateLimit(plan.rate_limit_per_minute)} | ${commercialUseLabel(plan.name)} |`
+    )
+    .join('\n')
+}
+
 export function buildLlmsTxtFromInput(
   posts: BlogDiscoveryPost[],
-  site: BlogDiscoverySite
+  site: BlogDiscoverySite,
+  pricingPlans?: BlogDiscoveryPricingPlan[]
 ): string {
   const blogLines =
     posts.length > 0
@@ -126,11 +176,7 @@ All plans include search, suggest, and barcode endpoints. Rate limits apply per 
 
 | Plan | Price | API calls / month | Rate limit | Commercial use |
 |------|-------|-------------------|------------|----------------|
-| Free | $0 | 1,000 | 10/min | No (dev & personal only) |
-| Basic | $29 | 100,000 | 200/min | No |
-| Core | $99 | 750,000 | 500/min | No |
-| Plus | $299 | See pricing page | 5,000/min | Yes — production apps |
-| Enterprise | Custom | Negotiated | Custom | Yes — SLA, phone support |
+${buildPricingTableRows(pricingPlans)}
 
 Notes:
 - Commercial production use requires Plus or Enterprise. Send header X-API-Usage-Type: commercial when applicable.

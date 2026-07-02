@@ -19,6 +19,13 @@ import {
   CreditCard, DollarSign, 
   CheckCircle, ExternalLink, RefreshCw, Download
 } from 'lucide-react'
+import { fetchPublicPlans } from '@/lib/pricing/fetch-plans'
+import {
+  formatPlanPrice,
+  getPlanCardHighlights,
+  isContactSalesPlan,
+  type PricingPlan,
+} from '@/lib/pricing/plan-display'
 
 interface BillingInfo {
   user_id: number
@@ -83,11 +90,55 @@ function UsageThisMonthCard({ used, limit }: { used: number; limit: number }) {
   )
 }
 
+function BillingPlanCard({
+  plan,
+  currentPlanName,
+  onSelect,
+}: {
+  plan: PricingPlan
+  currentPlanName: string
+  onSelect: (planId: number) => void
+}) {
+  const isCurrent = currentPlanName.toLowerCase() === plan.name.toLowerCase()
+  const { amount, suffix } = formatPlanPrice(plan)
+  const highlights = getPlanCardHighlights(plan.name, plan.monthly_quota, plan.rate_limit_per_minute)
+  const contactSales = isContactSalesPlan(plan.name)
+
+  return (
+    <div className="border border-gray-200 rounded-lg p-4">
+      <div className="flex justify-between items-start mb-3">
+        <div>
+          <h4 className="font-semibold text-gray-900">{plan.name}</h4>
+          <p className="text-2xl font-bold text-gray-900">
+            {amount}
+            {suffix && <span className="text-sm font-normal text-gray-600"> {suffix.replace('/mo', 'per month')}</span>}
+          </p>
+        </div>
+        {isCurrent && <Badge className="bg-green-100 text-green-800">Current</Badge>}
+      </div>
+      <ul className="text-sm text-gray-600 space-y-1 mb-4">
+        {highlights.slice(0, 4).map((item) => (
+          <li key={item}>• {item}</li>
+        ))}
+      </ul>
+      <Button
+        onClick={() => onSelect(plan.id)}
+        variant={isCurrent ? 'outline' : 'default'}
+        disabled={isCurrent || contactSales}
+        className="w-full"
+      >
+        {isCurrent ? 'Current Plan' : contactSales ? 'Contact sales' : `Switch to ${plan.name}`}
+      </Button>
+    </div>
+  )
+}
+
 function BillingPageContent() {
   const { user, isAuthenticated, loading } = useAuth()
   const router = useRouter()
   const searchParams = useSearchParams()
   const [billingInfo, setBillingInfo] = useState<BillingInfo | null>(null)
+  const [availablePlans, setAvailablePlans] = useState<PricingPlan[]>([])
   const [invoices, setInvoices] = useState<Invoice[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
@@ -100,10 +151,12 @@ function BillingPageContent() {
 
       const { api } = await import('@/lib/api/client')
 
-      const [profileResponse, usageResponse] = await Promise.all([
+      const [profileResponse, usageResponse, plans] = await Promise.all([
         api.user.getProfile(),
         api.usage.getUsageStats(),
+        fetchPublicPlans().catch(() => [] as PricingPlan[]),
       ])
+      setAvailablePlans(plans.filter((p) => p.monthly_price > 0 || p.name.toLowerCase() !== 'free'))
 
       if (!profileResponse.success) {
         throw new Error('Failed to load user profile')
@@ -494,95 +547,16 @@ function BillingPageContent() {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {/* Basic Plan */}
-                  <div className="border border-gray-200 rounded-lg p-4">
-                    <div className="flex justify-between items-start mb-3">
-                      <div>
-                        <h4 className="font-semibold text-gray-900">Basic</h4>
-                        <p className="text-2xl font-bold text-gray-900">$9</p>
-                        <p className="text-sm text-gray-600">per month</p>
-                      </div>
-                      {billingInfo.plan_name === 'Basic' && (
-                        <Badge className="bg-green-100 text-green-800">Current</Badge>
-                      )}
-                    </div>
-                    <ul className="text-sm text-gray-600 space-y-1 mb-4">
-                      <li>• 1,000 API calls/month</li>
-                      <li>• 10 requests/minute</li>
-                      <li>• Email support</li>
-                      <li>• Basic analytics</li>
-                    </ul>
-                    <Button
-                      onClick={() => handlePlanChange(2)}
-                      variant={billingInfo.plan_name === 'Basic' ? "outline" : "default"}
-                      disabled={billingInfo.plan_name === 'Basic'}
-                      className="w-full"
-                    >
-                      {billingInfo.plan_name === 'Basic' ? 'Current Plan' : 'Switch to Basic'}
-                    </Button>
-                  </div>
-
-                  {/* Professional Plan */}
-                  <div className="border border-gray-200 rounded-lg p-4">
-                    <div className="flex justify-between items-start mb-3">
-                      <div>
-                        <h4 className="font-semibold text-gray-900">Professional</h4>
-                        <p className="text-2xl font-bold text-gray-900">$29</p>
-                        <p className="text-sm text-gray-600">per month</p>
-                      </div>
-                      {billingInfo.plan_name === 'Professional' && (
-                        <Badge className="bg-green-100 text-green-800">Current</Badge>
-                      )}
-                      {billingInfo.plan_name !== 'Professional' && (
-                        <Badge className="bg-purple-100 text-purple-800">Popular</Badge>
-                      )}
-                    </div>
-                    <ul className="text-sm text-gray-600 space-y-1 mb-4">
-                      <li>• 10,000 API calls/month</li>
-                      <li>• 50 requests/minute</li>
-                      <li>• Priority support</li>
-                      <li>• Advanced analytics</li>
-                    </ul>
-                    <Button
-                      onClick={() => handlePlanChange(3)}
-                      variant={billingInfo.plan_name === 'Professional' ? "outline" : "default"}
-                      disabled={billingInfo.plan_name === 'Professional'}
-                      className="w-full bg-purple-600 hover:bg-purple-700"
-                    >
-                      {billingInfo.plan_name === 'Professional' ? 'Current Plan' : 'Switch to Professional'}
-                    </Button>
-                  </div>
-
-                  {/* Enterprise Plan */}
-                  <div className="border border-gray-200 rounded-lg p-4">
-                    <div className="flex justify-between items-start mb-3">
-                      <div>
-                        <h4 className="font-semibold text-gray-900">Enterprise</h4>
-                        <p className="text-2xl font-bold text-gray-900">$99</p>
-                        <p className="text-sm text-gray-600">per month</p>
-                      </div>
-                      {billingInfo.plan_name === 'Enterprise' && (
-                        <Badge className="bg-green-100 text-green-800">Current</Badge>
-                      )}
-                      {billingInfo.plan_name !== 'Enterprise' && (
-                        <Badge className="bg-yellow-100 text-yellow-800">Best Value</Badge>
-                      )}
-                    </div>
-                    <ul className="text-sm text-gray-600 space-y-1 mb-4">
-                      <li>• 50,000 API calls/month</li>
-                      <li>• 100 requests/minute</li>
-                      <li>• 24/7 support</li>
-                      <li>• Custom integrations</li>
-                    </ul>
-                    <Button
-                      onClick={() => handlePlanChange(4)}
-                      variant={billingInfo.plan_name === 'Enterprise' ? "outline" : "default"}
-                      disabled={billingInfo.plan_name === 'Enterprise'}
-                      className="w-full bg-yellow-600 hover:bg-yellow-700"
-                    >
-                      {billingInfo.plan_name === 'Enterprise' ? 'Current Plan' : 'Switch to Enterprise'}
-                    </Button>
-                  </div>
+                  {availablePlans
+                    .filter((p) => p.name.toLowerCase() !== 'free')
+                    .map((plan) => (
+                      <BillingPlanCard
+                        key={plan.id}
+                        plan={plan}
+                        currentPlanName={billingInfo.plan_name}
+                        onSelect={handlePlanChange}
+                      />
+                    ))}
                 </div>
               </CardContent>
             </Card>
@@ -744,53 +718,17 @@ function BillingPageContent() {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* Professional Plan */}
-                  <div className="border border-gray-200 rounded-lg p-4">
-                    <div className="flex justify-between items-start mb-3">
-                      <div>
-                        <h4 className="font-semibold text-gray-900">Professional</h4>
-                        <p className="text-2xl font-bold text-gray-900">$29</p>
-                        <p className="text-sm text-gray-600">per month</p>
-                      </div>
-                      <Badge className="bg-purple-100 text-purple-800">Popular</Badge>
-                    </div>
-                    <ul className="text-sm text-gray-600 space-y-1 mb-4">
-                      <li>• 10,000 API calls/month</li>
-                      <li>• 100 requests/minute</li>
-                      <li>• Priority support</li>
-                      <li>• Advanced analytics</li>
-                    </ul>
-                    <Button
-                      onClick={() => handleUpgradeToPlan(2)}
-                      className="w-full bg-purple-600 hover:bg-purple-700"
-                    >
-                      Upgrade to Professional
-                    </Button>
-                  </div>
-
-                  {/* Enterprise Plan */}
-                  <div className="border border-gray-200 rounded-lg p-4">
-                    <div className="flex justify-between items-start mb-3">
-                      <div>
-                        <h4 className="font-semibold text-gray-900">Enterprise</h4>
-                        <p className="text-2xl font-bold text-gray-900">$99</p>
-                        <p className="text-sm text-gray-600">per month</p>
-                      </div>
-                      <Badge className="bg-yellow-100 text-yellow-800">Best Value</Badge>
-                    </div>
-                    <ul className="text-sm text-gray-600 space-y-1 mb-4">
-                      <li>• 50,000 API calls/month</li>
-                      <li>• 200 requests/minute</li>
-                      <li>• 24/7 support</li>
-                      <li>• Custom integrations</li>
-                    </ul>
-                    <Button
-                      onClick={() => handleUpgradeToPlan(3)}
-                      className="w-full bg-yellow-600 hover:bg-yellow-700"
-                    >
-                      Upgrade to Enterprise
-                    </Button>
-                  </div>
+                  {availablePlans
+                    .filter((p) => p.name.toLowerCase() !== 'free')
+                    .slice(0, 2)
+                    .map((plan) => (
+                      <BillingPlanCard
+                        key={plan.id}
+                        plan={plan}
+                        currentPlanName="Free"
+                        onSelect={handleUpgradeToPlan}
+                      />
+                    ))}
                 </div>
                 
                 <div className="mt-4 text-center">

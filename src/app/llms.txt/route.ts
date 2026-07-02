@@ -6,7 +6,7 @@ export const revalidate = 300
 
 export async function GET() {
   const posts = await getBlogPosts()
-  const body = buildLlmsTxt(posts)
+  const body = await buildLlmsTxt(posts)
 
   return new NextResponse(body, {
     headers: {

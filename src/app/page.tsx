@@ -11,6 +11,7 @@ import {
   MarketingSectionHeader,
 } from '@/components/marketing/marketing-shell'
 import { StructuredData, JsonLdScript } from '@/components/seo/structured-data'
+import { PricingProductSchema } from '@/components/seo/pricing-product-schema'
 import { HomeSeoContent } from '@/components/marketing/home-seo-content'
 
 export const metadata: Metadata = buildPublicPageMetadata('/')
@@ -93,7 +94,7 @@ export default function HomePage() {
       <FaqSection />
 
       <StructuredData type="api" />
-      <StructuredData type="product" />
+      <PricingProductSchema />
       <JsonLdScript id="faq-jsonld" data={FAQ_JSON_LD} />
     </div>
   )

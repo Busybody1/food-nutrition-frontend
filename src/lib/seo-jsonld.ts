@@ -1,3 +1,6 @@
+import { buildPricingProductJsonLdFromInput } from '@/lib/pricing-product-jsonld'
+import { fetchPublicPlans } from '@/lib/pricing/fetch-plans'
+import { isEnterprisePlan } from '@/lib/pricing/plan-display'
 import {
   OG_IMAGE_URL,
   SITE_DESCRIPTION,
@@ -5,31 +8,63 @@ import {
   SITE_URL,
   absoluteUrl,
 } from '@/lib/site'
-import { buildPricingProductJsonLdFromInput } from '@/lib/pricing-product-jsonld'
 import {
   buildBlogItemListJsonLdFromInput,
   buildBlogPostingJsonLdFromInput,
 } from '@/lib/blog-jsonld-format'
 
-const PRICING_PLANS = [
+const FALLBACK_PRICING_PLANS = [
   { name: 'Free', price: '0' },
   { name: 'Basic', price: '29' },
   { name: 'Core', price: '99' },
   { name: 'Plus', price: '299' },
 ] as const
 
-/** Product JSON-LD for pricing pages — satisfies Google Product/Offer required fields. */
-export function buildPricingProductJsonLd() {
-  return buildPricingProductJsonLdFromInput({
+function plansToJsonLdOffers(
+  plans: Array<{ name: string; monthly_price: number }>
+): Array<{ name: string; price: string }> {
+  return plans
+    .filter((plan) => plan.monthly_price === 0 || !isEnterprisePlan(plan.name))
+    .map((plan) => ({
+      name: plan.name,
+      price: plan.monthly_price === 0 ? '0' : String(plan.monthly_price),
+    }))
+}
+
+function buildPricingJsonLdInput(
+  plans: readonly { name: string; price: string }[]
+) {
+  return {
     siteName: SITE_NAME,
     siteUrl: SITE_URL,
     siteDescription: SITE_DESCRIPTION,
     imageUrl: OG_IMAGE_URL,
     pricingUrl: absoluteUrl('/pricing'),
     termsUrl: absoluteUrl('/terms'),
-    plans: PRICING_PLANS,
+    plans,
     priceValidUntil: `${new Date().getFullYear() + 1}-12-31`,
-  })
+  }
+}
+
+/** Product JSON-LD for pricing pages — satisfies Google Product/Offer required fields. */
+export function buildPricingProductJsonLd() {
+  return buildPricingProductJsonLdFromInput(
+    buildPricingJsonLdInput(FALLBACK_PRICING_PLANS)
+  )
+}
+
+/** Server-side JSON-LD built from live plan prices in the database. */
+export async function buildPricingProductJsonLdAsync() {
+  try {
+    const plans = await fetchPublicPlans()
+    const offers = plansToJsonLdOffers(plans)
+    if (offers.length > 0) {
+      return buildPricingProductJsonLdFromInput(buildPricingJsonLdInput(offers))
+    }
+  } catch {
+    // fall back to static offers when API is unavailable
+  }
+  return buildPricingProductJsonLd()
 }
 
 export type BreadcrumbItem = { name: string; path: string }
