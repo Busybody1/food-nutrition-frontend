@@ -78,9 +78,16 @@ export default function AdminPlansPage() {
       if (monthlyPrice !== '') payload.monthly_price = Number(monthlyPrice)
       if (quota !== '') payload.monthly_quota = Number(quota)
       if (rateLimit !== '') payload.rate_limit_per_minute = Number(rateLimit)
-      payload.stripe_price_id = stripePriceId.trim() || null
-      payload.stripe_test_price_id = stripeTestPriceId.trim() || null
-      payload.stripe_live_price_id = stripeLivePriceId.trim() || null
+
+      const legacyStripe = stripePriceId.trim()
+      const testStripe = stripeTestPriceId.trim()
+      const liveStripe = stripeLivePriceId.trim()
+      if (legacyStripe) payload.stripe_price_id = legacyStripe
+      else if (selected.stripe_price_id) payload.stripe_price_id = null
+      if (testStripe) payload.stripe_test_price_id = testStripe
+      else if (selected.stripe_test_price_id) payload.stripe_test_price_id = null
+      if (liveStripe) payload.stripe_live_price_id = liveStripe
+      else if (selected.stripe_live_price_id) payload.stripe_live_price_id = null
 
       await adminAPI.patchPlan(selected.id, payload)
       const refreshed = await adminAPI.getPlans()
