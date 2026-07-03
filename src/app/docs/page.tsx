@@ -1,11 +1,29 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ArrowRight, AlertCircle, Database, FlaskConical, Key, Zap } from 'lucide-react'
+import {
+  AlertCircle,
+  AlertTriangle,
+  ArrowRight,
+  Code2,
+  Database,
+  FileText,
+  FlaskConical,
+  Gauge,
+  Globe,
+  Key,
+  Layers,
+  ScanBarcode,
+  Search,
+  Smartphone,
+  Terminal,
+  Zap,
+} from 'lucide-react'
 import { SITE_NAME, FOOD_DATABASE_SIZE_LABEL } from '@/lib/site'
 import { API_CONFIG } from '@/lib/config/api'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { MarketingImageHero } from '@/components/marketing/marketing-image-hero'
+import { Reveal } from '@/components/marketing/reveal'
 import { buildPublicPageMetadata } from '@/lib/build-public-metadata'
 import { PublicPageSchema } from '@/components/seo/public-page-schema'
 import { DocsSeoContent } from '@/components/seo/public-page-seo-content'
@@ -79,6 +97,35 @@ const SECTION_CARD_IDS: Record<string, string> = {
   authentication: 'api-keys',
 }
 
+/** Decorative per-section icons (aria-hidden; icons carry no copy). */
+const SECTION_ICONS: Record<string, typeof Key> = {
+  authentication: Key,
+  'food-search': Search,
+  'barcode-lookup': ScanBarcode,
+  'food-details': FileText,
+  'reference-data': Database,
+  'rate-limits': Gauge,
+  errors: AlertTriangle,
+}
+
+/** Decorative per-framework icons (aria-hidden; icons carry no copy). */
+const GUIDE_ICONS: Record<string, typeof Key> = {
+  'React Native': Smartphone,
+  'Next.js': Globe,
+  Flutter: Layers,
+  'Node.js': Terminal,
+  Python: Code2,
+}
+
+const CARD_LINK_CLASS =
+  'marketing-card group flex h-full min-w-0 flex-col focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2'
+
+const INLINE_LINK_CLASS =
+  'text-brand-strong underline decoration-brand/40 underline-offset-2 hover:decoration-brand-strong'
+
+const ICON_CHIP_CLASS =
+  'flex h-9 w-9 shrink-0 items-center justify-center rounded-brand bg-brand-muted transition-colors duration-200 group-hover:bg-brand/15'
+
 export default function DocsPage() {
   return (
     <div className="marketing-page docs-page min-h-screen">
@@ -93,51 +140,66 @@ export default function DocsPage() {
         <p className="text-lg text-ink-muted max-w-2xl mx-auto">
           Search, retrieve, and analyze nutritional information with our REST API over HTTPS.
         </p>
-        <p className="mt-4 text-sm text-ink-muted">
+        <div className="mt-5 flex flex-wrap justify-center gap-2">
+          <Badge variant="secondary" className="gap-1">
+            <Database className="w-3 h-3" />
+            {FOOD_DATABASE_SIZE_LABEL}
+          </Badge>
+          <Badge variant="secondary" className="gap-1">
+            <Zap className="w-3 h-3" />
+            Real-time data
+          </Badge>
+          <Badge variant="secondary" className="gap-1">
+            <Key className="w-3 h-3" />
+            Easy integration
+          </Badge>
+        </div>
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+          <Link href="/auth/register" className="btn-brand">
+            Create Account <ArrowRight className="w-4 h-4 ml-2" aria-hidden />
+          </Link>
+          <Link href="/playground" className="btn-brand-outline">
+            <FlaskConical className="w-4 h-4 mr-2" aria-hidden />
+            Open API playground
+          </Link>
+        </div>
+        <p className="mt-5 text-sm text-ink-muted">
           Base URL: <code className="docs-inline-code">{API_BASE}/api/v1</code>
         </p>
       </MarketingImageHero>
 
       <DocsShell>
-        <section id="introduction" className="mb-12 scroll-mt-[calc(var(--site-header-offset)+1rem)]">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8 max-w-3xl">
-            <div className="flex items-center gap-2 rounded-brand border border-surface-border px-4 py-3 text-sm text-ink-muted">
-              <Key className="h-4 w-4 text-brand shrink-0" />
+        <section id="introduction" className="mb-16 scroll-mt-24">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4 mb-8">
+            <div className="group flex items-center gap-3 rounded-brand border border-surface-border/80 bg-white px-4 py-3 text-sm font-medium text-ink-muted shadow-glass transition-colors duration-200 hover:border-brand/30">
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-brand bg-brand-muted transition-colors duration-200 group-hover:bg-brand/15">
+                <Key className="h-4 w-4 text-brand-strong" aria-hidden />
+              </span>
               API key auth
             </div>
-            <div className="flex items-center gap-2 rounded-brand border border-surface-border px-4 py-3 text-sm text-ink-muted">
-              <Zap className="h-4 w-4 text-brand shrink-0" />
+            <div className="group flex items-center gap-3 rounded-brand border border-surface-border/80 bg-white px-4 py-3 text-sm font-medium text-ink-muted shadow-glass transition-colors duration-200 hover:border-brand/30">
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-brand bg-brand-muted transition-colors duration-200 group-hover:bg-brand/15">
+                <Zap className="h-4 w-4 text-brand-strong" aria-hidden />
+              </span>
               REST + JSON
             </div>
-            <div className="flex items-center gap-2 rounded-brand border border-surface-border px-4 py-3 text-sm text-ink-muted">
-              <Database className="h-4 w-4 text-brand shrink-0" />
+            <div className="group flex items-center gap-3 rounded-brand border border-surface-border/80 bg-white px-4 py-3 text-sm font-medium text-ink-muted shadow-glass transition-colors duration-200 hover:border-brand/30">
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-brand bg-brand-muted transition-colors duration-200 group-hover:bg-brand/15">
+                <Database className="h-4 w-4 text-brand-strong" aria-hidden />
+              </span>
               Food database
             </div>
           </div>
 
           <div className="marketing-callout mb-8">
             <div className="flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-brand-strong mt-0.5 shrink-0" />
+              <AlertCircle className="w-5 h-5 text-brand-strong mt-0.5 shrink-0" aria-hidden />
               <div>
                 <h2 className="text-lg font-semibold text-ink mb-2">Quick start</h2>
                 <p className="text-ink-muted mb-4 leading-relaxed">
                   Get started in minutes with our comprehensive food database API.
                   Create an account, choose a plan, get your API key, and start making requests.
                 </p>
-                <div className="flex flex-wrap gap-2 mb-4">
-                  <Badge variant="secondary" className="gap-1">
-                    <Database className="w-3 h-3" />
-                    {FOOD_DATABASE_SIZE_LABEL}
-                  </Badge>
-                  <Badge variant="secondary" className="gap-1">
-                    <Zap className="w-3 h-3" />
-                    Real-time data
-                  </Badge>
-                  <Badge variant="secondary" className="gap-1">
-                    <Key className="w-3 h-3" />
-                    Easy integration
-                  </Badge>
-                </div>
                 <Button variant="outline" asChild>
                   <Link href="/playground">
                     <FlaskConical className="w-4 h-4 mr-2" />
@@ -150,8 +212,10 @@ export default function DocsPage() {
           </div>
         </section>
 
-        <section id="create-account" className="mb-12 scroll-mt-24">
-          <h2 className="text-2xl sm:text-3xl font-bold text-ink mb-6">Getting Started</h2>
+        <section id="create-account" className="mb-16 scroll-mt-24">
+          <h2 className="font-display text-2xl md:text-3xl tracking-tight text-ink mb-6">
+            Getting Started
+          </h2>
 
           <div className="space-y-8">
             <div className="docs-step">
@@ -176,7 +240,7 @@ export default function DocsPage() {
                 <p className="text-ink-muted mb-4">
                   Start on the free plan and upgrade as your request volume grows. Paid plans raise
                   per-minute rate limits and monthly quotas. See{' '}
-                  <Link href="/docs/rate-limits" className="text-brand-strong hover:underline">
+                  <Link href="/docs/rate-limits" className={INLINE_LINK_CLASS}>
                     rate limits &amp; quotas
                   </Link>{' '}
                   for how limits work.
@@ -194,7 +258,7 @@ export default function DocsPage() {
                 <p className="text-ink-muted mb-4">
                   After subscribing to a plan, generate your API key from the dashboard. This key
                   authenticates your requests. See{' '}
-                  <Link href="/docs/authentication" className="text-brand-strong hover:underline">
+                  <Link href="/docs/authentication" className={INLINE_LINK_CLASS}>
                     authentication
                   </Link>{' '}
                   for security best practices.
@@ -222,53 +286,97 @@ export default function DocsPage() {
           </div>
         </section>
 
-        <section id="search" className="mb-12 scroll-mt-24">
-          <h2 className="text-2xl sm:text-3xl font-bold text-ink mb-4">API Reference</h2>
-          <p className="text-ink-muted mb-8 max-w-3xl">
-            Every endpoint has a dedicated reference page with parameters, response examples, and
-            integration FAQs.
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {DOCS_SECTIONS.map((section) => (
-              <Link
-                key={section.slug}
-                id={SECTION_CARD_IDS[section.slug]}
-                href={docsSectionPath(section.slug)}
-                className="group rounded-brand border border-surface-border p-5 hover:border-brand transition-colors scroll-mt-24"
-              >
-                <h3 className="text-lg font-semibold text-ink mb-1 group-hover:text-brand-strong">
-                  {section.title}
-                </h3>
-                <p className="text-sm text-ink-muted leading-relaxed">{section.summary}</p>
-                <span className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-brand-strong">
-                  Read reference <ArrowRight className="w-4 h-4" aria-hidden />
-                </span>
-              </Link>
-            ))}
+        <section id="search" className="mb-16 scroll-mt-24">
+          <div className="rounded-brand border border-surface-border/60 bg-surface-elevated/60 p-5 sm:p-6 md:p-8">
+            <h2 className="font-display text-2xl md:text-3xl tracking-tight text-ink mb-4">
+              API Reference
+            </h2>
+            <p className="text-ink-muted mb-8 max-w-3xl">
+              Every endpoint has a dedicated reference page with parameters, response examples, and
+              integration FAQs.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
+              {DOCS_SECTIONS.map((section, index) => {
+                const Icon = SECTION_ICONS[section.slug] ?? Database
+                const featured = index === 0
+                return (
+                  <Reveal
+                    key={section.slug}
+                    delay={Math.min(index, 6) * 80}
+                    className={featured ? 'h-full min-w-0 md:col-span-2' : 'h-full min-w-0'}
+                  >
+                    <Link
+                      id={SECTION_CARD_IDS[section.slug]}
+                      href={docsSectionPath(section.slug)}
+                      className={
+                        featured
+                          ? `${CARD_LINK_CLASS} card-hairline p-6 scroll-mt-24`
+                          : `${CARD_LINK_CLASS} scroll-mt-24`
+                      }
+                    >
+                      <span className={`${ICON_CHIP_CLASS} mb-3`} aria-hidden>
+                        <Icon className="h-4 w-4 text-brand-strong" />
+                      </span>
+                      <h3 className="text-xl font-semibold text-ink mb-1 group-hover:text-brand-strong transition-colors duration-200">
+                        {section.title}
+                      </h3>
+                      <p className="text-sm text-ink-muted leading-relaxed">{section.summary}</p>
+                      <span className="mt-auto pt-3 inline-flex items-center gap-1 text-sm font-medium text-brand-strong">
+                        Read reference{' '}
+                        <ArrowRight
+                          className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5"
+                          aria-hidden
+                        />
+                      </span>
+                    </Link>
+                  </Reveal>
+                )
+              })}
+            </div>
           </div>
         </section>
 
-        <section id="guides" className="mb-12 scroll-mt-24">
-          <h2 className="text-2xl sm:text-3xl font-bold text-ink mb-4">Integration Guides</h2>
+        <section id="guides" className="mb-16 scroll-mt-24">
+          <h2 className="font-display text-2xl md:text-3xl tracking-tight text-ink mb-4">
+            Integration Guides
+          </h2>
           <p className="text-ink-muted mb-8 max-w-3xl">
             Framework-specific walkthroughs with working code for common nutrition features.
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {GUIDES.map((guide) => (
-              <Link
-                key={guide.slug}
-                href={guidePath(guide.slug)}
-                className="group rounded-brand border border-surface-border p-5 hover:border-brand transition-colors"
-              >
-                <p className="text-xs font-semibold uppercase tracking-wider text-brand-strong mb-1">
-                  {guide.framework}
-                </p>
-                <h3 className="text-lg font-semibold text-ink mb-1 group-hover:text-brand-strong">
-                  {guide.title}
-                </h3>
-                <p className="text-sm text-ink-muted leading-relaxed">{guide.summary}</p>
-              </Link>
-            ))}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
+            {GUIDES.map((guide, index) => {
+              const Icon = GUIDE_ICONS[guide.framework] ?? Code2
+              const featured = index === 0
+              return (
+                <Reveal
+                  key={guide.slug}
+                  delay={Math.min(index, 6) * 80}
+                  className={featured ? 'h-full min-w-0 md:col-span-2' : 'h-full min-w-0'}
+                >
+                  <Link
+                    href={guidePath(guide.slug)}
+                    className={featured ? `${CARD_LINK_CLASS} card-hairline p-6` : CARD_LINK_CLASS}
+                  >
+                    <div className="mb-3 flex items-center gap-2.5">
+                      <span className={ICON_CHIP_CLASS} aria-hidden>
+                        <Icon className="h-4 w-4 text-brand-strong" />
+                      </span>
+                      <p className="marketing-section-label">{guide.framework}</p>
+                    </div>
+                    <h3 className="text-xl font-semibold text-ink mb-1 group-hover:text-brand-strong transition-colors duration-200">
+                      {guide.title}
+                    </h3>
+                    <p className="text-sm text-ink-muted leading-relaxed">{guide.summary}</p>
+                    <span className="mt-auto pt-3 inline-flex items-center text-brand-strong">
+                      <ArrowRight
+                        className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5"
+                        aria-hidden
+                      />
+                    </span>
+                  </Link>
+                </Reveal>
+              )
+            })}
           </div>
         </section>
       </DocsShell>

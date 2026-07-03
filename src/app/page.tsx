@@ -10,6 +10,7 @@ import {
   MarketingCtaBand,
   MarketingSectionHeader,
 } from '@/components/marketing/marketing-shell'
+import { Reveal, RevealGroup } from '@/components/marketing/reveal'
 import { StructuredData, JsonLdScript } from '@/components/seo/structured-data'
 import { PricingProductSchema } from '@/components/seo/pricing-product-schema'
 import { HomeSeoContent } from '@/components/marketing/home-seo-content'
@@ -56,35 +57,46 @@ export default function HomePage() {
     <div className="marketing-page">
       <HomeHero />
 
-      <section className="section-pad bg-surface-elevated -mt-1" id="demo">
+      <section className="section-pad bg-surface-elevated" id="demo">
         <div className="container-narrow">
-          <MarketingSectionHeader
-            label="Live demo"
-            title="Try our food calorie API live"
-            description="Run a real search against our public food API demo endpoint, no signup required."
-          />
+          <Reveal>
+            <MarketingSectionHeader
+              label="Live demo"
+              title="Try our food calorie API live"
+              description="Run a real search against our public food API demo endpoint, no signup required."
+            />
+          </Reveal>
           <LazyApiPlayground />
         </div>
       </section>
 
-      <section className="section-pad">
+      <section className="section-pad bg-white">
         <div className="container-narrow">
-          <MarketingSectionHeader
-            label="Platform"
-            title="Food database API for modern health products"
-            description="Everything you need to integrate nutrition API data into mobile, web, and AI workflows."
-          />
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
+          <Reveal>
+            <MarketingSectionHeader
+              label="Platform"
+              title="Food database API for modern health products"
+              description="Everything you need to integrate nutrition API data into mobile, web, and AI workflows."
+            />
+          </Reveal>
+          <RevealGroup
+            className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5"
+            itemClassName="h-full min-w-0"
+          >
             {features.map((f) => (
               <MarketingFeatureCard key={f.title} {...f} />
             ))}
-          </div>
+          </RevealGroup>
         </div>
       </section>
 
+      <Testimonials />
+
       <StatsBand />
 
-      <Testimonials />
+      <HomeSeoContent />
+
+      <FaqSection items={HOME_FAQ_ITEMS} />
 
       <MarketingCtaBand
         title="Ready to integrate?"
@@ -94,10 +106,6 @@ export default function HomePage() {
         secondaryHref="/pricing"
         secondaryLabel="View pricing"
       />
-
-      <HomeSeoContent />
-
-      <FaqSection items={HOME_FAQ_ITEMS} />
 
       <StructuredData type="api" />
       <PricingProductSchema />

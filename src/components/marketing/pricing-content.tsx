@@ -8,13 +8,33 @@ import { MarketingImageHero } from '@/components/marketing/marketing-image-hero'
 import { MarketingTrustPills } from '@/components/marketing/marketing-shell'
 import { PricingCard } from '@/components/marketing/pricing-card'
 import { PricingComparison } from '@/components/marketing/pricing-comparison'
+import { RevealGroup } from '@/components/marketing/reveal'
+import { StatsBand } from '@/components/marketing/stats-band'
+import { TrackedCtaLink } from '@/components/analytics/tracked-cta-link'
 import { fetchPublicPlans } from '@/lib/pricing/fetch-plans'
 import { isContactSalesPlan, type PricingPlan } from '@/lib/pricing/plan-display'
+import { cn } from '@/lib/utils/cn'
 
 type PricingContentProps = {
   /** Server-fetched plans so the grid is in the SSR HTML (crawlable prices). */
   initialPlans: PricingPlan[]
   initialError: string | null
+}
+
+/**
+ * Count-aware plan grid: columns always divide evenly (no flex-basis drift),
+ * and five tiers share a single row at xl — the standard pricing scan pattern.
+ */
+const PLAN_GRID_CLASS: Record<number, string> = {
+  1: 'grid-cols-1 max-w-sm mx-auto',
+  2: 'sm:grid-cols-2 max-w-3xl mx-auto',
+  3: 'sm:grid-cols-2 lg:grid-cols-3',
+  4: 'sm:grid-cols-2 lg:grid-cols-4',
+  5: 'sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5',
+}
+
+function planGridClass(count: number): string {
+  return cn('grid w-full gap-4 md:gap-5', PLAN_GRID_CLASS[count] ?? PLAN_GRID_CLASS[3])
 }
 
 export function PricingContent({ initialPlans, initialError }: PricingContentProps) {
@@ -130,6 +150,22 @@ export function PricingContent({ initialPlans, initialError }: PricingContentPro
           Per-account rate limits, monthly quotas, and anti-scrape protections built in.
           Commercial production use starts on Plus.
         </p>
+        <div className="mb-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <TrackedCtaLink
+            href="/auth/register"
+            eventLabel="Get started free"
+            className="btn-brand h-12 w-full px-8 text-base sm:w-auto"
+          >
+            Get started free
+          </TrackedCtaLink>
+          <TrackedCtaLink
+            href="/contact?inquiry=enterprise"
+            eventLabel="Contact Sales"
+            className="btn-brand-outline h-12 w-full px-8 text-base sm:w-auto"
+          >
+            Contact Sales
+          </TrackedCtaLink>
+        </div>
         <MarketingTrustPills
           items={[
             'Live limits from your plan',
@@ -139,40 +175,49 @@ export function PricingContent({ initialPlans, initialError }: PricingContentPro
         />
       </MarketingImageHero>
 
-      <section className="pt-10 md:pt-12 pb-12 md:pb-20 bg-surface-elevated -mt-1">
-        <div className="container-narrow flex flex-col items-center">
+      <section className="relative overflow-hidden bg-surface-elevated pt-10 md:pt-12 pb-20 md:pb-28">
+        {/* Soft radial brand glow behind the commercial decision point. */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute left-1/2 top-0 h-[420px] w-full max-w-[900px] -translate-x-1/2 bg-[radial-gradient(ellipse_at_center,rgba(10,197,215,0.12),transparent_65%)]"
+        />
+        <div className="container-narrow relative">
           {isLoading ? (
-            <div className="flex w-full max-w-5xl flex-wrap justify-center gap-5 pt-6">
+            <div role="status" aria-label="Loading pricing..." className={planGridClass(5)}>
               {Array.from({ length: 5 }).map((_, i) => (
                 <div
                   key={i}
-                  className="h-[280px] w-full max-w-[340px] rounded-brand border border-surface-border bg-white p-6 animate-pulse sm:max-w-[340px] lg:flex-[0_1_calc(33.333%-0.875rem)] lg:max-w-[320px]"
+                  className="h-[420px] rounded-brand border border-surface-border bg-white animate-pulse"
                 />
               ))}
             </div>
           ) : loadError ? (
-            <p className="text-sm text-red-600 pt-6 text-center max-w-md">{loadError}</p>
-          ) : displayPlans.length === 0 ? (
-            <p className="text-sm text-ink-muted pt-6">No plans available.</p>
-          ) : (
-            <div className="flex w-full max-w-5xl flex-wrap justify-center gap-5 pt-6">
-              {displayPlans.map((plan) => (
-                <div
-                  key={plan.id}
-                  className="w-full max-w-[340px] sm:max-w-[340px] lg:max-w-[320px] lg:flex-[0_1_calc(33.333%-0.875rem)]"
-                >
-                  <PricingCard
-                    plan={plan}
-                    isPopular={plan.name === 'Plus'}
-                    isCurrent={currentSubscription?.plan_id === plan.id}
-                    onSelect={() => handlePlanSelect(plan)}
-                  />
-                </div>
-              ))}
+            <div
+              role="alert"
+              className="mx-auto max-w-md rounded-brand border border-error-500/30 bg-white px-5 py-4 text-center shadow-glass"
+            >
+              <p className="text-sm text-error-600">{loadError}</p>
             </div>
+          ) : displayPlans.length === 0 ? (
+            <p className="text-sm text-ink-muted text-center">No plans available.</p>
+          ) : (
+            <RevealGroup className={planGridClass(displayPlans.length)} itemClassName="h-full min-w-0">
+              {displayPlans.map((plan) => (
+                <PricingCard
+                  key={plan.id}
+                  plan={plan}
+                  isPopular={plan.name === 'Plus'}
+                  isCurrent={currentSubscription?.plan_id === plan.id}
+                  dense={displayPlans.length >= 5}
+                  onSelect={() => handlePlanSelect(plan)}
+                />
+              ))}
+            </RevealGroup>
           )}
         </div>
       </section>
+
+      <StatsBand />
 
       {!isLoading && <PricingComparison plans={displayPlans} />}
 

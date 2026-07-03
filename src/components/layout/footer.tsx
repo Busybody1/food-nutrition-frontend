@@ -46,7 +46,7 @@ function FooterLinkColumn({
   links: { href: string; label: string }[]
 }) {
   return (
-    <div className="md:col-span-2">
+    <div className="min-w-0 md:col-span-1 lg:col-span-2">
       <h3 className="text-xs font-semibold text-ink uppercase tracking-wider mb-4">{title}</h3>
       <ul className="space-y-2.5">
         {links.map(({ href, label }) => (
@@ -54,7 +54,7 @@ function FooterLinkColumn({
             <Link
               href={href}
               prefetch={false}
-              className="text-sm text-ink-muted hover:text-brand-strong transition-colors"
+              className="inline-block rounded-sm text-sm text-ink-muted transition-colors duration-200 hover:text-brand-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2"
             >
               {label}
             </Link>
@@ -67,11 +67,19 @@ function FooterLinkColumn({
 
 export function Footer() {
   return (
-    <footer className="bg-white border-t border-surface-border/80">
-      <div className="container-narrow py-14 md:py-16">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-8">
-          <div className="md:col-span-4">
-            <Link href="/" className="inline-flex items-center gap-2.5 mb-4" {...navPrefetch}>
+    <footer className="relative overflow-hidden bg-surface-elevated border-t border-brand/10">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_50%_0%,rgba(10,197,215,0.08),transparent)]"
+      />
+      <div className="container-narrow relative py-14 md:py-16">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-12 gap-10 md:gap-8">
+          <div className="col-span-2 md:col-span-4 lg:col-span-4">
+            <Link
+              href="/"
+              className="inline-flex items-center gap-2.5 mb-4 rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2"
+              {...navPrefetch}
+            >
               <span className="relative block h-8 w-8 shrink-0">
                 <Image
                   src="/logos/busybody-logo.png"
@@ -89,10 +97,15 @@ export function Footer() {
             </p>
             <a
               href={`mailto:${SUPPORT_EMAIL}`}
-              className="text-sm font-medium text-brand-strong hover:text-brand transition-colors"
+              className="rounded-sm text-sm font-medium text-brand-strong underline decoration-brand/40 underline-offset-2 transition-colors duration-200 hover:decoration-brand-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2"
             >
               {SUPPORT_EMAIL}
             </a>
+            <div className="mt-5">
+              <Link href="/auth/register" prefetch={false} className="btn-brand h-10 px-5">
+                Get API key
+              </Link>
+            </div>
           </div>
 
           <FooterLinkColumn title="Product" links={productLinks} />
@@ -101,9 +114,12 @@ export function Footer() {
           <FooterLinkColumn title="Legal" links={legalLinks} />
         </div>
 
-        <div className="mt-12 pt-8 border-t border-surface-border/60 flex flex-col sm:flex-row justify-between gap-3 text-xs text-ink-dim">
+        <div className="mt-12 pt-8 border-t border-surface-border/60 flex flex-col sm:flex-row justify-between gap-3 text-xs text-ink-muted">
           <p>© {new Date().getFullYear()} BusyBody FIT LTD. All rights reserved.</p>
-          <a href={absoluteUrl('/llms.txt')} className="hover:text-brand-strong transition-colors">
+          <a
+            href={absoluteUrl('/llms.txt')}
+            className="rounded-sm underline decoration-surface-border underline-offset-2 transition-colors duration-200 hover:text-brand-strong hover:decoration-brand-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2"
+          >
             llms.txt
           </a>
         </div>

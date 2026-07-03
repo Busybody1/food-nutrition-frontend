@@ -12,12 +12,17 @@
     --ink: #1e1e1e;
     --ink-muted: #52525b;
     --radius: 12px;
-    /* Floating pill header: pt-4 + h-14 + pb-2 */
+    /* Floating pill header: pt-4 (1rem) + h-16 (4rem) + pb-2 (0.5rem) = 5.5rem */
     --site-header-offset: 5.5rem;
   }
 
   * {
     border-color: rgb(229 231 235);
+  }
+
+  html {
+    /* Keep in-page anchor targets clear of the fixed floating header */
+    scroll-padding-top: var(--site-header-offset);
   }
 
   body {
@@ -432,22 +437,40 @@
     }
   }
 
+  /* Background/overflow only — combine with .hero-pad or .hero-pad-compact for
+     vertical padding. Never combine hero-glow with section-pad/py-* (cascade bug). */
   .hero-glow {
     @apply relative overflow-hidden;
-    padding-top: var(--site-header-offset);
     background:
       radial-gradient(ellipse 70% 55% at 15% 20%, rgba(10, 197, 215, 0.2), transparent),
       radial-gradient(ellipse 50% 40% at 85% 30%, rgba(10, 197, 215, 0.08), transparent),
       linear-gradient(180deg, #f8fafc 0%, #ffffff 72%);
   }
 
+  /* Full-hero vertical rhythm: clears the fixed floating header. */
+  .hero-pad {
+    @apply pb-20 md:pb-28;
+    padding-top: calc(var(--site-header-offset) + 2.5rem);
+  }
+
+  @media (min-width: 768px) {
+    .hero-pad {
+      padding-top: calc(var(--site-header-offset) + 4rem);
+    }
+  }
+
+  /* Compact hero rhythm (info pages: about/faq/contact/changelog/api-status). */
+  .hero-pad-compact {
+    @apply pb-16 md:pb-20;
+    padding-top: calc(var(--site-header-offset) + 1.5rem);
+  }
+
   .hero-home {
-    @apply relative min-h-[580px] md:min-h-[640px] lg:min-h-[700px] overflow-hidden;
-    background-color: #ebeae6;
+    @apply relative min-h-[580px] md:min-h-[640px] lg:min-h-[700px] overflow-hidden bg-surface-elevated;
   }
 
   .hero-home__image {
-    @apply object-cover object-[68%_center] lg:object-[right_center];
+    @apply object-cover object-[68%_center] lg:object-[right_center] motion-safe:animate-ken-burns;
   }
 
   .hero-home__overlay {
@@ -547,7 +570,8 @@
 
   .site-header-bar {
     @apply pointer-events-auto mx-auto flex h-16 max-w-6xl items-center gap-3 rounded-full border border-white/70
-      bg-white/75 px-3 sm:px-5 lg:px-6 shadow-[0_4px_24px_rgba(15,23,42,0.07)] backdrop-blur-xl;
+      bg-white/75 px-3 sm:px-5 lg:px-6 shadow-[0_4px_24px_rgba(15,23,42,0.07)] backdrop-blur-xl
+      transition-[background-color,box-shadow,border-color] duration-200;
   }
 
   .site-header-bar--hero {
@@ -594,8 +618,9 @@
   }
 
   .site-header-cta {
-    @apply inline-flex h-9 items-center justify-center rounded-full bg-brand px-5 text-sm font-medium text-white
-      shadow-glow transition-all hover:bg-brand-strong;
+    @apply inline-flex h-9 cursor-pointer items-center justify-center rounded-full bg-brand px-5 text-sm font-medium text-white
+      shadow-glow transition-all duration-200 hover:bg-brand-strong
+      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2;
   }
 
   .glass-panel {
@@ -604,7 +629,20 @@
 
   .card-dark,
   .marketing-card {
-    @apply bg-white border border-surface-border/80 rounded-brand p-5 text-ink shadow-glass;
+    @apply bg-white border border-surface-border/80 rounded-brand p-5 text-ink shadow-glass
+      transition-all duration-200 hover:border-brand/30 hover:shadow-glass-lg
+      motion-safe:hover:-translate-y-0.5;
+  }
+
+  /* Featured-card top hairline: add alongside .marketing-card / .glass-panel. */
+  .card-hairline {
+    @apply relative overflow-hidden;
+  }
+
+  .card-hairline::before {
+    content: '';
+    @apply pointer-events-none absolute inset-x-0 top-0 h-[3px]
+      bg-gradient-to-r from-brand/60 via-brand to-brand-soft;
   }
 
   .marketing-hero-badge {
@@ -625,13 +663,15 @@
   }
 
   .marketing-cta-band {
-    @apply section-pad bg-surface-elevated relative overflow-hidden;
+    @apply section-pad bg-surface-elevated relative overflow-hidden border-t border-brand/15;
   }
 
   .marketing-cta-band::before {
     content: '';
     @apply absolute inset-0 pointer-events-none;
-    background: radial-gradient(ellipse 70% 50% at 50% 100%, rgba(10, 197, 215, 0.1), transparent);
+    background:
+      radial-gradient(ellipse 70% 55% at 50% 100%, rgba(10, 197, 215, 0.18), transparent),
+      radial-gradient(ellipse 45% 35% at 88% 0%, rgba(255, 140, 66, 0.08), transparent 70%);
   }
 
   .marketing-callout {
@@ -648,10 +688,13 @@
 
   .marketing-faq-trigger {
     @apply w-full flex items-center justify-between text-left gap-4 py-1 font-medium text-ink
-      hover:text-brand-strong transition-colors;
+      cursor-pointer hover:text-brand-strong transition-colors
+      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2 focus-visible:rounded-lg;
   }
 
   .marketing-faq-summary {
+    @apply cursor-pointer rounded-lg focus-visible:outline-none focus-visible:ring-2
+      focus-visible:ring-brand/50 focus-visible:ring-offset-2;
     list-style: none;
   }
 
@@ -681,13 +724,18 @@
   }
 
   .btn-brand {
-    @apply inline-flex items-center justify-center h-11 px-6 rounded-brand bg-brand text-white font-medium text-sm
-      hover:bg-brand-strong transition-all shadow-glow hover:shadow-glow-lg;
+    @apply inline-flex items-center justify-center h-11 px-6 rounded-brand text-white font-semibold text-sm
+      bg-gradient-to-r from-brand to-brand-strong cursor-pointer
+      shadow-glow transition-[box-shadow,transform,opacity,background-color] duration-200
+      hover:shadow-glow-lg motion-safe:hover:-translate-y-px
+      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2;
   }
 
   .btn-brand-outline {
     @apply inline-flex items-center justify-center h-11 px-6 rounded-brand border border-surface-border text-ink
-      bg-white hover:bg-surface-elevated transition-all;
+      bg-white cursor-pointer transition-[background-color,border-color,box-shadow,transform] duration-200
+      hover:bg-surface-elevated hover:border-brand/30
+      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2;
   }
 
   .text-gradient-brand {
@@ -698,8 +746,23 @@
     @apply py-20 md:py-28;
   }
 
+  /* Short bands: stat strips, RelatedResources, hero-continuation intros. */
+  .section-pad-sm {
+    @apply py-10 md:py-14;
+  }
+
   .container-narrow {
     @apply container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl min-w-0 w-full;
+  }
+
+  /* Single narrow column for prose/FAQ/narrative sections. */
+  .container-prose {
+    @apply mx-auto w-full min-w-0 max-w-3xl px-4 sm:px-6;
+  }
+
+  /* Marketing loading spinner — keeps marketing surfaces off dashboard-* classes. */
+  .marketing-spinner {
+    @apply h-9 w-9 rounded-full border-2 border-surface-border border-t-brand animate-spin;
   }
 
   .dashboard-page {
@@ -895,6 +958,80 @@
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Marketing motion system (plain CSS on purpose — never tree-shaken).
+   - JS-driven: <Reveal>/<RevealGroup> set [data-reveal] just before observing,
+     then [data-revealed] when ~15% visible. Content is visible by default
+     (no-JS / crawler safe); hiding only applies between those two moments.
+   - CSS-only: .animate-rise (+ .stagger-1..6) for above-the-fold entrances.
+   Everything is gated behind prefers-reduced-motion: no-preference.
+--------------------------------------------------------------------------- */
+@keyframes fade-rise {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-reveal]:not([data-revealed]) {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  [data-reveal][data-revealed] {
+    animation: fade-rise 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: var(--reveal-delay, 0ms);
+  }
+
+  .animate-rise {
+    animation: fade-rise 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .animate-menu-in {
+    animation: menu-in 0.18s ease-out both;
+  }
+
+  .stagger-1 {
+    animation-delay: 0ms;
+  }
+
+  .stagger-2 {
+    animation-delay: 80ms;
+  }
+
+  .stagger-3 {
+    animation-delay: 160ms;
+  }
+
+  .stagger-4 {
+    animation-delay: 240ms;
+  }
+
+  .stagger-5 {
+    animation-delay: 320ms;
+  }
+
+  .stagger-6 {
+    animation-delay: 400ms;
   }
 }
 

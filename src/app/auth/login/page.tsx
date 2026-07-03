@@ -46,7 +46,8 @@ export default function LoginPage() {
   }
 
   const labelClass = 'block text-sm font-medium text-ink-muted mb-1'
-  const inputClass = 'bg-white border-surface-border text-ink'
+  const linkClass =
+    'text-brand-strong underline decoration-brand/40 underline-offset-2 hover:decoration-brand-strong rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2'
 
   return (
     <AuthShell
@@ -54,7 +55,7 @@ export default function LoginPage() {
       subtitle={
         <>
           Or{' '}
-          <Link href="/auth/register" className="text-brand hover:text-brand-soft">
+          <Link href="/auth/register" className={linkClass}>
             create a free account
           </Link>
         </>
@@ -62,7 +63,10 @@ export default function LoginPage() {
     >
       <form onSubmit={handleSubmit} className="space-y-4">
         {error && (
-          <div className="bg-error-500/10 border border-error-500/30 text-error-500 px-4 py-3 rounded-card text-sm">
+          <div
+            role="alert"
+            className="bg-error-500/10 border border-error-500/30 text-error-500 px-4 py-3 rounded-card text-sm"
+          >
             {error}
           </div>
         )}
@@ -77,7 +81,7 @@ export default function LoginPage() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className={inputClass}
+            className="h-11"
           />
         </div>
 
@@ -92,11 +96,11 @@ export default function LoginPage() {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className={`${inputClass} pr-10`}
+              className="h-11 pr-10"
             />
             <button
               type="button"
-              className="absolute inset-y-0 right-0 pr-3 flex items-center text-ink-dim"
+              className="absolute inset-y-0 right-0 pr-3 flex items-center rounded-r-brand cursor-pointer text-ink-muted hover:text-ink transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
               onClick={() => setShowPassword(!showPassword)}
               aria-label={showPassword ? 'Hide password' : 'Show password'}
             >
@@ -105,7 +109,11 @@ export default function LoginPage() {
           </div>
         </div>
 
-        <Button type="submit" className="w-full" disabled={isLoading}>
+        <Button
+          type="submit"
+          className="w-full h-11 font-semibold hover:shadow-glow-lg motion-safe:hover:-translate-y-px"
+          disabled={isLoading}
+        >
           {isLoading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -117,12 +125,12 @@ export default function LoginPage() {
         </Button>
       </form>
 
-      <p className="mt-6 text-center text-sm text-ink-dim">
-        No account?{' '}
-        <Link href="/auth/register" className="text-brand hover:underline">
+      <div className="mt-6 border-t border-surface-border/70 pt-5 text-center">
+        <p className="text-sm text-ink-muted">No account?</p>
+        <Link href="/auth/register" className="btn-brand-outline mt-3 w-full">
           Sign up free
         </Link>
-      </p>
+      </div>
     </AuthShell>
   )
 }

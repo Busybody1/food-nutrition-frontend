@@ -30,7 +30,7 @@ export function MarketingImageHero({
         centered && 'hero-home--center'
       )}
     >
-      <div className="absolute inset-0" aria-hidden>
+      <div className="absolute inset-0">
         <Image
           src={HERO_IMAGE_SRC}
           alt={HERO_IMAGE_ALT}
@@ -54,20 +54,23 @@ export function MarketingImageHero({
       >
         <div
           className={cn(
-            'w-full',
+            'w-full animate-rise',
             compact ? 'py-10 md:py-14' : 'pt-10 md:pt-14 lg:pt-16 pb-20 md:pb-28 lg:pb-32',
             centered
               ? 'max-w-2xl mx-auto text-center'
               : 'max-w-xl lg:max-w-2xl text-center lg:text-left'
           )}
         >
-          {children}
+          {/* Below lg the photo shows through more — glass panel keeps text ≥ AA contrast. */}
+          <div className="max-lg:rounded-2xl max-lg:bg-surface-elevated/75 max-lg:backdrop-blur-sm max-lg:p-6 max-lg:shadow-glass">
+            {children}
+          </div>
         </div>
       </div>
 
       <svg
         className={cn(
-          'absolute bottom-0 left-0 z-[2] w-full h-14 md:h-20 pointer-events-none',
+          'absolute -bottom-px left-0 z-[2] w-full h-14 md:h-20 pointer-events-none',
           WAVE_TONE_CLASS[waveTone]
         )}
         viewBox="0 0 1440 96"

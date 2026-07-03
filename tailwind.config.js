@@ -75,6 +75,7 @@ module.exports = {
         'slide-up': 'slideUp 0.6s ease-out',
         float: 'float 8s ease-in-out infinite',
         glow: 'glow 3s ease-in-out infinite alternate',
+        'ken-burns': 'kenBurns 24s ease-out forwards',
       },
       keyframes: {
         fadeIn: {
@@ -84,6 +85,10 @@ module.exports = {
         slideUp: {
           '0%': { opacity: '0', transform: 'translateY(24px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        kenBurns: {
+          '0%': { transform: 'scale(1)' },
+          '100%': { transform: 'scale(1.06)' },
         },
         float: {
           '0%, 100%': { transform: 'translateY(0)' },

@@ -44,11 +44,14 @@ export function PricingCard({
   plan,
   isCurrent,
   isPopular,
+  dense,
   onSelect,
 }: {
   plan: PricingPlan
   isCurrent: boolean
   isPopular?: boolean
+  /** Tightens intra-card layout when five tiers share one row at xl. */
+  dense?: boolean
   onSelect: () => void
 }) {
   const { amount, suffix } = formatPlanPrice(plan)
@@ -65,8 +68,12 @@ export function PricingCard({
   return (
     <article
       className={cn(
-        'relative flex w-full flex-col rounded-brand border bg-white p-6 shadow-glass transition-shadow hover:shadow-glass-lg',
-        isPopular ? 'border-brand/40 ring-1 ring-brand/10' : 'border-surface-border/80'
+        'relative flex h-full w-full flex-col rounded-brand border bg-white transition-all duration-200',
+        dense ? 'p-6 xl:p-5' : 'p-6',
+        isPopular
+          ? // Featured tier: brand hairline, warm tint, glow, and a resting lift at lg+.
+            'border-brand/50 bg-gradient-to-b from-brand-muted/40 via-white to-white shadow-glow hover:shadow-glow-lg motion-safe:hover:-translate-y-0.5 lg:-translate-y-1.5 motion-safe:lg:hover:-translate-y-2 before:pointer-events-none before:absolute before:inset-x-0 before:top-0 before:h-[3px] before:rounded-t-brand before:bg-gradient-to-r before:from-brand/60 before:via-brand before:to-brand-soft before:content-[""]'
+          : 'border-surface-border/80 shadow-glass hover:border-brand/30 hover:shadow-glass-lg motion-safe:hover:-translate-y-0.5'
       )}
     >
       {isPopular && (
@@ -75,33 +82,40 @@ export function PricingCard({
         </div>
       )}
 
-      <div className="flex items-center justify-between gap-2 mb-4">
-        <div className="flex items-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-brand bg-brand-muted">
-            <PlanIcon name={plan.name} />
-          </div>
-          <h3 className="text-lg font-semibold text-ink">{plan.name}</h3>
+      <div className="flex items-center gap-2 mb-3">
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-brand bg-brand-muted">
+          <PlanIcon name={plan.name} />
         </div>
+        <h3 className="text-lg font-semibold text-ink">{plan.name}</h3>
+      </div>
+
+      {/* Reserved line on every card so prices baseline-align across the row. */}
+      <div className="mb-3 flex min-h-6 items-center">
         {commercial && (
-          <span className="text-[10px] font-semibold uppercase tracking-wide text-brand-strong bg-brand-muted px-2 py-0.5 rounded-full">
+          <span className="inline-flex items-center rounded-full bg-brand-muted px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-brand-strong">
             Commercial
           </span>
         )}
       </div>
 
-      <div className="mb-1">
-        <span className="text-3xl font-semibold tracking-tight text-ink tabular-nums">
+      <div className="mb-1 flex items-baseline gap-1">
+        <span className="font-display text-4xl leading-none tracking-tight text-ink tabular-nums">
           {amount}
         </span>
-        {suffix ? <span className="text-sm text-ink-dim">{suffix}</span> : null}
+        {suffix ? <span className="text-sm font-medium text-ink-muted">{suffix}</span> : null}
       </div>
-      <p className="text-sm text-ink-muted mb-4 min-h-[2.5rem] leading-snug">{plan.description}</p>
+      <p className="text-sm text-ink-muted mb-4 min-h-[3.75rem] leading-snug">{plan.description}</p>
 
-      <div className="grid grid-cols-2 gap-2 mb-5 rounded-brand bg-surface-elevated/80 border border-surface-border/60 p-3">
+      <div
+        className={cn(
+          'grid grid-cols-2 gap-2 mb-5 rounded-brand bg-surface-elevated/80 border border-surface-border/60 p-3',
+          dense && 'xl:grid-cols-1'
+        )}
+      >
         <div className="flex gap-2">
           <Calendar className="h-4 w-4 text-brand shrink-0 mt-0.5" aria-hidden />
           <div>
-            <p className="text-[10px] uppercase tracking-wide text-ink-dim font-medium">Monthly</p>
+            <p className="text-xs uppercase tracking-wide text-ink-muted font-medium">Monthly</p>
             <p className="text-sm font-semibold text-ink tabular-nums">
               {formatQuota(plan.monthly_quota)}
             </p>
@@ -110,7 +124,7 @@ export function PricingCard({
         <div className="flex gap-2">
           <Gauge className="h-4 w-4 text-brand shrink-0 mt-0.5" aria-hidden />
           <div>
-            <p className="text-[10px] uppercase tracking-wide text-ink-dim font-medium">Rate limit</p>
+            <p className="text-xs uppercase tracking-wide text-ink-muted font-medium">Rate limit</p>
             <p className="text-sm font-semibold text-ink tabular-nums">
               {formatRateLimit(plan.rate_limit_per_minute)}
             </p>
@@ -128,10 +142,15 @@ export function PricingCard({
       </ul>
 
       <Button
-        variant={plan.name === 'Free' ? 'outline' : 'default'}
-        className="w-full"
+        variant={isPopular ? 'default' : 'outline'}
+        className={cn(
+          'w-full cursor-pointer',
+          isPopular &&
+            'h-11 font-semibold bg-gradient-to-r from-brand to-brand-strong shadow-glow hover:shadow-glow-lg'
+        )}
         onClick={onSelect}
         disabled={isCurrent}
+        aria-label={`${ctaLabel} — ${plan.name} plan`}
       >
         {ctaLabel}
       </Button>

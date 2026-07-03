@@ -1,8 +1,14 @@
 import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { MarketingHero } from '@/components/marketing/marketing-hero'
-import { marketingCardClass, MarketingStatStrip, MarketingCtaBand } from '@/components/marketing/marketing-shell'
+import { MarketingImageHero } from '@/components/marketing/marketing-image-hero'
+import {
+  marketingCardClass,
+  MarketingFeatureCard,
+  MarketingSectionHeader,
+  MarketingStatStrip,
+  MarketingCtaBand,
+} from '@/components/marketing/marketing-shell'
+import { Reveal, RevealGroup } from '@/components/marketing/reveal'
+import { TrackedCtaLink } from '@/components/analytics/tracked-cta-link'
 import type { Metadata } from 'next'
 import { buildPublicPageMetadata } from '@/lib/build-public-metadata'
 import { PublicPageSchema } from '@/components/seo/public-page-schema'
@@ -23,26 +29,43 @@ export default function AboutPage() {
         pageName="About"
         extraJsonLd={[buildAboutPageJsonLd(aboutSeo.description)]}
       />
-      <MarketingHero
-        badge={
-          <>
-            <Heart className="w-4 h-4 mr-2 inline" />
-            Our story
-          </>
-        }
-        title={
-          <>
-            Building the future of{' '}
-            <span className="text-gradient-brand">nutrition technology</span>
-          </>
-        }
-        subtitle="We democratize access to comprehensive nutrition data so developers can ship health and fitness products faster."
-      />
+      <MarketingImageHero compact centered waveTone="elevated">
+        <p className="marketing-hero-badge mb-6 inline-flex items-center gap-2">
+          <Heart className="h-4 w-4" aria-hidden />
+          Our story
+        </p>
+        <h1 className="font-display text-4xl md:text-5xl tracking-tight text-ink mb-4 text-balance">
+          Building the future of{' '}
+          <span className="text-gradient-brand">nutrition technology</span>
+        </h1>
+        <p className="text-lg text-ink-muted leading-relaxed max-w-xl mx-auto">
+          We democratize access to comprehensive nutrition data so developers can ship health and
+          fitness products faster.
+        </p>
+        <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
+          <TrackedCtaLink
+            href="/auth/register"
+            eventLabel="Get started free"
+            className="btn-brand w-full sm:w-auto"
+          >
+            Get started free
+          </TrackedCtaLink>
+          <TrackedCtaLink
+            href="/contact"
+            eventLabel="Contact us"
+            className="btn-brand-outline w-full sm:w-auto"
+          >
+            Contact us
+          </TrackedCtaLink>
+        </div>
+      </MarketingImageHero>
 
       <section className="section-pad bg-surface-elevated">
         <div className="container-narrow grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <div>
-            <h2 className="font-display text-3xl text-ink mb-6">Our mission</h2>
+          <Reveal>
+            <h2 className="font-display text-3xl md:text-4xl tracking-tight text-ink mb-6">
+              Our mission
+            </h2>
             <p className="text-ink-muted leading-relaxed mb-6">
               Provide developers with accurate, searchable nutrition data, from macros to
               barcode lookup, with transparent pricing and reliable uptime.
@@ -51,37 +74,42 @@ export default function AboutPage() {
               Quality nutrition data should be simple to integrate, affordable at every scale,
               and secure by default.
             </p>
-            <Button asChild>
-              <Link href="/docs">
-                <Target className="mr-2 h-4 w-4" />
-                Read the docs
-              </Link>
-            </Button>
-          </div>
-          <Card className={marketingCardClass}>
-            <CardContent className="p-8 text-center">
-              <div className="w-20 h-20 bg-brand rounded-full flex items-center justify-center mx-auto mb-6 shadow-glow">
-                <Heart className="h-10 w-10 text-surface" />
+            <Link href="/docs" className="btn-brand-outline">
+              <Target className="mr-2 h-4 w-4" aria-hidden />
+              Read the docs
+            </Link>
+          </Reveal>
+          <Reveal delay={120} className="relative">
+            <div
+              className="absolute left-1/2 top-1/2 -z-10 h-64 w-full max-w-sm -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand/10 blur-3xl pointer-events-none"
+              aria-hidden
+            />
+            <div className={`${marketingCardClass} card-hairline p-8 text-center`}>
+              <div className="w-20 h-20 bg-gradient-to-br from-brand to-brand-strong rounded-full flex items-center justify-center mx-auto mb-6 shadow-glow">
+                <Heart className="h-10 w-10 text-surface" aria-hidden />
               </div>
               <h3 className="text-2xl font-display text-ink mb-4">Health first</h3>
               <p className="text-ink-muted">
                 Every product decision is guided by helping people make better food choices
                 through trustworthy data.
               </p>
-            </CardContent>
-          </Card>
+            </div>
+          </Reveal>
         </div>
       </section>
 
-      <section className="section-pad">
+      <section className="section-pad bg-white">
         <div className="container-narrow">
-          <div className="text-center mb-16">
-            <h2 className="font-display text-3xl text-ink mb-4">Core values</h2>
-            <p className="text-ink-muted max-w-2xl mx-auto">
-              Principles that shape our API, documentation, and support.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <Reveal>
+            <MarketingSectionHeader
+              title="Core values"
+              description="Principles that shape our API, documentation, and support."
+            />
+          </Reveal>
+          <RevealGroup
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5"
+            itemClassName="h-full min-w-0"
+          >
             {[
               { icon: Zap, title: 'Innovation', description: 'Search, suggest, and barcode endpoints built for modern apps.' },
               { icon: Shield, title: 'Reliability', description: 'Rate limits, usage tracking, and health checks you can monitor.' },
@@ -89,35 +117,34 @@ export default function AboutPage() {
               { icon: Globe, title: 'Accessibility', description: 'Free tier and public demo so you can evaluate before you commit.' },
               { icon: Brain, title: 'Intelligence', description: 'Verified foods, match modes, and rich nutrient payloads.' },
               { icon: Award, title: 'Excellence', description: 'Clear changelogs, versioning, and honest SLAs per plan.' },
-            ].map(({ icon: Icon, title, description }) => (
-              <Card key={title} className={`${marketingCardClass} hover:border-brand/40 transition-colors`}>
-                <CardHeader>
-                  <div className="h-12 w-12 rounded-card bg-brand/20 flex items-center justify-center mb-4 text-brand">
-                    <Icon className="h-6 w-6" />
-                  </div>
-                  <CardTitle className="text-ink">{title}</CardTitle>
-                  <CardDescription className="text-ink-dim">{description}</CardDescription>
-                </CardHeader>
-              </Card>
+            ].map(({ icon, title, description }) => (
+              <MarketingFeatureCard key={title} icon={icon} title={title} description={description} />
             ))}
-          </div>
+          </RevealGroup>
         </div>
       </section>
 
-      <section className="section-pad hero-glow">
+      <section className="section-pad-sm bg-gradient-to-b from-white to-surface-elevated">
         <div className="container-narrow">
-          <div className="text-center mb-12">
-            <h2 className="font-display text-3xl text-ink mb-4">Impact</h2>
-            <p className="text-ink-muted">Built for teams shipping calorie tracking, meal planning, and wellness products.</p>
-          </div>
-          <MarketingStatStrip
-            stats={[
-              { value: '2M+', label: 'Food records', icon: Zap },
-              { value: '99.9%', label: 'Target uptime', icon: Clock },
-              { value: '<100ms', label: 'Search p95 goal', icon: Shield },
-              { value: 'Global', label: 'Developer access', icon: Globe },
-            ]}
-          />
+          <Reveal>
+            <MarketingSectionHeader
+              title="Impact"
+              description="Built for teams shipping calorie tracking, meal planning, and wellness products."
+              className="mb-8 md:mb-10"
+            />
+          </Reveal>
+          <Reveal delay={80}>
+            <div className="rounded-brand border border-brand/15 bg-brand-muted/40 px-4 py-8 sm:px-6 md:px-8 md:py-10">
+              <MarketingStatStrip
+                stats={[
+                  { value: '2M+', label: 'Food records', icon: Zap },
+                  { value: '99.9%', label: 'Target uptime', icon: Clock },
+                  { value: '<100ms', label: 'Search p95 goal', icon: Shield },
+                  { value: 'Global', label: 'Developer access', icon: Globe },
+                ]}
+              />
+            </div>
+          </Reveal>
         </div>
       </section>
 

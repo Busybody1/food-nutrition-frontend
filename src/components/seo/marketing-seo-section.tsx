@@ -23,10 +23,17 @@ export function MarketingSeoSection({
       )}
       aria-labelledby={`${id}-heading`}
     >
-      <div className="container-narrow max-w-3xl">
-        <h2 id={`${id}-heading`} className="font-display text-2xl md:text-3xl text-ink mb-4">
+      <div className="container-prose">
+        <h2
+          id={`${id}-heading`}
+          className="font-display text-3xl md:text-4xl tracking-tight text-ink mb-3"
+        >
           {title}
         </h2>
+        <div
+          className="h-1 w-12 rounded-full bg-gradient-to-r from-brand to-brand-soft mb-6"
+          aria-hidden
+        />
         <div className="space-y-4 text-ink-muted leading-relaxed text-base">{children}</div>
       </div>
     </section>
@@ -41,7 +48,11 @@ export function SeoInlineLink({
   children: React.ReactNode
 }) {
   return (
-    <Link href={href} prefetch={false} className="text-brand-strong font-medium hover:underline">
+    <Link
+      href={href}
+      prefetch={false}
+      className="text-brand-strong font-medium underline decoration-brand/40 underline-offset-2 transition-colors duration-200 hover:decoration-brand-strong rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2"
+    >
       {children}
     </Link>
   )

@@ -1,3 +1,4 @@
+import { Check } from 'lucide-react'
 import { SITE_NAME } from '@/lib/site'
 import { MarketingImageHero } from '@/components/marketing/marketing-image-hero'
 import {
@@ -6,6 +7,8 @@ import {
   marketingCardClass,
 } from '@/components/marketing/marketing-shell'
 import { FaqList } from '@/components/marketing/faq-section'
+import { Reveal, RevealGroup } from '@/components/marketing/reveal'
+import { TrackedCtaLink } from '@/components/analytics/tracked-cta-link'
 import { JsonLdScript } from '@/components/seo/structured-data'
 import { buildBreadcrumbJsonLd, buildWebPageJsonLd } from '@/lib/seo-jsonld'
 import { buildFaqPageJsonLd } from '@/lib/faq-data'
@@ -41,10 +44,27 @@ export function ComparisonPageView({ page }: { page: ComparisonPage }) {
           {page.h1}: {SITE_NAME} vs {page.competitor}
         </h1>
         <p className="text-lg text-ink-muted leading-relaxed max-w-2xl mx-auto">{page.intro[0]}</p>
+        {/* CTA labels/hrefs duplicated verbatim from this page's MarketingCtaBand below. */}
+        <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <TrackedCtaLink
+            href="/playground"
+            eventLabel="Open the playground"
+            className="btn-brand w-full sm:w-auto"
+          >
+            Open the playground
+          </TrackedCtaLink>
+          <TrackedCtaLink
+            href="/auth/register"
+            eventLabel="Get a free API key"
+            className="btn-brand-outline w-full sm:w-auto"
+          >
+            Get a free API key
+          </TrackedCtaLink>
+        </div>
       </MarketingImageHero>
 
-      <section className="section-pad bg-white -mt-1">
-        <div className="container-narrow max-w-3xl space-y-4 text-ink-muted leading-relaxed">
+      <section className="section-pad-sm bg-white">
+        <div className="container-prose space-y-4 text-ink-muted leading-relaxed">
           {page.intro.slice(1).map((paragraph) => (
             <p key={paragraph.slice(0, 40)}>{paragraph}</p>
           ))}
@@ -53,82 +73,110 @@ export function ComparisonPageView({ page }: { page: ComparisonPage }) {
 
       <section className="section-pad bg-surface-elevated" aria-label="Feature comparison">
         <div className="container-narrow">
-          <MarketingSectionHeader
-            label="Side by side"
-            title={`${SITE_NAME} vs ${page.competitor}`}
-          />
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm border border-surface-border rounded-brand overflow-hidden bg-white">
-              <thead>
-                <tr className="bg-surface-elevated text-left">
-                  <th scope="col" className="px-4 py-3 font-semibold text-ink">Dimension</th>
-                  <th scope="col" className="px-4 py-3 font-semibold text-ink">{SITE_NAME}</th>
-                  <th scope="col" className="px-4 py-3 font-semibold text-ink">{page.competitor}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {page.matrix.map((row) => (
-                  <tr key={row.dimension} className="border-t border-surface-border align-top">
-                    <th scope="row" className="px-4 py-3 font-medium text-ink text-left">
-                      {row.dimension}
+          <Reveal>
+            <MarketingSectionHeader
+              label="Side by side"
+              title={`${SITE_NAME} vs ${page.competitor}`}
+            />
+          </Reveal>
+          <Reveal delay={80}>
+            <div className="overflow-x-auto rounded-brand border border-surface-border bg-white shadow-glass">
+              <table className="w-full min-w-[640px] text-sm">
+                <thead>
+                  <tr className="bg-brand-muted/50 text-left">
+                    <th scope="col" className="px-4 py-3 font-semibold text-ink">Dimension</th>
+                    <th
+                      scope="col"
+                      className="border-t-2 border-brand bg-brand-muted px-4 py-3 font-semibold text-brand-strong"
+                    >
+                      {SITE_NAME}
                     </th>
-                    <td className="px-4 py-3 text-ink-muted">{row.us}</td>
-                    <td className="px-4 py-3 text-ink-muted">{row.them}</td>
+                    <th scope="col" className="px-4 py-3 font-semibold text-ink">{page.competitor}</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <p className="mt-4 text-xs text-ink-dim max-w-3xl">{COMPARISON_DISCLAIMER(page.asOf)}</p>
+                </thead>
+                <tbody>
+                  {page.matrix.map((row) => (
+                    <tr
+                      key={row.dimension}
+                      className="border-t border-surface-border align-top odd:bg-surface-elevated/50"
+                    >
+                      <th scope="row" className="px-4 py-3 text-left font-medium text-ink">
+                        {row.dimension}
+                      </th>
+                      <td className="bg-brand-muted/30 px-4 py-3 text-ink-muted">{row.us}</td>
+                      <td className="px-4 py-3 text-ink-muted">{row.them}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <p className="mx-auto mt-4 max-w-3xl text-center text-xs text-ink-muted">
+              {COMPARISON_DISCLAIMER(page.asOf)}
+            </p>
+          </Reveal>
         </div>
       </section>
 
-      <section className="section-pad">
-        <div className="container-narrow grid md:grid-cols-2 gap-6">
-          <div className={`${marketingCardClass} p-6`}>
-            <h2 className="text-xl font-semibold text-ink mb-4">
-              When {page.competitor} is the better fit
-            </h2>
-            <ul className="space-y-3 text-sm text-ink-muted leading-relaxed list-disc pl-5">
-              {page.whenTheyFit.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-          </div>
-          <div className={`${marketingCardClass} p-6`}>
-            <h2 className="text-xl font-semibold text-ink mb-4">
-              When {SITE_NAME} is the better fit
-            </h2>
-            <ul className="space-y-3 text-sm text-ink-muted leading-relaxed list-disc pl-5">
-              {page.whenWeFit.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-          </div>
+      <section className="section-pad bg-white">
+        <div className="container-narrow">
+          <RevealGroup className="grid gap-4 md:grid-cols-2 md:gap-5" itemClassName="h-full min-w-0">
+            <div className={`${marketingCardClass} card-hairline h-full p-6`}>
+              <h2 className="mb-4 text-lg font-semibold text-ink">
+                When {SITE_NAME} is the better fit
+              </h2>
+              <ul className="space-y-3 text-sm leading-relaxed text-ink-muted">
+                {page.whenWeFit.map((item) => (
+                  <li key={item} className="flex items-start gap-2.5">
+                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-brand-strong" aria-hidden />
+                    <span className="min-w-0">{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className={`${marketingCardClass} h-full p-6`}>
+              <h2 className="mb-4 text-lg font-semibold text-ink">
+                When {page.competitor} is the better fit
+              </h2>
+              <ul className="space-y-3 text-sm leading-relaxed text-ink-muted">
+                {page.whenTheyFit.map((item) => (
+                  <li key={item} className="flex items-start gap-2.5">
+                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-ink-dim" aria-hidden />
+                    <span className="min-w-0">{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </RevealGroup>
         </div>
       </section>
 
       <section className="section-pad bg-surface-elevated">
-        <div className="container-narrow max-w-3xl">
-          <h2 className="font-display text-2xl md:text-3xl text-ink mb-4">
-            Migrating from {page.competitor}
-          </h2>
-          <div className="space-y-4 text-ink-muted leading-relaxed">
-            {page.migration.map((paragraph) => (
-              <p key={paragraph.slice(0, 40)}>{paragraph}</p>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="section-pad" aria-label="Frequently asked questions">
         <div className="container-narrow">
-          <MarketingSectionHeader title={`${page.h1}: frequently asked questions`} />
-          <FaqList items={page.faqs} />
+          <Reveal>
+            <MarketingSectionHeader title={`Migrating from ${page.competitor}`} />
+          </Reveal>
+          <Reveal delay={80}>
+            <div className="mx-auto max-w-3xl space-y-4 leading-relaxed text-ink-muted">
+              {page.migration.map((paragraph) => (
+                <p key={paragraph.slice(0, 40)}>{paragraph}</p>
+              ))}
+            </div>
+          </Reveal>
         </div>
       </section>
 
       <RelatedResources links={page.related} />
+
+      <section className="section-pad bg-surface-elevated" aria-label="Frequently asked questions">
+        <div className="container-narrow">
+          <Reveal>
+            <MarketingSectionHeader title={`${page.h1}: frequently asked questions`} />
+          </Reveal>
+          <Reveal delay={80}>
+            <FaqList items={page.faqs} />
+          </Reveal>
+        </div>
+      </section>
 
       <MarketingCtaBand
         title={`Try ${SITE_NAME} against your real queries`}

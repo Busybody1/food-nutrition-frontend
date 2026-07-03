@@ -24,6 +24,7 @@ export function DocsLanguageTabs({
             variant={selected === lang ? 'default' : 'outline'}
             size="sm"
             onClick={() => setSelected(lang)}
+            aria-pressed={selected === lang}
             className="capitalize"
           >
             {lang}

@@ -10,8 +10,11 @@ import { MarketingImageHero } from '@/components/marketing/marketing-image-hero'
 import {
   MarketingCtaBand,
   MarketingSectionHeader,
+  marketingCardClass,
 } from '@/components/marketing/marketing-shell'
 import { FaqList } from '@/components/marketing/faq-section'
+import { Reveal, RevealGroup } from '@/components/marketing/reveal'
+import { TrackedCtaLink } from '@/components/analytics/tracked-cta-link'
 import {
   COMPARE_HUB_ROWS,
   COMPARISON_PAGES,
@@ -78,72 +81,108 @@ export default function CompareHubPage() {
           Every provider below is good at something. This page maps who is good at what, so you
           can shortlist in minutes and verify with your own data.
         </p>
+        {/* CTA labels/hrefs duplicated verbatim from this page's MarketingCtaBand below. */}
+        <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <TrackedCtaLink
+            href="/playground"
+            eventLabel="Open the playground"
+            className="btn-brand w-full sm:w-auto"
+          >
+            Open the playground
+          </TrackedCtaLink>
+          <TrackedCtaLink
+            href="/auth/register"
+            eventLabel="Get a free API key"
+            className="btn-brand-outline w-full sm:w-auto"
+          >
+            Get a free API key
+          </TrackedCtaLink>
+        </div>
       </MarketingImageHero>
 
-      <section className="section-pad bg-white -mt-1" aria-label="Provider overview">
+      <section className="section-pad-sm bg-white" aria-label="Provider overview">
         <div className="container-narrow">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm border border-surface-border rounded-brand overflow-hidden">
-              <thead>
-                <tr className="bg-surface-elevated text-left">
-                  <th scope="col" className="px-4 py-3 font-semibold text-ink">Provider</th>
-                  <th scope="col" className="px-4 py-3 font-semibold text-ink">Primary focus</th>
-                  <th scope="col" className="px-4 py-3 font-semibold text-ink">Best for</th>
-                </tr>
-              </thead>
-              <tbody>
-                {COMPARE_HUB_ROWS.map((row) => (
-                  <tr key={row.provider} className="border-t border-surface-border align-top">
-                    <th scope="row" className="px-4 py-3 font-medium text-ink text-left whitespace-nowrap">
-                      <Link href={row.href} prefetch={false} className="text-brand-strong hover:underline">
-                        {row.provider}
-                      </Link>
-                    </th>
-                    <td className="px-4 py-3 text-ink-muted">{row.focus}</td>
-                    <td className="px-4 py-3 text-ink-muted">{row.bestFor}</td>
+          <Reveal>
+            <div className="overflow-x-auto rounded-brand border border-surface-border bg-white shadow-glass">
+              <table className="w-full min-w-[640px] text-sm">
+                <thead>
+                  <tr className="bg-brand-muted/50 text-left">
+                    <th scope="col" className="px-4 py-3 font-semibold text-ink">Provider</th>
+                    <th scope="col" className="px-4 py-3 font-semibold text-ink">Primary focus</th>
+                    <th scope="col" className="px-4 py-3 font-semibold text-ink">Best for</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <p className="mt-4 text-xs text-ink-dim">
-            Summaries reviewed as of July 2026; verify against each provider&apos;s current
-            documentation before deciding.
-          </p>
+                </thead>
+                <tbody>
+                  {COMPARE_HUB_ROWS.map((row) => (
+                    <tr
+                      key={row.provider}
+                      className="border-t border-surface-border align-top odd:bg-surface-elevated/50 hover:bg-brand-muted/30 transition-colors duration-150"
+                    >
+                      <th scope="row" className="px-4 py-3 font-medium text-ink text-left whitespace-nowrap">
+                        <Link
+                          href={row.href}
+                          prefetch={false}
+                          className="rounded-sm text-brand-strong underline decoration-brand/40 underline-offset-2 hover:decoration-brand-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2"
+                        >
+                          {row.provider}
+                        </Link>
+                      </th>
+                      <td className="px-4 py-3 text-ink-muted">{row.focus}</td>
+                      <td className="px-4 py-3 text-ink-muted">{row.bestFor}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <p className="mt-4 text-center text-xs text-ink-muted">
+              Summaries reviewed as of July 2026; verify against each provider&apos;s current
+              documentation before deciding.
+            </p>
+          </Reveal>
         </div>
       </section>
 
       <section className="section-pad bg-surface-elevated">
         <div className="container-narrow">
-          <MarketingSectionHeader
-            label="Deep dives"
-            title="Detailed comparisons"
-            description={`Feature matrices, honest fit guidance, and migration notes for each ${SITE_NAME} alternative page.`}
-          />
-          <div className="grid sm:grid-cols-2 gap-4 md:gap-5">
+          <Reveal>
+            <MarketingSectionHeader
+              label="Deep dives"
+              title="Detailed comparisons"
+              description={`Feature matrices, honest fit guidance, and migration notes for each ${SITE_NAME} alternative page.`}
+            />
+          </Reveal>
+          <RevealGroup className="grid sm:grid-cols-2 gap-4 md:gap-5" itemClassName="h-full min-w-0">
             {COMPARISON_PAGES.map((page) => (
               <Link
                 key={page.slug}
                 href={comparisonPath(page.slug)}
-                className="group rounded-brand border border-surface-border bg-white p-5 hover:border-brand transition-colors"
+                className={`${marketingCardClass} group flex h-full cursor-pointer flex-col p-6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2`}
               >
-                <h3 className="text-lg font-semibold text-ink mb-1 group-hover:text-brand-strong">
+                <h3 className="text-lg font-semibold text-ink mb-1 transition-colors duration-200 group-hover:text-brand-strong">
                   {SITE_NAME} vs {page.competitor}
                 </h3>
                 <p className="text-sm text-ink-muted leading-relaxed">{page.summary}</p>
-                <span className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-brand-strong">
-                  Read comparison <ArrowRight className="w-4 h-4" aria-hidden />
+                <span className="mt-auto inline-flex items-center gap-1 pt-3 text-sm font-medium text-brand-strong">
+                  Read comparison{' '}
+                  <ArrowRight
+                    className="w-4 h-4 transition-transform duration-200 motion-safe:group-hover:translate-x-0.5"
+                    aria-hidden
+                  />
                 </span>
               </Link>
             ))}
-          </div>
+          </RevealGroup>
         </div>
       </section>
 
-      <section className="section-pad" aria-label="Frequently asked questions">
+      <section className="section-pad bg-white" aria-label="Frequently asked questions">
         <div className="container-narrow">
-          <MarketingSectionHeader title="Choosing a nutrition API: common questions" />
-          <FaqList items={HUB_FAQS} />
+          <Reveal>
+            <MarketingSectionHeader title="Choosing a nutrition API: common questions" />
+          </Reveal>
+          <Reveal delay={80}>
+            <FaqList items={HUB_FAQS} />
+          </Reveal>
         </div>
       </section>
 

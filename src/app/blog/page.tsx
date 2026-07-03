@@ -87,6 +87,8 @@ export default async function BlogIndexPage({ searchParams }: PageProps) {
         query={query}
       />
 
+      <BlogSeoContent />
+
       <MarketingCtaBand
         title="Ready to integrate?"
         description="Get your free API key and start building food search, barcode lookup, and macro logging in minutes."
@@ -95,8 +97,6 @@ export default async function BlogIndexPage({ searchParams }: PageProps) {
         secondaryHref="/docs"
         secondaryLabel="View documentation"
       />
-
-      <BlogSeoContent />
     </div>
   )
 }

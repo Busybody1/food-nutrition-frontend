@@ -63,7 +63,15 @@ export function DocsCodeBlock({
           )}
         </div>
       )}
-      <pre className="docs-code-pre">{code}</pre>
+      {/* Focusable so keyboard users can horizontally scroll wide code. */}
+      <pre
+        className="docs-code-pre focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand/60"
+        tabIndex={0}
+        role="region"
+        aria-label={title || 'Code sample'}
+      >
+        {code}
+      </pre>
     </div>
   )
 }

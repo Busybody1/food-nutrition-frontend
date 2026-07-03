@@ -22,7 +22,9 @@ export function ConditionalLayout({ children }: ConditionalLayoutProps) {
   return (
     <div className="site-layout">
       <Header />
-      <main className="site-layout__main">{children}</main>
+      <main id="main-content" tabIndex={-1} className="site-layout__main outline-none">
+        {children}
+      </main>
       <Footer />
     </div>
   )

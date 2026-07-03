@@ -22,7 +22,7 @@ const inter = Inter({
   variable: '--font-sans',
   display: 'swap',
   adjustFontFallback: true,
-  preload: false,
+  preload: true,
 })
 const garamond = EB_Garamond({
   subsets: ['latin'],
@@ -30,7 +30,7 @@ const garamond = EB_Garamond({
   variable: '--font-display',
   display: 'swap',
   adjustFontFallback: true,
-  preload: false,
+  preload: true,
 })
 
 export const metadata: Metadata = {
@@ -90,6 +90,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`h-full ${inter.variable} ${garamond.variable}`}>
       <body className="h-full font-sans">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[60] btn-brand"
+        >
+          Skip to content
+        </a>
         <GoogleAnalytics />
         <ErrorBoundary>
           <AuthProvider>

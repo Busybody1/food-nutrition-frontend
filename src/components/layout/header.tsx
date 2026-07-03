@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import { useAuth } from '@/lib/hooks/use-auth'
 import { getDashboardPath, isDashboardPathActive } from '@/lib/auth/post-login-path'
@@ -38,21 +38,40 @@ const navPrefetch = { prefetch: false } as const
 export function Header() {
   const pathname = usePathname()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(false)
   const { user, isAuthenticated, logout } = useAuth()
   const dashboardHref = getDashboardPath(user)
   const dashboardActive = isDashboardPathActive(pathname, user)
+
+  // Elevate the floating bar once the page scrolls past the hero seam.
+  useEffect(() => {
+    const onScroll = () => setIsScrolled(window.scrollY > 24)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
+  // Lock page scroll behind the mobile menu while it is open.
+  useEffect(() => {
+    if (!isMenuOpen) return
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = previousOverflow
+    }
+  }, [isMenuOpen])
 
   const resourcesActive = resourceLinks.some(({ href }) => isNavActive(pathname, href))
 
   const navLinkClass = (href: string) =>
     cn(
-      'site-header-nav-link',
+      'site-header-nav-link focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2',
       isNavActive(pathname, href) && 'site-header-nav-link--active'
     )
 
   return (
     <header className="site-header-shell">
-      <div className="site-header-bar site-header-bar--hero">
+      <div className={cn('site-header-bar', !isScrolled && 'site-header-bar--hero')}>
         <Link href="/" className="site-header-brand" {...navPrefetch} aria-label={`${SITE_NAME} home`}>
           <span className="site-header-logo-mark">
             <Image
@@ -81,7 +100,8 @@ export function Header() {
               <button
                 type="button"
                 className={cn(
-                  'site-header-nav-link group flex items-center gap-1',
+                  'site-header-nav-link group flex cursor-pointer items-center gap-1',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2',
                   resourcesActive && 'site-header-nav-link--active'
                 )}
               >
@@ -109,7 +129,7 @@ export function Header() {
                       >
                         {label}
                       </span>
-                      <span className="text-xs text-ink-dim">{description}</span>
+                      <span className="text-xs text-ink-muted">{description}</span>
                     </Link>
                   </DropdownMenu.Item>
                 ))}
@@ -133,7 +153,7 @@ export function Header() {
               <button
                 type="button"
                 onClick={logout}
-                className="flex h-9 w-9 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-surface-elevated hover:text-ink"
+                className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full text-ink-muted transition-colors duration-200 hover:bg-surface-elevated hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2"
                 aria-label="Sign out"
                 title="Sign out"
               >
@@ -144,7 +164,7 @@ export function Header() {
             <>
               <Link
                 href="/auth/login"
-                className="rounded-full px-3.5 py-1.5 text-sm font-medium text-ink-muted transition-colors hover:text-ink"
+                className="site-header-nav-link focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2"
                 {...navPrefetch}
               >
                 Sign in
@@ -156,12 +176,28 @@ export function Header() {
           )}
         </div>
 
+        {!isAuthenticated && (
+          <Link
+            href="/auth/register"
+            className="site-header-cta lg:hidden ml-auto h-8 shrink-0 px-4"
+            {...navPrefetch}
+            onClick={() => setIsMenuOpen(false)}
+          >
+            Get API key
+          </Link>
+        )}
+
         <button
           type="button"
-          className="lg:hidden ml-auto text-ink p-2 rounded-full hover:bg-surface-elevated"
+          className={cn(
+            'lg:hidden shrink-0 cursor-pointer text-ink p-2 rounded-full transition-colors duration-200 hover:bg-surface-elevated',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2',
+            isAuthenticated && 'ml-auto'
+          )}
           onClick={() => setIsMenuOpen(!isMenuOpen)}
           aria-label="Toggle menu"
           aria-expanded={isMenuOpen}
+          aria-controls="mobile-nav"
         >
           {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
@@ -169,7 +205,8 @@ export function Header() {
 
       {isMenuOpen && (
         <nav
-          className="pointer-events-auto mx-auto mt-2 max-w-6xl rounded-2xl border border-white/70 bg-white/90 p-3 shadow-[0_8px_32px_rgba(15,23,42,0.1)] backdrop-blur-xl lg:hidden space-y-1 animate-fade-in"
+          id="mobile-nav"
+          className="pointer-events-auto mx-auto mt-2 max-w-6xl max-h-[calc(100dvh-var(--site-header-offset)-1rem)] overflow-y-auto rounded-2xl border border-white/70 bg-white/90 p-3 shadow-[0_8px_32px_rgba(15,23,42,0.1)] backdrop-blur-xl lg:hidden space-y-1 animate-menu-in"
           aria-label="Mobile"
         >
           {primaryLinks.map(({ href, label }) => (
@@ -178,7 +215,7 @@ export function Header() {
               href={href}
               {...navPrefetch}
               className={cn(
-                'block rounded-xl px-4 py-2.5 text-sm font-medium',
+                'block rounded-xl px-4 py-2.5 text-sm font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-inset',
                 isNavActive(pathname, href)
                   ? 'bg-surface-elevated text-ink'
                   : 'text-ink-muted hover:bg-surface-elevated/80'
@@ -189,7 +226,7 @@ export function Header() {
             </Link>
           ))}
 
-          <p className="px-4 pt-3 pb-1 text-xs font-semibold uppercase tracking-wider text-ink-dim">
+          <p className="px-4 pt-3 pb-1 text-xs font-semibold uppercase tracking-wider text-ink-muted">
             Resources
           </p>
           {resourceLinks.map(({ href, label }) => (
@@ -198,7 +235,7 @@ export function Header() {
               href={href}
               {...navPrefetch}
               className={cn(
-                'block rounded-xl px-4 py-2.5 text-sm font-medium',
+                'block rounded-xl px-4 py-2.5 text-sm font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-inset',
                 isNavActive(pathname, href)
                   ? 'bg-surface-elevated text-ink'
                   : 'text-ink-muted hover:bg-surface-elevated/80'
@@ -226,7 +263,7 @@ export function Header() {
                     logout()
                     setIsMenuOpen(false)
                   }}
-                  className="flex items-center justify-center gap-2 text-sm text-ink-muted py-2"
+                  className="flex cursor-pointer items-center justify-center gap-2 rounded-xl text-sm text-ink-muted py-2 transition-colors duration-200 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-inset"
                 >
                   <LogOut className="h-4 w-4" />
                   Sign out
@@ -237,7 +274,7 @@ export function Header() {
                 <Link
                   href="/auth/login"
                   {...navPrefetch}
-                  className="block text-center py-2.5 text-sm font-medium text-ink-muted"
+                  className="block rounded-xl text-center py-2.5 text-sm font-medium text-ink-muted transition-colors duration-200 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-inset"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Sign in

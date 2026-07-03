@@ -3,7 +3,6 @@
 import { useMemo, useState } from 'react'
 import Link from 'next/link'
 import { Loader2, Play, AlertCircle } from 'lucide-react'
-import { SITE_URL } from '@/lib/site'
 import {
   PLAYGROUND_ENDPOINTS,
   PUBLIC_DEMO_RATE_LIMIT,
@@ -12,9 +11,13 @@ import {
   initialBody,
   type PlaygroundEndpoint,
 } from '@/lib/playground/endpoints'
+import { JsonSyntax } from '@/components/playground/json-syntax'
 import { cn } from '@/lib/utils/cn'
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '') || 'http://localhost:8000'
+
+const INLINE_LINK_CLASS =
+  'text-brand-strong underline decoration-brand/40 underline-offset-2 hover:decoration-brand-strong rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2'
 
 export function ApiPlaygroundPage() {
   const [activeId, setActiveId] = useState(PLAYGROUND_ENDPOINTS[0].id)
@@ -101,11 +104,11 @@ export function ApiPlaygroundPage() {
   }
 
   return (
-    <div className="docs-layout bg-white -mt-1">
+    <div className="docs-layout bg-white">
       <aside className="hidden lg:block w-64 shrink-0 border-r border-surface-border/80 bg-white sticky top-[var(--site-header-offset)] h-[calc(100vh-var(--site-header-offset))] overflow-y-auto">
-        <div className="p-5 space-y-4">
+        <div className="px-5 pb-6 pt-10 space-y-4">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-brand-strong">Endpoints</p>
+            <p className="marketing-section-label">Endpoints</p>
             <p className="text-sm text-ink-muted mt-1">Public demo routes (no API key)</p>
           </div>
           <EndpointNav activeId={activeId} onSelect={setActiveId} />
@@ -113,14 +116,14 @@ export function ApiPlaygroundPage() {
         </div>
       </aside>
 
-      <main className="docs-main min-w-0">
-        <div className="lg:hidden mb-6">
+      <main className="docs-main min-w-0 pt-6 sm:pt-8 lg:pt-10 pb-16 lg:pb-20">
+        <div className="lg:hidden mb-6 max-w-4xl">
           <label htmlFor="playground-endpoint" className="text-sm font-medium text-ink mb-2 block">
             Endpoint
           </label>
           <select
             id="playground-endpoint"
-            className="w-full h-10 rounded-brand border border-surface-border px-3 text-sm"
+            className="w-full h-10 rounded-brand border border-surface-border bg-white px-3 text-sm text-ink cursor-pointer focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand/40"
             value={activeId}
             onChange={(event) => setActiveId(event.target.value)}
           >
@@ -133,6 +136,7 @@ export function ApiPlaygroundPage() {
         </div>
 
         <EndpointPanel
+          key={activeEndpoint.id}
           endpoint={activeEndpoint}
           values={values}
           onChange={setParamValue}
@@ -146,17 +150,22 @@ export function ApiPlaygroundPage() {
           result={result}
         />
 
-        <p className="text-sm text-ink-muted mt-8">
-          Need higher limits and authenticated endpoints?{' '}
-          <Link href="/auth/register" className="text-brand-strong hover:underline">
-            Create a free account
-          </Link>{' '}
-          or read the{' '}
-          <Link href="/docs" className="text-brand-strong hover:underline">
-            full API reference
-          </Link>
-          .
-        </p>
+        {/* Mobile/tablet never see the sidebar — repeat the demo limits so 429s aren't a surprise. */}
+        <RateLimitCallout className="lg:hidden mt-8 max-w-4xl" />
+
+        <div className="marketing-callout mt-10 max-w-4xl">
+          <p className="text-sm text-ink-muted leading-relaxed">
+            Need higher limits and authenticated endpoints?{' '}
+            <Link href="/auth/register" className={cn(INLINE_LINK_CLASS, 'font-medium')}>
+              Create a free account
+            </Link>{' '}
+            or read the{' '}
+            <Link href="/docs" className={cn(INLINE_LINK_CLASS, 'font-medium')}>
+              full API reference
+            </Link>
+            .
+          </p>
+        </div>
       </main>
     </div>
   )
@@ -170,8 +179,10 @@ function EndpointNav({ activeId, onSelect }: { activeId: string; onSelect: (id: 
           <button
             type="button"
             onClick={() => onSelect(endpoint.id)}
+            aria-current={activeId === endpoint.id ? 'true' : undefined}
             className={cn(
-              'w-full text-left rounded-brand px-3 py-2 text-sm transition-colors',
+              'w-full text-left rounded-brand px-3 py-2 text-sm transition-colors duration-150 cursor-pointer',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-1',
               activeId === endpoint.id
                 ? 'bg-brand/10 text-brand-strong font-medium'
                 : 'text-ink-muted hover:bg-surface-elevated hover:text-ink'
@@ -185,11 +196,11 @@ function EndpointNav({ activeId, onSelect }: { activeId: string; onSelect: (id: 
   )
 }
 
-function RateLimitCallout() {
+function RateLimitCallout({ className }: { className?: string }) {
   return (
-    <div className="rounded-brand border border-surface-border bg-surface-elevated/60 p-4 text-sm text-ink-muted">
+    <div className={cn('rounded-brand border border-surface-border bg-surface-elevated/60 p-4 text-sm text-ink-muted', className)}>
       <div className="flex items-start gap-2">
-        <AlertCircle className="h-4 w-4 text-brand shrink-0 mt-0.5" aria-hidden />
+        <AlertCircle className="h-4 w-4 text-brand-strong shrink-0 mt-0.5" aria-hidden />
         <div className="space-y-2">
           <p className="font-medium text-ink">Demo rate limits</p>
           <ul className="space-y-1 list-disc pl-4">
@@ -198,9 +209,9 @@ function RateLimitCallout() {
           </ul>
           <p>
             Production keys:{' '}
-            <a href={`${SITE_URL}/auth/register`} className="text-brand-strong hover:underline">
+            <Link href="/auth/register" className={INLINE_LINK_CLASS}>
               sign up free
-            </a>
+            </Link>
           </p>
         </div>
       </div>
@@ -237,31 +248,42 @@ function EndpointPanel({
 }: EndpointPanelProps) {
   const isPost = endpoint.method === 'POST'
   const methodColors = isPost
-    ? 'text-blue-700 bg-blue-50'
+    ? 'text-brand-strong bg-brand-muted'
     : 'text-emerald-700 bg-emerald-50'
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-4xl motion-safe:animate-[fade-rise_0.3s_ease-out]">
       <div>
-        <p className="text-xs font-semibold uppercase tracking-wider text-brand-strong mb-2">Playground</p>
-        <h2 className="text-2xl font-bold text-ink">{endpoint.name}</h2>
-        <p className="text-ink-muted mt-2 max-w-2xl">{endpoint.description}</p>
+        <p className="marketing-section-label mb-2">Playground</p>
+        <h2 className="font-display text-2xl md:text-3xl text-ink tracking-tight">{endpoint.name}</h2>
+        <p className="text-ink-muted leading-relaxed mt-2 max-w-2xl">{endpoint.description}</p>
       </div>
 
       <div className="glass-panel overflow-hidden shadow-glass-lg">
         <div className="flex items-center gap-2 px-4 py-3 border-b border-surface-border/80 bg-surface-elevated">
+          <span className="flex items-center gap-1.5 mr-1" aria-hidden>
+            <span className="w-2.5 h-2.5 rounded-full bg-red-400/90" />
+            <span className="w-2.5 h-2.5 rounded-full bg-amber-400/90" />
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400/90" />
+          </span>
           <span className={cn('text-xs font-mono font-semibold px-2 py-0.5 rounded', methodColors)}>
             {endpoint.method}
           </span>
-          <span className="text-xs text-ink-dim font-mono truncate">{requestUrl.replace(API_BASE, '')}</span>
+          <span className="text-xs text-ink-muted font-mono truncate">{requestUrl.replace(API_BASE, '')}</span>
         </div>
 
-        <div className="p-6 space-y-4">
+        <form
+          className="p-6 space-y-4"
+          onSubmit={(event) => {
+            event.preventDefault()
+            onRun()
+          }}
+        >
           {isPost ? (
             <label className="block text-sm">
               <span className="font-medium text-ink mb-1.5 block">Request body (JSON)</span>
               <textarea
-                className="w-full rounded-brand border border-surface-border px-3 py-2 text-sm font-mono text-ink placeholder:text-ink-dim focus:outline-none focus:ring-2 focus:ring-brand/30 resize-y"
+                className="w-full rounded-brand border border-surface-border px-3 py-2 text-sm font-mono text-ink placeholder:text-ink-dim focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand/40 transition-colors resize-y"
                 rows={10}
                 value={body}
                 onChange={(event) => onBodyChange(event.target.value)}
@@ -278,8 +300,10 @@ function EndpointPanel({
                       {param.required ? ' *' : ''}
                     </span>
                     <select
-                      className="w-full h-10 rounded-brand border border-surface-border px-3 text-ink bg-white focus:outline-none focus:ring-2 focus:ring-brand/30"
+                      className="w-full h-10 rounded-brand border border-surface-border px-3 text-ink bg-white cursor-pointer focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand/40 transition-colors"
                       value={values[param.key] ?? ''}
+                      required={param.required}
+                      aria-required={param.required || undefined}
                       onChange={(event) => onChange(param.key, event.target.value)}
                     >
                       {param.options?.map((option) => (
@@ -297,9 +321,11 @@ function EndpointPanel({
                     </span>
                     <input
                       type={param.type === 'number' ? 'number' : 'text'}
-                      className="w-full h-10 rounded-brand border border-surface-border px-3 text-ink placeholder:text-ink-dim focus:outline-none focus:ring-2 focus:ring-brand/30"
+                      className="w-full h-10 rounded-brand border border-surface-border px-3 text-ink placeholder:text-ink-dim focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand/40 transition-colors"
                       value={values[param.key] ?? ''}
                       placeholder={param.placeholder}
+                      required={param.required}
+                      aria-required={param.required || undefined}
                       onChange={(event) => onChange(param.key, event.target.value)}
                     />
                   </label>
@@ -308,15 +334,23 @@ function EndpointPanel({
             </div>
           )}
 
-          <button type="button" className="btn-brand inline-flex items-center gap-2" onClick={onRun} disabled={loading}>
+          <button
+            type="submit"
+            className="btn-brand inline-flex items-center gap-2 disabled:opacity-60 disabled:pointer-events-none"
+            disabled={loading}
+          >
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />}
             Send request
           </button>
 
-          {error && <p className="text-sm text-error-500">{error}</p>}
+          {error && (
+            <p role="alert" className="text-sm text-error-500">
+              {error}
+            </p>
+          )}
 
           <div>
-            <div className="flex items-center justify-between gap-3 mb-2">
+            <div className="flex items-center justify-between gap-3 mb-2" role="status" aria-live="polite">
               <p className="text-sm font-medium text-ink">Response</p>
               {statusCode !== null && (
                 <span
@@ -324,18 +358,21 @@ function EndpointPanel({
                     'text-xs font-mono px-2 py-0.5 rounded',
                     statusCode >= 200 && statusCode < 300
                       ? 'bg-emerald-50 text-emerald-700'
-                      : 'bg-red-50 text-red-700'
+                      : 'bg-error-500/10 text-error-500'
                   )}
                 >
                   HTTP {statusCode}
                 </span>
               )}
             </div>
-            <pre className="marketing-code-window-body max-h-[28rem] m-0 rounded-brand border border-surface-border bg-[#0f172a] text-slate-300 max-w-full overflow-auto whitespace-pre">
-              {result || `${endpoint.method} ${requestUrl}`}
+            <pre
+              key={result ? `result-${result.length}` : 'idle'}
+              className="marketing-code-window-body max-h-[28rem] m-0 rounded-brand border border-surface-border bg-[#0f172a] text-slate-300 max-w-full overflow-auto whitespace-pre motion-safe:animate-[fade-rise_0.3s_ease-out]"
+            >
+              <JsonSyntax code={result || `${endpoint.method} ${requestUrl}`} />
             </pre>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   )

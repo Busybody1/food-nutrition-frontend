@@ -22,12 +22,10 @@ export default function PlaygroundPage() {
           Test search, suggest, barcode lookup, and food details against rate-limited public demo routes, no API key
           required.
         </p>
-        <p className="mt-4 text-sm text-ink-muted">
-          Authenticated endpoints and higher quotas:{' '}
-          <Link href="/auth/register" className="text-brand-strong hover:underline inline-flex items-center gap-1">
-            Get a free API key <ArrowRight className="h-3.5 w-3.5" aria-hidden />
-          </Link>
-        </p>
+        <p className="mt-6 text-sm text-ink-muted">Authenticated endpoints and higher quotas:</p>
+        <Link href="/auth/register" className="btn-brand mt-3 inline-flex items-center gap-2">
+          Get a free API key <ArrowRight className="h-4 w-4" aria-hidden />
+        </Link>
       </MarketingImageHero>
       <ApiPlaygroundPage />
     </div>
