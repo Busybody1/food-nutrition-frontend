@@ -225,7 +225,7 @@ export default function AdminRequestsPage() {
                           {new Date(r.created_at).toLocaleString()}
                         </td>
                         <td className="max-w-[140px] truncate">
-                          {r.email || (r.user_id ? `#${r.user_id}` : '—')}
+                          {r.email || (r.user_id ? `#${r.user_id}` : '-')}
                         </td>
                         <td className="font-mono text-xs max-w-[220px] truncate">
                           <span className="text-ink-dim mr-1">{r.method}</span>
@@ -263,9 +263,9 @@ export default function AdminRequestsPage() {
                 { label: 'Endpoint', value: `${selected.method} ${selected.endpoint}`, mono: true },
                 { label: 'Status', value: <AdminHttpStatusBadge code={selected.status_code} /> },
                 { label: 'Response time', value: formatMs(selected.response_time_ms) },
-                { label: 'User', value: String(selected.email || selected.user_id || '—') },
-                { label: 'API key', value: String(selected.api_key_id ?? '—') },
-                { label: 'IP address', value: selected.ip_address || '—' },
+                { label: 'User', value: String(selected.email || selected.user_id || '-') },
+                { label: 'API key', value: String(selected.api_key_id ?? '-') },
+                { label: 'IP address', value: selected.ip_address || '-' },
                 { label: 'Timestamp', value: new Date(selected.created_at).toLocaleString() },
               ]}
             />

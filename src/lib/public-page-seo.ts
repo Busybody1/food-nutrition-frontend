@@ -21,7 +21,7 @@ export type PageSeoConfig = {
   keywords: string[]
 }
 
-/** Per-route SEO copy — unique titles/descriptions for crawlers and AI indexes. */
+/** Per-route SEO copy, unique titles/descriptions for crawlers and AI indexes. */
 export const PUBLIC_PAGE_SEO: Record<PublicPagePath, PageSeoConfig> = {
   '/': {
     description:
@@ -66,7 +66,7 @@ export const PUBLIC_PAGE_SEO: Record<PublicPagePath, PageSeoConfig> = {
   '/playground': {
     title: 'API Playground',
     description:
-      'Try Calorie API endpoints live: food search, autocomplete suggest, barcode lookup, and food details. Rate-limited public demo — no API key required.',
+      'Try Calorie API endpoints live: food search, autocomplete suggest, barcode lookup, and food details. Rate-limited public demo, no API key required.',
     keywords: [
       'nutrition API playground',
       'food API demo',

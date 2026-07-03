@@ -47,7 +47,7 @@ export function BlogPagination({
   return (
     <nav className="blog-pagination" aria-label="Blog pagination">
       <p className="blog-pagination__summary">
-        Showing {start}–{end} of {total} articles
+        Showing {start}-{end} of {total} articles
       </p>
       <ul className="blog-pagination__list">
         <li>

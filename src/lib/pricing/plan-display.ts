@@ -39,7 +39,7 @@ function parseFloatField(value: unknown): number {
 
 /** Display monthly quota exactly as stored in plans.monthly_quota. */
 export function formatQuota(quota: number): string {
-  if (quota <= 0) return '—'
+  if (quota <= 0) return '-'
   if (quota >= 1_000_000) {
     return `${(quota / 1_000_000).toFixed(quota % 1_000_000 === 0 ? 0 : 1)}M`
   }
@@ -49,7 +49,7 @@ export function formatQuota(quota: number): string {
 
 /** Display rate_limit_per_minute exactly as stored in plans.rate_limit_per_minute. */
 export function formatRateLimit(rpm: number): string {
-  if (rpm <= 0) return '—'
+  if (rpm <= 0) return '-'
   return `${rpm.toLocaleString()}/min`
 }
 
@@ -169,7 +169,7 @@ export const COMPARE_ROWS: CompareRow[] = [
         plus: '25',
         enterprise: '100',
       }
-      return map[p.name.toLowerCase()] ?? '—'
+      return map[p.name.toLowerCase()] ?? '-'
     },
   },
   {
@@ -203,7 +203,7 @@ export const COMPARE_ROWS: CompareRow[] = [
         plus: 'Dedicated',
         enterprise: 'Dedicated + phone',
       }
-      return map[p.name.toLowerCase()] ?? '—'
+      return map[p.name.toLowerCase()] ?? '-'
     },
   },
   {
@@ -211,13 +211,13 @@ export const COMPARE_ROWS: CompareRow[] = [
     section: 'support',
     getValue: (p) => {
       const map: Record<string, CompareCell> = {
-        free: '—',
+        free: '-',
         basic: '99%',
         core: '99.5%',
         plus: '99.9%',
         enterprise: '99.99%',
       }
-      return map[p.name.toLowerCase()] ?? '—'
+      return map[p.name.toLowerCase()] ?? '-'
     },
   },
   {
@@ -232,7 +232,7 @@ export const COMPARE_ROWS: CompareRow[] = [
   },
 ]
 
-/** Map API/DB plan rows to UI — uses database values as-is (no client-side overrides). */
+/** Map API/DB plan rows to UI, uses database values as-is (no client-side overrides). */
 export function transformPlanData(backendPlans: Record<string, unknown>[]): PricingPlan[] {
   return backendPlans.map((plan) => {
     const name = String(plan.name ?? '')
@@ -259,7 +259,7 @@ export function transformPlanData(backendPlans: Record<string, unknown>[]): Pric
 export const FALLBACK_PLANS: PricingPlan[] = []
 
 export const PRICING_FOOTNOTES = [
-  'Rate limits apply per account (user id), not per IP — suitable for multi-tenant and server-side apps.',
+  'Rate limits apply per account (user id), not per IP, suitable for multi-tenant and server-side apps.',
   'Each plan may access at most 5% of distinct foods in the database per calendar month to prevent catalog scraping.',
   'Commercial production use requires Plus or Enterprise. Send header X-API-Usage-Type: commercial when applicable.',
   'Plus and Enterprise include short-lived Redis caching on search and food GET endpoints to absorb traffic spikes.',

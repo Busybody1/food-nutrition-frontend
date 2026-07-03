@@ -39,7 +39,7 @@ export function FaqSection({
       <div className="container-narrow">
         {showIntro && (
           <MarketingSectionHeader
-            title="Food calorie API — frequently asked questions"
+            title="Food calorie API: frequently asked questions"
             description="Answers for developers evaluating our food API, nutrition API, and food database API."
           />
         )}

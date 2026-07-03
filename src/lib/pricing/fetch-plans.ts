@@ -21,7 +21,7 @@ export async function fetchPublicPlans(): Promise<PricingPlan[]> {
   } catch (err) {
     const hint =
       err instanceof TypeError
-        ? `Cannot reach ${base} — check NEXT_PUBLIC_API_URL (hostname/DNS or server down).`
+        ? `Cannot reach ${base}, check NEXT_PUBLIC_API_URL (hostname/DNS or server down).`
         : 'Network error loading plans.'
     throw new Error(hint)
   }

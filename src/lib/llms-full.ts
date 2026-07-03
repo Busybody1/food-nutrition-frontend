@@ -67,7 +67,7 @@ export function buildLlmsFullTxt(): string {
       .join('\n')
   ).join('\n\n---\n\n')
 
-  return `# ${SITE_NAME} — Full API Documentation
+  return `# ${SITE_NAME} - Full API Documentation
 
 > ${SITE_DESCRIPTION}
 

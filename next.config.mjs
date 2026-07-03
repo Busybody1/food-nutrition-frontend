@@ -1,3 +1,15 @@
+/** S3/CDN hosts serving admin-uploaded media (testimonial avatars). */
+const mediaRemotePatterns = [
+  { protocol: 'https', hostname: '**.amazonaws.com' },
+];
+// Optional CDN in front of the shared S3 bucket (mirrors AWS_S3_PUBLIC_BASE_URL on the API).
+if (process.env.NEXT_PUBLIC_MEDIA_HOSTNAME) {
+  mediaRemotePatterns.push({
+    protocol: 'https',
+    hostname: process.env.NEXT_PUBLIC_MEDIA_HOSTNAME,
+  });
+}
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   async redirects() {
@@ -23,6 +35,7 @@ const nextConfig = {
         pathname: '/logos/**',
       },
     ],
+    remotePatterns: mediaRemotePatterns,
   },
 };
 

@@ -32,7 +32,7 @@ const HUB_FAQS = [
   },
   {
     q: 'Can I combine multiple nutrition data providers?',
-    a: 'Yes — hybrid setups are common, like USDA FoodData Central for reference analysis with Calorie API in the interactive logging path. Normalize to per-100g values at your boundary to keep the mix maintainable.',
+    a: 'Yes, hybrid setups are common, like USDA FoodData Central for reference analysis with Calorie API in the interactive logging path. Normalize to per-100g values at your boundary to keep the mix maintainable.',
   },
 ]
 
@@ -75,7 +75,7 @@ export default function CompareHubPage() {
           Choosing a nutrition API
         </h1>
         <p className="text-lg text-ink-muted leading-relaxed max-w-2xl mx-auto">
-          Every provider below is good at something. This page maps who is good at what — so you
+          Every provider below is good at something. This page maps who is good at what, so you
           can shortlist in minutes and verify with your own data.
         </p>
       </MarketingImageHero>
@@ -107,7 +107,7 @@ export default function CompareHubPage() {
             </table>
           </div>
           <p className="mt-4 text-xs text-ink-dim">
-            Summaries reviewed as of July 2026 — verify against each provider&apos;s current
+            Summaries reviewed as of July 2026; verify against each provider&apos;s current
             documentation before deciding.
           </p>
         </div>
@@ -142,14 +142,14 @@ export default function CompareHubPage() {
 
       <section className="section-pad" aria-label="Frequently asked questions">
         <div className="container-narrow">
-          <MarketingSectionHeader title="Choosing a nutrition API — common questions" />
+          <MarketingSectionHeader title="Choosing a nutrition API: common questions" />
           <FaqList items={HUB_FAQS} />
         </div>
       </section>
 
       <MarketingCtaBand
         title="Shortlisted us? Verify with real data"
-        description="Run your users' actual food queries and barcodes through the public playground — no signup required."
+        description="Run your users' actual food queries and barcodes through the public playground, no signup required."
         primaryHref="/playground"
         primaryLabel="Open the playground"
         secondaryHref="/auth/register"

@@ -12,7 +12,7 @@ export const REFERENCE_DATA_CONTENT: DocsSectionContent = {
     { kind: 'h2', text: 'Nutrients', id: 'nutrients' },
     {
       kind: 'p',
-      text: 'List the nutrient definitions used in food payloads — macronutrients, vitamins, and minerals with their units.',
+      text: 'List the nutrient definitions used in food payloads, macronutrients, vitamins, and minerals with their units.',
     },
     {
       kind: 'code',
@@ -55,11 +55,11 @@ export const REFERENCE_DATA_CONTENT: DocsSectionContent = {
   faqs: [
     {
       q: 'How often does reference data change?',
-      a: 'Rarely — nutrients, brands, and categories evolve with catalog updates but are stable enough to cache for a day or longer in your application.',
+      a: 'Rarely; nutrients, brands, and categories evolve with catalog updates but are stable enough to cache for a day or longer in your application.',
     },
     {
       q: 'Can I search brands by name?',
-      a: 'Yes — GET /api/v1/search/brands?q={name} performs a name search over brands, complementing the paginated listing endpoint.',
+      a: 'Yes, GET /api/v1/search/brands?q={name} performs a name search over brands, complementing the paginated listing endpoint.',
     },
   ],
 }

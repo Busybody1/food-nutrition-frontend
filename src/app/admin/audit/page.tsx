@@ -98,7 +98,7 @@ export default function AdminAuditPage() {
                         </code>
                       </td>
                       <td className="text-xs text-ink-muted">
-                        {e.target_type ? `${e.target_type}:${e.target_id ?? '—'}` : '—'}
+                        {e.target_type ? `${e.target_type}:${e.target_id ?? '-'}` : '-'}
                       </td>
                     </tr>
                   ))}

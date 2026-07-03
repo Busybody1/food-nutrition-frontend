@@ -31,7 +31,7 @@ export async function generateMetadata({ searchParams }: PageProps): Promise<Met
   const seo = getPublicPageSeo('/blog')
 
   const base = buildPageMetadata({
-    title: page > 1 ? `${seo.title} — Page ${page}` : seo.title,
+    title: page > 1 ? `${seo.title} - Page ${page}` : seo.title,
     description: seo.description,
     keywords: seo.keywords,
     path: page > 1 ? `/blog?page=${page}` : '/blog',

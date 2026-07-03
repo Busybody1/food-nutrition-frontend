@@ -160,7 +160,7 @@ export default function AdminPlansPage() {
                       </div>
                       <p className="text-xs text-ink-muted mt-2">
                         {formatPlanPriceLabel(p.monthly_price)}/mo · quota{' '}
-                        {formatCount(p.monthly_quota ?? 0)} · {p.rate_limit_per_minute ?? '—'}/min
+                        {formatCount(p.monthly_quota ?? 0)} · {p.rate_limit_per_minute ?? '-'}/min
                       </p>
                     </button>
                   ))

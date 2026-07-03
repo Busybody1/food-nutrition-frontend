@@ -176,7 +176,7 @@ export const privacySections: LegalSection[] = [
         items: [
           'TLS 1.2 or higher encryption for all data in transit',
           'AES-256 encryption for sensitive data at rest',
-          'API key hashing — we do not store raw API keys',
+          'API key hashing - we do not store raw API keys',
           'Regular security audits and penetration testing',
           'Role-based access controls within our organization',
           'Two-factor authentication for developer portal accounts',
@@ -264,7 +264,7 @@ export const privacySections: LegalSection[] = [
       {
         type: 'ul',
         items: [
-          'Privacy Officer — Food Database API',
+          'Privacy Officer - Food Database API',
           `Email: ${PRIVACY_EMAIL}`,
           `Address: ${COMPANY_ADDRESS}`,
           `Data Protection Officer (EU/EEA inquiries): ${DPO_EMAIL}`,

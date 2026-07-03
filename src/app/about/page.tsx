@@ -44,8 +44,8 @@ export default function AboutPage() {
           <div>
             <h2 className="font-display text-3xl text-ink mb-6">Our mission</h2>
             <p className="text-ink-muted leading-relaxed mb-6">
-              Provide developers with accurate, searchable nutrition data — from macros to
-              barcode lookup — with transparent pricing and reliable uptime.
+              Provide developers with accurate, searchable nutrition data, from macros to
+              barcode lookup, with transparent pricing and reliable uptime.
             </p>
             <p className="text-ink-muted leading-relaxed mb-8">
               Quality nutrition data should be simple to integrate, affordable at every scale,

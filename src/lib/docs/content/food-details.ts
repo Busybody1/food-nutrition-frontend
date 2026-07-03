@@ -7,7 +7,7 @@ export const FOOD_DETAILS_CONTENT: DocsSectionContent = {
   blocks: [
     {
       kind: 'p',
-      text: 'Fetch the complete nutrition payload for a single food by its ID — typically after a user picks a result from search or autocomplete suggest. The response includes per-100g macro values, the full structured nutrients array (micronutrients when available), and serving metadata for meal logging.',
+      text: 'Fetch the complete nutrition payload for a single food by its ID, typically after a user picks a result from search or autocomplete suggest. The response includes per-100g macro values, the full structured nutrients array (micronutrients when available), and serving metadata for meal logging.',
     },
     {
       kind: 'code',
@@ -36,7 +36,7 @@ export const FOOD_DETAILS_CONTENT: DocsSectionContent = {
   faqs: [
     {
       q: 'Are food IDs stable across time?',
-      a: 'Yes — IDs are stable identifiers, so you can persist them with user logs and re-fetch details later.',
+      a: 'Yes, IDs are stable identifiers, so you can persist them with user logs and re-fetch details later.',
     },
     {
       q: 'Does the details endpoint include micronutrients?',

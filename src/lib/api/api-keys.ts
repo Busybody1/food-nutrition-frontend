@@ -80,7 +80,7 @@ export function resolveApiKeyPlaintext(id: number, inline?: string | null): stri
 
 export function formatMaskedApiKey(plaintext: string | null | undefined): string {
   if (!isApiKeyPlaintext(plaintext)) {
-    return 'Hidden — copy only available right after creation'
+    return 'Hidden, copy only available right after creation'
   }
   if (plaintext.length <= 12) return plaintext
   return `${plaintext.slice(0, 8)}...${plaintext.slice(-4)}`

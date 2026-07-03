@@ -43,11 +43,11 @@ export const BARCODE_LOOKUP_CONTENT: DocsSectionContent = {
   faqs: [
     {
       q: 'Which barcode formats are supported?',
-      a: 'UPC and EAN barcodes. Pass the digits in the URL path — dashes are stripped automatically.',
+      a: 'UPC and EAN barcodes. Pass the digits in the URL path; dashes are stripped automatically.',
     },
     {
       q: 'Is the Open Food Facts fallback automatic?',
-      a: 'Yes. The lookup order is always local catalog first, then Open Food Facts, with a single normalized response shape either way — your client code does not need to know the source.',
+      a: 'Yes. The lookup order is always local catalog first, then Open Food Facts, with a single normalized response shape either way, your client code does not need to know the source.',
     },
     {
       q: 'Why are some nutrition fields null?',

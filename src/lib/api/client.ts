@@ -119,14 +119,20 @@ class ApiClient {
     retried = false
   ): Promise<ApiResponse<T>> {
     const url = `${this.baseURL}${endpoint}`;
-    
+
+    const headers: Record<string, string> = {
+      ...(this.getHeaders() as Record<string, string>),
+      ...(options.headers as Record<string, string> | undefined),
+    };
+    // Multipart bodies need the browser-generated boundary Content-Type.
+    if (options.body instanceof FormData) {
+      delete headers['Content-Type'];
+    }
+
     try {
       const response = await fetch(url, {
         ...options,
-        headers: {
-          ...this.getHeaders(),
-          ...options.headers,
-        },
+        headers,
       });
 
       if (response.status === 401 && !retried) {
@@ -204,6 +210,14 @@ class ApiClient {
     return this.request<T>(endpoint, {
       method: 'POST',
       body: data ? JSON.stringify(data) : undefined,
+    });
+  }
+
+  // Multipart POST (file uploads)
+  async postFormData<T>(endpoint: string, formData: FormData): Promise<ApiResponse<T>> {
+    return this.request<T>(endpoint, {
+      method: 'POST',
+      body: formData,
     });
   }
 

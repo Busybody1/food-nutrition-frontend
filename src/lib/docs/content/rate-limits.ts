@@ -4,7 +4,7 @@ export const RATE_LIMITS_CONTENT: DocsSectionContent = {
   blocks: [
     {
       kind: 'p',
-      text: 'Limits apply per account (user id), not per IP — safe behind NAT and multi-tenant apps. Each plan combines a per-minute rate limit with a monthly request quota; see the pricing page for current quotas.',
+      text: 'Limits apply per account (user id), not per IP, which keeps NAT and multi-tenant apps safe. Each plan combines a per-minute rate limit with a monthly request quota; see the pricing page for current quotas.',
     },
     {
       kind: 'params',
@@ -45,8 +45,8 @@ export const RATE_LIMITS_CONTENT: DocsSectionContent = {
       kind: 'params',
       title: 'Status codes',
       rows: [
-        { name: '429', description: 'Per-minute rate limit exceeded — back off and retry after X-RateLimit-Reset.' },
-        { name: '402', description: 'Monthly quota exceeded — upgrade your plan or wait for the billing cycle reset.' },
+        { name: '429', description: 'Per-minute rate limit exceeded. Back off and retry after X-RateLimit-Reset.' },
+        { name: '402', description: 'Monthly quota exceeded. Upgrade your plan or wait for the billing cycle reset.' },
         { name: '403', description: 'Commercial use not allowed on your plan, or food coverage cap reached.' },
       ],
     },
@@ -62,7 +62,7 @@ export const RATE_LIMITS_CONTENT: DocsSectionContent = {
     },
     {
       q: 'How do I raise my limits?',
-      a: 'Upgrade your plan from the dashboard — rate limit and quota changes take effect immediately. Enterprise plans negotiate custom limits.',
+      a: 'Upgrade your plan from the dashboard, rate limit and quota changes take effect immediately. Enterprise plans negotiate custom limits.',
     },
   ],
 }

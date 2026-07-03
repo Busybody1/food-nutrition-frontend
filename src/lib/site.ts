@@ -1,4 +1,4 @@
-/** Canonical site URL — set NEXT_PUBLIC_SITE_URL in production (e.g. https://calorieapi.com). */
+/** Canonical site URL, set NEXT_PUBLIC_SITE_URL in production (e.g. https://calorieapi.com). */
 export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, '') || 'http://localhost:3000';
 
@@ -16,10 +16,10 @@ export const LOGO_ALT = `${SITE_NAME} logo`;
 export const HERO_IMAGE_ALT =
   'Healthy plant-based meals representing nutrition and food data for the Calorie API';
 
-/** Alt text for link previews (Open Graph / Twitter) — all pages share one image. */
+/** Alt text for link previews (Open Graph / Twitter), all pages share one image. */
 export const OG_IMAGE_ALT =
   process.env.NEXT_PUBLIC_OG_IMAGE_ALT?.trim() ||
-  `${SITE_NAME} — accurate nutrition data for developers`;
+  `${SITE_NAME} - accurate nutrition data for developers`;
 
 export const SITE_KEYWORDS = (
   process.env.NEXT_PUBLIC_SITE_KEYWORDS?.trim() ||
@@ -29,7 +29,7 @@ export const SITE_KEYWORDS = (
   .map((k) => k.trim())
   .filter(Boolean);
 
-/** Marketing label for catalog size — override with NEXT_PUBLIC_FOOD_DATABASE_SIZE. */
+/** Marketing label for catalog size, override with NEXT_PUBLIC_FOOD_DATABASE_SIZE. */
 export const FOOD_DATABASE_SIZE_LABEL =
   process.env.NEXT_PUBLIC_FOOD_DATABASE_SIZE?.trim() || '4M+ foods';
 
@@ -65,7 +65,7 @@ function resolveOgImageUrl(): string {
   return absoluteUrl(`${DEFAULT_OG_IMAGE_PATH}?v=${OG_IMAGE_VERSION}`);
 }
 
-/** Social preview image (Open Graph / Twitter) — one image for all shared links. */
+/** Social preview image (Open Graph / Twitter), one image for all shared links. */
 export const OG_IMAGE_URL = resolveOgImageUrl();
 
 export function ogImageMimeType(url: string): string {
@@ -85,14 +85,14 @@ export const ORG_SAMEAS = (process.env.NEXT_PUBLIC_ORG_SAMEAS || '')
   .map((url) => url.trim())
   .filter((url) => url.startsWith('http'));
 
-/** ISO date (YYYY-MM-DD) — emitted as Organization foundingDate when set. */
+/** ISO date (YYYY-MM-DD), emitted as Organization foundingDate when set. */
 export const ORG_FOUNDING_DATE =
   process.env.NEXT_PUBLIC_ORG_FOUNDING_DATE?.trim() || '';
 
 export const SUPPORT_EMAIL =
   process.env.NEXT_PUBLIC_SUPPORT_EMAIL || 'busybody.office@gmail.com';
 
-/** Legal / privacy contact — defaults to support email. */
+/** Legal / privacy contact, defaults to support email. */
 export const PRIVACY_EMAIL =
   process.env.NEXT_PUBLIC_PRIVACY_EMAIL?.trim() || SUPPORT_EMAIL;
 
@@ -104,20 +104,20 @@ export const DPO_EMAIL =
 
 export const COMPANY_ADDRESS =
   process.env.NEXT_PUBLIC_COMPANY_ADDRESS?.trim() ||
-  'Address not configured — set NEXT_PUBLIC_COMPANY_ADDRESS';
+  'Address not configured, set NEXT_PUBLIC_COMPANY_ADDRESS';
 
 export const SERVER_REGION =
   process.env.NEXT_PUBLIC_SERVER_REGION?.trim() ||
-  'Not specified — set NEXT_PUBLIC_SERVER_REGION';
+  'Not specified, set NEXT_PUBLIC_SERVER_REGION';
 
 export const JURISDICTION =
   process.env.NEXT_PUBLIC_JURISDICTION?.trim() ||
-  'Not specified — set NEXT_PUBLIC_JURISDICTION';
+  'Not specified, set NEXT_PUBLIC_JURISDICTION';
 
 export const ARBITRATION_BODY =
   process.env.NEXT_PUBLIC_ARBITRATION_BODY?.trim() ||
-  'Not specified — set NEXT_PUBLIC_ARBITRATION_BODY';
+  'Not specified, set NEXT_PUBLIC_ARBITRATION_BODY';
 
 export const ARBITRATION_LOCATION =
   process.env.NEXT_PUBLIC_ARBITRATION_LOCATION?.trim() ||
-  'Not specified — set NEXT_PUBLIC_ARBITRATION_LOCATION';
+  'Not specified, set NEXT_PUBLIC_ARBITRATION_LOCATION';

@@ -33,7 +33,7 @@ export type DocsSectionMeta = {
   keywords: string[]
   /** One-line summary for hub cards and llms.txt */
   summary: string
-  /** ISO date — update when the section content materially changes */
+  /** ISO date, update when the section content materially changes */
   dateModified: string
   group: DocsGroup
 }

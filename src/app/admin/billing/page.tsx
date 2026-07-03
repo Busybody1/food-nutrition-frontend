@@ -138,7 +138,7 @@ export default function AdminBillingPage() {
                           <td className="text-ink-muted">
                             {s.current_period_end
                               ? new Date(String(s.current_period_end)).toLocaleDateString()
-                              : '—'}
+                              : '-'}
                           </td>
                         </tr>
                       ))}

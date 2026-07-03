@@ -11,7 +11,7 @@ export default function FeedbackLegacyPage() {
         <h1 className="font-display text-2xl text-ink mb-3">Reply to our email</h1>
         <p className="text-sm text-ink-muted mb-6 leading-relaxed">
           We collect API feedback by email reply. If you received a message from us, use the
-          Reply button in that thread — no web form is needed.
+          Reply button in that thread, no web form is needed.
         </p>
         <Button asChild variant="outline">
           <Link href="/contact">Contact support</Link>

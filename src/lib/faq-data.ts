@@ -32,11 +32,11 @@ export const IMPLEMENTATION_FAQS: readonly FaqItem[] = [
   },
   {
     q: 'What happens when a barcode is not found?',
-    a: 'Barcode lookup checks the local food database first and automatically falls back to Open Food Facts. If neither source has the product, the API returns HTTP 404 with a "Food not found for barcode" message — handle this by offering manual food search in your app.',
+    a: 'Barcode lookup checks the local food database first and automatically falls back to Open Food Facts. If neither source has the product, the API returns HTTP 404 with a "Food not found for barcode" message. Handle this by offering manual food search in your app.',
   },
   {
     q: 'How should my app handle rate limit errors?',
-    a: 'Per-minute rate limits return HTTP 429 with X-RateLimit-Limit, X-RateLimit-Remaining, and X-RateLimit-Reset headers — retry after the reset time with exponential backoff. Exceeding your monthly quota returns HTTP 402, and commercial-use or food-coverage violations return HTTP 403.',
+    a: 'Per-minute rate limits return HTTP 429 with X-RateLimit-Limit, X-RateLimit-Remaining, and X-RateLimit-Reset headers. Retry after the reset time with exponential backoff. Exceeding your monthly quota returns HTTP 402, and commercial-use or food-coverage violations return HTTP 403.',
   },
   {
     q: 'How does the autocomplete suggest endpoint work?',
@@ -59,7 +59,7 @@ export const PRICING_FAQS: readonly FaqItem[] = [
   },
   {
     q: 'Can I change or cancel my plan at any time?',
-    a: 'Yes. Plans are billed through Stripe and managed from the developer dashboard — upgrades, downgrades, and cancellations take effect without contacting support.',
+    a: 'Yes. Plans are billed through Stripe and managed from the developer dashboard: upgrades, downgrades, and cancellations take effect without contacting support.',
   },
   {
     q: 'Is there a free tier for development?',
@@ -78,7 +78,7 @@ export const DATA_FAQS: readonly FaqItem[] = [
   },
   {
     q: 'What is a verified food?',
-    a: 'Verified foods are curated entries with complete, quality-checked macro data. Pass verified_only=true on search to restrict results to verified foods — useful when data accuracy matters more than coverage.',
+    a: 'Verified foods are curated entries with complete, quality-checked macro data. Pass verified_only=true on search to restrict results to verified foods, useful when data accuracy matters more than coverage.',
   },
   {
     q: 'Are nutrition values normalized?',
@@ -96,7 +96,7 @@ export const DATA_FAQS: readonly FaqItem[] = [
 
 export type FaqGroup = { id: string; title: string; items: readonly FaqItem[] }
 
-/** Grouped FAQ catalog — /faq renders every group; other pages render targeted subsets. */
+/** Grouped FAQ catalog, /faq renders every group; other pages render targeted subsets. */
 export const FAQ_GROUPS: readonly FaqGroup[] = [
   { id: 'general', title: 'Getting started', items: GENERAL_FAQS },
   { id: 'implementation', title: 'Implementation', items: IMPLEMENTATION_FAQS },
@@ -107,7 +107,7 @@ export const FAQ_GROUPS: readonly FaqGroup[] = [
 export const ALL_FAQ_ITEMS: readonly FaqItem[] = FAQ_GROUPS.flatMap((g) => [...g.items])
 
 /**
- * Home-page subset — intentionally distinct from the full /faq set so the two
+ * Home-page subset, intentionally distinct from the full /faq set so the two
  * URLs do not publish duplicate FAQPage JSON-LD.
  */
 export const HOME_FAQ_ITEMS: readonly FaqItem[] = [

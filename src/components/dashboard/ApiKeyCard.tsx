@@ -71,7 +71,7 @@ export function ApiKeyCard({
   }
 
   const displayValue = isVisible
-    ? (plaintext ?? 'Full key unavailable — only shown once at creation')
+    ? (plaintext ?? 'Full key unavailable, only shown once at creation')
     : formatMaskedApiKey(plaintext)
 
   return (

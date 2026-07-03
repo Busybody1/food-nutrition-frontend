@@ -114,7 +114,7 @@ export default function AdminAnnouncementsPage() {
             <div>
               <label className="text-xs font-medium text-ink-dim block mb-1.5">Subject</label>
               <Input
-                placeholder="Product update — March 2026"
+                placeholder="Product update, March 2026"
                 value={subject}
                 onChange={(e) => setSubject(e.target.value)}
                 disabled={!canSend}

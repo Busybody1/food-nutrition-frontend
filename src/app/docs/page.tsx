@@ -175,7 +175,7 @@ export default function DocsPage() {
                 <h3 className="text-xl font-semibold text-ink mb-2">Choose Your Plan</h3>
                 <p className="text-ink-muted mb-4">
                   Start on the free plan and upgrade as your request volume grows. Paid plans raise
-                  per-minute rate limits and monthly quotas — see{' '}
+                  per-minute rate limits and monthly quotas. See{' '}
                   <Link href="/docs/rate-limits" className="text-brand-strong hover:underline">
                     rate limits &amp; quotas
                   </Link>{' '}
@@ -193,7 +193,7 @@ export default function DocsPage() {
                 <h3 className="text-xl font-semibold text-ink mb-2">Get Your API Key</h3>
                 <p className="text-ink-muted mb-4">
                   After subscribing to a plan, generate your API key from the dashboard. This key
-                  authenticates your requests — see{' '}
+                  authenticates your requests. See{' '}
                   <Link href="/docs/authentication" className="text-brand-strong hover:underline">
                     authentication
                   </Link>{' '}

@@ -4,27 +4,32 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import { useAuth } from '@/lib/hooks/use-auth'
 import { getDashboardPath, isDashboardPathActive } from '@/lib/auth/post-login-path'
-import { Menu, X, LogOut } from 'lucide-react'
+import { Menu, X, LogOut, ChevronDown, LayoutDashboard } from 'lucide-react'
 import { SITE_NAME, LOGO_ALT } from '@/lib/site'
 import { cn } from '@/lib/utils/cn'
 
-type NavLink = { href: string; label: string; exact?: boolean }
+type NavLink = { href: string; label: string; description?: string }
 
-const navLinks: NavLink[] = [
-  { href: '/', label: 'Home', exact: true },
-  { href: '/pricing', label: 'Pricing' },
+const primaryLinks: NavLink[] = [
   { href: '/docs', label: 'Docs' },
-  { href: '/solutions', label: 'Solutions' },
   { href: '/playground', label: 'Playground' },
-  { href: '/blog', label: 'Blog' },
-  { href: '/faq', label: 'FAQ' },
+  { href: '/solutions', label: 'Solutions' },
+  { href: '/pricing', label: 'Pricing' },
 ]
 
-function isNavActive(pathname: string | null, href: string, exact?: boolean) {
+const resourceLinks: NavLink[] = [
+  { href: '/blog', label: 'Blog', description: 'Guides and tutorials' },
+  { href: '/faq', label: 'FAQ', description: 'Common questions, answered' },
+  { href: '/compare', label: 'Compare', description: 'How we stack up against other APIs' },
+  { href: '/changelog', label: 'Changelog', description: 'Latest product updates' },
+  { href: '/api-status', label: 'API Status', description: 'Uptime and service health' },
+]
+
+function isNavActive(pathname: string | null, href: string) {
   if (!pathname) return false
-  if (exact) return pathname === href
   return pathname === href || pathname.startsWith(`${href}/`)
 }
 
@@ -37,16 +42,18 @@ export function Header() {
   const dashboardHref = getDashboardPath(user)
   const dashboardActive = isDashboardPathActive(pathname, user)
 
-  const navLinkClass = (href: string, exact?: boolean) =>
+  const resourcesActive = resourceLinks.some(({ href }) => isNavActive(pathname, href))
+
+  const navLinkClass = (href: string) =>
     cn(
       'site-header-nav-link',
-      isNavActive(pathname, href, exact) && 'site-header-nav-link--active'
+      isNavActive(pathname, href) && 'site-header-nav-link--active'
     )
 
   return (
     <header className="site-header-shell">
       <div className="site-header-bar site-header-bar--hero">
-        <Link href="/" className="site-header-brand" {...navPrefetch}>
+        <Link href="/" className="site-header-brand" {...navPrefetch} aria-label={`${SITE_NAME} home`}>
           <span className="site-header-logo-mark">
             <Image
               src="/logos/busybody-logo.png"
@@ -57,40 +64,89 @@ export function Header() {
               priority
             />
           </span>
-          <span className="truncate text-sm font-semibold text-ink tracking-tight sm:text-base">
+          <span className="truncate max-w-[200px] xl:max-w-none text-sm font-semibold text-ink tracking-tight sm:text-base">
             {SITE_NAME}
           </span>
         </Link>
 
-        <nav className="hidden md:flex flex-1 items-center justify-center gap-0.5" aria-label="Main">
-          {navLinks.map(({ href, label, exact }) => (
-            <Link key={href} href={href} className={navLinkClass(href, exact)} {...navPrefetch}>
+        <nav className="hidden lg:flex flex-1 items-center justify-center gap-1" aria-label="Main">
+          {primaryLinks.map(({ href, label }) => (
+            <Link key={href} href={href} className={navLinkClass(href)} {...navPrefetch}>
               {label}
             </Link>
           ))}
-          {isAuthenticated && (
-            <Link
-              href={dashboardHref}
-              className={cn('site-header-nav-link', dashboardActive && 'site-header-nav-link--active')}
-              {...navPrefetch}
-            >
-              Dashboard
-            </Link>
-          )}
+
+          <DropdownMenu.Root modal={false}>
+            <DropdownMenu.Trigger asChild>
+              <button
+                type="button"
+                className={cn(
+                  'site-header-nav-link group flex items-center gap-1',
+                  resourcesActive && 'site-header-nav-link--active'
+                )}
+              >
+                Resources
+                <ChevronDown
+                  className="h-3.5 w-3.5 opacity-60 transition-transform duration-200 group-data-[state=open]:rotate-180"
+                  aria-hidden
+                />
+              </button>
+            </DropdownMenu.Trigger>
+            <DropdownMenu.Portal>
+              <DropdownMenu.Content
+                sideOffset={14}
+                align="center"
+                className="site-header-dropdown"
+              >
+                {resourceLinks.map(({ href, label, description }) => (
+                  <DropdownMenu.Item key={href} asChild>
+                    <Link href={href} className="site-header-dropdown-item" {...navPrefetch}>
+                      <span
+                        className={cn(
+                          'text-sm font-medium',
+                          isNavActive(pathname, href) ? 'text-brand-strong' : 'text-ink'
+                        )}
+                      >
+                        {label}
+                      </span>
+                      <span className="text-xs text-ink-dim">{description}</span>
+                    </Link>
+                  </DropdownMenu.Item>
+                ))}
+              </DropdownMenu.Content>
+            </DropdownMenu.Portal>
+          </DropdownMenu.Root>
         </nav>
 
-        <div className="hidden md:flex items-center gap-2 shrink-0 ml-auto">
+        <div className="hidden lg:flex items-center gap-2 shrink-0 ml-auto">
+          <span className="h-6 w-px bg-surface-border/70" aria-hidden />
           {isAuthenticated ? (
-            <button
-              type="button"
-              onClick={logout}
-              className="text-sm font-medium text-ink-muted hover:text-ink px-3"
-            >
-              Sign out
-            </button>
+            <>
+              <Link
+                href={dashboardHref}
+                className={cn('site-header-cta gap-2', dashboardActive && 'ring-2 ring-brand/25')}
+                {...navPrefetch}
+              >
+                <LayoutDashboard className="h-4 w-4" aria-hidden />
+                Dashboard
+              </Link>
+              <button
+                type="button"
+                onClick={logout}
+                className="flex h-9 w-9 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-surface-elevated hover:text-ink"
+                aria-label="Sign out"
+                title="Sign out"
+              >
+                <LogOut className="h-4 w-4" aria-hidden />
+              </button>
+            </>
           ) : (
             <>
-              <Link href="/auth/login" className="text-sm font-medium text-ink-muted hover:text-ink px-3" {...navPrefetch}>
+              <Link
+                href="/auth/login"
+                className="rounded-full px-3.5 py-1.5 text-sm font-medium text-ink-muted transition-colors hover:text-ink"
+                {...navPrefetch}
+              >
                 Sign in
               </Link>
               <Link href="/auth/register" className="site-header-cta" {...navPrefetch}>
@@ -102,7 +158,7 @@ export function Header() {
 
         <button
           type="button"
-          className="md:hidden ml-auto text-ink p-2 rounded-full hover:bg-surface-elevated"
+          className="lg:hidden ml-auto text-ink p-2 rounded-full hover:bg-surface-elevated"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
           aria-label="Toggle menu"
           aria-expanded={isMenuOpen}
@@ -113,17 +169,17 @@ export function Header() {
 
       {isMenuOpen && (
         <nav
-          className="pointer-events-auto mx-auto mt-2 max-w-5xl rounded-2xl border border-white/70 bg-white/90 p-3 shadow-[0_8px_32px_rgba(15,23,42,0.1)] backdrop-blur-xl md:hidden space-y-1 animate-fade-in"
+          className="pointer-events-auto mx-auto mt-2 max-w-6xl rounded-2xl border border-white/70 bg-white/90 p-3 shadow-[0_8px_32px_rgba(15,23,42,0.1)] backdrop-blur-xl lg:hidden space-y-1 animate-fade-in"
           aria-label="Mobile"
         >
-          {navLinks.map(({ href, label, exact }) => (
+          {primaryLinks.map(({ href, label }) => (
             <Link
               key={href}
               href={href}
               {...navPrefetch}
               className={cn(
                 'block rounded-xl px-4 py-2.5 text-sm font-medium',
-                isNavActive(pathname, href, exact)
+                isNavActive(pathname, href)
                   ? 'bg-surface-elevated text-ink'
                   : 'text-ink-muted hover:bg-surface-elevated/80'
               )}
@@ -132,21 +188,27 @@ export function Header() {
               {label}
             </Link>
           ))}
-          {isAuthenticated && (
+
+          <p className="px-4 pt-3 pb-1 text-xs font-semibold uppercase tracking-wider text-ink-dim">
+            Resources
+          </p>
+          {resourceLinks.map(({ href, label }) => (
             <Link
-              href={dashboardHref}
+              key={href}
+              href={href}
               {...navPrefetch}
               className={cn(
                 'block rounded-xl px-4 py-2.5 text-sm font-medium',
-                dashboardActive
+                isNavActive(pathname, href)
                   ? 'bg-surface-elevated text-ink'
                   : 'text-ink-muted hover:bg-surface-elevated/80'
               )}
               onClick={() => setIsMenuOpen(false)}
             >
-              Dashboard
+              {label}
             </Link>
-          )}
+          ))}
+
           <div className="pt-2 mt-1 border-t border-surface-border/50 flex flex-col gap-2">
             {isAuthenticated ? (
               <>

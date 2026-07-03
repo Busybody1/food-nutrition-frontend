@@ -13,7 +13,7 @@ export type CapabilityFeature = {
 export type CapabilityPage = {
   /** Top-level URL segment, e.g. 'barcode-nutrition-api' → /barcode-nutrition-api */
   slug: string
-  /** Primary query — used as h1 */
+  /** Primary query, used as h1 */
   h1: string
   metaTitle: string
   description: string
@@ -27,7 +27,7 @@ export type CapabilityPage = {
   related: { label: string; href: string }[]
   /** One-line summary for hubs and llms.txt */
   summary: string
-  /** ISO date — update when content materially changes */
+  /** ISO date, update when content materially changes */
   dateModified: string
 }
 
@@ -35,7 +35,7 @@ export const CAPABILITY_PAGES: CapabilityPage[] = [
   {
     slug: 'barcode-nutrition-api',
     h1: 'Barcode Nutrition API',
-    metaTitle: 'Barcode Nutrition API — UPC & EAN Food Lookup',
+    metaTitle: 'Barcode Nutrition API: UPC & EAN Food Lookup',
     description:
       'Resolve UPC and EAN barcodes to nutrition data with one REST call: product details, per-100g macros, serving sizes, and automatic Open Food Facts fallback.',
     keywords: [
@@ -47,7 +47,7 @@ export const CAPABILITY_PAGES: CapabilityPage[] = [
     ],
     heroBadge: 'Barcode lookup',
     heroCopy: [
-      'Turn a barcode scan into a logged meal with a single request. The barcode nutrition API resolves UPC and EAN codes against a verified local catalog first, then falls back to Open Food Facts automatically — one normalized response shape either way.',
+      'Turn a barcode scan into a logged meal with a single request. The barcode nutrition API resolves UPC and EAN codes against a verified local catalog first, then falls back to Open Food Facts automatically, with one normalized response shape either way.',
       'Every response is trimmed to what logging apps actually need: product name and brand, ingredients and allergens, serving metadata, macros per 100 g and per serving when available, and micronutrients when present.',
     ],
     stats: [
@@ -64,7 +64,7 @@ export const CAPABILITY_PAGES: CapabilityPage[] = [
       {
         icon: 'scan',
         title: 'Scanner-agnostic',
-        description: 'Works with any scanner library that yields raw digits — dashes are stripped automatically.',
+        description: 'Works with any scanner library that yields raw digits; dashes are stripped automatically.',
       },
       {
         icon: 'database',
@@ -74,7 +74,7 @@ export const CAPABILITY_PAGES: CapabilityPage[] = [
       {
         icon: 'zap',
         title: 'Logging-ready payloads',
-        description: 'No thousand-field raw dumps — only product, serving, and nutrition fields your app logs.',
+        description: 'No thousand-field raw dumps: only product, serving, and nutrition fields your app logs.',
       },
       {
         icon: 'shield',
@@ -95,7 +95,7 @@ export const CAPABILITY_PAGES: CapabilityPage[] = [
     faqs: [
       {
         q: 'Which barcode formats does the API support?',
-        a: 'UPC and EAN barcodes. Pass the digits in the URL path — dashes are stripped automatically, so scanner output works as-is.',
+        a: 'UPC and EAN barcodes. Pass the digits in the URL path; dashes are stripped automatically, so scanner output works as-is.',
       },
       {
         q: 'What happens when a product is not in the catalog?',
@@ -103,7 +103,7 @@ export const CAPABILITY_PAGES: CapabilityPage[] = [
       },
       {
         q: 'Is the response shape different for fallback products?',
-        a: 'No — local-catalog and Open Food Facts products return identical structures, so your client code never branches on data source.',
+        a: 'No, local-catalog and Open Food Facts products return identical structures, so your client code never branches on data source.',
       },
       {
         q: 'Can I use barcode lookup in a commercial app?',
@@ -122,7 +122,7 @@ export const CAPABILITY_PAGES: CapabilityPage[] = [
   {
     slug: 'food-database-api',
     h1: 'Food Database API',
-    metaTitle: 'Food Database API — Search Millions of Foods',
+    metaTitle: 'Food Database API: Search Millions of Foods',
     description:
       `Search a food database of ${FOOD_DATABASE_SIZE_LABEL} over REST: multi-word matching, brand filters, verified foods, autocomplete, and complete per-100g nutrition data.`,
     keywords: [
@@ -134,7 +134,7 @@ export const CAPABILITY_PAGES: CapabilityPage[] = [
     ],
     heroBadge: 'Food database',
     heroCopy: [
-      `Query ${FOOD_DATABASE_SIZE_LABEL} — generic foods, branded products, and restaurant items — through one REST food database API. Multi-word search with relevance ranking, brand and category filters, and a verified-only mode when data quality matters most.`,
+      `Query ${FOOD_DATABASE_SIZE_LABEL} (generic foods, branded products, and restaurant items) through one REST food database API. Multi-word search with relevance ranking, brand and category filters, and a verified-only mode when data quality matters most.`,
       'Every food returns complete nutrition data: per-100g macros, a structured nutrients array with micronutrients when available, and serving metadata that maps cleanly to meal-logging data models.',
     ],
     stats: [
@@ -151,7 +151,7 @@ export const CAPABILITY_PAGES: CapabilityPage[] = [
       {
         icon: 'search',
         title: 'Multi-word ranking',
-        description: 'Exact phrases rank first, then all-word and any-word matches — word order independent.',
+        description: 'Exact phrases rank first, then all-word and any-word matches, word order independent.',
       },
       {
         icon: 'shield',
@@ -171,7 +171,7 @@ export const CAPABILITY_PAGES: CapabilityPage[] = [
       {
         icon: 'chart',
         title: 'Complete macro data',
-        description: 'Only foods with complete macro data are returned — no null-riddled results to clean up.',
+        description: 'Only foods with complete macro data are returned, no null-riddled results to clean up.',
       },
       {
         icon: 'code',
@@ -186,7 +186,7 @@ export const CAPABILITY_PAGES: CapabilityPage[] = [
       },
       {
         q: 'Can I download the database in bulk?',
-        a: 'No — a 5% monthly distinct-food coverage cap blocks catalog scraping. Query and cache the foods your users actually log; IDs are stable.',
+        a: 'No, a 5% monthly distinct-food coverage cap blocks catalog scraping. Query and cache the foods your users actually log; IDs are stable.',
       },
       {
         q: 'How fresh is the data?',
@@ -209,7 +209,7 @@ export const CAPABILITY_PAGES: CapabilityPage[] = [
   {
     slug: 'meal-tracking-api',
     h1: 'Meal Tracking API',
-    metaTitle: 'Meal Tracking API — Food Logging for Apps',
+    metaTitle: 'Meal Tracking API: Food Logging for Apps',
     description:
       'The API backbone for meal tracking apps: autocomplete food search, stable food IDs, per-100g macros for portion math, and barcode scanning in one REST API.',
     keywords: [
@@ -221,7 +221,7 @@ export const CAPABILITY_PAGES: CapabilityPage[] = [
     ],
     heroBadge: 'Meal tracking',
     heroCopy: [
-      'A meal tracker lives or dies by its logging flow: type a few letters, pick a food, adjust the portion, done. The meal tracking API is built around that flow — a fast suggest endpoint for typeahead, full nutrition on selection, and barcode scanning for packaged foods.',
+      'A meal tracker lives or dies by its logging flow: type a few letters, pick a food, adjust the portion, done. The meal tracking API is built around that flow, a fast suggest endpoint for typeahead, full nutrition on selection, and barcode scanning for packaged foods.',
       'Stable food IDs make re-logging favorites instant, and per-100g normalized macros keep portion math consistent across generic foods, branded products, and scanned items.',
     ],
     stats: [
@@ -263,13 +263,13 @@ export const CAPABILITY_PAGES: CapabilityPage[] = [
       {
         icon: 'shield',
         title: 'Per-account rate limits',
-        description: 'Limits apply per account, not per IP — safe for mobile fleets behind NAT.',
+        description: 'Limits apply per account, not per IP, safe for mobile fleets behind NAT.',
       },
     ],
     faqs: [
       {
         q: 'Does the API store my users’ meal logs?',
-        a: 'No — you own your users’ data. The API provides food search and nutrition data; your app stores logs with the stable food ID and the logged amount.',
+        a: 'No, you own your users’ data. The API provides food search and nutrition data; your app stores logs with the stable food ID and the logged amount.',
       },
       {
         q: 'How do I keep quota usage low in a tracking app?',
@@ -296,7 +296,7 @@ export const CAPABILITY_PAGES: CapabilityPage[] = [
   {
     slug: 'nutrition-analysis-api',
     h1: 'Nutrition Analysis API',
-    metaTitle: 'Nutrition Analysis API — Macros & Nutrient Data',
+    metaTitle: 'Nutrition Analysis API: Macros & Nutrient Data',
     description:
       'Analyze foods programmatically: per-100g calories, protein, carbs, and fat, structured micronutrient arrays, and verified data for meal plans and health features.',
     keywords: [
@@ -309,7 +309,7 @@ export const CAPABILITY_PAGES: CapabilityPage[] = [
     heroBadge: 'Nutrition analysis',
     heroCopy: [
       'Build macro calculators, meal-plan generators, and health analytics on structured nutrition data instead of scraped labels. Every food exposes calories, protein, carbohydrates, and fat per 100 g, plus a nutrients array covering micronutrients when available.',
-      'The verified-only search mode restricts analysis to curated foods with complete, quality-checked macro data — the right default for anything that computes recommendations from the numbers.',
+      'The verified-only search mode restricts analysis to curated foods with complete, quality-checked macro data, the right default for anything that computes recommendations from the numbers.',
     ],
     stats: [
       { value: '4+', label: 'guaranteed macros per food' },
@@ -330,7 +330,7 @@ export const CAPABILITY_PAGES: CapabilityPage[] = [
       {
         icon: 'shield',
         title: 'Verified data mode',
-        description: 'verified_only=true limits results to curated entries — no cleaning noisy label data.',
+        description: 'verified_only=true limits results to curated entries, no cleaning noisy label data.',
       },
       {
         icon: 'database',
@@ -356,15 +356,15 @@ export const CAPABILITY_PAGES: CapabilityPage[] = [
     faqs: [
       {
         q: 'Can the API analyze a full recipe I send it?',
-        a: 'There is no recipe-ingestion endpoint. The pattern is to resolve each ingredient with food search, fetch per-100g macros, and aggregate by your recipe quantities — the Python guide shows the building blocks.',
+        a: 'There is no recipe-ingestion endpoint. The pattern is to resolve each ingredient with food search, fetch per-100g macros, and aggregate by your recipe quantities, the Python guide shows the building blocks.',
       },
       {
         q: 'Are macros guaranteed on every food?',
-        a: 'Yes — search only returns foods with complete macro data (calories, protein, carbs, fat per 100 g). Micronutrients appear when the source provides them.',
+        a: 'Yes, search only returns foods with complete macro data (calories, protein, carbs, fat per 100 g). Micronutrients appear when the source provides them.',
       },
       {
         q: 'Is the data suitable for medical use?',
-        a: 'The data supports wellness and nutrition features. For regulated medical decisions, apply your own clinical validation on top — see the healthcare solutions page for patterns.',
+        a: 'The data supports wellness and nutrition features. For regulated medical decisions, apply your own clinical validation on top, see the healthcare solutions page for patterns.',
       },
       {
         q: 'How do I analyze large food sets without hitting limits?',

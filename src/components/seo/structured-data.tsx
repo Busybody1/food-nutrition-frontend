@@ -113,7 +113,7 @@ function getStructuredData(type: StructuredDataProps['type'], data?: Record<stri
   }
 }
 
-/** Inline JSON-LD in SSR HTML (not next/script — avoids extra client JS and blocking). */
+/** Inline JSON-LD in SSR HTML (not next/script, avoids extra client JS and blocking). */
 function JsonLdInline({ id, __html }: { id: string; __html: string }) {
   return (
     <script

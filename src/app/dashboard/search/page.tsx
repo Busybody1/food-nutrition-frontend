@@ -142,7 +142,7 @@ export default function SearchPlaygroundPage() {
               <li key={item.id ?? i} className="px-5 py-3.5 hover:bg-surface-elevated/50 transition-colors">
                 <span className="text-sm font-medium text-ink">{item.name}</span>
                 {item.brand_name && (
-                  <span className="text-sm text-ink-muted"> — {item.brand_name}</span>
+                  <span className="text-sm text-ink-muted"> · {item.brand_name}</span>
                 )}
               </li>
             ))}

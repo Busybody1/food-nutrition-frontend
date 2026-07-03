@@ -61,7 +61,7 @@ export default function HomePage() {
           <MarketingSectionHeader
             label="Live demo"
             title="Try our food calorie API live"
-            description="Run a real search against our public food API demo endpoint — no signup required."
+            description="Run a real search against our public food API demo endpoint, no signup required."
           />
           <LazyApiPlayground />
         </div>

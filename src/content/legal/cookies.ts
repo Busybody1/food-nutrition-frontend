@@ -72,10 +72,10 @@ export const cookiesSections: LegalSection[] = [
       {
         type: 'ul',
         items: [
-          'session_id — Maintains your login session; expires when you close your browser',
-          'csrf_token — Prevents cross-site request forgery attacks; session-based',
-          'cookie_consent — Stores your cookie preferences; expires after 12 months',
-          'lb_route — Load balancing identifier; session-based',
+          'session_id - Maintains your login session; expires when you close your browser',
+          'csrf_token - Prevents cross-site request forgery attacks; session-based',
+          'cookie_consent - Stores your cookie preferences; expires after 12 months',
+          'lb_route - Load balancing identifier; session-based',
         ],
       },
       { type: 'p', text: '3.2 Performance and Analytics Cookies' },
@@ -103,10 +103,10 @@ export const cookiesSections: LegalSection[] = [
       {
         type: 'ul',
         items: [
-          '_ga, _gid (Google Analytics) — Distinguishes users and sessions; expires 2 years / 24 hours',
-          '_gat — Throttles Google Analytics request rate; expires 1 minute',
-          'hotjar_id (Hotjar, if applicable) — Tracks usage heatmaps; expires 1 year',
-          'perf_metrics — Internal performance tracking; session-based',
+          '_ga, _gid (Google Analytics) - Distinguishes users and sessions; expires 2 years / 24 hours',
+          '_gat - Throttles Google Analytics request rate; expires 1 minute',
+          'hotjar_id (Hotjar, if applicable) - Tracks usage heatmaps; expires 1 year',
+          'perf_metrics - Internal performance tracking; session-based',
         ],
       },
       { type: 'p', text: '3.3 Functional Cookies' },
@@ -134,10 +134,10 @@ export const cookiesSections: LegalSection[] = [
       {
         type: 'ul',
         items: [
-          'lang_pref — Stores your selected code language preference; expires 6 months',
-          'ui_theme — Stores your light/dark mode preference; expires 12 months',
-          'api_version — Stores your selected API version; expires 3 months',
-          'sidebar_state — Remembers collapsed/expanded navigation state; session-based',
+          'lang_pref - Stores your selected code language preference; expires 6 months',
+          'ui_theme - Stores your light/dark mode preference; expires 12 months',
+          'api_version - Stores your selected API version; expires 3 months',
+          'sidebar_state - Remembers collapsed/expanded navigation state; session-based',
         ],
       },
       { type: 'p', text: '3.4 Targeting and Marketing Cookies' },
@@ -164,9 +164,9 @@ export const cookiesSections: LegalSection[] = [
       {
         type: 'ul',
         items: [
-          '_fbp (Facebook Pixel, if applicable) — Measures ad effectiveness; expires 3 months',
-          'li_fat_id (LinkedIn Insight, if applicable) — Tracks conversions from LinkedIn; expires 30 days',
-          'campaign_attr — Internal campaign attribution tracking; expires 90 days',
+          '_fbp (Facebook Pixel, if applicable) - Measures ad effectiveness; expires 3 months',
+          'li_fat_id (LinkedIn Insight, if applicable) - Tracks conversions from LinkedIn; expires 30 days',
+          'campaign_attr - Internal campaign attribution tracking; expires 90 days',
         ],
       },
     ],
@@ -182,10 +182,10 @@ export const cookiesSections: LegalSection[] = [
       {
         type: 'ul',
         items: [
-          'Google Analytics — analytics.google.com — Privacy Policy: policies.google.com/privacy',
-          'Stripe (payment processing) — stripe.com — Privacy Policy: stripe.com/privacy',
-          'Intercom (customer support chat) — intercom.com — Privacy Policy: intercom.com/legal/privacy',
-          'Cloudflare (security and CDN) — cloudflare.com — Privacy Policy: cloudflare.com/privacypolicy',
+          'Google Analytics - analytics.google.com - Privacy Policy: policies.google.com/privacy',
+          'Stripe (payment processing) - stripe.com - Privacy Policy: stripe.com/privacy',
+          'Intercom (customer support chat) - intercom.com - Privacy Policy: intercom.com/legal/privacy',
+          'Cloudflare (security and CDN) - cloudflare.com - Privacy Policy: cloudflare.com/privacypolicy',
         ],
       },
     ],
@@ -320,7 +320,7 @@ export const cookiesSections: LegalSection[] = [
       {
         type: 'ul',
         items: [
-          'Privacy Team — Food Database API',
+          'Privacy Team - Food Database API',
           `Email: ${PRIVACY_EMAIL}`,
           `Address: ${COMPANY_ADDRESS}`,
         ],

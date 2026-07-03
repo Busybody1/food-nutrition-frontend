@@ -15,13 +15,13 @@ export const ERRORS_CONTENT: DocsSectionContent = {
       kind: 'params',
       title: 'Status codes',
       rows: [
-        { name: '400', description: 'Bad request — invalid parameters (e.g. query too short, bad match_mode).' },
-        { name: '401', description: 'Unauthorized — missing or invalid API key.' },
+        { name: '400', description: 'Bad request, invalid parameters (e.g. query too short, bad match_mode).' },
+        { name: '401', description: 'Unauthorized, missing or invalid API key.' },
         { name: '402', description: 'Monthly quota exceeded for your plan.' },
-        { name: '403', description: 'Forbidden — commercial use not allowed on plan, or food coverage cap reached.' },
-        { name: '404', description: 'Not found — unknown food ID or barcode with no match in any source.' },
-        { name: '429', description: 'Rate limited — per-minute limit exceeded; see X-RateLimit-Reset.' },
-        { name: '500', description: 'Server error — safe to retry with backoff; report persistent failures.' },
+        { name: '403', description: 'Forbidden, commercial use not allowed on plan, or food coverage cap reached.' },
+        { name: '404', description: 'Not found, unknown food ID or barcode with no match in any source.' },
+        { name: '429', description: 'Rate limited, per-minute limit exceeded; see X-RateLimit-Reset.' },
+        { name: '500', description: 'Server error, safe to retry with backoff; report persistent failures.' },
       ],
     },
     { kind: 'h2', text: 'Retry guidance', id: 'retries' },
@@ -29,7 +29,7 @@ export const ERRORS_CONTENT: DocsSectionContent = {
       kind: 'list',
       items: [
         '429: retry after the X-RateLimit-Reset time with exponential backoff and jitter.',
-        '402 and 403: do not retry — these persist until the plan or usage state changes.',
+        '402 and 403: do not retry, these persist until the plan or usage state changes.',
         '404 on barcode lookup: fall back to food search so users can log the item manually.',
         '5xx: retry with backoff; if errors persist, check the status page and contact support.',
       ],
@@ -42,7 +42,7 @@ export const ERRORS_CONTENT: DocsSectionContent = {
     },
     {
       q: 'How do I distinguish a rate limit from a quota error?',
-      a: 'Per-minute rate limiting returns 429 with X-RateLimit-* headers; monthly quota exhaustion returns 402. Handle them separately — 429 is transient, 402 is not.',
+      a: 'Per-minute rate limiting returns 429 with X-RateLimit-* headers; monthly quota exhaustion returns 402. Handle them separately, 429 is transient, 402 is not.',
     },
   ],
 }

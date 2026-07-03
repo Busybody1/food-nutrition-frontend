@@ -97,7 +97,7 @@ export function SolutionPageView({ page }: { page: SolutionPage }) {
 
       <section className="section-pad bg-surface-elevated" aria-label="Frequently asked questions">
         <div className="container-narrow">
-          <MarketingSectionHeader title={`${page.h1} — frequently asked questions`} />
+          <MarketingSectionHeader title={`${page.h1}: frequently asked questions`} />
           <FaqList items={page.faqs} />
         </div>
       </section>

@@ -221,6 +221,30 @@ export interface BlogPostInput {
   status: 'draft' | 'published'
 }
 
+export interface AdminTestimonial {
+  id: number
+  quote: string
+  author_name: string
+  author_role?: string | null
+  company?: string | null
+  avatar_url?: string | null
+  status: 'draft' | 'published'
+  display_order: number
+  created_by_user_id?: number | null
+  created_at?: string | null
+  updated_at?: string | null
+}
+
+export interface TestimonialInput {
+  quote: string
+  author_name: string
+  author_role?: string
+  company?: string
+  avatar_url?: string
+  status: 'draft' | 'published'
+  display_order: number
+}
+
 class AdminAPI {
   async getUsers(params?: Record<string, unknown>): Promise<{ users: AdminUser[]; total: number }> {
     return adminGet('/users', params)
@@ -422,6 +446,42 @@ class AdminAPI {
 
   async deleteBlogPost(postId: number): Promise<{ message: string; id: number }> {
     const res = await apiClient.delete<{ message: string; id: number }>(`${BASE}/blog/${postId}`)
+    return res.data
+  }
+
+  async getTestimonials(params?: {
+    status?: 'draft' | 'published'
+    skip?: number
+    limit?: number
+  }): Promise<{ testimonials: AdminTestimonial[]; count: number; limit?: number; skip?: number }> {
+    return adminGet('/testimonials', params)
+  }
+
+  async createTestimonial(data: TestimonialInput): Promise<AdminTestimonial> {
+    return adminPost('/testimonials', data)
+  }
+
+  async updateTestimonial(
+    testimonialId: number,
+    data: Partial<TestimonialInput>
+  ): Promise<AdminTestimonial> {
+    return adminPatch(`/testimonials/${testimonialId}`, data)
+  }
+
+  async deleteTestimonial(testimonialId: number): Promise<{ message: string; id: number }> {
+    const res = await apiClient.delete<{ message: string; id: number }>(
+      `${BASE}/testimonials/${testimonialId}`
+    )
+    return res.data
+  }
+
+  async uploadTestimonialImage(file: File): Promise<{ url: string }> {
+    const formData = new FormData()
+    formData.append('file', file)
+    const res = await apiClient.postFormData<{ url: string }>(
+      `${BASE}/testimonials/upload-image`,
+      formData
+    )
     return res.data
   }
 }

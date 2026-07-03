@@ -7,7 +7,7 @@ import { REFERENCE_DATA_CONTENT } from '@/lib/docs/content/reference-data'
 import { RATE_LIMITS_CONTENT } from '@/lib/docs/content/rate-limits'
 import { ERRORS_CONTENT } from '@/lib/docs/content/errors'
 
-/** Ordered registry — order drives sidebar, hub cards, and prev/next links. */
+/** Ordered registry, order drives sidebar, hub cards, and prev/next links. */
 export const DOCS_SECTIONS: DocsSectionMeta[] = [
   {
     slug: 'authentication',
@@ -78,7 +78,7 @@ export const DOCS_SECTIONS: DocsSectionMeta[] = [
     title: 'Nutrients, Brands & Categories',
     metaTitle: 'Nutrients, Brands & Categories API',
     description:
-      'Paginated reference endpoints for nutrients, brands, and food categories — build filter UIs and map nutrition taxonomies.',
+      'Paginated reference endpoints for nutrients, brands, and food categories for building filter UIs and mapping nutrition taxonomies.',
     keywords: [
       'nutrients API',
       'food brands API',

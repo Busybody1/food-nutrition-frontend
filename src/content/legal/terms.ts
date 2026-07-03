@@ -352,7 +352,7 @@ export const termsSections: LegalSection[] = [
       {
         type: 'ul',
         items: [
-          'Legal Team — Food Database API',
+          'Legal Team - Food Database API',
           `Email: ${LEGAL_EMAIL}`,
           `Address: ${COMPANY_ADDRESS}`,
         ],

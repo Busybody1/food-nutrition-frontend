@@ -23,9 +23,9 @@ const PAGE_SIZE = 20
 const SEARCH_DEBOUNCE_MS = 300
 
 function formatDate(value?: string | null): string {
-  if (!value) return '—'
+  if (!value) return '-'
   const date = new Date(value)
-  return Number.isNaN(date.getTime()) ? '—' : date.toLocaleDateString()
+  return Number.isNaN(date.getTime()) ? '-' : date.toLocaleDateString()
 }
 
 export default function AdminBlogPage() {
@@ -246,7 +246,7 @@ export default function AdminBlogPage() {
               {totalPages > 1 && (
                 <div className="flex flex-col gap-3 border-t border-surface-border/60 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
                   <p className="text-sm text-ink-muted">
-                    Showing {pageStart}–{pageEnd} of {total}
+                    Showing {pageStart}-{pageEnd} of {total}
                   </p>
                   <div className="flex items-center gap-2">
                     <Button

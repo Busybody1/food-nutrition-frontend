@@ -42,7 +42,7 @@ export type DiscoveryCatalog = {
 }
 
 function catalogLines(entries: DiscoveryCatalogEntry[]): string {
-  return entries.map((e) => `- ${e.url} — ${e.title}: ${e.summary}`).join('\n')
+  return entries.map((e) => `- ${e.url} - ${e.title}: ${e.summary}`).join('\n')
 }
 
 function escapeXml(value: string): string {
@@ -130,8 +130,8 @@ function formatDiscoveryRateLimit(rpm: number): string {
 function commercialUseLabel(name: string): string {
   const tier = name.toLowerCase()
   if (tier === 'free') return 'No (dev & personal only)'
-  if (tier === 'plus') return 'Yes — production apps'
-  if (tier === 'enterprise' || tier === 'custom') return 'Yes — SLA, phone support'
+  if (tier === 'plus') return 'Yes - production apps'
+  if (tier === 'enterprise' || tier === 'custom') return 'Yes - SLA, phone support'
   return 'No'
 }
 
@@ -167,7 +167,7 @@ export function buildLlmsTxtFromInput(
             const summary = postSummary(post)
             const keywords = postKeywords(post)
             const keywordSuffix = keywords ? ` | keywords: ${keywords}` : ''
-            return `- ${url} — ${post.title}: ${summary}${keywordSuffix}`
+            return `- ${url} - ${post.title}: ${summary}${keywordSuffix}`
           })
           .join('\n')
       : '- No articles published yet.'
@@ -180,14 +180,14 @@ export function buildLlmsTxtFromInput(
 ${site.siteName} is a REST API for nutrition and food data. Developers use API keys (X-API-Key header) or JWT from the dashboard to power meal logging, macro tracking, barcode scanning, and autocomplete in health and fitness apps.
 
 ## Food database
-- Approximately 4 million food records spanning global cuisines and regional products — not limited to Western or US-only catalogs.
+- Approximately 4 million food records spanning global cuisines and regional products - not limited to Western or US-only catalogs.
 - Coverage includes packaged goods, branded items, restaurant-style entries, and culturally diverse ingredients across markets worldwide.
 - Barcode (UPC/EAN) lookup for retail products; text search and suggest for common and regional food names.
 - Verified foods filter for higher-confidence nutrition values.
 
 ## Nutrition & serving sizes
 - Every food includes standardized macro and micronutrient values per 100g for consistent comparison and calculation.
-- Multiple real-world serving sizes — not just 100g. Each record may include serving_size (grams), serving_unit (e.g. cup, slice, piece), and serving (human-readable label such as "1 medium apple" or "1 tbsp").
+- Multiple real-world serving sizes - not just 100g. Each record may include serving_size (grams), serving_unit (e.g. cup, slice, piece), and serving (human-readable label such as "1 medium apple" or "1 tbsp").
 - Search and food-detail responses expose per-serving calculated values alongside per_100g nutrient arrays, so logging apps can display portions users actually eat without manual conversion.
 - Full nutrient payloads (calories, protein, carbs, fat, vitamins, minerals) suitable for diet tracking and wellness products.
 
@@ -201,18 +201,18 @@ ${buildPricingTableRows(pricingPlans)}
 Notes:
 - Commercial production use requires Plus or Enterprise. Send header X-API-Usage-Type: commercial when applicable.
 - Plus and Enterprise include Redis response caching (5 min) on GET search and food endpoints.
-- Enterprise: custom volume, 99.99% SLA, white-label, on-premise options — contact sales at ${site.siteUrl}/contact?inquiry=enterprise
+- Enterprise: custom volume, 99.99% SLA, white-label, on-premise options - contact sales at ${site.siteUrl}/contact?inquiry=enterprise
 
 ## Base URL
 - API: configured per deployment (see developer docs)
 - Website: ${site.siteUrl}
 
 ## Key endpoints
-- GET /api/v1/search/foods — search with q, limit, skip, match_mode (any|all), verified_only
-- GET /api/v1/search/suggest — autocomplete (q, limit)
-- GET /api/v1/search/barcode/{upc} — barcode lookup
-- GET /api/v1/foods/{id} — food details with nutrients, serving metadata, and barcodes
-- GET /api/v1/public/search/foods — IP-rate-limited public demo (no API key)
+- GET /api/v1/search/foods - search with q, limit, skip, match_mode (any|all), verified_only
+- GET /api/v1/search/suggest - autocomplete (q, limit)
+- GET /api/v1/search/barcode/{upc} - barcode lookup
+- GET /api/v1/foods/{id} - food details with nutrients, serving metadata, and barcodes
+- GET /api/v1/public/search/foods - IP-rate-limited public demo (no API key)
 
 ## Authentication
 - Header: X-API-Key: <your_key>
@@ -232,21 +232,21 @@ ${blogLines}
 
 ## Blog JSON API
 Machine-readable blog content for integrations, search, and AI crawlers:
-- GET ${site.apiBaseUrl}/api/v1/public/blog — list published posts (title, excerpt, keywords, dates)
-- GET ${site.apiBaseUrl}/api/v1/public/blog/{slug} — full article markdown, FAQ, and metadata
-- GET ${site.apiBaseUrl}/api/v1/public/blog/slugs — slug list with updated_at for sitemaps
+- GET ${site.apiBaseUrl}/api/v1/public/blog - list published posts (title, excerpt, keywords, dates)
+- GET ${site.apiBaseUrl}/api/v1/public/blog/{slug} - full article markdown, FAQ, and metadata
+- GET ${site.apiBaseUrl}/api/v1/public/blog/slugs - slug list with updated_at for sitemaps
 
 ## Public pages
-- ${site.siteUrl}/pricing — API plans, quotas, and enterprise
-- ${site.siteUrl}/blog — developer guides on calorie APIs, nutrition data, and integrations
-- ${site.siteUrl}/faq — authentication, search, commercial use, serving data
-- ${site.siteUrl}/solutions — use cases: fitness, meal planning, healthcare, grocery, wellness
-- ${site.siteUrl}/compare — honest nutrition API comparisons (Nutritionix, Edamam, USDA, Spoonacular)
-- ${site.siteUrl}/playground — try endpoints live without an API key
-- ${site.siteUrl}/about — mission and platform overview
-- ${site.siteUrl}/contact — support and sales
-- ${site.siteUrl}/api-status — service health
-- ${site.siteUrl}/changelog — release notes
+- ${site.siteUrl}/pricing - API plans, quotas, and enterprise
+- ${site.siteUrl}/blog - developer guides on calorie APIs, nutrition data, and integrations
+- ${site.siteUrl}/faq - authentication, search, commercial use, serving data
+- ${site.siteUrl}/solutions - use cases: fitness, meal planning, healthcare, grocery, wellness
+- ${site.siteUrl}/compare - honest nutrition API comparisons (Nutritionix, Edamam, USDA, Spoonacular)
+- ${site.siteUrl}/playground - try endpoints live without an API key
+- ${site.siteUrl}/about - mission and platform overview
+- ${site.siteUrl}/contact - support and sales
+- ${site.siteUrl}/api-status - service health
+- ${site.siteUrl}/changelog - release notes
 
 ## Support
 ${site.supportEmail}

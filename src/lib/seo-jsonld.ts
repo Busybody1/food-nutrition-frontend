@@ -49,7 +49,7 @@ function buildPricingJsonLdInput(
   }
 }
 
-/** Product JSON-LD for pricing pages — satisfies Google Product/Offer required fields. */
+/** Product JSON-LD for pricing pages, satisfies Google Product/Offer required fields. */
 export function buildPricingProductJsonLd() {
   return buildPricingProductJsonLdFromInput(
     buildPricingJsonLdInput(FALLBACK_PRICING_PLANS)
@@ -121,7 +121,7 @@ export function buildTechArticleJsonLd({
   headline: string
   description: string
   path: string
-  /** ISO date (YYYY-MM-DD) — update when the article content materially changes. */
+  /** ISO date (YYYY-MM-DD), update when the article content materially changes. */
   dateModified: string
   proficiencyLevel?: 'Beginner' | 'Expert'
   keywords?: string[]

@@ -11,7 +11,7 @@ import { COMPARISON_PAGES, comparisonPath } from '@/lib/comparisons-data'
 export const revalidate = 300
 
 /**
- * Per-page content dates — bump when a page materially changes.
+ * Per-page content dates, bump when a page materially changes.
  * A fixed date is an honest freshness signal; `new Date()` on every crawl is not.
  */
 const STATIC_PAGE_DATES: Record<string, string> = {

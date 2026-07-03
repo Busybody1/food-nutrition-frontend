@@ -17,7 +17,7 @@ export type ComparisonPage = {
   keywords: string[]
   intro: string[]
   matrix: ComparisonRow[]
-  /** Honest "when the competitor is the better fit" — credibility earns citations */
+  /** Honest "when the competitor is the better fit", credibility earns citations */
   whenTheyFit: string[]
   whenWeFit: string[]
   migration: string[]
@@ -31,14 +31,14 @@ export type ComparisonPage = {
 
 /** Rendered under every comparison table. */
 export const COMPARISON_DISCLAIMER = (asOf: string) =>
-  `Comparison notes reviewed as of ${asOf}. Competitor capabilities and pricing change — verify details against their current documentation before deciding.`
+  `Comparison notes reviewed as of ${asOf}. Competitor capabilities and pricing change; verify details against their current documentation before deciding.`
 
 export const COMPARISON_PAGES: ComparisonPage[] = [
   {
     slug: 'nutritionix-alternative',
     competitor: 'Nutritionix',
     h1: 'Nutritionix Alternative',
-    metaTitle: 'Nutritionix Alternative — Calorie API Comparison',
+    metaTitle: 'Nutritionix Alternative: Calorie API Comparison',
     description:
       'Comparing Calorie API and Nutritionix for developers: food database coverage, barcode lookup, verified data, commercial licensing, and migration notes.',
     keywords: [
@@ -49,7 +49,7 @@ export const COMPARISON_PAGES: ComparisonPage[] = [
     ],
     intro: [
       'Nutritionix is one of the most established nutrition data providers, known for its natural-language food parsing and restaurant-chain coverage. Calorie API takes a different shape: a lean REST food database API with verified macro data, explicit barcode fallback, and self-serve commercial licensing.',
-      'Which is right depends on what your product actually does with food data — this page lays out the differences honestly so you can decide quickly.',
+      'Which is right depends on what your product actually does with food data. This page lays out the differences honestly so you can decide quickly.',
     ],
     matrix: [
       {
@@ -96,15 +96,15 @@ export const COMPARISON_PAGES: ComparisonPage[] = [
     faqs: [
       {
         q: 'Does Calorie API have natural-language meal parsing like Nutritionix?',
-        a: 'No — search is keyword-based with multi-word ranking and match modes. If free-text meal parsing is your core interaction, Nutritionix is genuinely strong there; many trackers find ranked multi-word search covers their logging flow.',
+        a: 'No, search is keyword-based with multi-word ranking and match modes. If free-text meal parsing is your core interaction, Nutritionix is genuinely strong there; many trackers find ranked multi-word search covers their logging flow.',
       },
       {
         q: 'How do the food databases compare in size?',
-        a: `Calorie API covers ${FOOD_DATABASE_SIZE_LABEL} plus Open Food Facts fallback on barcodes. Database sizes shift constantly across providers — coverage of the foods your users log matters more than headline totals, so test both with your real queries.`,
+        a: `Calorie API covers ${FOOD_DATABASE_SIZE_LABEL} plus Open Food Facts fallback on barcodes. Database sizes shift constantly across providers, coverage of the foods your users log matters more than headline totals, so test both with your real queries.`,
       },
       {
         q: 'Can I run both during a migration?',
-        a: 'Yes — a common pattern is routing barcode traffic to Calorie API first (for the fallback coverage) while search migrates feature-by-feature behind a flag.',
+        a: 'Yes, a common pattern is routing barcode traffic to Calorie API first (for the fallback coverage) while search migrates feature-by-feature behind a flag.',
       },
     ],
     related: [
@@ -121,7 +121,7 @@ export const COMPARISON_PAGES: ComparisonPage[] = [
     slug: 'edamam-alternative',
     competitor: 'Edamam',
     h1: 'Edamam Alternative',
-    metaTitle: 'Edamam Alternative — Calorie API Comparison',
+    metaTitle: 'Edamam Alternative: Calorie API Comparison',
     description:
       'Comparing Calorie API and Edamam for developers: food search vs recipe analysis, barcode support, pricing model, and migration notes.',
     keywords: [
@@ -131,7 +131,7 @@ export const COMPARISON_PAGES: ComparisonPage[] = [
       'food API alternative',
     ],
     intro: [
-      'Edamam is best known for recipe-level nutrition analysis — send a full ingredient list, get an aggregate nutrition label. Calorie API is food-level infrastructure: fast search over a verified catalog, barcode lookup with fallback, and per-100g macros your own code aggregates.',
+      'Edamam is best known for recipe-level nutrition analysis: send a full ingredient list and get back an aggregate nutrition label. Calorie API is food-level infrastructure: fast search over a verified catalog, barcode lookup with fallback, and per-100g macros your own code aggregates.',
       'If your product needs recipe ingestion as a service, Edamam earns its place. If it logs foods, scans barcodes, or computes its own plans, food-level data with predictable licensing is usually the simpler foundation.',
     ],
     matrix: [
@@ -162,7 +162,7 @@ export const COMPARISON_PAGES: ComparisonPage[] = [
       },
     ],
     whenTheyFit: [
-      'You need turnkey recipe analysis — paste ingredients, receive a nutrition label.',
+      'You need turnkey recipe analysis: paste ingredients, receive a nutrition label.',
       'Diet and allergen classification at the recipe level is core to your product.',
       'You want meal recommendation endpoints rather than building recommendation logic.',
     ],
@@ -173,16 +173,16 @@ export const COMPARISON_PAGES: ComparisonPage[] = [
       'Verified-only data mode matters for your accuracy story.',
     ],
     migration: [
-      'For food search flows, migration is direct: X-API-Key auth, GET /api/v1/search/foods, and per-100g macro mapping. For recipe analysis flows, the pattern shifts — resolve each ingredient via search once, cache the stable food IDs, and aggregate by quantity in your code. The Python guide shows the aggregation building blocks.',
+      'For food search flows, migration is direct: X-API-Key auth, GET /api/v1/search/foods, and per-100g macro mapping. For recipe analysis flows, the pattern shifts, resolve each ingredient via search once, cache the stable food IDs, and aggregate by quantity in your code. The Python guide shows the aggregation building blocks.',
     ],
     faqs: [
       {
         q: 'Can Calorie API analyze a full recipe like Edamam?',
-        a: 'Not as a single endpoint. You resolve ingredients individually and aggregate per-100g macros by quantity — more code than a recipe endpoint, but you keep control of matching and the result is fully cacheable.',
+        a: 'Not as a single endpoint. You resolve ingredients individually and aggregate per-100g macros by quantity. It is more code than a recipe endpoint, but you keep control of matching and the result is fully cacheable.',
       },
       {
         q: 'Which is cheaper at scale?',
-        a: 'It depends on call patterns — flat monthly plans are easiest to predict when volume grows steadily. Model your expected requests against both providers’ current pricing pages before committing.',
+        a: 'It depends on call patterns. Flat monthly plans are easiest to predict when volume grows steadily. Model your expected requests against both providers’ current pricing pages before committing.',
       },
       {
         q: 'Do both support commercial products?',
@@ -203,7 +203,7 @@ export const COMPARISON_PAGES: ComparisonPage[] = [
     slug: 'usda-fooddata-central-alternative',
     competitor: 'USDA FoodData Central',
     h1: 'USDA FoodData Central Alternative',
-    metaTitle: 'USDA FoodData Central Alternative — Calorie API Comparison',
+    metaTitle: 'USDA FoodData Central Alternative: Calorie API Comparison',
     description:
       'When to use Calorie API vs the free USDA FoodData Central API: branded coverage, barcode lookup, autocomplete, rate limits, and production readiness.',
     keywords: [
@@ -213,7 +213,7 @@ export const COMPARISON_PAGES: ComparisonPage[] = [
       'FDC API production',
     ],
     intro: [
-      'USDA FoodData Central is a genuinely great resource — free, authoritative, and the reference standard for US generic foods. Plenty of products should just use it. This page is about the cases where teams outgrow it.',
+      'USDA FoodData Central is a genuinely great resource: free, authoritative, and the reference standard for US generic foods. Plenty of products should just use it. This page is about the cases where teams outgrow it.',
       'The gaps show up in production consumer apps: international and long-tail branded coverage, barcode lookup UX, autocomplete endpoints, and support commitments. That is the layer a commercial food API adds.',
     ],
     matrix: [
@@ -240,7 +240,7 @@ export const COMPARISON_PAGES: ComparisonPage[] = [
       {
         dimension: 'Support & guarantees',
         us: 'Support, dashboards, and enterprise terms available',
-        them: 'Public service — no SLA or support channel',
+        them: 'Public service, no SLA or support channel',
       },
     ],
     whenTheyFit: [
@@ -268,7 +268,7 @@ export const COMPARISON_PAGES: ComparisonPage[] = [
       },
       {
         q: 'Can I use both together?',
-        a: 'Yes — a common architecture uses FDC for authoritative reference lookups and Calorie API for the user-facing logging flow where UX endpoints matter.',
+        a: 'Yes, a common architecture uses FDC for authoritative reference lookups and Calorie API for the user-facing logging flow where UX endpoints matter.',
       },
     ],
     related: [
@@ -285,7 +285,7 @@ export const COMPARISON_PAGES: ComparisonPage[] = [
     slug: 'spoonacular-alternative',
     competitor: 'Spoonacular',
     h1: 'Spoonacular Alternative',
-    metaTitle: 'Spoonacular Alternative — Calorie API Comparison',
+    metaTitle: 'Spoonacular Alternative: Calorie API Comparison',
     description:
       'Comparing Calorie API and Spoonacular: food/nutrition data vs recipe content, pricing models, barcode lookup, and when each API fits.',
     keywords: [
@@ -321,12 +321,12 @@ export const COMPARISON_PAGES: ComparisonPage[] = [
       },
       {
         dimension: 'Content licensing',
-        us: 'Data API — your UI and content are your own',
+        us: 'Data API: your UI and content are your own',
         them: 'Recipe content licensing terms apply to displayed recipes',
       },
     ],
     whenTheyFit: [
-      'You need ready-made recipe content — instructions, images, and search by cuisine or diet.',
+      'You need ready-made recipe content, instructions, images, and search by cuisine or diet.',
       'Meal-plan content generation (not just data) is the feature you are shipping.',
       'Wine pairings, product matching, and food trivia-style content fit your product.',
     ],
@@ -337,16 +337,16 @@ export const COMPARISON_PAGES: ComparisonPage[] = [
       'Verified macro data feeds calculations, not just display.',
     ],
     migration: [
-      'If you used Spoonacular for ingredient/product data, map to food search and barcode endpoints with X-API-Key auth and per-100g macros. If you used recipe content, that content layer stays yours to build or source — Calorie API supplies the ingredient-level data your aggregation needs.',
+      'If you used Spoonacular for ingredient/product data, map to food search and barcode endpoints with X-API-Key auth and per-100g macros. If you used recipe content, that content layer stays yours to build or source, Calorie API supplies the ingredient-level data your aggregation needs.',
     ],
     faqs: [
       {
         q: 'Does Calorie API provide recipes?',
-        a: 'No — it is deliberately a food-data API. Ingredient resolution and macro aggregation for your own recipes is the supported pattern, shown in the meal-planning solution and Python guide.',
+        a: 'No, it is deliberately a food-data API. Ingredient resolution and macro aggregation for your own recipes is the supported pattern, shown in the meal-planning solution and Python guide.',
       },
       {
         q: 'How does flat pricing compare to points?',
-        a: 'Flat plans make cost a function of request volume only, which is easier to forecast. Points systems can be economical for low-volume mixed usage — model your call mix against both.',
+        a: 'Flat plans make cost a function of request volume only, which is easier to forecast. Points systems can be economical for low-volume mixed usage, model your call mix against both.',
       },
       {
         q: 'Which has better product/barcode coverage?',

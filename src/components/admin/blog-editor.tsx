@@ -261,7 +261,7 @@ export function BlogEditor({ mode, initialPost }: Props) {
             <AdminPanelBody className="space-y-4">
               {faq.length === 0 ? (
                 <p className="text-sm text-ink-muted">
-                  Add 5–8 questions using long-tail keyword variations to win featured snippets.
+                  Add 5-8 questions using long-tail keyword variations to win featured snippets.
                 </p>
               ) : (
                 faq.map((item, index) => (
@@ -365,7 +365,7 @@ export function BlogEditor({ mode, initialPost }: Props) {
                 <Input
                   value={coverImageUrl}
                   onChange={(e) => setCoverImageUrl(e.target.value)}
-                  placeholder="https://… (optional article cover — not used for link previews)"
+                  placeholder="https://… (optional article cover, not used for link previews)"
                 />
               </div>
             </AdminPanelBody>

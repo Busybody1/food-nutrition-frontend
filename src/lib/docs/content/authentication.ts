@@ -18,7 +18,7 @@ export const AUTHENTICATION_CONTENT: DocsSectionContent = {
     {
       kind: 'list',
       items: [
-        'Create a free account — no credit card required for the Free tier.',
+        'Create a free account, no credit card required for the Free tier.',
         'Choose a plan (you can start on Free and upgrade later).',
         'Generate a key from the dashboard under API Keys.',
       ],
@@ -33,8 +33,8 @@ export const AUTHENTICATION_CONTENT: DocsSectionContent = {
       kind: 'params',
       title: 'Auth-related status codes',
       rows: [
-        { name: '401', description: 'Missing or invalid API key — check the X-API-Key header.' },
-        { name: '402', description: 'Monthly quota exceeded — upgrade your plan or wait for the cycle reset.' },
+        { name: '401', description: 'Missing or invalid API key. Check the X-API-Key header.' },
+        { name: '402', description: 'Monthly quota exceeded. Upgrade your plan or wait for the cycle reset.' },
         { name: '403', description: 'Commercial use not allowed on your plan, or food coverage cap reached.' },
       ],
     },
@@ -46,7 +46,7 @@ export const AUTHENTICATION_CONTENT: DocsSectionContent = {
   faqs: [
     {
       q: 'Can I use the API key in a mobile app directly?',
-      a: 'Avoid shipping raw API keys in mobile binaries — they can be extracted. Route requests through your backend so the key stays server-side, and enforce your own per-user limits in front of it.',
+      a: 'Avoid shipping raw API keys in mobile binaries, they can be extracted. Route requests through your backend so the key stays server-side, and enforce your own per-user limits in front of it.',
     },
     {
       q: 'How do I rotate an API key?',

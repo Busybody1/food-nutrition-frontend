@@ -21,7 +21,7 @@ export function HomeSeoContent() {
             Use REST endpoints with JSON responses and API key authentication. The food API supports
             multi-word search, verified-food filters, UPC and EAN barcode lookup, and autocomplete
             suggest. Rate limits and monthly quotas scale from a free developer tier to high-volume
-            commercial use — so your calorie API integration grows with your user base.
+            commercial use, so your calorie API integration grows with your user base.
           </p>
 
           <h3 className="font-display text-xl text-ink pt-2">Nutrition API data you can trust</h3>
@@ -78,8 +78,8 @@ export function HomeSeoContent() {
 
           <h3 className="font-display text-xl text-ink pt-2">Integrate in minutes</h3>
           <p>
-            Create an account, generate an API key in the dashboard, and make your first request —
-            the{' '}
+            Create an account, generate an API key in the dashboard, and make your first request.
+            The{' '}
             <Link href="/docs" prefetch={false} className="text-brand-strong font-medium hover:underline">
               quickstart guide
             </Link>{' '}

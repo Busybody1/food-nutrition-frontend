@@ -73,7 +73,7 @@ export default function SolutionsIndexPage() {
 
       <MarketingCtaBand
         title="Don't see your use case?"
-        description="The API is general-purpose food and nutrition infrastructure — tell us what you're building and we'll point you at the right endpoints."
+        description="The API is general-purpose food and nutrition infrastructure. Tell us what you're building and we'll point you at the right endpoints."
         primaryHref="/contact"
         primaryLabel="Talk to us"
         secondaryHref="/docs"

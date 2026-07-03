@@ -15,7 +15,7 @@ export function StatsBand() {
     { value: 'UPC + EAN', label: 'barcode lookup with fallback' },
     ...(latency ? [{ value: latency, label: 'median response time' }] : []),
     ...(uptime ? [{ value: uptime, label: 'uptime' }] : []),
-    { value: 'Free', label: 'developer tier — no card required' },
+    { value: 'Free', label: 'developer tier, no card required' },
   ].slice(0, 4)
 
   return (

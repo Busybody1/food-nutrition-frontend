@@ -39,14 +39,14 @@ export const SOLUTION_PAGES: SolutionPage[] = [
     ],
     heroBadge: 'Fitness apps',
     intro: [
-      'Fitness users log meals between sets — the food search has to feel instant, and the macros have to be right. The API pairs a keystroke-fast suggest endpoint with verified per-100g macro data, so calorie budgets and macro splits stay trustworthy.',
+      'Fitness users log meals between sets, so the food search has to feel instant, and the macros have to be right. The API pairs a keystroke-fast suggest endpoint with verified per-100g macro data, so calorie budgets and macro splits stay trustworthy.',
       'Barcode scanning covers packaged foods and protein products, and stable food IDs make favorites and recents cost zero extra API calls once cached.',
     ],
     painPoints: [
       {
         title: 'Logging friction kills retention',
         description:
-          'Typeahead via the suggest endpoint keeps the log flow under a second — the single biggest retention lever in food tracking.',
+          'Typeahead via the suggest endpoint keeps the log flow under a second, the single biggest retention lever in food tracking.',
       },
       {
         title: 'Bad macros break trust',
@@ -56,7 +56,7 @@ export const SOLUTION_PAGES: SolutionPage[] = [
       {
         title: 'Building a food database is a product of its own',
         description:
-          'Millions of generic, branded, and restaurant foods with barcode fallback — without maintaining your own catalog.',
+          'Millions of generic, branded, and restaurant foods with barcode fallback, without maintaining your own catalog.',
       },
     ],
     endpointMap: [
@@ -72,11 +72,11 @@ export const SOLUTION_PAGES: SolutionPage[] = [
       },
       {
         q: 'Do I need a commercial plan for a paid fitness app?',
-        a: 'Yes — monetized apps are commercial use, which requires Plus or Enterprise and the X-API-Usage-Type: commercial header.',
+        a: 'Yes, monetized apps are commercial use, which requires Plus or Enterprise and the X-API-Usage-Type: commercial header.',
       },
       {
         q: 'How do other fitness apps structure the log flow?',
-        a: 'Debounced suggest while typing, food details on selection, portion math from per-100g macros, and barcode scan as the fast path for packaged foods — the React Native guide walks through the full pattern.',
+        a: 'Debounced suggest while typing, food details on selection, portion math from per-100g macros, and barcode scan as the fast path for packaged foods. The React Native guide walks through the full pattern.',
       },
     ],
     related: [
@@ -102,14 +102,14 @@ export const SOLUTION_PAGES: SolutionPage[] = [
     ],
     heroBadge: 'Meal planning',
     intro: [
-      'Meal planners are constraint solvers: hit protein targets, respect calorie budgets, vary the menu. That only works when every candidate food carries consistent, complete macro data — which is exactly what per-100g normalization and the verified-foods filter provide.',
+      'Meal planners are constraint solvers: hit protein targets, respect calorie budgets, vary the menu. That only works when every candidate food carries consistent, complete macro data, which is exactly what per-100g normalization and the verified-foods filter provide.',
       'Resolve each ingredient with food search, aggregate macros by quantity, and score plans against user targets. Reference endpoints for nutrients, brands, and categories power filter UIs and dietary constraints.',
     ],
     painPoints: [
       {
         title: 'Plans are only as good as the data',
         description:
-          'Complete macro data is guaranteed on every search result — no null-handling in the middle of your solver.',
+          'Complete macro data is guaranteed on every search result, no null-handling in the middle of your solver.',
       },
       {
         title: 'Ingredient quantities need a common baseline',
@@ -131,7 +131,7 @@ export const SOLUTION_PAGES: SolutionPage[] = [
     faqs: [
       {
         q: 'Can I analyze a whole recipe in one call?',
-        a: 'There is no recipe-ingestion endpoint — resolve ingredients individually with search and aggregate by quantity. Cached food IDs make repeat plan generation nearly free.',
+        a: 'There is no recipe-ingestion endpoint. Resolve ingredients individually with search and aggregate by quantity. Cached food IDs make repeat plan generation nearly free.',
       },
       {
         q: 'How do I keep generated plans within quota?',
@@ -165,7 +165,7 @@ export const SOLUTION_PAGES: SolutionPage[] = [
     ],
     heroBadge: 'Healthcare',
     intro: [
-      'Dietitian platforms, patient food diaries, and clinical wellness programs need nutrition data that practitioners can defend. The verified-foods mode restricts results to curated entries with complete, quality-checked macros — the right default for professional tools.',
+      'Dietitian platforms, patient food diaries, and clinical wellness programs need nutrition data that practitioners can defend. The verified-foods mode restricts results to curated entries with complete, quality-checked macros, the right default for professional tools.',
       'Structured micronutrient arrays support deeper dietary review, and your patient data never touches the API: you send food queries, we return food data, and diaries stay in your system.',
     ],
     painPoints: [
@@ -177,7 +177,7 @@ export const SOLUTION_PAGES: SolutionPage[] = [
       {
         title: 'Patient data must stay yours',
         description:
-          'The API is stateless food lookup — no patient identifiers, diaries, or health data ever leave your platform.',
+          'The API is stateless food lookup: no patient identifiers, diaries, or health data ever leave your platform.',
       },
       {
         title: 'Micronutrients matter clinically',
@@ -194,7 +194,7 @@ export const SOLUTION_PAGES: SolutionPage[] = [
     faqs: [
       {
         q: 'Is the API HIPAA compliant?',
-        a: 'The API never receives patient data — requests contain food queries only, so it sits outside your PHI boundary in most architectures. Route calls through your backend and keep diaries in your own systems.',
+        a: 'The API never receives patient data: requests contain food queries only, so it sits outside your PHI boundary in most architectures. Route calls through your backend and keep diaries in your own systems.',
       },
       {
         q: 'Is the data suitable for clinical decisions?',
@@ -202,7 +202,7 @@ export const SOLUTION_PAGES: SolutionPage[] = [
       },
       {
         q: 'Can we get an SLA for a healthcare deployment?',
-        a: 'Enterprise plans include custom limits and terms — contact us to discuss uptime and support commitments for clinical environments.',
+        a: 'Enterprise plans include custom limits and terms. Contact us to discuss uptime and support commitments for clinical environments.',
       },
     ],
     related: [
@@ -229,7 +229,7 @@ export const SOLUTION_PAGES: SolutionPage[] = [
     heroBadge: 'Grocery & retail',
     intro: [
       'Shoppers point their camera at a product and expect an answer: what is in it, what are the macros, does it fit my diet. The barcode endpoint resolves UPC and EAN codes to product name, brand, ingredients, allergens, and normalized nutrition in one request.',
-      'The two-source design — verified local catalog plus Open Food Facts fallback — matters most in retail, where new products appear on shelves weekly. Misses return a clean 404 so your app can offer text search instead.',
+      'The two-source design, verified local catalog plus Open Food Facts fallback, matters most in retail, where new products appear on shelves weekly. Misses return a clean 404 so your app can offer text search instead.',
     ],
     painPoints: [
       {
@@ -240,7 +240,7 @@ export const SOLUTION_PAGES: SolutionPage[] = [
       {
         title: 'Allergen answers must be fast',
         description:
-          'Ingredients and allergen lists arrive in the same scan response — no second lookup.',
+          'Ingredients and allergen lists arrive in the same scan response, no second lookup.',
       },
       {
         title: 'Kiosks and fleets share IPs',
@@ -261,7 +261,7 @@ export const SOLUTION_PAGES: SolutionPage[] = [
       },
       {
         q: 'Can in-store kiosks share one API account?',
-        a: 'Yes — limits are per account rather than per IP, so a kiosk fleet works naturally. Size your plan to fleet-wide request volume.',
+        a: 'Yes, limits are per account rather than per IP, so a kiosk fleet works naturally. Size your plan to fleet-wide request volume.',
       },
       {
         q: 'Do scan responses include package sizes?',
@@ -291,7 +291,7 @@ export const SOLUTION_PAGES: SolutionPage[] = [
     ],
     heroBadge: 'Wellness SaaS',
     intro: [
-      'Wellness platforms win deals with breadth: challenges, coaching, habit tracking — and nutrition. Embedding food logging and macro insights through an API turns a quarter-long data project into a sprint.',
+      'Wellness platforms win deals with breadth: challenges, coaching, habit tracking, and nutrition. Embedding food logging and macro insights through an API turns a quarter-long data project into a sprint.',
       'Commercial licensing is explicit (one header on a Plus or Enterprise plan), limits are per account so multi-tenant architectures just work, and stable food IDs keep your per-tenant caches simple.',
     ],
     painPoints: [
@@ -308,7 +308,7 @@ export const SOLUTION_PAGES: SolutionPage[] = [
       {
         title: 'Procurement asks about licensing',
         description:
-          'Commercial use is an explicit, documented plan feature — no ambiguous terms to negotiate around.',
+          'Commercial use is an explicit, documented plan feature, no ambiguous terms to negotiate around.',
       },
     ],
     endpointMap: [
@@ -324,7 +324,7 @@ export const SOLUTION_PAGES: SolutionPage[] = [
       },
       {
         q: 'Can we white-label the nutrition features?',
-        a: 'Yes — the API is invisible infrastructure. Your UI, your brand; the API only supplies data.',
+        a: 'Yes, the API is invisible infrastructure. Your UI, your brand; the API only supplies data.',
       },
       {
         q: 'What happens when our volume grows past a plan?',

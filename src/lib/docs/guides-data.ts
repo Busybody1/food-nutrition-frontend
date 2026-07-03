@@ -15,7 +15,7 @@ export type Guide = {
   framework: string
   /** One-line summary for index cards and llms.txt */
   summary: string
-  /** ISO date — update when the guide content materially changes */
+  /** ISO date, update when the guide content materially changes */
   dateModified: string
   blocks: DocsBlock[]
   faqs: readonly FaqItem[]
@@ -41,7 +41,7 @@ export const GUIDES: Guide[] = [
     blocks: [
       {
         kind: 'p',
-        text: 'This guide wires the three endpoints a food tracker needs — autocomplete suggest, food details, and barcode lookup — into a React Native app. Requests are routed through a small backend proxy so your API key never ships inside the app binary.',
+        text: 'This guide wires the three endpoints a food tracker needs (autocomplete suggest, food details, and barcode lookup) into a React Native app. Requests are routed through a small backend proxy so your API key never ships inside the app binary.',
       },
       { kind: 'h2', text: 'Set up a backend proxy', id: 'proxy' },
       {
@@ -72,7 +72,7 @@ app.listen(3001)`,
       { kind: 'h2', text: 'Debounced autocomplete', id: 'autocomplete' },
       {
         kind: 'p',
-        text: 'Debounce keystrokes so a fast typist costs one request instead of ten — it keeps the UI responsive and conserves your monthly quota.',
+        text: 'Debounce keystrokes so a fast typist costs one request instead of ten. It keeps the UI responsive and conserves your monthly quota.',
       },
       {
         kind: 'code',
@@ -114,7 +114,7 @@ export function useFoodSuggest(query: string) {
     \`https://your-backend.example.com/api/barcode/\${upc}\`
   )
   if (res.status === 404) {
-    // Unknown product — fall back to manual search
+    // Unknown product, fall back to manual search
     navigation.navigate('FoodSearch')
     return
   }
@@ -126,7 +126,7 @@ export function useFoodSuggest(query: string) {
       {
         kind: 'list',
         items: [
-          'Cache food details by ID on-device — IDs are stable, and re-logging favorites then costs zero API calls.',
+          'Cache food details by ID on-device, IDs are stable, and re-logging favorites then costs zero API calls.',
           'Handle 429 with backoff using the X-RateLimit-Reset header; surface 402 (quota) as an app-level alert to yourself, not to end users.',
           'Send X-API-Usage-Type: commercial from your proxy once the app monetizes (requires the Plus plan or higher).',
         ],
@@ -139,7 +139,7 @@ export function useFoodSuggest(query: string) {
       },
       {
         q: 'Which barcode scanner library works best?',
-        a: 'Any library that returns raw UPC/EAN digits works — expo-barcode-scanner and react-native-vision-camera are common choices. The API accepts the digits as-is; dashes are stripped automatically.',
+        a: 'Any library that returns raw UPC/EAN digits works, expo-barcode-scanner and react-native-vision-camera are common choices. The API accepts the digits as-is; dashes are stripped automatically.',
       },
     ],
     related: [
@@ -195,7 +195,7 @@ export async function GET(req: NextRequest) {
       { kind: 'h2', text: 'Server components for food pages', id: 'rsc' },
       {
         kind: 'p',
-        text: 'For food detail pages, fetch directly inside a server component — no client JavaScript needed and the page is fully rendered for crawlers.',
+        text: 'For food detail pages, fetch directly inside a server component, no client JavaScript needed and the page is fully rendered for crawlers.',
       },
       {
         kind: 'code',
@@ -226,7 +226,7 @@ export async function GET(req: NextRequest) {
         kind: 'list',
         items: [
           'Suggest calls: keep them client → route handler with short (or no) caching; they are user-specific and cheap.',
-          'Food details: revalidate: 3600 or longer — nutrition data for a given ID changes rarely.',
+          'Food details: revalidate: 3600 or longer, nutrition data for a given ID changes rarely.',
           'Popular searches: revalidate: 300 turns repeated queries into cache hits instead of quota spend.',
         ],
       },
@@ -234,14 +234,14 @@ export async function GET(req: NextRequest) {
       {
         kind: 'code',
         title: '.env.local',
-        code: `# Server-only — never expose with NEXT_PUBLIC_
+        code: `# Server-only, never expose with NEXT_PUBLIC_
 CALORIE_API_KEY=your_api_key_here`,
       },
     ],
     faqs: [
       {
         q: 'Should the API key be a NEXT_PUBLIC_ variable?',
-        a: 'No — NEXT_PUBLIC_ variables are embedded in client bundles. Use a plain server-side env var and only reference it in route handlers or server components.',
+        a: 'No, NEXT_PUBLIC_ variables are embedded in client bundles. Use a plain server-side env var and only reference it in route handlers or server components.',
       },
       {
         q: 'Does fetch caching count against my API quota?',
@@ -285,7 +285,7 @@ CALORIE_API_KEY=your_api_key_here`,
     if (barcode == null) return;
     final food = await FoodApi.lookupBarcode(barcode);
     if (food == null) {
-      // 404 — offer manual search instead
+      // 404, offer manual search instead
       Navigator.pushNamed(context, '/search');
     } else {
       Navigator.pushNamed(context, '/log', arguments: food);
@@ -329,8 +329,8 @@ class BarcodeFood {
       {
         kind: 'list',
         items: [
-          'Label data varies by product — nutrition fields the source lacks are null, not omitted. Model them as nullable.',
-          'A 404 means neither the local catalog nor Open Food Facts knows the code — fall back to text search.',
+          'Label data varies by product, nutrition fields the source lacks are null, not omitted. Model them as nullable.',
+          'A 404 means neither the local catalog nor Open Food Facts knows the code, fall back to text search.',
           'nutrition_per_serving is only present when the source provides serving data; per-100g values are always your safe base.',
         ],
       },
@@ -338,7 +338,7 @@ class BarcodeFood {
     faqs: [
       {
         q: 'Does the API care which scanner package I use?',
-        a: 'No — it only needs the raw UPC/EAN digits. mobile_scanner is a well-maintained option, but any camera/barcode library that yields the code string works.',
+        a: 'No, it only needs the raw UPC/EAN digits. mobile_scanner is a well-maintained option, but any camera/barcode library that yields the code string works.',
       },
       {
         q: 'Do I need separate handling for local-catalog vs Open Food Facts products?',
@@ -406,7 +406,7 @@ exports.lookupBarcode = (upc) => apiGet(\`/search/barcode/\${upc}\`)`,
       { kind: 'h2', text: 'Pagination', id: 'pagination' },
       {
         kind: 'p',
-        text: 'Search returns a paginated envelope (data, total, skip, limit). Page with skip/limit and stop when skip + data.length reaches total — limit maxes out at 100 per request.',
+        text: 'Search returns a paginated envelope (data, total, skip, limit). Page with skip/limit and stop when skip + data.length reaches total, limit maxes out at 100 per request.',
       },
       { kind: 'h2', text: 'Cache before you retry', id: 'caching' },
       {
@@ -417,7 +417,7 @@ exports.lookupBarcode = (upc) => apiGet(\`/search/barcode/\${upc}\`)`,
 async function getFoodCached(id) {
   if (details.has(id)) return details.get(id)
   const food = await getFood(id)
-  details.set(id, food) // IDs are stable — cache aggressively
+  details.set(id, food) // IDs are stable, cache aggressively
   return food
 }`,
       },
@@ -426,7 +426,7 @@ async function getFoodCached(id) {
         kind: 'list',
         items: [
           'On 429, wait until X-RateLimit-Reset before retrying; add jitter when many workers share the account.',
-          'Treat 402 (monthly quota) as terminal — alert, do not retry.',
+          'Treat 402 (monthly quota) as terminal: alert and stop retrying.',
           'Batch jobs should stay well under the 5% monthly food coverage cap; iterate over your users’ actual foods, not the whole catalog.',
         ],
       },
@@ -517,7 +517,7 @@ def search_foods(q: str, limit: int = 30, skip: int = 0, verified_only: bool = F
 rows = list(iter_foods("yogurt"))
 df = pd.DataFrame(rows)[["name", "brand", "calories", "protein", "carbs", "fat"]]
 
-# Protein density per 100 kcal — useful for ranking meal-plan candidates
+# Protein density per 100 kcal, useful for ranking meal-plan candidates
 df["protein_per_100kcal"] = df["protein"] / df["calories"] * 100
 print(df.sort_values("protein_per_100kcal", ascending=False).head(10))`,
       },
@@ -525,9 +525,9 @@ print(df.sort_values("protein_per_100kcal", ascending=False).head(10))`,
       {
         kind: 'list',
         items: [
-          'Use verified_only=true for analysis jobs — curated macro data avoids cleaning noisy label entries.',
+          'Use verified_only=true for analysis jobs, curated macro data avoids cleaning noisy label entries.',
           'Persist food details by ID between runs; IDs are stable and re-fetching is pure quota spend.',
-          'Keep batch jobs under the 5% monthly distinct-food coverage cap — analyze the foods your product uses, not the entire catalog.',
+          'Keep batch jobs under the 5% monthly distinct-food coverage cap: analyze the foods your product uses, not the entire catalog.',
         ],
       },
     ],
@@ -538,7 +538,7 @@ print(df.sort_values("protein_per_100kcal", ascending=False).head(10))`,
       },
       {
         q: 'Can I export the whole database for offline analysis?',
-        a: 'No — bulk export is blocked by the 5% monthly coverage cap. Work against the foods your application actually references, and cache those locally.',
+        a: 'No, bulk export is blocked by the 5% monthly coverage cap. Work against the foods your application actually references, and cache those locally.',
       },
     ],
     related: [

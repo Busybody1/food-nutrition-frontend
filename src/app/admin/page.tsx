@@ -274,14 +274,14 @@ function AdminDashboard() {
           <AdminStatGrid className="mb-6">
             <DashboardStatCard
               label="Total users"
-              value={stats?.totalUsers.toLocaleString() ?? '—'}
+              value={stats?.totalUsers.toLocaleString() ?? '-'}
               hint={`${stats?.activeUsers ?? 0} active in period`}
               icon={Users}
               accent="brand"
             />
             <DashboardStatCard
               label="API requests"
-              value={stats?.totalRequests.toLocaleString() ?? '—'}
+              value={stats?.totalRequests.toLocaleString() ?? '-'}
               hint={`${stats?.requestsToday ?? 0} today`}
               icon={Activity}
               accent="green"
@@ -291,7 +291,7 @@ function AdminDashboard() {
               value={
                 stats?.averageResponseTime != null
                   ? `${Math.round(stats.averageResponseTime)}ms`
-                  : '—'
+                  : '-'
               }
               hint={`Error rate ${stats?.errorRate?.toFixed(2) ?? '0'}%`}
               icon={Zap}
@@ -299,7 +299,7 @@ function AdminDashboard() {
             />
             <DashboardStatCard
               label="Revenue (MTD)"
-              value={stats?.revenue != null ? `$${stats.revenue.toLocaleString()}` : '—'}
+              value={stats?.revenue != null ? `$${stats.revenue.toLocaleString()}` : '-'}
               hint={
                 stats?.revenueGrowth != null
                   ? `${stats.revenueGrowth >= 0 ? '+' : ''}${stats.revenueGrowth}% vs last month`

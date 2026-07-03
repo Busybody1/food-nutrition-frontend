@@ -16,7 +16,7 @@ function CompareCellValue({ value }: { value: boolean | string }) {
       <Check className="h-4 w-4 text-brand-strong mx-auto" aria-label="Included" />
     ) : (
       <span className="text-ink-dim text-sm" aria-label="Not included">
-        —
+        -
       </span>
     )
   }

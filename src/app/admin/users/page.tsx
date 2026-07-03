@@ -646,7 +646,7 @@ export default function UserManagement() {
                 <div>
                   <p className="text-xs font-medium uppercase tracking-wide text-ink-dim">Name</p>
                   <p className="text-ink">
-                    {detailUser.first_name || '—'} {detailUser.last_name || ''}
+                    {detailUser.first_name || '-'} {detailUser.last_name || ''}
                   </p>
                 </div>
                 <div>
@@ -655,7 +655,7 @@ export default function UserManagement() {
                 </div>
                 <div>
                   <p className="text-xs font-medium uppercase tracking-wide text-ink-dim">Company</p>
-                  <p className="text-ink">{detailUser.company_name || '—'}</p>
+                  <p className="text-ink">{detailUser.company_name || '-'}</p>
                 </div>
                 <div>
                   <p className="text-xs font-medium uppercase tracking-wide text-ink-dim">Plan</p>

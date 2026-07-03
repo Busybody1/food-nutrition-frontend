@@ -123,7 +123,7 @@ export function ComparisonPageView({ page }: { page: ComparisonPage }) {
 
       <section className="section-pad" aria-label="Frequently asked questions">
         <div className="container-narrow">
-          <MarketingSectionHeader title={`${page.h1} — frequently asked questions`} />
+          <MarketingSectionHeader title={`${page.h1}: frequently asked questions`} />
           <FaqList items={page.faqs} />
         </div>
       </section>
@@ -132,7 +132,7 @@ export function ComparisonPageView({ page }: { page: ComparisonPage }) {
 
       <MarketingCtaBand
         title={`Try ${SITE_NAME} against your real queries`}
-        description="The public playground needs no signup — run your users' actual foods and barcodes through it before you decide."
+        description="The public playground needs no signup. Run your users' actual foods and barcodes through it before you decide."
         primaryHref="/playground"
         primaryLabel="Open the playground"
         secondaryHref="/auth/register"
