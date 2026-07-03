@@ -44,6 +44,12 @@ export function absoluteUrl(path: string): string {
   return `${SITE_URL}${p}`;
 }
 
+/** Stable JSON-LD @id anchors so Organization/WebSite/API nodes form one entity graph. */
+export const ORGANIZATION_ID = `${SITE_URL}/#organization`;
+export const WEBSITE_ID = `${SITE_URL}/#website`;
+export const SOFTWARE_ID = `${SITE_URL}/#software`;
+export const WEBAPI_ID = `${SITE_URL}/#api`;
+
 /** Default social preview asset under /public. Override entirely with NEXT_PUBLIC_OG_IMAGE_URL. */
 export const DEFAULT_OG_IMAGE_PATH = '/images/bg-banner.png';
 
@@ -69,6 +75,19 @@ export function ogImageMimeType(url: string): string {
   if (path.endsWith('.gif')) return 'image/gif';
   return 'image/jpeg';
 }
+
+export const LEGAL_NAME =
+  process.env.NEXT_PUBLIC_LEGAL_NAME?.trim() || 'BusyBody FIT LTD';
+
+/** Comma-separated profile URLs (GitHub org, X, LinkedIn, directories) for Organization sameAs. */
+export const ORG_SAMEAS = (process.env.NEXT_PUBLIC_ORG_SAMEAS || '')
+  .split(',')
+  .map((url) => url.trim())
+  .filter((url) => url.startsWith('http'));
+
+/** ISO date (YYYY-MM-DD) — emitted as Organization foundingDate when set. */
+export const ORG_FOUNDING_DATE =
+  process.env.NEXT_PUBLIC_ORG_FOUNDING_DATE?.trim() || '';
 
 export const SUPPORT_EMAIL =
   process.env.NEXT_PUBLIC_SUPPORT_EMAIL || 'busybody.office@gmail.com';

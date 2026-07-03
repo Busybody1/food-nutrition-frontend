@@ -39,6 +39,68 @@ export function HomeSeoContent() {
             local catalog, giving your food calorie API broad product coverage out of the box.
           </p>
 
+          <h3 className="font-display text-xl text-ink pt-2">Popular use cases</h3>
+          <p>
+            Teams use the API to power{' '}
+            <Link href="/solutions/fitness-apps" prefetch={false} className="text-brand-strong font-medium hover:underline">
+              fitness and calorie-tracking apps
+            </Link>
+            ,{' '}
+            <Link href="/solutions/meal-planning-apps" prefetch={false} className="text-brand-strong font-medium hover:underline">
+              meal planners
+            </Link>
+            ,{' '}
+            <Link href="/solutions/healthcare" prefetch={false} className="text-brand-strong font-medium hover:underline">
+              healthcare and dietitian software
+            </Link>
+            , and{' '}
+            <Link href="/solutions/grocery-retail" prefetch={false} className="text-brand-strong font-medium hover:underline">
+              grocery and retail scanning
+            </Link>
+            . Product-specific capabilities are covered on the{' '}
+            <Link href="/barcode-nutrition-api" prefetch={false} className="text-brand-strong font-medium hover:underline">
+              barcode nutrition API
+            </Link>
+            ,{' '}
+            <Link href="/food-database-api" prefetch={false} className="text-brand-strong font-medium hover:underline">
+              food database API
+            </Link>
+            ,{' '}
+            <Link href="/meal-tracking-api" prefetch={false} className="text-brand-strong font-medium hover:underline">
+              meal tracking API
+            </Link>
+            , and{' '}
+            <Link href="/nutrition-analysis-api" prefetch={false} className="text-brand-strong font-medium hover:underline">
+              nutrition analysis API
+            </Link>{' '}
+            pages.
+          </p>
+
+          <h3 className="font-display text-xl text-ink pt-2">Integrate in minutes</h3>
+          <p>
+            Create an account, generate an API key in the dashboard, and make your first request —
+            the{' '}
+            <Link href="/docs" prefetch={false} className="text-brand-strong font-medium hover:underline">
+              quickstart guide
+            </Link>{' '}
+            walks through authentication and your first food search in curl, JavaScript, and Python.
+            Framework walkthroughs for React Native, Next.js, Flutter, and Node.js live in the{' '}
+            <Link href="/docs/guides" prefetch={false} className="text-brand-strong font-medium hover:underline">
+              integration guides
+            </Link>
+            .
+          </p>
+
+          <h3 className="font-display text-xl text-ink pt-2">How {SITE_NAME} compares</h3>
+          <p>
+            Evaluating nutrition data providers? See how {SITE_NAME} stacks up against Nutritionix,
+            Edamam, USDA FoodData Central, and Spoonacular in our{' '}
+            <Link href="/compare" prefetch={false} className="text-brand-strong font-medium hover:underline">
+              nutrition API comparison
+            </Link>
+            , including free-tier limits, barcode coverage, and migration notes.
+          </p>
+
           <p>
             Explore the{' '}
             <Link href="/docs" prefetch={false} className="text-brand-strong font-medium hover:underline">

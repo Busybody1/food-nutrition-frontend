@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
-import { buildPublicPageMetadata } from '@/lib/build-public-metadata'
+import { buildPageMetadata } from '@/lib/metadata'
+import { getPublicPageSeo } from '@/lib/public-page-seo'
 import { PublicPageSchema } from '@/components/seo/public-page-schema'
 import { BLOG_PAGE_SIZE, getBlogPostsPage } from '@/lib/api/blog'
 import { BlogSeoContent } from '@/components/seo/public-page-seo-content'
@@ -7,18 +8,6 @@ import { buildBlogItemListJsonLd } from '@/lib/seo-jsonld'
 import { absoluteUrl } from '@/lib/site'
 import { BlogIndex } from '@/components/blog/blog-index'
 import { MarketingCtaBand } from '@/components/marketing/marketing-shell'
-
-const blogMetadata = buildPublicPageMetadata('/blog')
-
-export const metadata: Metadata = {
-  ...blogMetadata,
-  alternates: {
-    ...blogMetadata.alternates,
-    types: {
-      'application/rss+xml': [{ url: absoluteUrl('/blog/feed.xml'), title: 'Calorie API Blog RSS' }],
-    },
-  },
-}
 
 export const revalidate = 300
 
@@ -29,6 +18,35 @@ type PageProps = {
 function parsePage(value?: string): number {
   const n = parseInt(value ?? '1', 10)
   return Number.isFinite(n) && n > 0 ? n : 1
+}
+
+/**
+ * Self-referencing canonicals per pagination page (canonical-to-page-1 hides
+ * deep pages from crawlers); search-result variants are noindexed.
+ */
+export async function generateMetadata({ searchParams }: PageProps): Promise<Metadata> {
+  const { page: pageParam, q } = await searchParams
+  const page = parsePage(pageParam)
+  const isSearch = Boolean(q?.trim())
+  const seo = getPublicPageSeo('/blog')
+
+  const base = buildPageMetadata({
+    title: page > 1 ? `${seo.title} — Page ${page}` : seo.title,
+    description: seo.description,
+    keywords: seo.keywords,
+    path: page > 1 ? `/blog?page=${page}` : '/blog',
+    noIndex: isSearch,
+  })
+
+  return {
+    ...base,
+    alternates: {
+      ...base.alternates,
+      types: {
+        'application/rss+xml': [{ url: absoluteUrl('/blog/feed.xml'), title: 'Calorie API Blog RSS' }],
+      },
+    },
+  }
 }
 
 export default async function BlogIndexPage({ searchParams }: PageProps) {

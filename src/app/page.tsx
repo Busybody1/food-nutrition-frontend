@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { buildPublicPageMetadata } from '@/lib/build-public-metadata'
-import { FAQ_JSON_LD } from '@/lib/faq-data'
+import { HOME_FAQ_ITEMS, buildFaqPageJsonLd } from '@/lib/faq-data'
 import { Search, Shield, Zap, BarChart3, Code2, Database } from 'lucide-react'
 import { LazyApiPlayground } from '@/components/marketing/lazy-api-playground'
 import { FaqSection } from '@/components/marketing/faq-section'
@@ -13,6 +13,8 @@ import {
 import { StructuredData, JsonLdScript } from '@/components/seo/structured-data'
 import { PricingProductSchema } from '@/components/seo/pricing-product-schema'
 import { HomeSeoContent } from '@/components/marketing/home-seo-content'
+import { StatsBand } from '@/components/marketing/stats-band'
+import { Testimonials } from '@/components/marketing/testimonials'
 
 export const metadata: Metadata = buildPublicPageMetadata('/')
 
@@ -80,6 +82,10 @@ export default function HomePage() {
         </div>
       </section>
 
+      <StatsBand />
+
+      <Testimonials />
+
       <MarketingCtaBand
         title="Ready to integrate?"
         description="Create an account, generate an API key, and start searching in minutes."
@@ -91,11 +97,11 @@ export default function HomePage() {
 
       <HomeSeoContent />
 
-      <FaqSection />
+      <FaqSection items={HOME_FAQ_ITEMS} />
 
       <StructuredData type="api" />
       <PricingProductSchema />
-      <JsonLdScript id="faq-jsonld" data={FAQ_JSON_LD} />
+      <JsonLdScript id="faq-jsonld" data={buildFaqPageJsonLd(HOME_FAQ_ITEMS)} />
     </div>
   )
 }

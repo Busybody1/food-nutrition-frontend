@@ -16,6 +16,11 @@ type PageMetaInput = {
   keywords?: string[]
   path: string
   noIndex?: boolean
+  /**
+   * Set when the route has its own opengraph-image.tsx — explicit openGraph.images
+   * here would suppress the file-convention image, so we omit them instead.
+   */
+  hasDedicatedOgImage?: boolean
 }
 
 export function buildPageMetadata({
@@ -24,6 +29,7 @@ export function buildPageMetadata({
   keywords,
   path,
   noIndex = false,
+  hasDedicatedOgImage = false,
 }: PageMetaInput): Metadata {
   const canonical = absoluteUrl(path)
   const pageTitle =
@@ -48,21 +54,27 @@ export function buildPageMetadata({
       title: pageTitle,
       description: pageDescription,
       siteName: SITE_NAME,
-      images: [
-        {
-          url: OG_IMAGE_URL,
-          width: 1200,
-          height: 630,
-          alt: OG_IMAGE_ALT,
-          type: ogImageMimeType(OG_IMAGE_URL),
-        },
-      ],
+      ...(hasDedicatedOgImage
+        ? {}
+        : {
+            images: [
+              {
+                url: OG_IMAGE_URL,
+                width: 1200,
+                height: 630,
+                alt: OG_IMAGE_ALT,
+                type: ogImageMimeType(OG_IMAGE_URL),
+              },
+            ],
+          }),
     },
     twitter: {
       card: 'summary_large_image',
       title: pageTitle,
       description: pageDescription,
-      images: [{ url: OG_IMAGE_URL, alt: OG_IMAGE_ALT }],
+      ...(hasDedicatedOgImage
+        ? {}
+        : { images: [{ url: OG_IMAGE_URL, alt: OG_IMAGE_ALT }] }),
     },
     robots: noIndex ? { index: false, follow: false } : undefined,
   }

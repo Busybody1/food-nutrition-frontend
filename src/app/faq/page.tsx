@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
-import { FaqSection } from '@/components/marketing/faq-section'
-import { FAQ_JSON_LD } from '@/lib/faq-data'
+import { FaqList } from '@/components/marketing/faq-section'
+import { ALL_FAQ_ITEMS, FAQ_GROUPS, buildFaqPageJsonLd } from '@/lib/faq-data'
 import { JsonLdScript } from '@/components/seo/structured-data'
 import { MarketingImageHero } from '@/components/marketing/marketing-image-hero'
 import { buildPublicPageMetadata } from '@/lib/build-public-metadata'
@@ -20,8 +20,19 @@ export default function FaqPage() {
         </p>
       </MarketingImageHero>
       <FaqSeoIntro />
-      <FaqSection showIntro={false} />
-      <JsonLdScript id="faq-page-jsonld" data={FAQ_JSON_LD} />
+      <section className="section-pad pt-8 md:pt-10 -mt-1" id="faq" aria-label="Frequently asked questions">
+        <div className="container-narrow space-y-10">
+          {FAQ_GROUPS.map((group) => (
+            <div key={group.id} id={group.id}>
+              <h2 className="font-display text-2xl md:text-3xl text-ink mb-5 text-center">
+                {group.title}
+              </h2>
+              <FaqList items={group.items} openFirst={group.id === 'general'} />
+            </div>
+          ))}
+        </div>
+      </section>
+      <JsonLdScript id="faq-page-jsonld" data={buildFaqPageJsonLd(ALL_FAQ_ITEMS)} />
     </div>
   )
 }

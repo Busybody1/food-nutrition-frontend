@@ -26,6 +26,25 @@ export type BlogDiscoverySite = {
   blogPostUrl: (slug: string) => string
 }
 
+export type DiscoveryCatalogEntry = {
+  url: string
+  title: string
+  summary: string
+}
+
+/** Registry-derived page catalog so llms.txt lists every public surface without drift. */
+export type DiscoveryCatalog = {
+  docs: DiscoveryCatalogEntry[]
+  guides: DiscoveryCatalogEntry[]
+  capabilities: DiscoveryCatalogEntry[]
+  solutions: DiscoveryCatalogEntry[]
+  comparisons: DiscoveryCatalogEntry[]
+}
+
+function catalogLines(entries: DiscoveryCatalogEntry[]): string {
+  return entries.map((e) => `- ${e.url} — ${e.title}: ${e.summary}`).join('\n')
+}
+
 function escapeXml(value: string): string {
   return value
     .replace(/&/g, '&amp;')
@@ -137,7 +156,8 @@ function buildPricingTableRows(plans?: BlogDiscoveryPricingPlan[]): string {
 export function buildLlmsTxtFromInput(
   posts: BlogDiscoveryPost[],
   site: BlogDiscoverySite,
-  pricingPlans?: BlogDiscoveryPricingPlan[]
+  pricingPlans?: BlogDiscoveryPricingPlan[],
+  catalog?: DiscoveryCatalog
 ): string {
   const blogLines =
     posts.length > 0
@@ -199,8 +219,10 @@ Notes:
 - Or: Authorization: Bearer <jwt>
 
 ## Documentation
-${site.siteUrl}/docs
-
+Hub: ${site.siteUrl}/docs
+Full plain-text docs for LLMs: ${site.siteUrl}/llms-full.txt
+${catalog ? `\n### API reference pages\n${catalogLines(catalog.docs)}\n\n### Integration guides\n${catalogLines(catalog.guides)}\n` : ''}
+${catalog ? `## Product pages\n${catalogLines(catalog.capabilities)}\n\n## Solutions\n${catalogLines(catalog.solutions)}\n\n## Nutrition API comparisons\n${catalogLines(catalog.comparisons)}\n` : ''}
 ## Blog (developer guides)
 Index: ${site.blogUrl}
 RSS: ${site.feedUrl}
@@ -218,6 +240,9 @@ Machine-readable blog content for integrations, search, and AI crawlers:
 - ${site.siteUrl}/pricing — API plans, quotas, and enterprise
 - ${site.siteUrl}/blog — developer guides on calorie APIs, nutrition data, and integrations
 - ${site.siteUrl}/faq — authentication, search, commercial use, serving data
+- ${site.siteUrl}/solutions — use cases: fitness, meal planning, healthcare, grocery, wellness
+- ${site.siteUrl}/compare — honest nutrition API comparisons (Nutritionix, Edamam, USDA, Spoonacular)
+- ${site.siteUrl}/playground — try endpoints live without an API key
 - ${site.siteUrl}/about — mission and platform overview
 - ${site.siteUrl}/contact — support and sales
 - ${site.siteUrl}/api-status — service health

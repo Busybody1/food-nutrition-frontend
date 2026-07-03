@@ -1,63 +1,31 @@
-'use client'
-
-import { useState, useEffect } from 'react'
+import type { Metadata } from 'next'
 import Link from 'next/link'
+import { ArrowRight, AlertCircle, Database, FlaskConical, Key, Zap } from 'lucide-react'
 import { SITE_NAME, FOOD_DATABASE_SIZE_LABEL } from '@/lib/site'
+import { API_CONFIG } from '@/lib/config/api'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import {
-  BookOpen,
-  Menu,
-  X,
-  ChevronRight,
-  Search,
-  AlertCircle,
-  ArrowRight,
-  Key,
-  Zap,
-  Database,
-  FlaskConical,
-} from 'lucide-react'
-import { DocsCodeBlock } from '@/components/docs/docs-code-block'
 import { MarketingImageHero } from '@/components/marketing/marketing-image-hero'
-import { BARCODE_LOOKUP_EXAMPLE_JSON, BARCODE_LOOKUP_FIELDS } from '@/lib/docs/barcode-lookup'
-import { fetchPublicPlans } from '@/lib/pricing/fetch-plans'
-import {
-  formatPlanPrice,
-  formatQuota,
-  formatRateLimit,
-  getPlanCardHighlights,
-  type PricingPlan,
-} from '@/lib/pricing/plan-display'
+import { buildPublicPageMetadata } from '@/lib/build-public-metadata'
+import { PublicPageSchema } from '@/components/seo/public-page-schema'
+import { DocsSeoContent } from '@/components/seo/public-page-seo-content'
+import { StructuredData } from '@/components/seo/structured-data'
+import { DocsShell } from '@/components/docs/docs-shell'
+import { DocsCodeBlock } from '@/components/docs/docs-code-block'
+import { DocsLanguageTabs } from '@/components/docs/docs-language-tabs'
+import { DOCS_SECTIONS, docsSectionPath } from '@/lib/docs/registry'
+import { GUIDES, guidePath } from '@/lib/docs/guides-data'
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '') || 'http://localhost:8000'
+export const metadata: Metadata = buildPublicPageMetadata('/docs')
+
+const API_BASE = API_CONFIG.baseURL.replace(/\/$/, '')
 const SEARCH_URL = `${API_BASE}/api/v1/search/foods`
 
-export default function DocsPage() {
-  const [copiedCode, setCopiedCode] = useState<string | null>(null)
-  const [selectedLanguage, setSelectedLanguage] = useState('curl')
-  const [sidebarOpen, setSidebarOpen] = useState(false)
-  const [searchQuery, setSearchQuery] = useState('')
-  const [pricingPlans, setPricingPlans] = useState<PricingPlan[]>([])
-
-  useEffect(() => {
-    fetchPublicPlans()
-      .then((plans) => setPricingPlans(plans.filter((p) => p.name.toLowerCase() !== 'custom')))
-      .catch(() => setPricingPlans([]))
-  }, [])
-
-  const copyToClipboard = (code: string, id: string) => {
-    navigator.clipboard.writeText(code)
-    setCopiedCode(id)
-    setTimeout(() => setCopiedCode(null), 2000)
-  }
-
-  const codeExamples = {
-    curl: `curl "${SEARCH_URL}?q=apple" \\
+const FIRST_REQUEST_EXAMPLES: Record<string, string> = {
+  curl: `curl "${SEARCH_URL}?q=apple" \\
   -H "X-API-Key: your_api_key_here"`,
 
-    javascript: `const response = await fetch('${SEARCH_URL}?q=apple', {
+  javascript: `const response = await fetch('${SEARCH_URL}?q=apple', {
   headers: {
     'X-API-Key': 'your_api_key_here',
     'Content-Type': 'application/json'
@@ -67,7 +35,7 @@ export default function DocsPage() {
 const data = await response.json();
 console.log(data);`,
 
-    python: `import requests
+  python: `import requests
 
 url = "${SEARCH_URL}"
 headers = {
@@ -80,7 +48,7 @@ response = requests.get(url, headers=headers, params=params)
 data = response.json()
 print(data)`,
 
-    php: `<?php
+  php: `<?php
 $url = '${SEARCH_URL}?q=apple';
 $headers = [
     'X-API-Key: your_api_key_here',
@@ -97,140 +65,26 @@ curl_close($ch);
 
 $data = json_decode($response, true);
 print_r($data);
-?>`
-  }
+?>`,
+}
 
-  const navGroups = [
-    {
-      title: 'Getting Started',
-      icon: BookOpen,
-      items: [
-        { name: 'Introduction', href: '#introduction' },
-        { name: 'Create Account', href: '#create-account' },
-        { name: 'Choose Plan', href: '#choose-plan' },
-        { name: 'Get API Key', href: '#get-api-key' },
-        { name: 'First Request', href: '#first-request' },
-        { name: 'API Playground', href: '/playground' },
-      ],
-    },
-    {
-      title: 'Core Resources',
-      icon: Database,
-      items: [
-        { name: 'Search Foods', href: '#search' },
-        { name: 'Barcode Lookup', href: '#barcode-lookup' },
-        { name: 'Food Details', href: '#food-details' },
-        { name: 'Nutrients', href: '#nutrients' },
-        { name: 'Brands', href: '#brands' },
-        { name: 'Categories', href: '#categories' },
-      ],
-    },
-    {
-      title: 'Advanced',
-      icon: Zap,
-      items: [
-        { name: 'API Keys', href: '#api-keys' },
-        { name: 'Rate Limits', href: '#rate-limits' },
-        { name: 'Error Handling', href: '#error-handling' },
-      ],
-    },
-  ]
+/** Legacy /docs#anchor ids → new sub-route cards, so old deep links still land nearby. */
+const SECTION_CARD_IDS: Record<string, string> = {
+  'food-search': 'search',
+  'barcode-lookup': 'barcode-lookup',
+  'food-details': 'food-details',
+  'reference-data': 'nutrients',
+  'rate-limits': 'rate-limits',
+  errors: 'error-handling',
+  authentication: 'api-keys',
+}
 
-  const query = searchQuery.trim().toLowerCase()
-  const filteredNavGroups = navGroups
-    .map((group) => ({
-      ...group,
-      items: group.items.filter((item) => item.name.toLowerCase().includes(query)),
-    }))
-    .filter((group) => group.items.length > 0)
-
-  const onThisPageItems = navGroups.flatMap((group) => group.items)
-
-  useEffect(() => {
-    if (!sidebarOpen) return
-    const prev = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setSidebarOpen(false)
-    }
-    window.addEventListener('keydown', onKeyDown)
-    return () => {
-      document.body.style.overflow = prev
-      window.removeEventListener('keydown', onKeyDown)
-    }
-  }, [sidebarOpen])
-
-  const renderNav = (onNavigate?: () => void) => (
-    <nav className="space-y-6" aria-label="Documentation">
-      {filteredNavGroups.map((group) => {
-        const Icon = group.icon
-        return (
-          <div key={group.title}>
-            <div className="flex items-center gap-2 mb-2">
-              <Icon className="h-4 w-4 text-ink-dim shrink-0" aria-hidden />
-              <p className="text-xs font-semibold uppercase tracking-wider text-ink-dim">
-                {group.title}
-              </p>
-            </div>
-            <ul className="space-y-0.5 border-l border-surface-border pl-3 ml-1">
-              {group.items.map((item) => (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    onClick={onNavigate}
-                    className="docs-nav-link"
-                  >
-                    <span className="min-w-0">{item.name}</span>
-                    <ChevronRight className="docs-nav-chevron lg:hidden" aria-hidden />
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )
-      })}
-    </nav>
-  )
-
-  const searchFoodsCurl = `curl "${API_BASE}/api/v1/search/foods?q=apple" \\
-  -H "X-API-Key: your_api_key_here"`
-
-  const foodDetailsCurl = `curl "${API_BASE}/api/v1/foods/12345" \\
-  -H "X-API-Key: your_api_key_here"`
-
-  const nutrientsCurl = `curl "${API_BASE}/api/v1/foods/nutrients/" \\
-  -H "X-API-Key: your_api_key_here" \\
-  -G -d "limit=50" -d "skip=0"`
-
-  const brandsCurl = `curl "${API_BASE}/api/v1/foods/brands/" \\
-  -H "X-API-Key: your_api_key_here" \\
-  -G -d "limit=100" -d "skip=0"`
-
-  const categoriesCurl = `curl "${API_BASE}/api/v1/foods/categories/" \\
-  -H "X-API-Key: your_api_key_here" \\
-  -G -d "limit=50" -d "skip=0"`
-
-  const barcodeLookupCurl = `curl "${API_BASE}/api/v1/search/barcode/3017620422003" \\
-  -H "X-API-Key: your_api_key_here"`
-
-  const responseExample = `{
-  "foods": [
-    {
-      "id": 12345,
-      "name": "Apple, raw",
-      "brand": "Generic",
-      "calories": 52,
-      "protein": 0.3,
-      "carbs": 13.8,
-      "fat": 0.2
-    }
-  ],
-  "total": 1,
-  "page": 1
-}`
-
+export default function DocsPage() {
   return (
     <div className="marketing-page docs-page min-h-screen">
+      <PublicPageSchema path="/docs" pageName="Documentation" />
+      <StructuredData type="api" />
+
       <MarketingImageHero compact centered waveTone="white">
         <p className="marketing-hero-badge mb-4 inline-flex">Documentation</p>
         <h1 className="font-display text-4xl md:text-5xl text-ink mb-4 text-balance">
@@ -244,515 +98,182 @@ print_r($data);
         </p>
       </MarketingImageHero>
 
-      <div className="docs-layout bg-white -mt-1">
-        {!sidebarOpen && (
-          <button
-            type="button"
-            onClick={() => setSidebarOpen(true)}
-            className="docs-sidebar-fab"
-            aria-label="Open docs menu"
-          >
-            <Menu className="w-5 h-5" aria-hidden />
-          </button>
-        )}
-
-        {sidebarOpen && (
-          <button
-            type="button"
-            className="docs-sidebar-backdrop"
-            aria-label="Close docs menu"
-            onClick={() => setSidebarOpen(false)}
-          />
-        )}
-
-        <aside
-          className={`docs-sidebar shrink-0 ${sidebarOpen ? 'docs-sidebar--open' : ''}`}
-          aria-label="Documentation navigation"
-        >
-          <div className="docs-sidebar__header">
-            <div className="min-w-0">
-              <p className="text-xs font-semibold uppercase tracking-wider text-brand-strong">
-                {SITE_NAME}
-              </p>
-              <p className="text-sm font-semibold text-ink truncate">Documentation</p>
+      <DocsShell>
+        <section id="introduction" className="mb-12 scroll-mt-[calc(var(--site-header-offset)+1rem)]">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8 max-w-3xl">
+            <div className="flex items-center gap-2 rounded-brand border border-surface-border px-4 py-3 text-sm text-ink-muted">
+              <Key className="h-4 w-4 text-brand shrink-0" />
+              API key auth
             </div>
-            <button
-              type="button"
-              className="docs-sidebar__close"
-              onClick={() => setSidebarOpen(false)}
-              aria-label="Close docs menu"
-            >
-              <X className="h-5 w-5" aria-hidden />
-            </button>
+            <div className="flex items-center gap-2 rounded-brand border border-surface-border px-4 py-3 text-sm text-ink-muted">
+              <Zap className="h-4 w-4 text-brand shrink-0" />
+              REST + JSON
+            </div>
+            <div className="flex items-center gap-2 rounded-brand border border-surface-border px-4 py-3 text-sm text-ink-muted">
+              <Database className="h-4 w-4 text-brand shrink-0" />
+              Food database
+            </div>
           </div>
 
-          <div className="docs-sidebar__scroll">
-            <label className="relative block mb-6">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-ink-dim" />
-              <input
-                type="search"
-                placeholder="Search docs..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full h-10 pl-9 pr-3 text-sm rounded-brand border border-surface-border bg-white text-ink placeholder:text-ink-dim focus:outline-none focus:ring-2 focus:ring-brand/30"
-              />
-            </label>
-            {renderNav(() => setSidebarOpen(false))}
-          </div>
-        </aside>
-
-        <main className="docs-main">
-          <section id="introduction" className="mb-12 scroll-mt-[calc(var(--site-header-offset)+1rem)]">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8 max-w-3xl">
-              <div className="flex items-center gap-2 rounded-brand border border-surface-border px-4 py-3 text-sm text-ink-muted">
-                <Key className="h-4 w-4 text-brand shrink-0" />
-                API key auth
-              </div>
-              <div className="flex items-center gap-2 rounded-brand border border-surface-border px-4 py-3 text-sm text-ink-muted">
-                <Zap className="h-4 w-4 text-brand shrink-0" />
-                REST + JSON
-              </div>
-              <div className="flex items-center gap-2 rounded-brand border border-surface-border px-4 py-3 text-sm text-ink-muted">
-                <Database className="h-4 w-4 text-brand shrink-0" />
-                Food database
-              </div>
-            </div>
-
-            <div className="marketing-callout mb-8">
-              <div className="flex items-start gap-3">
-                <AlertCircle className="w-5 h-5 text-brand-strong mt-0.5 shrink-0" />
-                <div>
-                  <h3 className="text-lg font-semibold text-ink mb-2">Quick start</h3>
-                  <p className="text-ink-muted mb-4 leading-relaxed">
-                    Get started in minutes with our comprehensive food database API.
-                    Create an account, choose a plan, get your API key, and start making requests.
-                  </p>
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    <Badge variant="secondary" className="gap-1">
-                      <Database className="w-3 h-3" />
-                      {FOOD_DATABASE_SIZE_LABEL}
-                    </Badge>
-                    <Badge variant="secondary" className="gap-1">
-                      <Zap className="w-3 h-3" />
-                      Real-time data
-                    </Badge>
-                    <Badge variant="secondary" className="gap-1">
-                      <Key className="w-3 h-3" />
-                      Easy integration
-                    </Badge>
-                  </div>
-                  <Button variant="outline" asChild>
-                    <Link href="/playground">
-                      <FlaskConical className="w-4 h-4 mr-2" />
-                      Open API playground
-                      <ArrowRight className="w-4 h-4 ml-2" />
-                    </Link>
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* Getting Started Steps */}
-          <section id="create-account" className="mb-12 scroll-mt-24">
-            <h2 className="text-2xl sm:text-3xl font-bold text-ink mb-6">Getting Started</h2>
-            
-            <div className="space-y-8">
-              {/* Step 1: Create Account */}
-              <div className="docs-step">
-                <div className="marketing-step-number shrink-0">
-                  1
-                </div>
-                <div className="docs-step__body">
-                  <h3 className="text-xl font-semibold text-ink mb-2">Create Your Account</h3>
-                  <p className="text-ink-muted mb-4">
-                    Sign up for a free account to access the Food API. No credit card required for the free tier.
-                  </p>
-                  <Button asChild>
-                    <Link href="/auth/register">
-                      Create Account <ArrowRight className="w-4 h-4 ml-2" />
-                    </Link>
-                  </Button>
-                </div>
-              </div>
-
-              {/* Step 2: Choose Plan */}
-              <div id="choose-plan" className="docs-step">
-                <div className="marketing-step-number shrink-0">
-                  2
-                </div>
-                <div className="docs-step__body">
-                  <h3 className="text-xl font-semibold text-ink mb-2">Choose Your Plan</h3>
-                  <p className="text-ink-muted mb-4">
-                    Select a plan that fits your needs. Start with our free plan or upgrade for more requests and features.
-                  </p>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {(pricingPlans.length > 0
-                      ? pricingPlans.slice(0, 3)
-                      : []
-                    ).map((plan) => {
-                      const { amount, suffix } = formatPlanPrice(plan)
-                      const highlights = getPlanCardHighlights(
-                        plan.name,
-                        plan.monthly_quota,
-                        plan.rate_limit_per_minute
-                      )
-                      return (
-                        <Card key={plan.id}>
-                          <CardHeader className="pb-2">
-                            <CardTitle className="text-lg">{plan.name}</CardTitle>
-                            <p className="text-2xl font-bold text-brand">
-                              {amount}
-                              {suffix && (
-                                <span className="text-sm font-normal text-gray-500">{suffix}</span>
-                              )}
-                            </p>
-                          </CardHeader>
-                          <CardContent>
-                            <ul className="text-sm text-ink-muted space-y-1">
-                              <li>• {formatQuota(plan.monthly_quota)} requests/month</li>
-                              <li>• {formatRateLimit(plan.rate_limit_per_minute)} (per account)</li>
-                              {highlights.slice(2, 4).map((item) => (
-                                <li key={item}>• {item}</li>
-                              ))}
-                            </ul>
-                          </CardContent>
-                        </Card>
-                      )
-                    })}
-                  </div>
-                  <Button variant="outline" asChild className="mt-4">
-                    <Link href="/pricing">View All Plans</Link>
-                  </Button>
-                </div>
-              </div>
-
-              {/* Step 3: Get API Key */}
-              <div id="get-api-key" className="docs-step">
-                <div className="marketing-step-number shrink-0">
-                  3
-                </div>
-                <div className="docs-step__body">
-                  <h3 className="text-xl font-semibold text-ink mb-2">Get Your API Key</h3>
-                  <p className="text-ink-muted mb-4">
-                    After subscribing to a plan, generate your API key from the dashboard. This key authenticates your requests.
-                  </p>
-                  <DocsCodeBlock
-                    title="Your API Key"
-                    code="sk_live_1234567890abcdef"
-                    copyId="api-key"
-                    copiedId={copiedCode}
-                    onCopy={copyToClipboard}
-                  />
-                  <Button asChild>
-                    <Link href="/dashboard">
-                      <Key className="w-4 h-4 mr-2" />
-                      Go to Dashboard
-                    </Link>
-                  </Button>
-                </div>
-              </div>
-
-              {/* Step 4: First Request */}
-              <div id="first-request" className="docs-step">
-                <div className="marketing-step-number shrink-0">
-                  4
-                </div>
-                <div className="docs-step__body">
-                  <h3 className="text-xl font-semibold text-ink mb-2">Make Your First Request</h3>
-                  <p className="text-ink-muted mb-4">
-                    Test your API key with a simple search request. Replace the API key with your actual key.
-                  </p>
-
-                  <div className="docs-lang-tabs">
-                    {Object.keys(codeExamples).map((lang) => (
-                      <Button
-                        key={lang}
-                        variant={selectedLanguage === lang ? 'default' : 'outline'}
-                        size="sm"
-                        onClick={() => setSelectedLanguage(lang)}
-                        className="capitalize"
-                      >
-                        {lang}
-                      </Button>
-                    ))}
-                  </div>
-
-                  <DocsCodeBlock
-                    title='Search for "apple"'
-                    code={codeExamples[selectedLanguage as keyof typeof codeExamples]}
-                    copyId="first-request"
-                    copiedId={copiedCode}
-                    onCopy={copyToClipboard}
-                  />
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* Food API Endpoints */}
-          <section id="search" className="mb-12 scroll-mt-24">
-            <h2 className="text-2xl sm:text-3xl font-bold text-ink mb-6">Food API Endpoints</h2>
-            <p className="text-ink-muted mb-8">
-              Our API provides comprehensive access to nutrition and food data through simple REST endpoints.
-            </p>
-
-            {/* Search Endpoint */}
-            <div className="mb-8">
-              <h3 className="text-xl font-semibold text-ink mb-4">Search Foods</h3>
-              <p className="text-ink-muted mb-4">
-                Search for foods by name, brand, or category. Returns a list of matching foods with basic nutrition information.
-              </p>
-              
-              <DocsCodeBlock title="GET /api/v1/search/foods" code={searchFoodsCurl} />
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 min-w-0">
-                <div className="min-w-0">
-                  <h4 className="font-semibold text-ink mb-2">Query Parameters</h4>
-                  <div className="space-y-0 text-sm">
-                    <div className="docs-param-row">
-                      <code className="text-blue-600 shrink-0">q</code>
-                      <span className="text-ink-muted">Search query (required)</span>
-                    </div>
-                    <div className="docs-param-row">
-                      <code className="text-blue-600 shrink-0">limit</code>
-                      <span className="text-ink-muted">Results per page (default: 20)</span>
-                    </div>
-                    <div className="docs-param-row">
-                      <code className="text-blue-600 shrink-0">skip</code>
-                      <span className="text-ink-muted">Skip results (default: 0)</span>
-                    </div>
-                    <div className="docs-param-row">
-                      <code className="text-blue-600 shrink-0">brand</code>
-                      <span className="text-ink-muted">Filter by brand</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="min-w-0">
-                  <h4 className="font-semibold text-ink mb-2">Response Example</h4>
-                  <div className="bg-gray-100 rounded-brand overflow-hidden max-w-full">
-                    <pre className="docs-response-pre">{responseExample}</pre>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Barcode Lookup */}
-            <div id="barcode-lookup" className="mb-8 scroll-mt-24">
-              <h3 className="text-xl font-semibold text-ink mb-4">Barcode Lookup</h3>
-              <p className="text-ink-muted mb-4">
-                Resolve a UPC or EAN barcode to product and nutrition data. The API checks the local
-                food database first. When no match is found, it falls back to{' '}
-                <a
-                  href="https://world.openfoodfacts.org"
-                  className="text-brand-strong hover:underline"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Open Food Facts
-                </a>{' '}
-                and returns only the fields needed for logging: product details, serving size, macros
-                per 100 g (and per serving when available), and micronutrients when present.
-              </p>
-
-              <DocsCodeBlock title="GET /api/v1/search/barcode/{upc}" code={barcodeLookupCurl} />
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 min-w-0 mt-6">
-                <div className="min-w-0">
-                  <h4 className="font-semibold text-ink mb-2">Path Parameters</h4>
-                  <div className="space-y-0 text-sm">
-                    <div className="docs-param-row">
-                      <code className="text-blue-600 shrink-0">upc</code>
-                      <span className="text-ink-muted">UPC/EAN barcode (digits; dashes are stripped)</span>
-                    </div>
-                  </div>
-
-                  <h4 className="font-semibold text-ink mb-2 mt-6">Response fields</h4>
-                  <div className="space-y-0 text-sm">
-                    {BARCODE_LOOKUP_FIELDS.map((item) => (
-                      <div key={item.field} className="docs-param-row">
-                        <code className="text-blue-600 shrink-0">{item.field}</code>
-                        <span className="text-ink-muted">{item.description}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  <p className="text-sm text-ink-muted mt-4">
-                    Open Food Facts raw payloads include thousands of metadata fields; this endpoint
-                    strips that down to logging-ready product and nutrition data.
-                  </p>
-                </div>
-                <div className="min-w-0">
-                  <h4 className="font-semibold text-ink mb-2">Response Example (Nutella)</h4>
-                  <div className="bg-gray-100 rounded-brand overflow-hidden max-w-full">
-                    <pre className="docs-response-pre">{BARCODE_LOOKUP_EXAMPLE_JSON}</pre>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Food Details Endpoint */}
-            <div id="food-details" className="mb-8 scroll-mt-24">
-              <h3 className="text-xl font-semibold text-ink mb-4">Food Details</h3>
-              <p className="text-ink-muted mb-4">
-                Get detailed nutritional information for a specific food item by its ID.
-              </p>
-              
-              <DocsCodeBlock title="GET /api/v1/foods/{id}" code={foodDetailsCurl} />
-            </div>
-
-            {/* Nutrients Endpoint */}
-            <div id="nutrients" className="mb-8 scroll-mt-24">
-              <h3 className="text-xl font-semibold text-ink mb-4">Nutrients</h3>
-              <p className="text-ink-muted mb-4">
-                Access detailed nutrient information including vitamins, minerals, and macronutrients.
-              </p>
-              
-              <DocsCodeBlock title="GET /api/v1/foods/nutrients/" code={nutrientsCurl} />
-            </div>
-
-            {/* Brands Endpoint */}
-            <div id="brands" className="mb-8 scroll-mt-24">
-              <h3 className="text-xl font-semibold text-ink mb-4">Brands</h3>
-              <p className="text-ink-muted mb-4">
-                Retrieve brand information including company details, country of origin, and website links.
-              </p>
-              
-              <DocsCodeBlock title="GET /api/v1/foods/brands/" code={brandsCurl} />
-            </div>
-
-            {/* Categories Endpoint */}
-            <div id="categories" className="mb-8 scroll-mt-24">
-              <h3 className="text-xl font-semibold text-ink mb-4">Categories</h3>
-              <p className="text-ink-muted mb-4">
-                Access food categories and subcategories for better organization and filtering of food items.
-              </p>
-              
-              <DocsCodeBlock title="GET /api/v1/foods/categories/" code={categoriesCurl} />
-            </div>
-          </section>
-
-          {/* Authentication */}
-          <section id="api-keys" className="mb-12 scroll-mt-24">
-            <h2 className="text-2xl sm:text-3xl font-bold text-ink mb-6">Authentication</h2>
-            <p className="text-ink-muted mb-6">
-              All API requests require authentication using your API key. Include it in the request headers.
-            </p>
-
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mb-6">
-              <div className="flex items-start">
-                <AlertCircle className="w-5 h-5 text-yellow-600 mt-0.5 mr-3 flex-shrink-0" />
-                <div>
-                  <h3 className="text-lg font-semibold text-yellow-900 mb-2">Keep Your API Key Secure</h3>
-                  <p className="text-yellow-800">
-                    Never expose your API key in client-side code or public repositories. 
-                    Use environment variables or secure configuration management.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div id="rate-limits" className="scroll-mt-24">
-                <h3 className="text-xl font-semibold text-ink mb-4">Rate Limits &amp; abuse protection</h3>
-                <p className="text-sm text-ink-muted mb-4">
-                  Limits apply <strong>per account (user id)</strong>, not per IP — safe behind NAT and multi-tenant apps.
-                  See <Link href="/pricing" className="text-brand-strong hover:underline">pricing</Link> for monthly quotas.
+          <div className="marketing-callout mb-8">
+            <div className="flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 text-brand-strong mt-0.5 shrink-0" />
+              <div>
+                <h2 className="text-lg font-semibold text-ink mb-2">Quick start</h2>
+                <p className="text-ink-muted mb-4 leading-relaxed">
+                  Get started in minutes with our comprehensive food database API.
+                  Create an account, choose a plan, get your API key, and start making requests.
                 </p>
-                <div className="space-y-3 text-sm">
-                  <div className="flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-center p-3 bg-gray-50 rounded min-w-0">
-                    <span className="font-medium">Free</span>
-                    <Badge variant="outline" className="w-fit">10 req/min</Badge>
-                  </div>
-                  <div className="flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-center p-3 bg-gray-50 rounded min-w-0">
-                    <span className="font-medium">Basic</span>
-                    <Badge variant="outline" className="w-fit">200 req/min</Badge>
-                  </div>
-                  <div className="flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-center p-3 bg-gray-50 rounded min-w-0">
-                    <span className="font-medium">Core</span>
-                    <Badge variant="outline" className="w-fit">500 req/min</Badge>
-                  </div>
-                  <div className="flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-center p-3 bg-gray-50 rounded min-w-0">
-                    <span className="font-medium">Plus</span>
-                    <Badge variant="outline" className="w-fit shrink-0">5,000 req/min · caching</Badge>
-                  </div>
-                  <div className="flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-center p-3 bg-gray-50 rounded min-w-0">
-                    <span className="font-medium">Enterprise</span>
-                    <Badge variant="outline" className="w-fit">Custom (negotiated)</Badge>
-                  </div>
+                <div className="flex flex-wrap gap-2 mb-4">
+                  <Badge variant="secondary" className="gap-1">
+                    <Database className="w-3 h-3" />
+                    {FOOD_DATABASE_SIZE_LABEL}
+                  </Badge>
+                  <Badge variant="secondary" className="gap-1">
+                    <Zap className="w-3 h-3" />
+                    Real-time data
+                  </Badge>
+                  <Badge variant="secondary" className="gap-1">
+                    <Key className="w-3 h-3" />
+                    Easy integration
+                  </Badge>
                 </div>
-                <ul className="mt-4 text-sm text-ink-muted space-y-2 list-disc pl-5">
-                  <li>
-                    <strong>5% food coverage cap:</strong> each plan may access at most 5% of distinct foods in the database per calendar month (anti-scrape).
-                  </li>
-                  <li>
-                    <strong>Commercial use</strong> requires Plus or Enterprise. Send{' '}
-                    <code className="text-xs bg-gray-100 px-1 rounded">X-API-Usage-Type: commercial</code> only when applicable.
-                  </li>
-                  <li>
-                    Plus and Enterprise GET search/food responses may be cached for 5 minutes per account (Redis).
-                  </li>
-                  <li>HTTP <code className="text-xs">429</code> rate limit · <code className="text-xs">402</code> monthly quota · <code className="text-xs">403</code> commercial or food cap</li>
-                </ul>
-              </div>
-              <div id="error-handling" className="scroll-mt-24">
-                <h3 className="text-xl font-semibold text-ink mb-4">Error Handling</h3>
-                <div className="space-y-0 text-sm">
-                  <div className="docs-param-row">
-                    <code className="text-red-600 shrink-0">400</code>
-                    <span className="text-ink-muted">Bad Request</span>
-                  </div>
-                  <div className="docs-param-row">
-                    <code className="text-red-600 shrink-0">401</code>
-                    <span className="text-ink-muted">Unauthorized</span>
-                  </div>
-                  <div className="docs-param-row">
-                    <code className="text-red-600 shrink-0">429</code>
-                    <span className="text-ink-muted">Rate Limited</span>
-                  </div>
-                  <div className="docs-param-row">
-                    <code className="text-red-600 shrink-0">500</code>
-                    <span className="text-ink-muted">Server Error</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-
-          {/* Footer */}
-          <footer className="border-t border-gray-200 pt-8 mt-12">
-            <div className="text-center text-ink-muted">
-              <p className="mb-2">Need help? Contact our support team or check our FAQ.</p>
-              <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
-                <Link href="/contact" className="text-brand-strong hover:underline">Support</Link>
-                <Link href="/faq" className="text-brand-strong hover:underline">FAQ</Link>
-                <Link href="/api-status" className="text-brand-strong hover:underline">Status</Link>
-              </div>
-            </div>
-          </footer>
-        </main>
-
-        <aside className="hidden xl:block w-52 shrink-0 sticky top-[var(--site-header-offset)] z-20 h-[calc(100vh-var(--site-header-offset))] overflow-y-auto border-l border-surface-border/80 bg-white">
-          <div className="p-5">
-            <p className="text-xs font-semibold uppercase tracking-wider text-ink-dim mb-4">
-              On this page
-            </p>
-            <ul className="space-y-1">
-              {onThisPageItems.map((item) => (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    className="block text-sm text-ink-muted hover:text-brand py-1 leading-snug"
-                  >
-                    {item.name}
+                <Button variant="outline" asChild>
+                  <Link href="/playground">
+                    <FlaskConical className="w-4 h-4 mr-2" />
+                    Open API playground
+                    <ArrowRight className="w-4 h-4 ml-2" />
                   </Link>
-                </li>
-              ))}
-            </ul>
+                </Button>
+              </div>
+            </div>
           </div>
-        </aside>
-      </div>
+        </section>
+
+        <section id="create-account" className="mb-12 scroll-mt-24">
+          <h2 className="text-2xl sm:text-3xl font-bold text-ink mb-6">Getting Started</h2>
+
+          <div className="space-y-8">
+            <div className="docs-step">
+              <div className="marketing-step-number shrink-0">1</div>
+              <div className="docs-step__body">
+                <h3 className="text-xl font-semibold text-ink mb-2">Create Your Account</h3>
+                <p className="text-ink-muted mb-4">
+                  Sign up for a free account to access the Food API. No credit card required for the free tier.
+                </p>
+                <Button asChild>
+                  <Link href="/auth/register">
+                    Create Account <ArrowRight className="w-4 h-4 ml-2" />
+                  </Link>
+                </Button>
+              </div>
+            </div>
+
+            <div id="choose-plan" className="docs-step">
+              <div className="marketing-step-number shrink-0">2</div>
+              <div className="docs-step__body">
+                <h3 className="text-xl font-semibold text-ink mb-2">Choose Your Plan</h3>
+                <p className="text-ink-muted mb-4">
+                  Start on the free plan and upgrade as your request volume grows. Paid plans raise
+                  per-minute rate limits and monthly quotas — see{' '}
+                  <Link href="/docs/rate-limits" className="text-brand-strong hover:underline">
+                    rate limits &amp; quotas
+                  </Link>{' '}
+                  for how limits work.
+                </p>
+                <Button variant="outline" asChild>
+                  <Link href="/pricing">View All Plans</Link>
+                </Button>
+              </div>
+            </div>
+
+            <div id="get-api-key" className="docs-step">
+              <div className="marketing-step-number shrink-0">3</div>
+              <div className="docs-step__body">
+                <h3 className="text-xl font-semibold text-ink mb-2">Get Your API Key</h3>
+                <p className="text-ink-muted mb-4">
+                  After subscribing to a plan, generate your API key from the dashboard. This key
+                  authenticates your requests — see{' '}
+                  <Link href="/docs/authentication" className="text-brand-strong hover:underline">
+                    authentication
+                  </Link>{' '}
+                  for security best practices.
+                </p>
+                <DocsCodeBlock title="Your API Key" code="sk_live_1234567890abcdef" copyable />
+                <Button asChild className="mt-4">
+                  <Link href="/dashboard">
+                    <Key className="w-4 h-4 mr-2" />
+                    Go to Dashboard
+                  </Link>
+                </Button>
+              </div>
+            </div>
+
+            <div id="first-request" className="docs-step">
+              <div className="marketing-step-number shrink-0">4</div>
+              <div className="docs-step__body">
+                <h3 className="text-xl font-semibold text-ink mb-2">Make Your First Request</h3>
+                <p className="text-ink-muted mb-4">
+                  Test your API key with a simple search request. Replace the API key with your actual key.
+                </p>
+                <DocsLanguageTabs title='Search for "apple"' examples={FIRST_REQUEST_EXAMPLES} />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="search" className="mb-12 scroll-mt-24">
+          <h2 className="text-2xl sm:text-3xl font-bold text-ink mb-4">API Reference</h2>
+          <p className="text-ink-muted mb-8 max-w-3xl">
+            Every endpoint has a dedicated reference page with parameters, response examples, and
+            integration FAQs.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {DOCS_SECTIONS.map((section) => (
+              <Link
+                key={section.slug}
+                id={SECTION_CARD_IDS[section.slug]}
+                href={docsSectionPath(section.slug)}
+                className="group rounded-brand border border-surface-border p-5 hover:border-brand transition-colors scroll-mt-24"
+              >
+                <h3 className="text-lg font-semibold text-ink mb-1 group-hover:text-brand-strong">
+                  {section.title}
+                </h3>
+                <p className="text-sm text-ink-muted leading-relaxed">{section.summary}</p>
+                <span className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-brand-strong">
+                  Read reference <ArrowRight className="w-4 h-4" aria-hidden />
+                </span>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        <section id="guides" className="mb-12 scroll-mt-24">
+          <h2 className="text-2xl sm:text-3xl font-bold text-ink mb-4">Integration Guides</h2>
+          <p className="text-ink-muted mb-8 max-w-3xl">
+            Framework-specific walkthroughs with working code for common nutrition features.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {GUIDES.map((guide) => (
+              <Link
+                key={guide.slug}
+                href={guidePath(guide.slug)}
+                className="group rounded-brand border border-surface-border p-5 hover:border-brand transition-colors"
+              >
+                <p className="text-xs font-semibold uppercase tracking-wider text-brand-strong mb-1">
+                  {guide.framework}
+                </p>
+                <h3 className="text-lg font-semibold text-ink mb-1 group-hover:text-brand-strong">
+                  {guide.title}
+                </h3>
+                <p className="text-sm text-ink-muted leading-relaxed">{guide.summary}</p>
+              </Link>
+            ))}
+          </div>
+        </section>
+      </DocsShell>
+
+      <DocsSeoContent />
     </div>
   )
 }

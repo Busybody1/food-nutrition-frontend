@@ -11,8 +11,14 @@ import {
   buildLlmsTxtFromInput,
   type BlogDiscoveryPricingPlan,
   type BlogDiscoverySite,
+  type DiscoveryCatalog,
 } from '@/lib/blog-discovery-format'
 import { fetchPublicPlans } from '@/lib/pricing/fetch-plans'
+import { DOCS_SECTIONS, docsSectionPath } from '@/lib/docs/registry'
+import { GUIDES, guidePath } from '@/lib/docs/guides-data'
+import { CAPABILITY_PAGES, capabilityPath } from '@/lib/capability-pages-data'
+import { SOLUTION_PAGES, solutionPath } from '@/lib/solutions-data'
+import { COMPARISON_PAGES, comparisonPath } from '@/lib/comparisons-data'
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
@@ -48,8 +54,39 @@ async function loadPricingPlans(): Promise<BlogDiscoveryPricingPlan[] | undefine
   }
 }
 
+/** Registry-derived catalog of public pages, so llms.txt never drifts from real routes. */
+function discoveryCatalog(): DiscoveryCatalog {
+  return {
+    docs: DOCS_SECTIONS.map((s) => ({
+      url: absoluteUrl(docsSectionPath(s.slug)),
+      title: s.title,
+      summary: s.summary,
+    })),
+    guides: GUIDES.map((g) => ({
+      url: absoluteUrl(guidePath(g.slug)),
+      title: g.title,
+      summary: g.summary,
+    })),
+    capabilities: CAPABILITY_PAGES.map((p) => ({
+      url: absoluteUrl(capabilityPath(p.slug)),
+      title: p.h1,
+      summary: p.summary,
+    })),
+    solutions: SOLUTION_PAGES.map((p) => ({
+      url: absoluteUrl(solutionPath(p.slug)),
+      title: p.h1,
+      summary: p.summary,
+    })),
+    comparisons: COMPARISON_PAGES.map((p) => ({
+      url: absoluteUrl(comparisonPath(p.slug)),
+      title: `${SITE_NAME} vs ${p.competitor}`,
+      summary: p.summary,
+    })),
+  }
+}
+
 /** llms.txt body with a dynamic catalog of published blog posts. */
 export async function buildLlmsTxt(posts: BlogListItem[]): Promise<string> {
   const pricingPlans = await loadPricingPlans()
-  return buildLlmsTxtFromInput(posts, discoverySite(), pricingPlans)
+  return buildLlmsTxtFromInput(posts, discoverySite(), pricingPlans, discoveryCatalog())
 }

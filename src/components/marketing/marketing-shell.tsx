@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import type { LucideIcon } from 'lucide-react'
 import { cn } from '@/lib/utils/cn'
+import { TrackedCtaLink } from '@/components/analytics/tracked-cta-link'
 
 export const marketingCardClass =
   'bg-white border border-surface-border/80 rounded-brand text-ink shadow-glass hover:shadow-glass-lg transition-shadow duration-200'
@@ -81,13 +82,17 @@ export function MarketingCtaBand({
         <h2 className="font-display text-3xl md:text-4xl text-ink mb-4 text-balance">{title}</h2>
         <p className="text-ink-muted max-w-lg mx-auto mb-8 leading-relaxed">{description}</p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <Link href={primaryHref} prefetch={false} className="btn-brand">
+          <TrackedCtaLink href={primaryHref} eventLabel={primaryLabel} className="btn-brand">
             {primaryLabel}
-          </Link>
+          </TrackedCtaLink>
           {secondaryHref && secondaryLabel && (
-            <Link href={secondaryHref} prefetch={false} className="btn-brand-outline">
+            <TrackedCtaLink
+              href={secondaryHref}
+              eventLabel={secondaryLabel}
+              className="btn-brand-outline"
+            >
               {secondaryLabel}
-            </Link>
+            </TrackedCtaLink>
           )}
         </div>
       </div>

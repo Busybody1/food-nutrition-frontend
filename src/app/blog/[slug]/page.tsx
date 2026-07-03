@@ -11,6 +11,7 @@ import {
 import { OG_IMAGE_URL, FOOD_DATABASE_SIZE_LABEL } from '@/lib/site'
 import { MarkdownContent } from '@/components/blog/markdown-content'
 import { getBlogPost, getBlogSlugs } from '@/lib/api/blog'
+import { getRelatedLinksForText } from '@/lib/topic-clusters'
 
 export const revalidate = 300
 export const dynamicParams = true
@@ -55,6 +56,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     description: post.meta_description || post.excerpt || undefined,
     keywords: splitKeywords(post.keywords),
     path: `/blog/${post.slug}`,
+    hasDedicatedOgImage: true,
   })
 }
 
@@ -85,6 +87,7 @@ export default async function BlogArticlePage({ params }: PageProps) {
     { name: post.title, path },
   ])
   const faqJsonLd = post.faq.length ? buildFaqJsonLd(post.faq) : null
+  const relatedLinks = getRelatedLinksForText(`${post.title} ${post.keywords ?? ''}`)
 
   return (
     <div className="marketing-page">
@@ -133,6 +136,23 @@ export default async function BlogArticlePage({ params }: PageProps) {
               </div>
             </section>
           )}
+
+          <section className="mt-12 pt-8 border-t border-surface-border/70" aria-label="Related resources">
+            <h2 className="font-display text-2xl text-ink mb-5 tracking-tight">Related resources</h2>
+            <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {relatedLinks.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    prefetch={false}
+                    className="text-sm font-medium text-brand-strong hover:underline"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </section>
 
           <div className="marketing-callout mt-12">
             <h2 className="text-lg font-semibold text-ink mb-2">Start building with the Calorie API</h2>

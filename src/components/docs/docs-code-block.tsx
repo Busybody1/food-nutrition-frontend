@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { Check, Copy } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -9,6 +10,8 @@ type DocsCodeBlockProps = {
   copyId?: string
   copiedId?: string | null
   onCopy?: (code: string, id: string) => void
+  /** Show a self-managed copy button (no external state needed). */
+  copyable?: boolean
   className?: string
 }
 
@@ -18,25 +21,40 @@ export function DocsCodeBlock({
   copyId,
   copiedId,
   onCopy,
+  copyable = false,
   className = '',
 }: DocsCodeBlockProps) {
-  const showCopy = Boolean(copyId && onCopy)
+  const [selfCopied, setSelfCopied] = useState(false)
+  const externalCopy = Boolean(copyId && onCopy)
+  const showCopy = externalCopy || copyable
+
+  const copied = externalCopy ? copiedId === copyId : selfCopied
+
+  const handleCopy = () => {
+    if (externalCopy && copyId && onCopy) {
+      onCopy(code, copyId)
+      return
+    }
+    navigator.clipboard.writeText(code)
+    setSelfCopied(true)
+    setTimeout(() => setSelfCopied(false), 2000)
+  }
 
   return (
     <div className={`docs-code-panel ${className}`.trim()}>
       {(title || showCopy) && (
         <div className="docs-code-panel__header">
           {title ? <span className="docs-code-panel__title">{title}</span> : <span />}
-          {showCopy && copyId && onCopy && (
+          {showCopy && (
             <Button
               size="sm"
               variant="ghost"
               type="button"
-              onClick={() => onCopy(code, copyId)}
+              onClick={handleCopy}
               className="shrink-0 text-slate-300 hover:text-white h-8 w-8 p-0"
               aria-label="Copy code"
             >
-              {copiedId === copyId ? (
+              {copied ? (
                 <Check className="w-4 h-4" aria-hidden />
               ) : (
                 <Copy className="w-4 h-4" aria-hidden />

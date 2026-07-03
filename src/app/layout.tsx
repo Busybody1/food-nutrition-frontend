@@ -98,6 +98,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </ErrorBoundary>
         <StructuredData type="organization" />
         <StructuredData type="website" />
+        <StructuredData type="webapi" />
       </body>
     </html>
   )

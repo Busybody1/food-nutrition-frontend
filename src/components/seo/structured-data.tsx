@@ -1,8 +1,21 @@
 import { buildPricingProductJsonLd } from '@/lib/seo-jsonld'
-import { SITE_URL, SITE_NAME, SITE_DESCRIPTION, SUPPORT_EMAIL, absoluteUrl } from '@/lib/site'
+import {
+  SITE_URL,
+  SITE_NAME,
+  SITE_DESCRIPTION,
+  SUPPORT_EMAIL,
+  LEGAL_NAME,
+  ORG_SAMEAS,
+  ORG_FOUNDING_DATE,
+  ORGANIZATION_ID,
+  WEBSITE_ID,
+  SOFTWARE_ID,
+  WEBAPI_ID,
+  absoluteUrl,
+} from '@/lib/site'
 
 interface StructuredDataProps {
-  type: 'organization' | 'website' | 'api' | 'product'
+  type: 'organization' | 'website' | 'api' | 'webapi' | 'product'
   data?: Record<string, unknown>
 }
 
@@ -17,32 +30,47 @@ function getStructuredData(type: StructuredDataProps['type'], data?: Record<stri
       return {
         '@context': 'https://schema.org',
         '@type': 'Organization',
+        '@id': ORGANIZATION_ID,
         name: SITE_NAME,
+        legalName: LEGAL_NAME,
         url: SITE_URL,
         logo: absoluteUrl('/logos/busybody-logo.png'),
         description: SITE_DESCRIPTION,
         email: SUPPORT_EMAIL,
-        sameAs: [],
+        contactPoint: {
+          '@type': 'ContactPoint',
+          contactType: 'technical support',
+          email: SUPPORT_EMAIL,
+          url: absoluteUrl('/contact'),
+        },
+        ...(ORG_FOUNDING_DATE ? { foundingDate: ORG_FOUNDING_DATE } : {}),
+        ...(ORG_SAMEAS.length > 0 ? { sameAs: ORG_SAMEAS } : {}),
       }
 
     case 'website':
       return {
         '@context': 'https://schema.org',
         '@type': 'WebSite',
+        '@id': WEBSITE_ID,
         name: SITE_NAME,
         url: SITE_URL,
         description: SITE_DESCRIPTION,
+        publisher: { '@id': ORGANIZATION_ID },
       }
 
     case 'api':
       return {
         '@context': 'https://schema.org',
         '@type': 'SoftwareApplication',
+        '@id': SOFTWARE_ID,
         name: SITE_NAME,
         applicationCategory: 'DeveloperApplication',
         operatingSystem: 'Any',
         description: SITE_DESCRIPTION,
         url: SITE_URL,
+        provider: { '@id': ORGANIZATION_ID },
+        softwareHelp: absoluteUrl('/docs'),
+        termsOfService: absoluteUrl('/terms'),
         offers: {
           '@type': 'Offer',
           price: '0',
@@ -56,6 +84,25 @@ function getStructuredData(type: StructuredDataProps['type'], data?: Record<stri
           'REST JSON API',
           'API key authentication',
         ],
+      }
+
+    case 'webapi':
+      return {
+        '@context': 'https://schema.org',
+        '@type': 'WebAPI',
+        '@id': WEBAPI_ID,
+        name: `${SITE_NAME} REST API`,
+        description: SITE_DESCRIPTION,
+        url: SITE_URL,
+        documentation: absoluteUrl('/docs'),
+        termsOfService: absoluteUrl('/terms'),
+        provider: { '@id': ORGANIZATION_ID },
+        offers: {
+          '@type': 'Offer',
+          price: '0',
+          priceCurrency: 'USD',
+          description: 'Free developer tier with monthly API quota',
+        },
       }
 
     case 'product':

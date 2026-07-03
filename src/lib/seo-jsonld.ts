@@ -6,6 +6,9 @@ import {
   SITE_DESCRIPTION,
   SITE_NAME,
   SITE_URL,
+  ORGANIZATION_ID,
+  WEBSITE_ID,
+  WEBAPI_ID,
   absoluteUrl,
 } from '@/lib/site'
 import {
@@ -99,9 +102,43 @@ export function buildWebPageJsonLd({
     url: absoluteUrl(path),
     isPartOf: {
       '@type': 'WebSite',
+      '@id': WEBSITE_ID,
       name: SITE_NAME,
       url: SITE_URL,
     },
+  }
+}
+
+/** TechArticle JSON-LD for docs pages and framework guides. */
+export function buildTechArticleJsonLd({
+  headline,
+  description,
+  path,
+  dateModified,
+  proficiencyLevel = 'Beginner',
+  keywords,
+}: {
+  headline: string
+  description: string
+  path: string
+  /** ISO date (YYYY-MM-DD) — update when the article content materially changes. */
+  dateModified: string
+  proficiencyLevel?: 'Beginner' | 'Expert'
+  keywords?: string[]
+}) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'TechArticle',
+    headline,
+    description,
+    url: absoluteUrl(path),
+    dateModified,
+    proficiencyLevel,
+    ...(keywords?.length ? { keywords: keywords.join(', ') } : {}),
+    isPartOf: { '@type': 'WebSite', '@id': WEBSITE_ID },
+    about: { '@type': 'WebAPI', '@id': WEBAPI_ID },
+    author: { '@type': 'Organization', '@id': ORGANIZATION_ID, name: SITE_NAME },
+    publisher: { '@type': 'Organization', '@id': ORGANIZATION_ID, name: SITE_NAME },
   }
 }
 
