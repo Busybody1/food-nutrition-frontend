@@ -78,7 +78,7 @@ export default function AdminAnnouncementsPage() {
     <AdminPage>
       <AdminPageHeader
         title="Announcements"
-        description="Broadcast email to active users via Resend (same as BusyBody admin). Each send is logged in the audit trail."
+        description="Broadcast email to active users via Resend (same as the companion app admin). Each send is logged in the audit trail."
         actions={
           emailStatus ? (
             <Badge variant={emailStatus.resend_configured ? 'default' : 'secondary'}>
