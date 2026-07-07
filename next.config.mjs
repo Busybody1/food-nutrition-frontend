@@ -10,8 +10,39 @@ if (process.env.NEXT_PUBLIC_MEDIA_HOSTNAME) {
   });
 }
 
+/**
+ * RFC 8288 Link header advertising agent-discoverable resources from the
+ * homepage: the API catalog (RFC 9727), human docs, an LLM-friendly summary,
+ * and the sitemap. Relative URLs resolve against the request origin.
+ */
+const agentDiscoveryLink = [
+  '</.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"',
+  '</docs>; rel="service-doc"; type="text/html"',
+  '</llms.txt>; rel="describedby"; type="text/markdown"',
+  '</sitemap.xml>; rel="sitemap"; type="application/xml"',
+].join(', ');
+
+/**
+ * Indexable entry points that advertise the discovery links: the homepage and
+ * the per-product API landing pages. Deliberately excludes app/admin/auth
+ * routes, which are private and disallowed in robots.txt.
+ */
+const agentDiscoveryPaths = [
+  '/',
+  '/food-database-api',
+  '/nutrition-analysis-api',
+  '/barcode-nutrition-api',
+  '/meal-tracking-api',
+];
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  async headers() {
+    return agentDiscoveryPaths.map((source) => ({
+      source,
+      headers: [{ key: 'Link', value: agentDiscoveryLink }],
+    }));
+  },
   async redirects() {
     return [
       { source: '/signup', destination: '/auth/register', permanent: true },
