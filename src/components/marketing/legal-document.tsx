@@ -2,7 +2,6 @@ import Link from 'next/link'
 import { ReactNode } from 'react'
 import { cn } from '@/lib/utils/cn'
 import { MarketingHero } from './marketing-hero'
-import { Reveal } from './reveal'
 import { LegalToc } from './legal-toc'
 
 export type LegalBlock =
@@ -14,10 +13,6 @@ export type LegalSection = {
   title: string
   blocks: LegalBlock[]
 }
-
-/** Single source of truth for the disclaimer shown under every legal document. */
-export const LEGAL_DISCLAIMER =
-  'These documents are templates and do not constitute legal advice. Please consult a qualified attorney.'
 
 /**
  * Numbered sub-clauses ("2.1 Account Registration", "3.2 Attribution", ...)
@@ -128,7 +123,7 @@ export function LegalPageShell({
   effectiveDate,
   path,
   sections,
-  footerNote = LEGAL_DISCLAIMER,
+  footerNote,
   codeListLeads,
 }: {
   title: string
@@ -188,11 +183,9 @@ export function LegalPageShell({
               />
             </div>
             <div className="min-w-0">
-              <Reveal>
-                <article className="glass-panel card-hairline mx-auto w-full max-w-3xl p-6 md:p-10 lg:mx-0">
-                  <LegalDocumentBody sections={sections} codeListLeads={codeListLeads} />
-                </article>
-              </Reveal>
+              <article className="glass-panel card-hairline mx-auto w-full max-w-3xl p-6 md:p-10 lg:mx-0">
+                <LegalDocumentBody sections={sections} codeListLeads={codeListLeads} />
+              </article>
               <div className="mx-auto max-w-3xl lg:mx-0">
                 {footerNote && (
                   <p className="mt-6 text-center text-sm text-ink-muted leading-relaxed">
