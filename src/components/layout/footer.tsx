@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { SITE_NAME, SUPPORT_EMAIL, LOGO_ALT, absoluteUrl } from '@/lib/site'
+import { SITE_NAME, SUPPORT_EMAIL, LOGO_ALT } from '@/lib/site'
 import { CAPABILITY_PAGES, capabilityPath } from '@/lib/capability-pages-data'
 import { SOLUTION_PAGES, solutionPath } from '@/lib/solutions-data'
 
@@ -35,6 +35,7 @@ const legalLinks = [
   { href: '/privacy', label: 'Privacy' },
   { href: '/terms', label: 'Terms' },
   { href: '/cookies', label: 'Cookies' },
+  { href: '/commercial-license', label: 'Commercial License' },
   { href: '/contact', label: 'Contact' },
 ]
 
@@ -116,12 +117,6 @@ export function Footer() {
 
         <div className="mt-12 pt-8 border-t border-surface-border/60 flex flex-col sm:flex-row justify-between gap-3 text-xs text-ink-muted">
           <p>© {new Date().getFullYear()} BusyBody FIT LTD. All rights reserved.</p>
-          <a
-            href={absoluteUrl('/llms.txt')}
-            className="rounded-sm underline decoration-surface-border underline-offset-2 transition-colors duration-200 hover:text-brand-strong hover:decoration-brand-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2"
-          >
-            llms.txt
-          </a>
         </div>
       </div>
     </footer>

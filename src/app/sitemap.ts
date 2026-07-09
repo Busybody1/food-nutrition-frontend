@@ -29,6 +29,7 @@ const STATIC_PAGE_DATES: Record<string, string> = {
   '/privacy': '2026-07-03',
   '/terms': '2026-07-03',
   '/cookies': '2026-07-03',
+  '/commercial-license': '2026-07-09',
   '/api-status': '2026-07-03',
   '/changelog': '2026-07-03',
 }
@@ -58,6 +59,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: '/privacy', priority: 0.4, changeFrequency: 'yearly' },
     { path: '/terms', priority: 0.4, changeFrequency: 'yearly' },
     { path: '/cookies', priority: 0.3, changeFrequency: 'yearly' },
+    { path: '/commercial-license', priority: 0.4, changeFrequency: 'yearly' },
     { path: '/api-status', priority: 0.6, changeFrequency: 'daily' },
     { path: '/changelog', priority: 0.5, changeFrequency: 'weekly' },
   ]

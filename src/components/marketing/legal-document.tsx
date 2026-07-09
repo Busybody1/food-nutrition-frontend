@@ -113,6 +113,7 @@ const LEGAL_NAV = [
   { href: '/privacy', label: 'Privacy Policy' },
   { href: '/terms', label: 'Terms' },
   { href: '/cookies', label: 'Cookies' },
+  { href: '/commercial-license', label: 'Commercial License' },
 ] as const
 
 type LegalPath = (typeof LEGAL_NAV)[number]['href']
@@ -207,9 +208,13 @@ export function LegalPageShell({
                   <Link href="/terms" className={CROSS_LINK_CLASS}>
                     Terms
                   </Link>
-                  , and{' '}
+                  ,{' '}
                   <Link href="/cookies" className={CROSS_LINK_CLASS}>
                     Cookies
+                  </Link>
+                  , and{' '}
+                  <Link href="/commercial-license" className={CROSS_LINK_CLASS}>
+                    Commercial License
                   </Link>
                   .
                 </p>

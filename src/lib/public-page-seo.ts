@@ -14,6 +14,7 @@ export type PublicPagePath =
   | '/privacy'
   | '/terms'
   | '/cookies'
+  | '/commercial-license'
 
 export type PageSeoConfig = {
   title?: string
@@ -148,6 +149,18 @@ export const PUBLIC_PAGE_SEO: Record<PublicPagePath, PageSeoConfig> = {
     description:
       'Cookie and tracking technologies used on the Calorie API marketing site and developer dashboard.',
     keywords: ['cookie policy', 'website cookies', 'tracking disclosure'],
+  },
+  '/commercial-license': {
+    title: 'Commercial API License Agreement',
+    description:
+      'Commercial API License Agreement for the Calorie API: license grant, permitted use, restrictions, fees, and terms for commercial use on Plus plans and higher.',
+    keywords: [
+      'commercial API license',
+      'API license agreement',
+      'nutrition API commercial use',
+      'food API license',
+      'Plus plan license',
+    ],
   },
 }
 

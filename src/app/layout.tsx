@@ -84,6 +84,16 @@ export const metadata: Metadata = {
     ? { google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION }
     : undefined,
   category: 'technology',
+  alternates: {
+    // Machine-discoverable pointers for AI agents/crawlers. Rendered as
+    // <link rel="alternate" type="text/plain"> in <head> — not shown in the UI.
+    types: {
+      'text/plain': [
+        { url: '/llms.txt', title: 'llms.txt' },
+        { url: '/llms-full.txt', title: 'llms-full.txt' },
+      ],
+    },
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

@@ -93,18 +93,18 @@ export const termsSections: LegalSection[] = [
           'Academic or non-commercial research with attribution (Free, Basic, or Core)',
         ],
       },
-      { type: 'p', text: '3.2 Commercial Use Requires a Paid Plan' },
+      { type: 'p', text: '3.2 Commercial Use Requires a Plus Plan or Higher' },
       {
         type: 'p',
-        text: 'Any commercial use of the Services requires an active paid subscription on a plan that permits commercial use. "Commercial use" means any use of the API, or of data retrieved through it, that is intended for or directed toward commercial advantage or monetary compensation — including use in, or to support, any product, application, or service that is sold, licensed, monetized (whether through fees, advertising, sponsorship, or otherwise), or otherwise operated by or on behalf of a for-profit entity.',
+        text: 'Any commercial use of the Services requires an active subscription to the Plus plan or higher (currently the Plus and Enterprise plans). "Commercial use" means any use of the API, or of data retrieved through it, that is intended for or directed toward commercial advantage or monetary compensation — including use in, or to support, any product, application, or service that is sold, licensed, monetized (whether through fees, advertising, sponsorship, or otherwise), or otherwise operated by or on behalf of a for-profit entity.',
       },
       {
         type: 'p',
-        text: `Commercial production use is available only on the Plus and Enterprise plans. The Free, Basic, and Core plans are licensed for non-commercial use only — including evaluation, prototyping, testing, internal development, and academic or non-commercial research. You must not use the Free tier, or any non-commercial plan, to operate or support a live commercial product or service. Current plans and their commercial-use eligibility are listed on our pricing page at ${PRICING_URL}.`,
+        text: `Commercial production use is available only on the Plus plan and higher. The Free, Basic, and Core plans — including the paid Basic and Core plans — are licensed for non-commercial use only, such as evaluation, prototyping, testing, internal development, and academic or non-commercial research. You must not use any plan below Plus to operate or support a live commercial product or service. Current plans and their commercial-use eligibility are listed on our pricing page at ${PRICING_URL}.`,
       },
       {
         type: 'p',
-        text: 'Where your use is commercial, you must maintain a subscription to a plan that permits commercial use and identify such traffic by sending the header X-API-Usage-Type: commercial with your requests. Operating commercially on a free or non-commercial plan is a material breach of these Terms and may result in immediate suspension, back-billing at the applicable commercial rate, and/or termination of your access.',
+        text: 'Where your use is commercial, you must maintain a subscription to the Plus plan or higher and identify such traffic by sending the header X-API-Usage-Type: commercial with your requests. Operating commercially on a plan below Plus is a material breach of these Terms and may result in immediate suspension, back-billing at the applicable commercial rate, and/or termination of your access.',
       },
       { type: 'p', text: '3.3 Attribution' },
       {

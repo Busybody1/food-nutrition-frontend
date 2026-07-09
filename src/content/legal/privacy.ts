@@ -249,7 +249,7 @@ export const privacySections: LegalSection[] = [
     blocks: [
       {
         type: 'p',
-        text: 'Commercial use of the Food Database API requires an active paid subscription on a plan that permits commercial use (currently the Plus and Enterprise plans), as set out in Section 3 of our Terms and Conditions. The Free, Basic, and Core plans are licensed for non-commercial use only.',
+        text: 'Commercial use of the Food Database API requires an active subscription to the Plus plan or higher (currently the Plus and Enterprise plans), as set out in Section 3 of our Terms and Conditions. The Free, Basic, and Core plans — including the paid Basic and Core plans — are licensed for non-commercial use only.',
       },
       {
         type: 'p',
