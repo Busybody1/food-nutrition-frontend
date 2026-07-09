@@ -244,8 +244,22 @@ export const privacySections: LegalSection[] = [
     ],
   },
   {
+    id: 'commercial-use',
+    title: '11. Commercial Use and Paid Subscriptions',
+    blocks: [
+      {
+        type: 'p',
+        text: 'Commercial use of the Food Database API requires an active paid subscription on a plan that permits commercial use (currently the Plus and Enterprise plans), as set out in Section 3 of our Terms and Conditions. The Free, Basic, and Core plans are licensed for non-commercial use only.',
+      },
+      {
+        type: 'p',
+        text: 'Where you use the API commercially, we collect and process your billing, subscription, and usage-type information — including the X-API-Usage-Type indicator you send with your requests and your associated usage metrics — to verify plan eligibility, enforce commercial-use requirements, and bill for your use. For the full commercial-use licensing terms, please refer to our Terms and Conditions.',
+      },
+    ],
+  },
+  {
     id: 'changes',
-    title: '11. Changes to This Policy',
+    title: '12. Changes to This Policy',
     blocks: [
       {
         type: 'p',
@@ -255,7 +269,7 @@ export const privacySections: LegalSection[] = [
   },
   {
     id: 'contact',
-    title: '12. Contact Us',
+    title: '13. Contact Us',
     blocks: [
       {
         type: 'p',
