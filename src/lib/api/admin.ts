@@ -22,6 +22,11 @@ async function adminPatch<T>(path: string, data?: unknown): Promise<T> {
   return res.data
 }
 
+async function adminDelete<T>(path: string): Promise<T> {
+  const res = await apiClient.delete<T>(`${BASE}${path}`)
+  return res.data
+}
+
 export interface AdminUser {
   id: number
   email: string
@@ -183,6 +188,43 @@ export interface UserUsagePayload {
   daily: Array<{ date: string; requests: number; errors: number }>
   by_endpoint: Array<{ endpoint: string; requests: number; avg_response_time: number }>
   status_mix: Array<{ status_code: number; count: number }>
+}
+
+export interface SecurityHoldRow {
+  id: number
+  email?: string
+  plan_id?: number
+  security_hold_until: string
+  security_hold_reason?: string | null
+  security_hold_count?: number
+}
+
+export interface SecurityIncident {
+  id: number
+  user_id?: number
+  email?: string
+  api_key_id?: number | null
+  kind: 'volume_hourly' | 'volume_daily' | 'breadth_foods' | 'manual' | string
+  detail: {
+    reasons?: string[]
+    hourly_count?: number
+    distinct_foods_hour?: number
+    rate_limit_per_minute?: number
+    monthly_quota?: number | null
+    path?: string
+    reason?: string
+    by_admin?: number
+    [k: string]: unknown
+  }
+  requests_in_window?: number | null
+  distinct_foods?: number | null
+  ip_address?: string | null
+  user_agent?: string | null
+  action_taken: 'alert_only' | 'held' | string
+  resolved: boolean
+  resolved_by_user_id?: number | null
+  resolved_at?: string | null
+  created_at: string
 }
 
 export interface AdminBlogFaqItem {
@@ -393,6 +435,32 @@ class AdminAPI {
     limit?: number
   }): Promise<{ feedback: Array<Record<string, unknown>>; count: number }> {
     return adminGet('/feedback', params)
+  }
+
+  // --- Security holds & anomaly incidents ---
+
+  async getSecurityHolds(): Promise<{ holds: SecurityHoldRow[]; count: number }> {
+    return adminGet('/security/holds')
+  }
+
+  async getSecurityIncidents(params?: {
+    resolved?: boolean
+    limit?: number
+  }): Promise<{ incidents: SecurityIncident[]; count: number }> {
+    return adminGet('/security/incidents', params)
+  }
+
+  async placeSecurityHold(
+    userId: number,
+    data: { minutes: number; reason: string }
+  ): Promise<{ message: string; user_id: number; hold_until: string | null }> {
+    return adminPost(`/users/${userId}/security-hold`, data)
+  }
+
+  async releaseSecurityHold(
+    userId: number
+  ): Promise<{ message: string; user_id: number }> {
+    return adminDelete(`/users/${userId}/security-hold`)
   }
 
   async getSystemSettings(): Promise<SystemSettingRow[]> {

@@ -32,7 +32,10 @@
 
 @layer components {
   .marketing-page {
-    @apply bg-surface text-ink min-h-screen w-full max-w-[100vw] overflow-x-hidden;
+    /* overflow-x: clip (not hidden) prevents horizontal scroll WITHOUT forcing
+       overflow-y to `auto`, which would break position: sticky descendants
+       (e.g. the legal "on this page" rail). */
+    @apply bg-surface text-ink min-h-screen w-full max-w-[100vw] overflow-x-clip;
   }
 
   /* API docs — prevent horizontal page scroll; code scrolls inside panels */
@@ -561,7 +564,8 @@
   }
 
   .site-layout__main {
-    @apply flex-1 min-w-0 overflow-x-hidden;
+    /* clip (not hidden) so sticky descendants keep working — see .marketing-page. */
+    @apply flex-1 min-w-0 overflow-x-clip;
   }
 
   .site-header-shell {

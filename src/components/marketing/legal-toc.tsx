@@ -6,18 +6,11 @@ import { cn } from '@/lib/utils/cn'
 export type LegalTocItem = { id: string; title: string }
 
 /**
- * Sticky "on this page" rail for the legal documents (lg+ only).
- * Renders plain anchor links server-side (works without JS); a lightweight
- * IntersectionObserver scroll-spy highlights the section currently in the
- * reading band. Link text is the existing section titles, verbatim.
+ * Shared scroll-spy: returns the id of the section currently in the reading
+ * band (just below the floating header down to the upper half of the viewport,
+ * so long sections stay "active" while being read).
  */
-export function LegalToc({
-  items,
-  className,
-}: {
-  items: LegalTocItem[]
-  className?: string
-}) {
+export function useActiveSection(items: LegalTocItem[]): string {
   const [activeId, setActiveId] = useState<string>('')
 
   useEffect(() => {
@@ -36,13 +29,40 @@ export function LegalToc({
         const current = items.find((item) => inView.has(item.id))
         if (current) setActiveId(current.id)
       },
-      // Band just below the floating header down to the upper half of the
-      // viewport — long sections stay "active" while being read.
       { rootMargin: '-96px 0px -55% 0px' }
     )
     sections.forEach((section) => observer.observe(section))
     return () => observer.disconnect()
   }, [items])
+
+  return activeId
+}
+
+/** Smooth-scroll to a section (reduced-motion aware) and sync the URL hash. */
+export function smoothScrollToId(id: string): void {
+  const el = document.getElementById(id)
+  if (!el) return
+  const reduce =
+    typeof window.matchMedia === 'function' &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' })
+  if (typeof history !== 'undefined') history.replaceState(null, '', `#${id}`)
+}
+
+/**
+ * Sticky "on this page" rail for the legal documents (lg+ only).
+ * Renders plain anchor links server-side (works without JS); the scroll-spy
+ * hook highlights the section currently in the reading band, and clicks are
+ * upgraded to smooth scrolling. Link text is the section titles, verbatim.
+ */
+export function LegalToc({
+  items,
+  className,
+}: {
+  items: LegalTocItem[]
+  className?: string
+}) {
+  const activeId = useActiveSection(items)
 
   if (items.length === 0) return null
 
@@ -55,6 +75,10 @@ export function LegalToc({
             <li key={item.id}>
               <a
                 href={`#${item.id}`}
+                onClick={(e) => {
+                  e.preventDefault()
+                  smoothScrollToId(item.id)
+                }}
                 aria-current={active ? 'true' : undefined}
                 className={cn(
                   '-ml-px block cursor-pointer rounded-r border-l-2 py-1.5 pl-4 pr-2 text-sm leading-snug transition-colors duration-200',

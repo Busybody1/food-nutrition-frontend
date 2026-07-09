@@ -3,6 +3,8 @@ import { ReactNode } from 'react'
 import { cn } from '@/lib/utils/cn'
 import { MarketingHero } from './marketing-hero'
 import { LegalToc } from './legal-toc'
+import { LegalMobileNav } from './legal-mobile-nav'
+import { BackToTop } from './back-to-top'
 
 export type LegalBlock =
   | { type: 'p'; text: string }
@@ -216,6 +218,9 @@ export function LegalPageShell({
           </div>
         </div>
       </section>
+
+      <LegalMobileNav items={tocItems} />
+      <BackToTop />
     </div>
   )
 }

@@ -23,6 +23,7 @@ import {
   MessageSquareQuote,
   List,
   ChevronRight,
+  ShieldAlert,
 } from 'lucide-react'
 import { useAuth } from '@/lib/hooks/use-auth'
 import { useAdmin } from '@/lib/hooks/use-admin'
@@ -55,6 +56,7 @@ const NAV_SECTIONS = [
       { name: 'Announcements', href: '/admin/announcements', icon: Mail, permission: 'admin:settings:update' },
       { name: 'Blog', href: '/admin/blog', icon: FileText, permission: 'admin:settings:update' },
       { name: 'Testimonials', href: '/admin/testimonials', icon: MessageSquareQuote, permission: 'admin:settings:update' },
+      { name: 'Security', href: '/admin/security', icon: ShieldAlert, permission: 'admin:monitoring:view' },
       { name: 'Audit log', href: '/admin/audit', icon: FileSearch, permission: 'admin:monitoring:view' },
       { name: 'Settings', href: '/admin/settings', icon: Settings, permission: 'admin:settings:view' },
       { name: 'Monitoring', href: '/admin/monitoring', icon: Activity, permission: 'admin:monitoring:view' },
@@ -72,6 +74,7 @@ const PAGE_TITLES: Record<string, string> = {
   '/admin/announcements': 'Announcements',
   '/admin/blog': 'Blog',
   '/admin/testimonials': 'Testimonials',
+  '/admin/security': 'Security',
   '/admin/audit': 'Audit log',
   '/admin/settings': 'Settings',
   '/admin/monitoring': 'Monitoring',
