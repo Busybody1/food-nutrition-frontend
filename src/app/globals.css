@@ -5,7 +5,8 @@
 @layer base {
   :root {
     --brand: #0ac5d7;
-    --brand-strong: #0891a3;
+    /* Darkened from #0891a3 → #067a88 (keep in sync with tailwind brand.strong) for WCAG AA text contrast. */
+    --brand-strong: #067a88;
     --surface: #ffffff;
     --surface-elevated: #f8fafc;
     --surface-card: #ffffff;
@@ -622,8 +623,8 @@
   }
 
   .site-header-cta {
-    @apply inline-flex h-9 cursor-pointer items-center justify-center rounded-full bg-brand px-5 text-sm font-medium text-white
-      shadow-glow transition-all duration-200 hover:bg-brand-strong
+    @apply inline-flex h-9 cursor-pointer items-center justify-center rounded-full bg-brand px-5 text-sm font-medium text-ink
+      shadow-glow transition-all duration-200 hover:brightness-105
       focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2;
   }
 
@@ -683,7 +684,7 @@
   }
 
   .marketing-step-number {
-    @apply flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand text-white text-sm font-semibold;
+    @apply flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand text-ink text-sm font-semibold;
   }
 
   .marketing-faq-item {
@@ -728,8 +729,8 @@
   }
 
   .btn-brand {
-    @apply inline-flex items-center justify-center h-11 px-6 rounded-brand text-white font-semibold text-sm
-      bg-gradient-to-r from-brand to-brand-strong cursor-pointer
+    @apply inline-flex items-center justify-center h-11 px-6 rounded-brand text-ink font-semibold text-sm
+      bg-gradient-to-r from-brand to-primary-400 cursor-pointer
       shadow-glow transition-[box-shadow,transform,opacity,background-color] duration-200
       hover:shadow-glow-lg motion-safe:hover:-translate-y-px
       focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2;

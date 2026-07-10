@@ -42,7 +42,7 @@ export type DiscoveryCatalog = {
 }
 
 function catalogLines(entries: DiscoveryCatalogEntry[]): string {
-  return entries.map((e) => `- ${e.url} - ${e.title}: ${e.summary}`).join('\n')
+  return entries.map((e) => `- [${e.title}](${e.url}): ${e.summary}`).join('\n')
 }
 
 function escapeXml(value: string): string {
@@ -167,7 +167,7 @@ export function buildLlmsTxtFromInput(
             const summary = postSummary(post)
             const keywords = postKeywords(post)
             const keywordSuffix = keywords ? ` | keywords: ${keywords}` : ''
-            return `- ${url} - ${post.title}: ${summary}${keywordSuffix}`
+            return `- [${post.title}](${url}): ${summary}${keywordSuffix}`
           })
           .join('\n')
       : '- No articles published yet.'
@@ -205,7 +205,7 @@ Notes:
 
 ## Base URL
 - API: configured per deployment (see developer docs)
-- Website: ${site.siteUrl}
+- Website: [${site.siteName}](${site.siteUrl})
 
 ## Key endpoints
 - GET /api/v1/search/foods - search with q, limit, skip, match_mode (any|all), verified_only
@@ -219,41 +219,41 @@ Notes:
 - Or: Authorization: Bearer <jwt>
 
 ## Documentation
-Hub: ${site.siteUrl}/docs
-Full plain-text docs for LLMs: ${site.siteUrl}/llms-full.txt
+- [Documentation hub](${site.siteUrl}/docs): API reference, quickstart, and integration guides
+- [llms-full.txt](${site.siteUrl}/llms-full.txt): full plain-text documentation for LLMs
 ${catalog ? `\n### API reference pages\n${catalogLines(catalog.docs)}\n\n### Integration guides\n${catalogLines(catalog.guides)}\n` : ''}
 ${catalog ? `## Product pages\n${catalogLines(catalog.capabilities)}\n\n## Solutions\n${catalogLines(catalog.solutions)}\n\n## Nutrition API comparisons\n${catalogLines(catalog.comparisons)}\n` : ''}
 ## Blog (developer guides)
-Index: ${site.blogUrl}
-RSS: ${site.feedUrl}
+- [Blog index](${site.blogUrl}): developer guides on calorie APIs, nutrition data, and integrations
+- [RSS feed](${site.feedUrl}): subscribe to new articles
 
 ### Published articles
 ${blogLines}
 
 ## Blog JSON API
 Machine-readable blog content for integrations, search, and AI crawlers:
-- GET ${site.apiBaseUrl}/api/v1/public/blog - list published posts (title, excerpt, keywords, dates)
-- GET ${site.apiBaseUrl}/api/v1/public/blog/{slug} - full article markdown, FAQ, and metadata
-- GET ${site.apiBaseUrl}/api/v1/public/blog/slugs - slug list with updated_at for sitemaps
+- [Published posts JSON](${site.apiBaseUrl}/api/v1/public/blog): list published posts (title, excerpt, keywords, dates)
+- [Slug list JSON](${site.apiBaseUrl}/api/v1/public/blog/slugs): slug list with updated_at for sitemaps
+- GET ${site.apiBaseUrl}/api/v1/public/blog/{slug} - full article markdown, FAQ, and metadata (per-slug template)
 
 ## Public pages
-- ${site.siteUrl}/pricing - API plans, quotas, and enterprise
-- ${site.siteUrl}/blog - developer guides on calorie APIs, nutrition data, and integrations
-- ${site.siteUrl}/faq - authentication, search, commercial use, serving data
-- ${site.siteUrl}/solutions - use cases: fitness, meal planning, healthcare, grocery, wellness
-- ${site.siteUrl}/compare - honest nutrition API comparisons (Nutritionix, Edamam, USDA, Spoonacular)
-- ${site.siteUrl}/playground - try endpoints live without an API key
-- ${site.siteUrl}/about - mission and platform overview
-- ${site.siteUrl}/contact - support and sales
-- ${site.siteUrl}/api-status - service health
-- ${site.siteUrl}/changelog - release notes
+- [Pricing](${site.siteUrl}/pricing): API plans, quotas, and enterprise
+- [Blog](${site.siteUrl}/blog): developer guides on calorie APIs, nutrition data, and integrations
+- [FAQ](${site.siteUrl}/faq): authentication, search, commercial use, serving data
+- [Solutions](${site.siteUrl}/solutions): use cases - fitness, meal planning, healthcare, grocery, wellness
+- [Compare](${site.siteUrl}/compare): honest nutrition API comparisons (Nutritionix, Edamam, USDA, Spoonacular, FatSecret, Open Food Facts)
+- [Playground](${site.siteUrl}/playground): try endpoints live without an API key
+- [About](${site.siteUrl}/about): mission and platform overview
+- [Contact](${site.siteUrl}/contact): support and sales
+- [API status](${site.siteUrl}/api-status): service health
+- [Changelog](${site.siteUrl}/changelog): release notes
 
 ## Support
-${site.supportEmail}
+- [Email support](mailto:${site.supportEmail}): ${site.supportEmail}
 
 ## Legal
-${site.siteUrl}/privacy
-${site.siteUrl}/terms
-${site.siteUrl}/cookies
+- [Privacy Policy](${site.siteUrl}/privacy)
+- [Terms of Service](${site.siteUrl}/terms)
+- [Cookie Policy](${site.siteUrl}/cookies)
 `
 }
