@@ -52,9 +52,13 @@ const nextConfig = {
   },
   experimental: {
     optimizePackageImports: ['lucide-react'],
+    // Inline route CSS into the HTML so the initial render isn't blocked on
+    // separate stylesheet requests (Lighthouse "render-blocking requests").
+    inlineCss: true,
   },
   images: {
-    formats: ['image/webp'],
+    // AVIF first (smaller than WebP at equal quality), WebP fallback.
+    formats: ['image/avif', 'image/webp'],
     qualities: [70, 75],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920],
     minimumCacheTTL: 60 * 60 * 24 * 30,

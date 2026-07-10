@@ -25,7 +25,9 @@ The codebase + new-content portion of this plan is **implemented and verified** 
 |---|---|---|
 | Agentic Browsing → "llms.txt does not follow recommendations / no links" | Converted `/llms.txt` link lists from bare URLs to Markdown `[title](url)` (H1 was already present) | `src/lib/blog-discovery-format.ts` |
 | Accessibility → contrast fails on CTA button + hero badge | `brand.strong` darkened `#0891A3→#067A88` (badge/teal text 3.5→4.7:1); primary buttons keep the vibrant cyan but text flips white→ink using the existing `brand.foreground` token (2.1→7.9:1); button hovers/gradient flipped from darken→light so dark text stays legible | `tailwind.config.js`, `src/app/globals.css`, `src/components/ui/button.tsx` |
-| Reduce unused JS/CSS, long tasks | **Not actioned — "Unscored" diagnostics.** Biggest item is Google's own `gtag.js` (66 KiB), unshrinkable; already deferred via `lazyOnload` (E1). Low ROI. | — |
+| Render-blocking requests (~610 ms, LCP/FCP) | Enabled `experimental.inlineCss` (Next 16) — route CSS inlined into HTML; verified 0 `<link rel=stylesheet>` in built pages | `next.config.mjs` |
+| Improve image delivery (~24 KiB hero, LCP) | Added AVIF: `images.formats: ['image/avif','image/webp']` (sharp present for prod) | `next.config.mjs` |
+| Reduce unused JS + long tasks | **Not actioned — "Unscored" diagnostics.** Biggest item is Google's own `gtag.js` (66 KiB), unshrinkable; already deferred via `lazyOnload` (E1). Low ROI. | — |
 
 **Turned out already-done (verified in code, no work needed):** D1 (FAQPage JSON-LD) and D2 (BreadcrumbList JSON-LD) are already emitted on **every** compare/solution/capability page — see `comparison-page.tsx:27-39`, `solution-page.tsx:54-66`, `capability-page.tsx:58-69`. The earlier "only the homepage emits FAQPage" note was based on a stale read; disregard D1/D2 below.
 **D4 (OpenAPI):** backend is FastAPI → `/openapi.json` is already public, and a RapidAPI spec exists at `food-nutrition-backend/docs/rapidapi/openapi.rapidapi.json`. No code needed — apis.guru/RapidAPI submission is an ops step (§3A).
