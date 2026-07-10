@@ -48,6 +48,10 @@ const nextConfig = {
       { source: '/signup', destination: '/auth/register', permanent: true },
       { source: '/login', destination: '/auth/login', permanent: true },
       { source: '/register', destination: '/auth/register', permanent: true },
+      // Blog post slug renamed in the CMS (dropped the year): the old URL now
+      // 404s, so 301 it to preserve any indexed/linked equity. Audited
+      // seeded-vs-live slugs 2026-07-10 — this is the only rename.
+      { source: '/blog/free-food-apis-2025', destination: '/blog/free-food-apis', permanent: true },
     ];
   },
   experimental: {

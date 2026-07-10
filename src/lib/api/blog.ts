@@ -113,7 +113,29 @@ export async function getBlogPosts(limit = 100): Promise<BlogListItem[]> {
 }
 
 export async function getBlogPost(slug: string): Promise<BlogPost | null> {
-  return blogFetch<BlogPost>(`/${encodeURIComponent(slug)}`)
+  // Unlike the list helpers, a single-post fetch must distinguish a genuine
+  // 404 (post doesn't exist → null → the page renders notFound() + noindex,
+  // which is correct) from a transient upstream failure (5xx / network /
+  // timeout). Returning null on a transient error would emit noindex + 404 on
+  // a REAL published post and let a crawler cache that. So we throw on
+  // transient errors instead: Next then keeps serving the last-good ISR page
+  // rather than baking a bad noindex.
+  let res: Response
+  try {
+    res = await fetch(`${API_BASE_URL}/api/v1/public/blog/${encodeURIComponent(slug)}`, {
+      headers: { Accept: 'application/json' },
+      next: { revalidate: REVALIDATE_SECONDS, tags: ['blog'] },
+    })
+  } catch (err) {
+    throw new Error(
+      `getBlogPost("${slug}") network error: ${err instanceof Error ? err.message : String(err)}`
+    )
+  }
+  if (res.status === 404) return null
+  if (!res.ok) {
+    throw new Error(`getBlogPost("${slug}") upstream error: HTTP ${res.status}`)
+  }
+  return (await res.json()) as BlogPost
 }
 
 export async function getBlogSlugs(): Promise<BlogSlug[]> {
