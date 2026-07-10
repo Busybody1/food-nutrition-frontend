@@ -67,9 +67,13 @@ export function HomeSeoContent() {
               <SeoInlineLink href="/solutions/healthcare">
                 healthcare and dietitian software
               </SeoInlineLink>
-              , and{' '}
+              ,{' '}
               <SeoInlineLink href="/solutions/grocery-retail">
                 grocery and retail scanning
+              </SeoInlineLink>
+              , and{' '}
+              <SeoInlineLink href="/solutions/wellness-saas">
+                wellness and corporate-health platforms
               </SeoInlineLink>
               . Product-specific capabilities are covered on the{' '}
               <SeoInlineLink href="/barcode-nutrition-api">
@@ -108,11 +112,28 @@ export function HomeSeoContent() {
             <h3 className={subheadClass}>How {SITE_NAME} compares</h3>
             <p>
               Evaluating nutrition data providers? See how {SITE_NAME} stacks up against Nutritionix,
-              Edamam, USDA FoodData Central, and Spoonacular in our{' '}
+              Edamam, USDA FoodData Central, Spoonacular, FatSecret, and Open Food Facts in our{' '}
               <SeoInlineLink href="/compare">
                 nutrition API comparison
               </SeoInlineLink>
-              , including free-tier limits, barcode coverage, and migration notes.
+              , including authentication, free-tier limits, barcode coverage, and migration notes.
+            </p>
+
+            <h3 className={subheadClass}>From the developer blog</h3>
+            <p>
+              The{' '}
+              <SeoInlineLink href="/blog">
+                developer blog
+              </SeoInlineLink>{' '}
+              goes deeper on choosing and migrating between nutrition data providers. Start with the{' '}
+              <SeoInlineLink href="/blog/best-food-nutrition-apis-2025">
+                best food and nutrition APIs
+              </SeoInlineLink>{' '}
+              roundup, or the{' '}
+              <SeoInlineLink href="/blog/edamam-api-alternative">
+                Edamam API alternative
+              </SeoInlineLink>{' '}
+              walkthrough for a concrete migration example with code.
             </p>
 
             <p>

@@ -54,12 +54,15 @@ export const TOPIC_CLUSTERS: TopicCluster[] = [
   },
   {
     id: 'comparison',
-    triggers: ['nutritionix', 'edamam', 'usda', 'fooddata', 'spoonacular', 'alternative', 'compare', 'vs', 'best nutrition api', 'best food api'],
+    triggers: ['nutritionix', 'edamam', 'usda', 'fooddata', 'spoonacular', 'fatsecret', 'open food facts', 'openfoodfacts', 'alternative', 'compare', 'vs', 'best nutrition api', 'best food api'],
     links: [
       { label: 'Compare nutrition APIs', href: '/compare' },
       { label: 'Nutritionix alternative', href: '/compare/nutritionix-alternative' },
       { label: 'Edamam alternative', href: '/compare/edamam-alternative' },
       { label: 'USDA FoodData Central alternative', href: '/compare/usda-fooddata-central-alternative' },
+      { label: 'Spoonacular alternative', href: '/compare/spoonacular-alternative' },
+      { label: 'FatSecret alternative', href: '/compare/fatsecret-alternative' },
+      { label: 'Open Food Facts alternative', href: '/compare/open-food-facts-alternative' },
     ],
   },
 ]

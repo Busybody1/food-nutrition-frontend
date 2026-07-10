@@ -3,7 +3,6 @@ import {
   SITE_NAME,
   SITE_TITLE,
   SITE_DESCRIPTION,
-  SITE_KEYWORDS,
   OG_IMAGE_URL,
   OG_IMAGE_ALT,
   absoluteUrl,
@@ -13,6 +12,11 @@ import {
 type PageMetaInput = {
   title?: string
   description?: string
+  /**
+   * Accepted for call-site compatibility but intentionally NOT emitted:
+   * Google has ignored <meta name="keywords"> since 2009. Kept so the many
+   * callers that still pass keywords compile without churn.
+   */
   keywords?: string[]
   path: string
   noIndex?: boolean
@@ -26,7 +30,6 @@ type PageMetaInput = {
 export function buildPageMetadata({
   title,
   description,
-  keywords,
   path,
   noIndex = false,
   hasDedicatedOgImage = false,
@@ -39,14 +42,12 @@ export function buildPageMetadata({
         ? `${title} | ${SITE_NAME}`
         : SITE_TITLE
   const pageDescription = description ?? SITE_DESCRIPTION
-  const pageKeywords = keywords?.length ? keywords : [...SITE_KEYWORDS]
 
   const titleMeta: Metadata['title'] = { absolute: pageTitle }
 
   return {
     title: titleMeta,
     description: pageDescription,
-    keywords: pageKeywords,
     alternates: { canonical },
     openGraph: {
       type: 'website',

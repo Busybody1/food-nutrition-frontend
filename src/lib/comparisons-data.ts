@@ -363,6 +363,172 @@ export const COMPARISON_PAGES: ComparisonPage[] = [
     asOf: 'July 2026',
     dateModified: '2026-07-03',
   },
+  {
+    slug: 'fatsecret-alternative',
+    competitor: 'FatSecret',
+    h1: 'FatSecret Alternative',
+    metaTitle: 'FatSecret Alternative: Calorie API Comparison',
+    description:
+      'Comparing Calorie API and the FatSecret Platform API for developers: authentication, verified macro data, barcode lookup, pricing, and migration notes.',
+    keywords: [
+      'FatSecret alternative',
+      'FatSecret Platform API alternative',
+      'FatSecret vs Calorie API',
+      'nutrition API comparison',
+    ],
+    intro: [
+      'FatSecret is a long-established nutrition data provider with a large branded and user-generated food catalog, a Platform API accessed via OAuth request signing, and add-ons like image recognition and regional databases. Calorie API takes a leaner shape: a REST food database API with verified per-100g macros, plain API-key authentication, barcode lookup with fallback, and flat self-serve plans.',
+      'Both cover the core food-data job. The differences that usually decide it are auth model, how much you trust user-generated entries, and whether you want image recognition and regional catalogs or a simpler, predictable data layer.',
+    ],
+    matrix: [
+      {
+        dimension: 'Authentication',
+        us: 'Single X-API-Key header',
+        them: 'OAuth request signing (per-request signature)',
+      },
+      {
+        dimension: 'Primary focus',
+        us: `REST food search, barcode lookup, and verified per-100g macros (${FOOD_DATABASE_SIZE_LABEL})`,
+        them: 'Large branded + user-generated food database, image recognition, and regional catalogs',
+      },
+      {
+        dimension: 'Data quality control',
+        us: 'verified_only filter guarantees curated foods with complete macros',
+        them: 'Mix of branded and community-contributed entries; quality varies by source',
+      },
+      {
+        dimension: 'Barcode lookup',
+        us: 'UPC/EAN with automatic Open Food Facts fallback and one normalized response shape',
+        them: 'Barcode supported; coverage varies by region and plan',
+      },
+      {
+        dimension: 'Pricing & licensing',
+        us: 'Flat self-serve plans; commercial use is a plan feature plus a request header',
+        them: 'Freemium; free tier typically carries attribution requirements, paid tier for scale',
+      },
+    ],
+    whenTheyFit: [
+      'Image-based food recognition (photo to nutrition) is a feature you are shipping.',
+      'You need their established regional food databases for specific markets.',
+      'You are already invested in their OAuth flow and the migration cost outweighs the benefits.',
+    ],
+    whenWeFit: [
+      'You want simple API-key auth instead of OAuth request signing.',
+      'Verified, per-100g normalized macros matter for your calorie math.',
+      'You want flat, predictable pricing with no free-tier attribution requirements.',
+      'Barcode coverage that extends past a single catalog via Open Food Facts fallback is a core flow.',
+    ],
+    migration: [
+      'The biggest change is auth: swap OAuth request signing for a single X-API-Key header, which removes the signature step from every call. Point search at GET /api/v1/search/foods and map food fields to the per-100g macro baseline (calories, protein, carbs, fat). Barcode flows move to GET /api/v1/search/barcode/{upc}.',
+      'Food IDs differ between providers, so re-resolve stored foods by name or barcode once and cache our stable IDs going forward.',
+    ],
+    faqs: [
+      {
+        q: 'Is authentication simpler than the FatSecret Platform API?',
+        a: 'Yes. Calorie API uses a single X-API-Key header, so there is no OAuth request signing per call. If you already have OAuth signing working and rely on it elsewhere, that advantage is smaller.',
+      },
+      {
+        q: 'Does Calorie API offer image recognition like FatSecret?',
+        a: 'No. Calorie API is deliberately a food-data API: search, barcode lookup, and details. If photo-to-nutrition recognition is central to your product, FatSecret is genuinely strong there.',
+      },
+      {
+        q: 'Do I have to display attribution?',
+        a: 'Free tiers on some providers require visible attribution. Calorie API paid plans are built for commercial products without competitor-style attribution requirements, verify current terms on both before launch.',
+      },
+    ],
+    related: [
+      { label: 'Food database API overview', href: '/food-database-api' },
+      { label: 'Barcode nutrition API overview', href: '/barcode-nutrition-api' },
+      { label: 'All nutrition API comparisons', href: '/compare' },
+      { label: 'Nutritionix alternative', href: '/compare/nutritionix-alternative' },
+    ],
+    summary: 'Simple API-key REST access and verified macros vs FatSecret’s OAuth platform and image recognition.',
+    asOf: 'July 2026',
+    dateModified: '2026-07-10',
+  },
+  {
+    slug: 'open-food-facts-alternative',
+    competitor: 'Open Food Facts',
+    h1: 'Open Food Facts Alternative',
+    metaTitle: 'Open Food Facts Alternative: Calorie API Comparison',
+    description:
+      'When to use Calorie API vs the free Open Food Facts API: verified curation, normalized macros, ranked search, support, and how the two work together.',
+    keywords: [
+      'Open Food Facts alternative',
+      'Open Food Facts API alternative',
+      'Open Food Facts vs Calorie API',
+      'food database API comparison',
+    ],
+    intro: [
+      'Open Food Facts is a free, open, crowdsourced product database with excellent international barcode coverage, released under an open data license. It is a genuinely great resource, and Calorie API actually uses it as a barcode fallback, so a lot of that coverage already reaches you through our endpoints, returned in one normalized shape alongside our curated catalog.',
+      'This page is about the cases where a raw open dataset is not enough: when you need verified curation, guaranteed per-100g macros, ranked search and autocomplete, and a support channel behind a production dependency.',
+    ],
+    matrix: [
+      {
+        dimension: 'Cost & licensing',
+        us: 'Free developer tier; paid plans with standard commercial terms',
+        them: 'Free and open, but the open data license carries attribution / share-alike obligations',
+      },
+      {
+        dimension: 'Data model',
+        us: 'Verified curation with per-100g normalization on every food',
+        them: 'Crowdsourced; completeness and accuracy vary by product and contributor',
+      },
+      {
+        dimension: 'Coverage',
+        us: `Curated generic + branded foods (${FOOD_DATABASE_SIZE_LABEL}) with Open Food Facts fallback on barcodes`,
+        them: 'Very strong international packaged-goods / barcode coverage; thinner on generic and raw foods',
+      },
+      {
+        dimension: 'App-oriented endpoints',
+        us: 'Ranked multi-word search, autocomplete suggest, barcode-to-macros in one call',
+        them: 'Product lookup and search; no typeahead-optimized ranking layer',
+      },
+      {
+        dimension: 'Support & reliability',
+        us: 'Support, dashboards, and enterprise terms available',
+        them: 'Community project, no SLA or dedicated support channel',
+      },
+    ],
+    whenTheyFit: [
+      'Zero-budget projects comfortable handling crowdsourced data quality and the open-data license terms.',
+      'You want the raw dataset or bulk exports to process yourself.',
+      'You are contributing back to the open database and want to build directly on it.',
+    ],
+    whenWeFit: [
+      'You want verified, normalized per-100g macros rather than cleaning crowdsourced fields yourself.',
+      'Ranked search and autocomplete UX matter for your logging flow.',
+      'You want support and terms behind a production dependency.',
+      'You want Open Food Facts barcode coverage without managing data cleaning and license obligations yourself.',
+    ],
+    migration: [
+      'Because Calorie API already falls back to Open Food Facts for barcodes, migrating barcode flows is often a straight endpoint swap that adds curation on top of the coverage you already had. Point lookups at GET /api/v1/search/barcode/{upc} with an X-API-Key header, and map product fields to the per-100g macro baseline.',
+      'For search, replace direct product queries with GET /api/v1/search/foods to get ranked multi-word results and verified filtering that the open dataset does not provide on its own.',
+    ],
+    faqs: [
+      {
+        q: 'Does Calorie API use Open Food Facts data?',
+        a: 'Yes. When a scanned product is not in our curated catalog, barcode lookups fall back to Open Food Facts and return in the same normalized response shape, so you get that coverage plus our curation without integrating two APIs.',
+      },
+      {
+        q: 'Why pay when Open Food Facts is free?',
+        a: 'You are paying for the productized layer: verified curation, per-100g normalization, ranked search and autocomplete, support, and not having to handle data cleaning or the open-data license obligations yourself. If you do not need that layer, Open Food Facts is the right call.',
+      },
+      {
+        q: 'Can I use both together?',
+        a: 'Yes. A common pattern queries Open Food Facts directly for open-data needs while using Calorie API for the user-facing logging path where ranked search, verified macros, and support matter.',
+      },
+    ],
+    related: [
+      { label: 'Barcode nutrition API overview', href: '/barcode-nutrition-api' },
+      { label: 'Food database API overview', href: '/food-database-api' },
+      { label: 'All nutrition API comparisons', href: '/compare' },
+      { label: 'Spoonacular alternative', href: '/compare/spoonacular-alternative' },
+    ],
+    summary: 'Verified, normalized production layer (with OFF built in as fallback) vs the raw open crowdsourced dataset.',
+    asOf: 'July 2026',
+    dateModified: '2026-07-10',
+  },
 ]
 
 export function getComparisonPage(slug: string): ComparisonPage | undefined {
@@ -404,5 +570,17 @@ export const COMPARE_HUB_ROWS = [
     focus: 'Recipe content, meal-plan content, and product data (points pricing)',
     bestFor: 'Products that need ready-made recipe content',
     href: '/compare/spoonacular-alternative',
+  },
+  {
+    provider: 'FatSecret',
+    focus: 'Branded + user-generated food database with OAuth access and image recognition',
+    bestFor: 'Teams needing photo recognition or established regional catalogs',
+    href: '/compare/fatsecret-alternative',
+  },
+  {
+    provider: 'Open Food Facts',
+    focus: 'Free, open, crowdsourced product database (open data license)',
+    bestFor: 'Zero-budget projects and open-data / barcode use cases',
+    href: '/compare/open-food-facts-alternative',
   },
 ] as const
