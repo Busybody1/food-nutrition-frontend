@@ -4,11 +4,12 @@ import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { 
-  Activity, AlertTriangle, CheckCircle, Clock, 
-  Server, Database, Zap, TrendingUp, 
+import {
+  Activity, AlertTriangle, CheckCircle, Clock,
+  Server, Database, Zap, TrendingUp,
   TrendingDown, RefreshCw, Eye
 } from 'lucide-react'
+import { AdminPage, AdminPageHeader } from '@/components/admin/admin-ui'
 
 interface SystemStatus {
   overall: 'healthy' | 'warning' | 'critical'
@@ -174,7 +175,7 @@ export default function APIMonitoring() {
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
+      <AdminPage>
         <div className="animate-pulse">
           <div className="h-8 bg-gray-200 rounded w-1/4 mb-6"></div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -183,41 +184,38 @@ export default function APIMonitoring() {
             ))}
           </div>
         </div>
-      </div>
+      </AdminPage>
     )
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">API Monitoring</h1>
-          <p className="text-gray-600 mt-2">
-            Real-time system health, performance metrics, and alerts
-          </p>
-        </div>
-        <div className="flex items-center space-x-3">
-          <Button
-            variant={autoRefresh ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setAutoRefresh(!autoRefresh)}
-            className="flex items-center"
-          >
-            <RefreshCw className={`w-4 h-4 mr-2 ${autoRefresh ? 'animate-spin' : ''}`} />
-            Auto Refresh
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={loadMonitoringData}
-            className="flex items-center"
-          >
-            <RefreshCw className="w-4 h-4 mr-2" />
-            Refresh Now
-          </Button>
-        </div>
-      </div>
+    <AdminPage>
+      <AdminPageHeader
+        title="API Monitoring"
+        description="Real-time system health, performance metrics, and alerts"
+        actions={
+          <div className="flex items-center gap-2">
+            <Button
+              variant={autoRefresh ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setAutoRefresh(!autoRefresh)}
+              className="flex items-center"
+            >
+              <RefreshCw className={`w-4 h-4 mr-2 ${autoRefresh ? 'animate-spin' : ''}`} />
+              Auto Refresh
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={loadMonitoringData}
+              className="flex items-center"
+            >
+              <RefreshCw className="w-4 h-4 mr-2" />
+              Refresh Now
+            </Button>
+          </div>
+        }
+      />
 
       {/* System Overview */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -429,6 +427,6 @@ export default function APIMonitoring() {
           </CardContent>
         </Card>
       </div>
-    </div>
+    </AdminPage>
   )
 }
