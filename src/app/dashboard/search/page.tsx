@@ -22,10 +22,28 @@ interface FoodSearchHit {
   id?: number
   name?: string
   brand_name?: string
+  category_name?: string
+}
+
+function optionalNumber(value: string): number | undefined {
+  if (!value.trim()) return undefined
+  const n = Number(value)
+  return Number.isFinite(n) ? n : undefined
 }
 
 export default function SearchPlaygroundPage() {
   const [query, setQuery] = useState('chicken')
+  const [brand, setBrand] = useState('')
+  const [category, setCategory] = useState('')
+  const [brandId, setBrandId] = useState('')
+  const [categoryId, setCategoryId] = useState('')
+  const [nutrientId, setNutrientId] = useState('')
+  const [minAmount, setMinAmount] = useState('')
+  const [maxAmount, setMaxAmount] = useState('')
+  const [minCalories, setMinCalories] = useState('')
+  const [maxCalories, setMaxCalories] = useState('')
+  const [minProtein, setMinProtein] = useState('')
+  const [maxProtein, setMaxProtein] = useState('')
   const [results, setResults] = useState<FoodSearchHit[]>([])
   const [suggestions, setSuggestions] = useState<FoodSuggestItem[]>([])
   const [total, setTotal] = useState(0)
@@ -34,15 +52,40 @@ export default function SearchPlaygroundPage() {
   const [matchMode, setMatchMode] = useState<'any' | 'all'>('any')
   const [verifiedOnly, setVerifiedOnly] = useState(false)
 
+  const buildFilterParams = (): Record<string, unknown> => {
+    const params: Record<string, unknown> = {
+      limit: 20,
+      match_mode: matchMode,
+      verified_only: verifiedOnly,
+    }
+    if (brand.trim()) params.brand = brand.trim()
+    if (category.trim()) params.category = category.trim()
+    const bid = optionalNumber(brandId)
+    if (bid !== undefined) params.brand_id = bid
+    const cid = optionalNumber(categoryId)
+    if (cid !== undefined) params.category_id = cid
+    const nid = optionalNumber(nutrientId)
+    if (nid !== undefined) params.nutrient_id = nid
+    const minA = optionalNumber(minAmount)
+    if (minA !== undefined) params.min_amount = minA
+    const maxA = optionalNumber(maxAmount)
+    if (maxA !== undefined) params.max_amount = maxA
+    const minCal = optionalNumber(minCalories)
+    if (minCal !== undefined) params.min_calories = minCal
+    const maxCal = optionalNumber(maxCalories)
+    if (maxCal !== undefined) params.max_calories = maxCal
+    const minP = optionalNumber(minProtein)
+    if (minP !== undefined) params.min_protein = minP
+    const maxP = optionalNumber(maxProtein)
+    if (maxP !== undefined) params.max_protein = maxP
+    return params
+  }
+
   const runSearch = async () => {
     setLoading(true)
     setError(null)
     try {
-      const res = await api.search.foods(query, {
-        limit: 20,
-        match_mode: matchMode,
-        verified_only: verifiedOnly,
-      })
+      const res = await api.search.foods(query, buildFilterParams())
       setResults((res.data || []) as FoodSearchHit[])
       setTotal(res.total ?? 0)
     } catch (e) {
@@ -66,7 +109,7 @@ export default function SearchPlaygroundPage() {
     <DashboardPage>
       <DashboardPageHeader
         title="Search playground"
-        description="Test search and suggest endpoints with your API key or session."
+        description="Test search and suggest endpoints with brand, category, and nutrient filters."
       />
 
       <div className="dashboard-panel">
@@ -106,6 +149,51 @@ export default function SearchPlaygroundPage() {
               </Button>
             </div>
           </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            <div>
+              <label className="text-xs font-medium text-ink-muted uppercase tracking-wide mb-2 block">Brand</label>
+              <Input value={brand} onChange={(e) => setBrand(e.target.value)} placeholder="Brand name" />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-ink-muted uppercase tracking-wide mb-2 block">Category</label>
+              <Input value={category} onChange={(e) => setCategory(e.target.value)} placeholder="Category name" />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-ink-muted uppercase tracking-wide mb-2 block">Brand ID</label>
+              <Input value={brandId} onChange={(e) => setBrandId(e.target.value)} placeholder="e.g. 12" inputMode="numeric" />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-ink-muted uppercase tracking-wide mb-2 block">Category ID</label>
+              <Input value={categoryId} onChange={(e) => setCategoryId(e.target.value)} placeholder="e.g. 5" inputMode="numeric" />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-ink-muted uppercase tracking-wide mb-2 block">Nutrient ID</label>
+              <Input value={nutrientId} onChange={(e) => setNutrientId(e.target.value)} placeholder="e.g. 106899" inputMode="numeric" />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-ink-muted uppercase tracking-wide mb-2 block">Min amount</label>
+              <Input value={minAmount} onChange={(e) => setMinAmount(e.target.value)} placeholder="With nutrient ID" inputMode="decimal" />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-ink-muted uppercase tracking-wide mb-2 block">Max amount</label>
+              <Input value={maxAmount} onChange={(e) => setMaxAmount(e.target.value)} placeholder="With nutrient ID" inputMode="decimal" />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-ink-muted uppercase tracking-wide mb-2 block">Calories (min–max)</label>
+              <div className="flex gap-2">
+                <Input value={minCalories} onChange={(e) => setMinCalories(e.target.value)} placeholder="Min" inputMode="decimal" />
+                <Input value={maxCalories} onChange={(e) => setMaxCalories(e.target.value)} placeholder="Max" inputMode="decimal" />
+              </div>
+            </div>
+            <div>
+              <label className="text-xs font-medium text-ink-muted uppercase tracking-wide mb-2 block">Protein (min–max)</label>
+              <div className="flex gap-2">
+                <Input value={minProtein} onChange={(e) => setMinProtein(e.target.value)} placeholder="Min" inputMode="decimal" />
+                <Input value={maxProtein} onChange={(e) => setMaxProtein(e.target.value)} placeholder="Max" inputMode="decimal" />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -143,6 +231,9 @@ export default function SearchPlaygroundPage() {
                 <span className="text-sm font-medium text-ink">{item.name}</span>
                 {item.brand_name && (
                   <span className="text-sm text-ink-muted"> · {item.brand_name}</span>
+                )}
+                {item.category_name && (
+                  <span className="text-sm text-ink-muted"> · {item.category_name}</span>
                 )}
               </li>
             ))}

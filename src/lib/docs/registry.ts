@@ -30,7 +30,7 @@ export const DOCS_SECTIONS: DocsSectionMeta[] = [
     title: 'Food Search',
     metaTitle: 'Food Search API',
     description:
-      'Search the food database by name or brand: multi-word matching, match_mode, verified_only filters, pagination, and the autocomplete suggest endpoint.',
+      'Search the food database by name, brand, category, and nutrients: multi-word matching, match_mode, verified_only, pagination, catalog meta endpoints, and the autocomplete suggest endpoint.',
     keywords: [
       'food search API',
       'food database search',

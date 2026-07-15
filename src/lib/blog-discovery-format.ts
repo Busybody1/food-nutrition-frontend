@@ -208,11 +208,16 @@ Notes:
 - Website: [${site.siteName}](${site.siteUrl})
 
 ## Key endpoints
-- GET /api/v1/search/foods - search with q, limit, skip, match_mode (any|all), verified_only
+- GET /api/v1/search/foods - search with q, limit, skip, brand, brand_id, category, category_id, nutrient_id, min/max_amount, min/max macros, match_mode, verified_only
 - GET /api/v1/search/suggest - autocomplete (q, limit)
 - GET /api/v1/search/barcode/{upc} - barcode lookup
-- GET /api/v1/foods/{id} - food details with nutrients, serving metadata, and barcodes
-- GET /api/v1/public/search/foods - IP-rate-limited public demo (no API key)
+- GET /api/v1/foods/{id} - food details with nutrients, verified_portions, default_portion, and barcodes
+- Search hits include default_portion + portions_count; portion_nutrients/meal scale with default grams (nutrients/*_100g stay per 100g)
+- GET /api/v1/catalog/foods - food metadata only (no nutrients), higher limit (max 100), same filters
+- GET /api/v1/catalog/foods/{id} - food metadata by ID (no nutrients)
+- GET /api/v1/catalog/brands|categories|nutrients - taxonomy for filter pickers
+- GET /api/v1/public/search/foods - IP-rate-limited public demo with the same filters (limit max 10)
+- GET /api/v1/public/catalog/* - public meta/taxonomy demos (aligned filters, lower limits)
 
 ## Authentication
 - Header: X-API-Key: <your_key>

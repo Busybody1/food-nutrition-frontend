@@ -7,7 +7,7 @@ export const REFERENCE_DATA_CONTENT: DocsSectionContent = {
   blocks: [
     {
       kind: 'p',
-      text: 'Three paginated reference endpoints expose the taxonomy behind the food catalog. Use them to build filter dropdowns, map your own nutrition models, or validate data coming from search.',
+      text: 'Paginated reference endpoints expose the taxonomy behind the food catalog. Use them to build filter dropdowns, map your own nutrition models, or validate data coming from search. Authenticated catalog lists: /api/v1/catalog/brands|categories|nutrients. Public demos (no key, IP limited): /api/v1/public/catalog/brands|categories|nutrients.',
     },
     { kind: 'h2', text: 'Nutrients', id: 'nutrients' },
     {

@@ -308,6 +308,36 @@ export const api = {
       ),
   },
 
+  // Lightweight catalog (meta-only foods; authenticated; limit max 100)
+  catalog: {
+    foods: (params?: Record<string, unknown>) =>
+      apiClient.getPaginated('/api/v1/catalog/foods', params),
+    getFood: (id: number) =>
+      apiClient.get(`/api/v1/catalog/foods/${id}`),
+    brands: (params?: Record<string, unknown>) =>
+      apiClient.getPaginated('/api/v1/catalog/brands', params),
+    categories: (params?: Record<string, unknown>) =>
+      apiClient.getPaginated('/api/v1/catalog/categories', params),
+    nutrients: (params?: Record<string, unknown>) =>
+      apiClient.getPaginated('/api/v1/catalog/nutrients', params),
+  },
+
+  // Public demo (no API key; IP rate limited; same filters, lower limits)
+  public: {
+    searchFoods: (query: string, params?: Record<string, unknown>) =>
+      apiClient.getPaginated('/api/v1/public/search/foods', { q: query, ...params }),
+    catalogFoods: (params?: Record<string, unknown>) =>
+      apiClient.getPaginated('/api/v1/public/catalog/foods', params),
+    catalogFood: (id: number) =>
+      apiClient.get(`/api/v1/public/catalog/foods/${id}`),
+    brands: (params?: Record<string, unknown>) =>
+      apiClient.getPaginated('/api/v1/public/catalog/brands', params),
+    categories: (params?: Record<string, unknown>) =>
+      apiClient.getPaginated('/api/v1/public/catalog/categories', params),
+    nutrients: (params?: Record<string, unknown>) =>
+      apiClient.getPaginated('/api/v1/public/catalog/nutrients', params),
+  },
+
   // Food Data
   foods: {
     list: (params?: Record<string, unknown>) =>

@@ -25,17 +25,53 @@ export const PUBLIC_DEMO_RATE_LIMIT = {
   minIntervalSec: 1,
 } as const
 
+const FOOD_FILTER_PARAMS: PlaygroundParam[] = [
+  { key: 'brand', label: 'Brand name', placeholder: 'Organic' },
+  { key: 'brand_id', label: 'Brand ID', placeholder: '12', type: 'number' },
+  { key: 'category', label: 'Category name', placeholder: 'Dairy' },
+  { key: 'category_id', label: 'Category ID', placeholder: '5', type: 'number' },
+  { key: 'nutrient_id', label: 'Nutrient ID', placeholder: '106899', type: 'number' },
+  { key: 'min_amount', label: 'Min amount', placeholder: '10', type: 'number' },
+  { key: 'max_amount', label: 'Max amount', placeholder: '40', type: 'number' },
+  { key: 'min_calories', label: 'Min calories', placeholder: '50', type: 'number' },
+  { key: 'max_calories', label: 'Max calories', placeholder: '400', type: 'number' },
+  { key: 'min_protein', label: 'Min protein', placeholder: '5', type: 'number' },
+  { key: 'max_protein', label: 'Max protein', placeholder: '30', type: 'number' },
+]
+
 export const PLAYGROUND_ENDPOINTS: PlaygroundEndpoint[] = [
   {
     id: 'search-foods',
     name: 'Search foods',
-    description: 'Search the food catalog by name or brand. Returns macros per 100 g and nutrient arrays.',
+    description:
+      'Search foods with brand, category, and nutrient filters. Returns macros per 100 g and nutrient arrays.',
     method: 'GET',
     pathTemplate: '/search/foods',
     params: [
       { key: 'q', label: 'Query', placeholder: 'apple', defaultValue: 'apple', required: true },
       { key: 'limit', label: 'Limit', placeholder: '5', defaultValue: '5', type: 'number' },
       { key: 'skip', label: 'Skip', placeholder: '0', defaultValue: '0', type: 'number' },
+      {
+        key: 'match_mode',
+        label: 'Match mode',
+        type: 'select',
+        defaultValue: 'any',
+        options: [
+          { value: 'any', label: 'Any words' },
+          { value: 'all', label: 'All words' },
+        ],
+      },
+      {
+        key: 'verified_only',
+        label: 'Verified only',
+        type: 'select',
+        defaultValue: 'false',
+        options: [
+          { value: 'false', label: 'No' },
+          { value: 'true', label: 'Yes' },
+        ],
+      },
+      ...FOOD_FILTER_PARAMS,
     ],
   },
   {
@@ -74,6 +110,66 @@ export const PLAYGROUND_ENDPOINTS: PlaygroundEndpoint[] = [
     pathTemplate: '/foods/{food_id}',
     params: [
       { key: 'food_id', label: 'Food ID', placeholder: '12345', defaultValue: '12345', required: true, type: 'number' },
+    ],
+  },
+  {
+    id: 'catalog-foods',
+    name: 'Catalog foods (meta)',
+    description:
+      'List food metadata only (no nutrients). Same brand/category/nutrient filters; demo limit max 10.',
+    method: 'GET',
+    pathTemplate: '/catalog/foods',
+    params: [
+      { key: 'q', label: 'Query', placeholder: 'yogurt' },
+      { key: 'limit', label: 'Limit', placeholder: '5', defaultValue: '5', type: 'number' },
+      { key: 'skip', label: 'Skip', placeholder: '0', defaultValue: '0', type: 'number' },
+      ...FOOD_FILTER_PARAMS,
+    ],
+  },
+  {
+    id: 'catalog-food',
+    name: 'Catalog food by ID',
+    description: 'Single food metadata only (no nutrients or barcodes).',
+    method: 'GET',
+    pathTemplate: '/catalog/foods/{food_id}',
+    params: [
+      { key: 'food_id', label: 'Food ID', placeholder: '12345', defaultValue: '12345', required: true, type: 'number' },
+    ],
+  },
+  {
+    id: 'catalog-brands',
+    name: 'Catalog brands',
+    description: 'List brands for filter pickers.',
+    method: 'GET',
+    pathTemplate: '/catalog/brands',
+    params: [
+      { key: 'q', label: 'Search', placeholder: 'organic' },
+      { key: 'limit', label: 'Limit', placeholder: '20', defaultValue: '20', type: 'number' },
+      { key: 'skip', label: 'Skip', placeholder: '0', defaultValue: '0', type: 'number' },
+    ],
+  },
+  {
+    id: 'catalog-categories',
+    name: 'Catalog categories',
+    description: 'List categories for filter pickers.',
+    method: 'GET',
+    pathTemplate: '/catalog/categories',
+    params: [
+      { key: 'q', label: 'Search', placeholder: 'dairy' },
+      { key: 'limit', label: 'Limit', placeholder: '20', defaultValue: '20', type: 'number' },
+      { key: 'skip', label: 'Skip', placeholder: '0', defaultValue: '0', type: 'number' },
+    ],
+  },
+  {
+    id: 'catalog-nutrients',
+    name: 'Catalog nutrients',
+    description: 'List nutrient taxonomy (id, name, unit) for filter pickers.',
+    method: 'GET',
+    pathTemplate: '/catalog/nutrients',
+    params: [
+      { key: 'q', label: 'Search', placeholder: 'protein' },
+      { key: 'limit', label: 'Limit', placeholder: '20', defaultValue: '20', type: 'number' },
+      { key: 'skip', label: 'Skip', placeholder: '0', defaultValue: '0', type: 'number' },
     ],
   },
   {
@@ -130,7 +226,7 @@ export const PLAYGROUND_ENDPOINTS: PlaygroundEndpoint[] = [
     id: 'calc-portion',
     name: 'Portion scaler',
     description:
-      'Scale a food\'s nutrition to any gram amount. Enter a food ID from search and the number of grams to get exact macros for that serving.',
+      "Scale a food's nutrition to any gram amount. Enter a food ID from search and the number of grams to get exact macros for that serving.",
     method: 'GET',
     pathTemplate: '/calc/portion',
     params: [

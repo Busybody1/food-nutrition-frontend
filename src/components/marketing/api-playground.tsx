@@ -12,17 +12,22 @@ const INLINE_LINK_CLASS =
 
 export function ApiPlayground() {
   const [query, setQuery] = useState('apple');
+  const [category, setCategory] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<string>('');
+
+  const buildDemoUrl = () => {
+    const params = new URLSearchParams({ q: query, limit: '3' });
+    if (category.trim()) params.set('category', category.trim());
+    return `${API_BASE}/api/v1/public/search/foods?${params.toString()}`;
+  };
 
   const runDemo = async () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(
-        `${API_BASE}/api/v1/public/search/foods?q=${encodeURIComponent(query)}&limit=3`
-      );
+      const res = await fetch(buildDemoUrl());
       const text = await res.text();
       if (!res.ok) {
         let msg = 'Request failed';
@@ -54,23 +59,32 @@ export function ApiPlayground() {
       </div>
       <div className="p-6 space-y-4">
         <form
-          className="flex flex-col sm:flex-row gap-3"
+          className="flex flex-col gap-3"
           onSubmit={(e) => {
             e.preventDefault();
             runDemo();
           }}
         >
-          <input
-            className="flex-1 bg-white border border-surface-border rounded-brand px-4 py-2.5 text-sm text-ink placeholder:text-ink-dim focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand/40 transition-colors"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search foods…"
-            aria-label="Food search query"
-          />
-          <button type="submit" className="btn-brand shrink-0 min-w-[108px] gap-2 disabled:opacity-60 disabled:pointer-events-none" disabled={loading}>
-            {loading && <Loader2 className="h-4 w-4 animate-spin" aria-hidden />}
-            Try API
-          </button>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <input
+              className="flex-1 bg-white border border-surface-border rounded-brand px-4 py-2.5 text-sm text-ink placeholder:text-ink-dim focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand/40 transition-colors"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search foods…"
+              aria-label="Food search query"
+            />
+            <input
+              className="sm:w-40 bg-white border border-surface-border rounded-brand px-4 py-2.5 text-sm text-ink placeholder:text-ink-dim focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand/40 transition-colors"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              placeholder="Category filter"
+              aria-label="Category filter"
+            />
+            <button type="submit" className="btn-brand shrink-0 min-w-[108px] gap-2 disabled:opacity-60 disabled:pointer-events-none" disabled={loading}>
+              {loading && <Loader2 className="h-4 w-4 animate-spin" aria-hidden />}
+              Try API
+            </button>
+          </div>
         </form>
         {error && (
           <p role="alert" className="text-sm text-error-600">
@@ -83,10 +97,10 @@ export function ApiPlayground() {
           aria-busy={loading}
           className="marketing-code-window-body max-h-64 m-0 rounded-brand border border-surface-border bg-[#0f172a] text-slate-300 max-w-full overflow-x-auto whitespace-pre motion-safe:animate-[fade-rise_0.3s_ease-out]"
         >
-          <JsonSyntax code={result || `GET ${API_BASE}/api/v1/public/search/foods?q=${query}&limit=3`} />
+          <JsonSyntax code={result || `GET ${buildDemoUrl()}`} />
         </pre>
         <p className="text-sm text-ink-muted">
-          Try search, suggest, barcode, and food details in the{' '}
+          Try filters, catalog meta, suggest, barcode, and food details in the{' '}
           <Link href="/playground" className={INLINE_LINK_CLASS}>
             full API playground
           </Link>
