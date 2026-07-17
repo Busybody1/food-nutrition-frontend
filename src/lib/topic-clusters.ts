@@ -67,6 +67,56 @@ export const TOPIC_CLUSTERS: TopicCluster[] = [
   },
 ]
 
+/**
+ * Blog-to-blog crosslinks. Kept separate from TOPIC_CLUSTERS (which points at
+ * hub/product/docs pages) so every matching post surfaces a couple of sibling
+ * articles in its Related grid — this is how existing posts gain inbound links
+ * to newer ones without editing their stored body content.
+ */
+const BLOG_CROSSLINKS: TopicCluster[] = [
+  {
+    id: 'blog-competitors',
+    triggers: [
+      'nutritionix', 'spoonacular', 'edamam', 'calorieninjas', 'calorie ninja',
+      'usda', 'fooddata', 'fatsecret', 'alternative', 'pricing', 'compare', ' vs ',
+    ],
+    links: [
+      { label: 'Nutritionix API pricing explained', href: '/blog/nutritionix-api-pricing' },
+      { label: 'Spoonacular API pricing explained', href: '/blog/spoonacular-api-pricing' },
+      { label: 'CalorieNinjas API alternative', href: '/blog/calorieninjas-api-alternative' },
+      { label: 'USDA FoodData Central API guide', href: '/blog/usda-fooddata-central-api-guide' },
+    ],
+  },
+  {
+    id: 'blog-tracking',
+    triggers: ['track', 'logging', 'meal log', 'diary', 'calorie count', 'counter', 'fitness', 'workout'],
+    links: [
+      { label: 'Calorie tracking API guide', href: '/blog/calorie-tracking-api' },
+      { label: 'Build a calorie tracker app with a food API', href: '/blog/build-calorie-tracker-app-food-api' },
+    ],
+  },
+  {
+    id: 'blog-recipe',
+    triggers: [
+      'recipe', 'ingredient', 'protein', 'estimat', 'calculator', 'calculate',
+      'label', 'nutrition facts', 'food label', 'food.com',
+    ],
+    links: [
+      { label: 'Recipe nutrition from ingredients (Food.com alternative)', href: '/blog/food-com-recipe-nutrition-api' },
+      { label: 'Calorie estimation API', href: '/blog/calorie-estimation-api' },
+      { label: 'Nutrition facts & food label API', href: '/blog/nutrition-facts-label-api' },
+    ],
+  },
+  {
+    id: 'blog-image',
+    triggers: ['image', 'photo', 'scan', 'cal ai', 'caloriemama', 'calorie mama', 'detection', 'snap', 'recognition'],
+    links: [
+      { label: 'Food photo calorie APIs (Cal AI, CalorieMama)', href: '/blog/food-image-recognition-calorie-api' },
+      { label: 'Grocery app barcode nutrition lookup', href: '/blog/grocery-list-app-barcode-nutrition-lookup-api' },
+    ],
+  },
+]
+
 const DEFAULT_LINKS: RelatedLink[] = [
   { label: 'API documentation', href: '/docs' },
   { label: 'Food database API overview', href: '/food-database-api' },
@@ -74,24 +124,47 @@ const DEFAULT_LINKS: RelatedLink[] = [
   { label: 'Compare nutrition APIs', href: '/compare' },
 ]
 
-/** Match text (post keywords + title) to cluster links; falls back to core pages. */
-export function getRelatedLinksForText(text: string, max = 4): RelatedLink[] {
-  const haystack = text.toLowerCase()
-  const matched: RelatedLink[] = []
-  const seen = new Set<string>()
+type RelatedLinkOptions = {
+  /** Max hub/product/docs links (from TOPIC_CLUSTERS). */
+  maxHub?: number
+  /** Max sibling blog links (from BLOG_CROSSLINKS). */
+  maxBlog?: number
+  /** Href of the current page, excluded so a post never links to itself. */
+  excludeHref?: string
+}
 
-  for (const cluster of TOPIC_CLUSTERS) {
-    if (!cluster.triggers.some((t) => haystack.includes(t))) continue
-    for (const link of cluster.links) {
-      if (seen.has(link.href)) continue
-      seen.add(link.href)
-      matched.push(link)
-      if (matched.length >= max) return matched
+/**
+ * Match text (post keywords + title) to a blend of hub links and sibling blog
+ * links; falls back to core pages. Hub links come first (conversion-focused),
+ * followed by up to `maxBlog` related articles.
+ */
+export function getRelatedLinksForText(
+  text: string,
+  options: RelatedLinkOptions = {},
+): RelatedLink[] {
+  const { maxHub = 4, maxBlog = 2, excludeHref } = options
+  const haystack = text.toLowerCase()
+  const seen = new Set<string>()
+  if (excludeHref) seen.add(excludeHref)
+
+  const collect = (clusters: TopicCluster[], cap: number): RelatedLink[] => {
+    const out: RelatedLink[] = []
+    for (const cluster of clusters) {
+      if (!cluster.triggers.some((t) => haystack.includes(t))) continue
+      for (const link of cluster.links) {
+        if (seen.has(link.href)) continue
+        seen.add(link.href)
+        out.push(link)
+        if (out.length >= cap) return out
+      }
     }
+    return out
   }
 
+  const matched = [...collect(TOPIC_CLUSTERS, maxHub), ...collect(BLOG_CROSSLINKS, maxBlog)]
+
   for (const link of DEFAULT_LINKS) {
-    if (matched.length >= max) break
+    if (matched.length >= maxHub + maxBlog) break
     if (seen.has(link.href)) continue
     seen.add(link.href)
     matched.push(link)

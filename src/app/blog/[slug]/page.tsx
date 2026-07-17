@@ -91,7 +91,9 @@ export default async function BlogArticlePage({ params }: PageProps) {
     { name: post.title, path },
   ])
   const faqJsonLd = post.faq.length ? buildFaqJsonLd(post.faq) : null
-  const relatedLinks = getRelatedLinksForText(`${post.title} ${post.keywords ?? ''}`)
+  const relatedLinks = getRelatedLinksForText(`${post.title} ${post.keywords ?? ''}`, {
+    excludeHref: path,
+  })
 
   return (
     <div className="marketing-page">
