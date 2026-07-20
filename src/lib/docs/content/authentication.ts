@@ -35,7 +35,7 @@ export const AUTHENTICATION_CONTENT: DocsSectionContent = {
       rows: [
         { name: '401', description: 'Missing or invalid API key. Check the X-API-Key header.' },
         { name: '402', description: 'Monthly quota exceeded. Upgrade your plan or wait for the cycle reset.' },
-        { name: '403', description: 'Commercial use not allowed on your plan, or food coverage cap reached.' },
+        { name: '403', description: 'Commercial use not allowed on your plan, or an account protection limit was reached.' },
       ],
     },
     {

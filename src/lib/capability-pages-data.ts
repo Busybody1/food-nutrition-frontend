@@ -186,7 +186,7 @@ export const CAPABILITY_PAGES: CapabilityPage[] = [
       },
       {
         q: 'Can I download the database in bulk?',
-        a: 'No, a 5% monthly distinct-food coverage cap blocks catalog scraping. Query and cache the foods your users actually log; IDs are stable.',
+        a: 'No. Query and cache the foods your users actually log; IDs are stable. Bulk catalog scraping is not permitted.',
       },
       {
         q: 'How fresh is the data?',
@@ -368,7 +368,7 @@ export const CAPABILITY_PAGES: CapabilityPage[] = [
       },
       {
         q: 'How do I analyze large food sets without hitting limits?',
-        a: 'Paginate with skip/limit (up to 100 per page), cache by stable food ID between runs, and stay within the 5% monthly distinct-food coverage cap by analyzing the foods your product actually uses.',
+        a: 'Paginate with skip/limit (up to 100 per page), cache by stable food ID between runs, and analyze the foods your product actually uses rather than bulk-exporting the catalog.',
       },
     ],
     related: [

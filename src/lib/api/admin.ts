@@ -167,6 +167,17 @@ export interface AdminPlan {
   stripe_price_id?: string | null
   stripe_test_price_id?: string | null
   stripe_live_price_id?: string | null
+  card_highlights?: string[]
+  price_display_label?: string | null
+}
+
+export interface AdminPlanFeature {
+  id?: number
+  plan_id?: number
+  feature_name: string
+  feature_value?: boolean
+  feature_limit?: number | null
+  created_at?: string
 }
 
 export interface AuditEntry {
@@ -350,6 +361,7 @@ class AdminAPI {
   async patchPlan(
     planId: number,
     data: {
+      name?: string
       monthly_quota?: number
       rate_limit_per_minute?: number
       is_active?: boolean
@@ -358,13 +370,16 @@ class AdminAPI {
       stripe_price_id?: string | null
       stripe_test_price_id?: string | null
       stripe_live_price_id?: string | null
+      card_highlights?: string[]
+      price_display_label?: string | null
     }
   ): Promise<{ message: string }> {
     return adminPatch(`/plans/${planId}`, data)
   }
 
-  async getPlanFeatures(planId: number): Promise<{ features: Array<Record<string, unknown>> }> {
-    return adminGet(`/plans/${planId}/features`)
+  async getPlanFeatures(planId: number): Promise<{ features: AdminPlanFeature[] }> {
+    const res = await adminGet<{ features: AdminPlanFeature[] }>(`/plans/${planId}/features`)
+    return { features: res.features ?? [] }
   }
 
   async upsertPlanFeature(
@@ -372,6 +387,17 @@ class AdminAPI {
     data: { feature_name: string; feature_value?: boolean; feature_limit?: number | null }
   ): Promise<{ message: string }> {
     return adminPut(`/plans/${planId}/features`, data)
+  }
+
+  async bulkUpsertPlanFeatures(
+    planId: number,
+    features: Array<{ feature_name: string; feature_value?: boolean; feature_limit?: number | null }>
+  ): Promise<{ message: string; count: number }> {
+    return adminPut(`/plans/${planId}/features/bulk`, { features })
+  }
+
+  async deletePlanFeature(planId: number, featureName: string): Promise<{ message: string }> {
+    return adminDelete(`/plans/${planId}/features/${encodeURIComponent(featureName)}`)
   }
 
   async getSubscriptions(params?: Record<string, unknown>): Promise<{ subscriptions: Array<Record<string, unknown>> }> {

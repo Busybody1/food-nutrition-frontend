@@ -192,7 +192,7 @@ ${site.siteName} is a REST API for nutrition and food data. Developers use API k
 - Full nutrient payloads (calories, protein, carbs, fat, vitamins, minerals) suitable for diet tracking and wellness products.
 
 ## Pricing (USD, monthly)
-All plans include search, suggest, and barcode endpoints. Rate limits apply per account (user id), not per IP. Each plan may access at most 5% of distinct foods in the database per calendar month (anti-scrape). Live quotas: ${site.siteUrl}/pricing
+All plans include search, suggest, and barcode endpoints. Rate limits apply per account (user id), not per IP. Live quotas: ${site.siteUrl}/pricing
 
 | Plan | Price | API calls / month | Rate limit | Commercial use |
 |------|-------|-------------------|------------|----------------|
@@ -201,7 +201,7 @@ ${buildPricingTableRows(pricingPlans)}
 Notes:
 - Commercial production use requires Plus or Enterprise. Send header X-API-Usage-Type: commercial when applicable.
 - Plus and Enterprise include Redis response caching (5 min) on GET search and food endpoints.
-- Enterprise: custom volume, 99.99% SLA, white-label, on-premise options - contact sales at ${site.siteUrl}/contact?inquiry=enterprise
+- Enterprise: custom volume, image-to-calorie API, credits-based usage, 99.99% SLA, white-label, on-premise options - contact sales at ${site.siteUrl}/contact?inquiry=enterprise
 
 ## Base URL
 - API: configured per deployment (see developer docs)

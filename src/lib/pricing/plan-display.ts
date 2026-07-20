@@ -8,6 +8,7 @@ export interface PricingPlan {
   rate_limit_per_minute: number
   stripe_test_price_id?: string
   stripe_live_price_id?: string
+  price_display_label?: string | null
 }
 
 export function isEnterprisePlan(name: string): boolean {
@@ -37,6 +38,14 @@ function parseFloatField(value: unknown): number {
   return 0
 }
 
+function parseHighlights(value: unknown): string[] {
+  if (!Array.isArray(value)) return []
+  return value
+    .filter((item): item is string => typeof item === 'string')
+    .map((item) => item.trim())
+    .filter(Boolean)
+}
+
 /** Display monthly quota exactly as stored in plans.monthly_quota. */
 export function formatQuota(quota: number): string {
   if (quota <= 0) return '-'
@@ -54,14 +63,17 @@ export function formatRateLimit(rpm: number): string {
 }
 
 export function formatPlanPrice(plan: PricingPlan): { amount: string; suffix: string } {
+  if (plan.price_display_label?.trim()) {
+    return { amount: plan.price_display_label.trim(), suffix: '' }
+  }
   if (plan.monthly_price === 0) return { amount: '$0', suffix: '/mo' }
-  if (isEnterprisePlan(plan.name)) return { amount: 'Custom', suffix: '' }
+  if (isEnterprisePlan(plan.name)) return { amount: 'Enterprise', suffix: '' }
   return { amount: `$${plan.monthly_price}`, suffix: '/mo' }
 }
 
 export function allowsCommercialUse(planName: string): boolean {
   const tier = planName.toLowerCase()
-  return tier === 'plus' || tier === 'enterprise'
+  return tier === 'plus' || tier === 'enterprise' || tier === 'custom'
 }
 
 export function getPlanCardHighlights(
@@ -71,7 +83,7 @@ export function getPlanCardHighlights(
 ): string[] {
   const quota = `${formatQuota(monthlyQuota)} API calls / month`
   const rate = `${formatRateLimit(rateLimit)} rate limit (per account)`
-  const items = [quota, rate, '5% unique foods / month (anti-scrape)']
+  const items = [quota, rate]
 
   if (allowsCommercialUse(name)) {
     items.push('Commercial production use')
@@ -94,6 +106,9 @@ export function getPlanCardHighlights(
       items.push('25 API keys · Dedicated support')
       break
     case 'enterprise':
+    case 'custom':
+      items.push('Image-to-calorie API')
+      items.push('Credits-based usage')
       items.push('100 API keys · Phone & custom SLA')
       break
     default:
@@ -110,7 +125,8 @@ export function getPlanDescription(name: string, fallback: string): string {
     basic: 'Small apps and early-stage startups',
     core: 'Growing products with higher volume',
     plus: 'Commercial apps at production scale',
-    enterprise: 'Custom volume, limits, and contracts',
+    enterprise: 'Custom volume, image-to-calorie API, and credits-based usage',
+    custom: 'Custom volume, image-to-calorie API, and credits-based usage',
   }
   return descriptions[name.toLowerCase()] ?? ''
 }
@@ -124,8 +140,10 @@ export type CompareRow = {
 }
 
 function planTier(name: string): number {
-  const order = ['free', 'basic', 'core', 'plus', 'enterprise']
-  return order.indexOf(name.toLowerCase())
+  const order = ['free', 'basic', 'core', 'plus', 'enterprise', 'custom']
+  const idx = order.indexOf(name.toLowerCase())
+  if (name.toLowerCase() === 'custom') return order.indexOf('enterprise')
+  return idx
 }
 
 function atLeast(plan: PricingPlan, tierName: string): boolean {
@@ -144,11 +162,6 @@ export const COMPARE_ROWS: CompareRow[] = [
     getValue: (p) => formatRateLimit(p.rate_limit_per_minute),
   },
   {
-    feature: 'Distinct foods per month',
-    section: 'limits',
-    getValue: () => '5% of database',
-  },
-  {
     feature: 'Commercial production use',
     section: 'limits',
     getValue: (p) => allowsCommercialUse(p.name),
@@ -157,6 +170,16 @@ export const COMPARE_ROWS: CompareRow[] = [
     feature: 'Response caching (GET search & foods)',
     section: 'limits',
     getValue: (p) => atLeast(p, 'plus'),
+  },
+  {
+    feature: 'Image-to-calorie API',
+    section: 'features',
+    getValue: (p) => isEnterprisePlan(p.name),
+  },
+  {
+    feature: 'Credits-based usage',
+    section: 'features',
+    getValue: (p) => isEnterprisePlan(p.name),
   },
   {
     feature: 'API keys',
@@ -168,6 +191,7 @@ export const COMPARE_ROWS: CompareRow[] = [
         core: '10',
         plus: '25',
         enterprise: '100',
+        custom: '100',
       }
       return map[p.name.toLowerCase()] ?? '-'
     },
@@ -202,6 +226,7 @@ export const COMPARE_ROWS: CompareRow[] = [
         core: 'Priority',
         plus: 'Dedicated',
         enterprise: 'Dedicated + phone',
+        custom: 'Dedicated + phone',
       }
       return map[p.name.toLowerCase()] ?? '-'
     },
@@ -216,6 +241,7 @@ export const COMPARE_ROWS: CompareRow[] = [
         core: '99.5%',
         plus: '99.9%',
         enterprise: '99.99%',
+        custom: '99.99%',
       }
       return map[p.name.toLowerCase()] ?? '-'
     },
@@ -232,7 +258,7 @@ export const COMPARE_ROWS: CompareRow[] = [
   },
 ]
 
-/** Map API/DB plan rows to UI, uses database values as-is (no client-side overrides). */
+/** Map API/DB plan rows to UI; prefer admin-managed card_highlights when present. */
 export function transformPlanData(backendPlans: Record<string, unknown>[]): PricingPlan[] {
   return backendPlans.map((plan) => {
     const name = String(plan.name ?? '')
@@ -240,6 +266,9 @@ export function transformPlanData(backendPlans: Record<string, unknown>[]): Pric
     const rateLimit = parseIntField(plan.rate_limit_per_minute)
     const description =
       typeof plan.description === 'string' ? plan.description : ''
+    const apiHighlights = parseHighlights(plan.card_highlights)
+    const priceLabel =
+      typeof plan.price_display_label === 'string' ? plan.price_display_label : null
 
     return {
       id: parseIntField(plan.id),
@@ -248,9 +277,13 @@ export function transformPlanData(backendPlans: Record<string, unknown>[]): Pric
       description: getPlanDescription(name, description),
       monthly_quota: monthlyQuota,
       rate_limit_per_minute: rateLimit,
-      highlights: getPlanCardHighlights(name, monthlyQuota, rateLimit),
+      highlights:
+        apiHighlights.length > 0
+          ? apiHighlights
+          : getPlanCardHighlights(name, monthlyQuota, rateLimit),
       stripe_test_price_id: plan.stripe_test_price_id as string | undefined,
       stripe_live_price_id: plan.stripe_live_price_id as string | undefined,
+      price_display_label: priceLabel,
     }
   })
 }
@@ -260,7 +293,7 @@ export const FALLBACK_PLANS: PricingPlan[] = []
 
 export const PRICING_FOOTNOTES = [
   'Rate limits apply per account (user id), not per IP, suitable for multi-tenant and server-side apps.',
-  'Each plan may access at most 5% of distinct foods in the database per calendar month to prevent catalog scraping.',
   'Commercial production use requires Plus or Enterprise. Send header X-API-Usage-Type: commercial when applicable.',
   'Plus and Enterprise include short-lived Redis caching on search and food GET endpoints to absorb traffic spikes.',
+  'Enterprise includes image-to-calorie API access and credits-based usage. Contact sales to enable.',
 ]

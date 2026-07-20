@@ -94,14 +94,14 @@ export const DOCS_SECTIONS: DocsSectionMeta[] = [
     title: 'Rate Limits & Quotas',
     metaTitle: 'Rate Limits & Quotas',
     description:
-      'Per-plan rate limits, monthly quotas, the 5% food coverage cap, commercial-use flag, response caching, and rate-limit headers.',
+      'Per-plan rate limits, monthly quotas, commercial-use flag, response caching, and rate-limit headers.',
     keywords: [
       'API rate limits',
       'nutrition API quota',
       'commercial API use',
       'X-RateLimit headers',
     ],
-    summary: 'Plan limits, quotas, coverage cap, and commercial use.',
+    summary: 'Plan limits, quotas, and commercial use.',
     dateModified: '2026-07-03',
     group: 'Advanced',
   },

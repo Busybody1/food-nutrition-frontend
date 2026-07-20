@@ -32,7 +32,7 @@ function CompareCellValue({ value }: { value: boolean | string }) {
 }
 
 const SECTION_LABELS: Record<NonNullable<CompareRow['section']>, string> = {
-  limits: 'Limits & protection',
+  limits: 'Limits',
   features: 'Features',
   support: 'Support & enterprise',
 }
@@ -62,7 +62,7 @@ export function PricingComparison({ plans }: { plans: PricingPlan[] }) {
           <MarketingSectionHeader
             id="compare-plans-heading"
             title="Compare plans"
-            description="All paid tiers include DDoS-oriented per-account rate limits, monthly quotas, and a 5% distinct-food cap. Commercial apps need Plus or Enterprise."
+            description="All paid tiers include per-account rate limits and monthly quotas. Commercial apps need Plus or Enterprise. Image-to-calorie API and credits-based usage are available on Enterprise."
           />
         </Reveal>
 

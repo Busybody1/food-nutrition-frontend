@@ -1,18 +1,19 @@
 'use client'
 
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useAuth } from '@/lib/hooks/use-auth'
 import { SubscribeModal } from '@/components/stripe/SubscribeModal'
 import { MarketingImageHero } from '@/components/marketing/marketing-image-hero'
 import { MarketingTrustPills } from '@/components/marketing/marketing-shell'
 import { PricingCard } from '@/components/marketing/pricing-card'
+import { PricingEnterpriseBand } from '@/components/marketing/pricing-enterprise-band'
 import { PricingComparison } from '@/components/marketing/pricing-comparison'
 import { RevealGroup } from '@/components/marketing/reveal'
 import { StatsBand } from '@/components/marketing/stats-band'
 import { TrackedCtaLink } from '@/components/analytics/tracked-cta-link'
 import { fetchPublicPlans } from '@/lib/pricing/fetch-plans'
-import { isContactSalesPlan, type PricingPlan } from '@/lib/pricing/plan-display'
+import { isContactSalesPlan, isEnterprisePlan, type PricingPlan } from '@/lib/pricing/plan-display'
 import { cn } from '@/lib/utils/cn'
 
 type PricingContentProps = {
@@ -21,20 +22,14 @@ type PricingContentProps = {
   initialError: string | null
 }
 
-/**
- * Count-aware plan grid: columns always divide evenly (no flex-basis drift),
- * and five tiers share a single row at xl — the standard pricing scan pattern.
- */
-const PLAN_GRID_CLASS: Record<number, string> = {
-  1: 'grid-cols-1 max-w-sm mx-auto',
-  2: 'sm:grid-cols-2 max-w-3xl mx-auto',
-  3: 'sm:grid-cols-2 lg:grid-cols-3',
-  4: 'sm:grid-cols-2 lg:grid-cols-4',
-  5: 'sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5',
-}
-
-function planGridClass(count: number): string {
-  return cn('grid w-full gap-4 md:gap-5', PLAN_GRID_CLASS[count] ?? PLAN_GRID_CLASS[3])
+function selfServeGridClass(count: number): string {
+  const map: Record<number, string> = {
+    1: 'grid-cols-1 max-w-sm mx-auto',
+    2: 'sm:grid-cols-2 max-w-3xl mx-auto',
+    3: 'sm:grid-cols-2 lg:grid-cols-3',
+    4: 'sm:grid-cols-2 lg:grid-cols-4',
+  }
+  return cn('grid w-full gap-4 md:gap-5', map[count] ?? 'sm:grid-cols-2 lg:grid-cols-3')
 }
 
 export function PricingContent({ initialPlans, initialError }: PricingContentProps) {
@@ -50,6 +45,16 @@ export function PricingContent({ initialPlans, initialError }: PricingContentPro
     plan_id: number
     plan_name: string
   } | null>(null)
+
+  const { selfServePlans, enterprisePlans } = useMemo(() => {
+    const selfServe: PricingPlan[] = []
+    const enterprise: PricingPlan[] = []
+    for (const plan of plans) {
+      if (isEnterprisePlan(plan.name)) enterprise.push(plan)
+      else selfServe.push(plan)
+    }
+    return { selfServePlans: selfServe, enterprisePlans: enterprise }
+  }, [plans])
 
   // Client-side fallback when server-side plan loading failed or returned nothing.
   useEffect(() => {
@@ -138,8 +143,6 @@ export function PricingContent({ initialPlans, initialError }: PricingContentPro
     setIsModalOpen(true)
   }
 
-  const displayPlans = plans
-
   return (
     <div className="marketing-page">
       <MarketingImageHero compact centered waveTone="elevated">
@@ -147,8 +150,8 @@ export function PricingContent({ initialPlans, initialError }: PricingContentPro
           Simple, transparent pricing
         </h1>
         <p className="text-lg text-ink-muted mb-8 max-w-2xl mx-auto">
-          Per-account rate limits, monthly quotas, and anti-scrape protections built in.
-          Commercial production use starts on Plus.
+          Per-account rate limits and monthly quotas for every tier. Commercial production use
+          starts on Plus. Enterprise adds image-to-calorie API and credits-based usage.
         </p>
         <div className="mb-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <TrackedCtaLink
@@ -167,30 +170,32 @@ export function PricingContent({ initialPlans, initialError }: PricingContentPro
           </TrackedCtaLink>
         </div>
         <MarketingTrustPills
-          items={[
-            'Live limits from your plan',
-            '5% food coverage cap',
-            'Cancel anytime',
-          ]}
+          items={['Live limits from your plan', 'Cancel anytime', 'Enterprise image + credits']}
         />
       </MarketingImageHero>
 
       <section className="relative overflow-hidden bg-surface-elevated pt-10 md:pt-12 pb-20 md:pb-28">
-        {/* Soft radial brand glow behind the commercial decision point. */}
         <div
           aria-hidden
           className="pointer-events-none absolute left-1/2 top-0 h-[420px] w-full max-w-[900px] -translate-x-1/2 bg-[radial-gradient(ellipse_at_center,rgba(10,197,215,0.12),transparent_65%)]"
         />
-        <div className="container-narrow relative">
+        <div className="container-narrow relative space-y-8">
           {isLoading ? (
-            <div role="status" aria-label="Loading pricing..." className={planGridClass(5)}>
-              {Array.from({ length: 5 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="h-[420px] rounded-brand border border-surface-border bg-white animate-pulse"
-                />
-              ))}
-            </div>
+            <>
+              <div
+                role="status"
+                aria-label="Loading pricing..."
+                className={selfServeGridClass(4)}
+              >
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className="h-[420px] rounded-brand border border-surface-border bg-white animate-pulse"
+                  />
+                ))}
+              </div>
+              <div className="h-48 rounded-brand border border-surface-border bg-white animate-pulse" />
+            </>
           ) : loadError ? (
             <div
               role="alert"
@@ -198,28 +203,43 @@ export function PricingContent({ initialPlans, initialError }: PricingContentPro
             >
               <p className="text-sm text-error-600">{loadError}</p>
             </div>
-          ) : displayPlans.length === 0 ? (
+          ) : plans.length === 0 ? (
             <p className="text-sm text-ink-muted text-center">No plans available.</p>
           ) : (
-            <RevealGroup className={planGridClass(displayPlans.length)} itemClassName="h-full min-w-0">
-              {displayPlans.map((plan) => (
-                <PricingCard
+            <>
+              {selfServePlans.length > 0 && (
+                <RevealGroup
+                  className={selfServeGridClass(selfServePlans.length)}
+                  itemClassName="h-full min-w-0"
+                >
+                  {selfServePlans.map((plan) => (
+                    <PricingCard
+                      key={plan.id}
+                      plan={plan}
+                      isPopular={plan.name === 'Plus'}
+                      isCurrent={currentSubscription?.plan_id === plan.id}
+                      onSelect={() => handlePlanSelect(plan)}
+                    />
+                  ))}
+                </RevealGroup>
+              )}
+
+              {enterprisePlans.map((plan) => (
+                <PricingEnterpriseBand
                   key={plan.id}
                   plan={plan}
-                  isPopular={plan.name === 'Plus'}
                   isCurrent={currentSubscription?.plan_id === plan.id}
-                  dense={displayPlans.length >= 5}
                   onSelect={() => handlePlanSelect(plan)}
                 />
               ))}
-            </RevealGroup>
+            </>
           )}
         </div>
       </section>
 
       <StatsBand />
 
-      {!isLoading && <PricingComparison plans={displayPlans} />}
+      {!isLoading && <PricingComparison plans={plans} />}
 
       <SubscribeModal
         isOpen={isModalOpen}

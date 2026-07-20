@@ -429,7 +429,7 @@ export const COMPARISON_PAGES: ComparisonPage[] = [
       },
       {
         q: 'Does Calorie API offer image recognition like FatSecret?',
-        a: 'No. Calorie API is deliberately a food-data API: search, barcode lookup, and details. If photo-to-nutrition recognition is central to your product, FatSecret is genuinely strong there.',
+        a: 'Yes on Enterprise: Calorie API supports an image-to-calorie API with credits-based usage. Self-serve plans remain a food-data API (search, barcode, details). Contact sales for Enterprise access.',
       },
       {
         q: 'Do I have to display attribution?',

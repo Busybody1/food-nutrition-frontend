@@ -18,7 +18,7 @@ export const ERRORS_CONTENT: DocsSectionContent = {
         { name: '400', description: 'Bad request, invalid parameters (e.g. query too short, bad match_mode).' },
         { name: '401', description: 'Unauthorized, missing or invalid API key.' },
         { name: '402', description: 'Monthly quota exceeded for your plan.' },
-        { name: '403', description: 'Forbidden, commercial use not allowed on plan, or food coverage cap reached.' },
+        { name: '403', description: 'Forbidden, commercial use not allowed on plan, or an account protection limit was reached.' },
         { name: '404', description: 'Not found, unknown food ID or barcode with no match in any source.' },
         { name: '429', description: 'Rate limited, per-minute limit exceeded; see X-RateLimit-Reset.' },
         { name: '500', description: 'Server error, safe to retry with backoff; report persistent failures.' },

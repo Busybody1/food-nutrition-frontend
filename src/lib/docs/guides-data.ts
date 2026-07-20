@@ -427,7 +427,7 @@ async function getFoodCached(id) {
         items: [
           'On 429, wait until X-RateLimit-Reset before retrying; add jitter when many workers share the account.',
           'Treat 402 (monthly quota) as terminal: alert and stop retrying.',
-          'Batch jobs should stay well under the 5% monthly food coverage cap; iterate over your users’ actual foods, not the whole catalog.',
+          'Batch jobs should iterate over your users’ actual foods, not the whole catalog.',
         ],
       },
     ],
@@ -527,7 +527,7 @@ print(df.sort_values("protein_per_100kcal", ascending=False).head(10))`,
         items: [
           'Use verified_only=true for analysis jobs, curated macro data avoids cleaning noisy label entries.',
           'Persist food details by ID between runs; IDs are stable and re-fetching is pure quota spend.',
-          'Keep batch jobs under the 5% monthly distinct-food coverage cap: analyze the foods your product uses, not the entire catalog.',
+          'Keep batch jobs focused on the foods your product uses, not the entire catalog.',
         ],
       },
     ],

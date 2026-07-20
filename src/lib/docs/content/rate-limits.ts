@@ -35,7 +35,6 @@ export const RATE_LIMITS_CONTENT: DocsSectionContent = {
     {
       kind: 'list',
       items: [
-        '5% food coverage cap: each plan may access at most 5% of distinct foods in the database per calendar month (anti-scrape).',
         'Commercial use requires Plus or Enterprise. Send X-API-Usage-Type: commercial only when your app is a commercial product.',
         'Plus and Enterprise GET search/food responses may be cached for 5 minutes per account (Redis).',
       ],
@@ -47,7 +46,7 @@ export const RATE_LIMITS_CONTENT: DocsSectionContent = {
       rows: [
         { name: '429', description: 'Per-minute rate limit exceeded. Back off and retry after X-RateLimit-Reset.' },
         { name: '402', description: 'Monthly quota exceeded. Upgrade your plan or wait for the billing cycle reset.' },
-        { name: '403', description: 'Commercial use not allowed on your plan, or food coverage cap reached.' },
+        { name: '403', description: 'Commercial use not allowed on your plan, or an account protection limit was reached.' },
       ],
     },
   ],
@@ -55,10 +54,6 @@ export const RATE_LIMITS_CONTENT: DocsSectionContent = {
     {
       q: 'Do rate limits apply per API key or per account?',
       a: 'Per account (user id). Creating multiple keys under one account does not increase your limits.',
-    },
-    {
-      q: 'What is the 5% food coverage cap?',
-      a: 'An anti-scraping protection: within a calendar month, one plan can access at most 5% of the distinct foods in the database. Normal app usage never gets close to it; bulk exports do.',
     },
     {
       q: 'How do I raise my limits?',

@@ -48,7 +48,7 @@ function ContactPageContent() {
       setFormData((prev) => ({
         ...prev,
         inquiryType: 'enterprise',
-        subject: prev.subject || 'Enterprise / Custom plan inquiry',
+        subject: prev.subject || 'Enterprise plan inquiry',
       }))
     }
   }
@@ -64,7 +64,7 @@ function ContactPageContent() {
     setFormData((prev) => ({
       ...prev,
       inquiryType: 'enterprise',
-      subject: prev.subject || 'Enterprise / Custom plan inquiry',
+      subject: prev.subject || 'Enterprise plan inquiry',
     }))
     const reduceMotion =
       typeof window.matchMedia === 'function' &&
@@ -235,7 +235,7 @@ function ContactPageContent() {
                           <option value="general">General</option>
                           <option value="technical">Technical support</option>
                           <option value="sales">Sales</option>
-                          <option value="enterprise">Enterprise / Custom plan</option>
+                          <option value="enterprise">Enterprise plan</option>
                         </select>
                       </div>
                     </div>
@@ -326,9 +326,10 @@ function ContactPageContent() {
                 <div className="flex h-10 w-10 items-center justify-center rounded-brand bg-brand/15 mb-4">
                   <Building2 className="h-5 w-5 text-brand-strong" aria-hidden />
                 </div>
-                <h2 className="text-lg font-semibold text-ink mb-1">Enterprise &amp; Custom</h2>
+                <h2 className="text-lg font-semibold text-ink mb-1">Enterprise</h2>
                 <p className="text-sm text-ink-muted mb-3">
-                  Custom quotas, SLAs, white-label, and on-premise options for large teams.
+                  Custom quotas, image-to-calorie API, credits-based usage, SLAs, white-label, and
+                  on-premise options for large teams.
                 </p>
                 <p className="text-xs text-ink-muted">
                   Select <strong className="text-ink-muted">Enterprise</strong> in the form or email
