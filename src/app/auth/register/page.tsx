@@ -62,7 +62,7 @@ export default function RegisterPage() {
         company_name: formData.companyName || undefined,
       })
       if (result.success) {
-        router.push('/auth/login')
+        router.push(`/auth/verify-email?email=${encodeURIComponent(formData.email)}`)
       } else {
         setError(result.error || 'Registration failed')
       }

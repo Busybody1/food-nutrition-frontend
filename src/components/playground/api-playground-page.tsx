@@ -326,6 +326,8 @@ function EndpointPanel({
                       placeholder={param.placeholder}
                       required={param.required}
                       aria-required={param.required || undefined}
+                      min={param.type === 'number' ? param.min : undefined}
+                      max={param.type === 'number' ? param.max : undefined}
                       onChange={(event) => onChange(param.key, event.target.value)}
                     />
                   </label>

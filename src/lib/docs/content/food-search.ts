@@ -8,11 +8,28 @@ const RESPONSE_EXAMPLE = `{
     {
       "id": 12345,
       "name": "Apple, raw",
-      "brand": "Generic",
-      "calories": 52,
-      "protein": 0.3,
-      "carbs": 13.8,
-      "fat": 0.2
+      "brand_name": null,
+      "is_verified": true,
+      "calories_100g": 52,
+      "protein_100g": 0.3,
+      "carbs_100g": 13.8,
+      "fat_100g": 0.2,
+      "fiber_100g": 2.4,
+      "sugar_100g": 10.4,
+      "nutrients": [
+        { "nutrient_id": 106888, "nutrient_name": "Calories", "amount": 52 },
+        { "nutrient_id": 106899, "nutrient_name": "Protein", "amount": 0.3 }
+      ],
+      "serving_size": 100,
+      "serving_unit": "g",
+      "default_portion": { "grams": 100, "label": "100 g" },
+      "portions_count": 1,
+      "meal": {
+        "name": "Apple, raw",
+        "calories": 52,
+        "servings": 1,
+        "macros": { "protein": 0.3, "carbs": 13.8, "fat": 0.2, "fiber": 2.4, "sugar": 10.4 }
+      }
     }
   ],
   "total": 1,

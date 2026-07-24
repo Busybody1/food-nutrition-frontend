@@ -21,7 +21,7 @@ export const BARCODE_LOOKUP_CONTENT: DocsSectionContent = {
     {
       kind: 'params',
       title: 'Path parameters',
-      rows: [{ name: 'upc', description: 'UPC/EAN barcode (digits; dashes are stripped)' }],
+      rows: [{ name: 'upc', description: 'UPC/EAN barcode; any non-digit characters (dashes, spaces) are stripped' }],
     },
     { kind: 'json', title: 'Response example (Nutella)', code: BARCODE_LOOKUP_EXAMPLE_JSON },
     { kind: 'h2', text: 'Response fields', id: 'fields' },
@@ -43,7 +43,7 @@ export const BARCODE_LOOKUP_CONTENT: DocsSectionContent = {
   faqs: [
     {
       q: 'Which barcode formats are supported?',
-      a: 'UPC and EAN barcodes. Pass the digits in the URL path; dashes are stripped automatically.',
+      a: 'UPC and EAN barcodes. Pass the barcode in the URL path; any non-digit characters (dashes, spaces) are stripped automatically.',
     },
     {
       q: 'Is the Open Food Facts fallback automatic?',

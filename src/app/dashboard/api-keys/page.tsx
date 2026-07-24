@@ -9,6 +9,7 @@ import {
 } from '@/components/dashboard/dashboard-shell'
 import { useAuth } from '@/lib/hooks/use-auth'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import {
   normalizeApiKeyList,
   stashCreatedApiKeyPlaintext,
@@ -24,7 +25,7 @@ interface UserPlan {
 }
 
 export default function ApiKeysPage() {
-  const { isAuthenticated, loading } = useAuth()
+  const { isAuthenticated, loading, user } = useAuth()
   const router = useRouter()
   const [apiKeys, setApiKeys] = useState<ApiKeyRecord[]>([])
   const [userPlan, setUserPlan] = useState<UserPlan | null>(null)
@@ -70,7 +71,8 @@ export default function ApiKeysPage() {
       if (profileResponse.success) {
         const userProfile = profileResponse.data as { plan?: { name?: string; max_api_keys?: number } }
         const userPlan: UserPlan = {
-          max_api_keys: userProfile.plan?.max_api_keys || 5,
+          // Backend plans.max_api_keys is the source of truth; default to 1 only when truly absent.
+          max_api_keys: userProfile.plan?.max_api_keys ?? 1,
           plan_name: userProfile.plan?.name || 'Free'
         }
         setUserPlan(userPlan)
@@ -134,14 +136,23 @@ export default function ApiKeysPage() {
   return (
     <DashboardPage>
         {error && <DashboardAlert variant="error">{error}</DashboardAlert>}
+        {user && !user.email_verified && (
+          <DashboardAlert variant="warning">
+            Verify your email to create API keys.{' '}
+            <Link href="/auth/verify-email" className="font-medium underline">
+              Verify now
+            </Link>
+          </DashboardAlert>
+        )}
         <ApiKeyList
           apiKeys={apiKeys}
           onRefresh={loadData}
           onCreate={handleCreate}
           onDelete={handleDelete}
           isLoading={isLoading}
-          maxKeys={userPlan?.max_api_keys || 5}
+          maxKeys={userPlan?.max_api_keys ?? 1}
           currentKeys={apiKeys.length}
+          emailVerified={!!user?.email_verified}
         />
     </DashboardPage>
   )

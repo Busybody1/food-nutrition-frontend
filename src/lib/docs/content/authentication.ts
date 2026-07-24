@@ -7,7 +7,7 @@ export const AUTHENTICATION_CONTENT: DocsSectionContent = {
   blocks: [
     {
       kind: 'p',
-      text: 'All API requests are authenticated with an API key sent in the X-API-Key header. Keys are generated in the developer dashboard after creating an account, and each key is tied to your plan’s rate limits and monthly quota.',
+      text: 'Developer API requests are authenticated with an API key sent in the X-API-Key header (the public demo endpoints under /api/v1/public/ require no key and are IP rate limited). Keys are generated in the developer dashboard after creating an account, and each key is tied to your plan’s rate limits and monthly quota.',
     },
     {
       kind: 'code',
@@ -35,7 +35,8 @@ export const AUTHENTICATION_CONTENT: DocsSectionContent = {
       rows: [
         { name: '401', description: 'Missing or invalid API key. Check the X-API-Key header.' },
         { name: '402', description: 'Monthly quota exceeded. Upgrade your plan or wait for the cycle reset.' },
-        { name: '403', description: 'Commercial use not allowed on your plan, or an account protection limit was reached.' },
+        { name: '403', description: 'Commercial use not allowed on your plan, the endpoint is not enabled for your plan, or a food-coverage limit was reached.' },
+        { name: '423', description: 'Account on a temporary security hold due to unusual activity. Not retryable; contact support to restore access.' },
       ],
     },
     {

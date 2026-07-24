@@ -6,6 +6,8 @@ export interface PricingPlan {
   highlights: string[]
   monthly_quota: number
   rate_limit_per_minute: number
+  /** Backend plans.max_api_keys — single source of truth when present. */
+  max_api_keys?: number
   stripe_test_price_id?: string
   stripe_live_price_id?: string
   price_display_label?: string | null
@@ -76,10 +78,16 @@ export function allowsCommercialUse(planName: string): boolean {
   return tier === 'plus' || tier === 'enterprise' || tier === 'custom'
 }
 
+/** "1 API key" / "3 API keys" — pluralized label for a key count. */
+function apiKeyLabel(count: number): string {
+  return `${count} API key${count === 1 ? '' : 's'}`
+}
+
 export function getPlanCardHighlights(
   name: string,
   monthlyQuota: number,
-  rateLimit: number
+  rateLimit: number,
+  maxApiKeys?: number
 ): string[] {
   const quota = `${formatQuota(monthlyQuota)} API calls / month`
   const rate = `${formatRateLimit(rateLimit)} rate limit (per account)`
@@ -92,24 +100,28 @@ export function getPlanCardHighlights(
     items.push('Non-commercial use only')
   }
 
+  // Prefer the backend max_api_keys when supplied; fall back to per-tier defaults.
+  const keys = (fallback: number) =>
+    apiKeyLabel(maxApiKeys != null && maxApiKeys > 0 ? maxApiKeys : fallback)
+
   switch (name.toLowerCase()) {
     case 'free':
-      items.push('1 API key · Community support')
+      items.push(`${keys(1)} · Community support`)
       break
     case 'basic':
-      items.push('3 API keys · Email support')
+      items.push(`${keys(3)} · Email support`)
       break
     case 'core':
-      items.push('10 API keys · Priority support')
+      items.push(`${keys(10)} · Priority support`)
       break
     case 'plus':
-      items.push('25 API keys · Dedicated support')
+      items.push(`${keys(25)} · Dedicated support`)
       break
     case 'enterprise':
     case 'custom':
       items.push('Image-to-calorie API')
       items.push('Credits-based usage')
-      items.push('100 API keys · Phone & custom SLA')
+      items.push(`${keys(100)} · Phone & custom SLA`)
       break
     default:
       items.push('Standard support')
@@ -185,6 +197,8 @@ export const COMPARE_ROWS: CompareRow[] = [
     feature: 'API keys',
     section: 'features',
     getValue: (p) => {
+      // Backend max_api_keys wins when present; otherwise fall back to per-tier map.
+      if (p.max_api_keys != null && p.max_api_keys > 0) return String(p.max_api_keys)
       const map: Record<string, string> = {
         free: '1',
         basic: '3',
@@ -269,6 +283,8 @@ export function transformPlanData(backendPlans: Record<string, unknown>[]): Pric
     const apiHighlights = parseHighlights(plan.card_highlights)
     const priceLabel =
       typeof plan.price_display_label === 'string' ? plan.price_display_label : null
+    const maxApiKeys =
+      plan.max_api_keys != null ? parseIntField(plan.max_api_keys) : undefined
 
     return {
       id: parseIntField(plan.id),
@@ -277,10 +293,11 @@ export function transformPlanData(backendPlans: Record<string, unknown>[]): Pric
       description: getPlanDescription(name, description),
       monthly_quota: monthlyQuota,
       rate_limit_per_minute: rateLimit,
+      max_api_keys: maxApiKeys != null && maxApiKeys > 0 ? maxApiKeys : undefined,
       highlights:
         apiHighlights.length > 0
           ? apiHighlights
-          : getPlanCardHighlights(name, monthlyQuota, rateLimit),
+          : getPlanCardHighlights(name, monthlyQuota, rateLimit, maxApiKeys),
       stripe_test_price_id: plan.stripe_test_price_id as string | undefined,
       stripe_live_price_id: plan.stripe_live_price_id as string | undefined,
       price_display_label: priceLabel,

@@ -16,8 +16,8 @@ export const REFERENCE_DATA_CONTENT: DocsSectionContent = {
     },
     {
       kind: 'code',
-      title: 'GET /api/v1/foods/nutrients/',
-      code: `curl "${API_BASE}/api/v1/foods/nutrients/" \\\n  -H "X-API-Key: your_api_key_here" \\\n  -G -d "limit=50" -d "skip=0"`,
+      title: 'GET /api/v1/catalog/nutrients',
+      code: `curl "${API_BASE}/api/v1/catalog/nutrients" \\\n  -H "X-API-Key: your_api_key_here" \\\n  -G -d "limit=50" -d "skip=0"`,
     },
     { kind: 'h2', text: 'Brands', id: 'brands' },
     {
@@ -26,8 +26,8 @@ export const REFERENCE_DATA_CONTENT: DocsSectionContent = {
     },
     {
       kind: 'code',
-      title: 'GET /api/v1/foods/brands/',
-      code: `curl "${API_BASE}/api/v1/foods/brands/" \\\n  -H "X-API-Key: your_api_key_here" \\\n  -G -d "limit=100" -d "skip=0"`,
+      title: 'GET /api/v1/catalog/brands',
+      code: `curl "${API_BASE}/api/v1/catalog/brands" \\\n  -H "X-API-Key: your_api_key_here" \\\n  -G -d "limit=100" -d "skip=0"`,
     },
     { kind: 'h2', text: 'Categories', id: 'categories' },
     {
@@ -36,15 +36,16 @@ export const REFERENCE_DATA_CONTENT: DocsSectionContent = {
     },
     {
       kind: 'code',
-      title: 'GET /api/v1/foods/categories/',
-      code: `curl "${API_BASE}/api/v1/foods/categories/" \\\n  -H "X-API-Key: your_api_key_here" \\\n  -G -d "limit=50" -d "skip=0"`,
+      title: 'GET /api/v1/catalog/categories',
+      code: `curl "${API_BASE}/api/v1/catalog/categories" \\\n  -H "X-API-Key: your_api_key_here" \\\n  -G -d "limit=50" -d "skip=0"`,
     },
     {
       kind: 'params',
       title: 'Query parameters (all three endpoints)',
       rows: [
-        { name: 'limit', description: 'Results per page (default and max vary by endpoint, up to 100)' },
+        { name: 'limit', description: 'Results per page, 1–1000 (default: 100)' },
         { name: 'skip', description: 'Offset for pagination (default: 0)' },
+        { name: 'search', description: 'Optional name filter (min 2 characters). q is accepted as an alias.' },
       ],
     },
     {
@@ -59,7 +60,7 @@ export const REFERENCE_DATA_CONTENT: DocsSectionContent = {
     },
     {
       q: 'Can I search brands by name?',
-      a: 'Yes, GET /api/v1/search/brands?q={name} performs a name search over brands, complementing the paginated listing endpoint.',
+      a: 'Yes. Add search={name} (min 2 characters) to GET /api/v1/catalog/brands to name-filter the list. GET /api/v1/search/brands?q={name} also performs a brand name search.',
     },
   ],
 }

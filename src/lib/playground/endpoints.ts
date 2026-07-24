@@ -6,6 +6,9 @@ export type PlaygroundParam = {
   required?: boolean
   type?: 'text' | 'number' | 'select'
   options?: { value: string; label: string }[]
+  /** Numeric bounds for `type: 'number'` inputs (mirror the public demo caps). */
+  min?: number
+  max?: number
 }
 
 export type PlaygroundEndpoint = {
@@ -49,8 +52,8 @@ export const PLAYGROUND_ENDPOINTS: PlaygroundEndpoint[] = [
     pathTemplate: '/search/foods',
     params: [
       { key: 'q', label: 'Query', placeholder: 'apple', defaultValue: 'apple', required: true },
-      { key: 'limit', label: 'Limit', placeholder: '5', defaultValue: '5', type: 'number' },
-      { key: 'skip', label: 'Skip', placeholder: '0', defaultValue: '0', type: 'number' },
+      { key: 'limit', label: 'Limit', placeholder: '5', defaultValue: '5', type: 'number', min: 1, max: 10 },
+      { key: 'skip', label: 'Skip', placeholder: '0', defaultValue: '0', type: 'number', min: 0 },
       {
         key: 'match_mode',
         label: 'Match mode',
@@ -82,7 +85,7 @@ export const PLAYGROUND_ENDPOINTS: PlaygroundEndpoint[] = [
     pathTemplate: '/search/suggest',
     params: [
       { key: 'q', label: 'Query', placeholder: 'chi', defaultValue: 'chi', required: true },
-      { key: 'limit', label: 'Limit', placeholder: '8', defaultValue: '8', type: 'number' },
+      { key: 'limit', label: 'Limit', placeholder: '8', defaultValue: '8', type: 'number', min: 1, max: 10 },
     ],
   },
   {
@@ -121,8 +124,8 @@ export const PLAYGROUND_ENDPOINTS: PlaygroundEndpoint[] = [
     pathTemplate: '/catalog/foods',
     params: [
       { key: 'q', label: 'Query', placeholder: 'yogurt' },
-      { key: 'limit', label: 'Limit', placeholder: '5', defaultValue: '5', type: 'number' },
-      { key: 'skip', label: 'Skip', placeholder: '0', defaultValue: '0', type: 'number' },
+      { key: 'limit', label: 'Limit', placeholder: '5', defaultValue: '5', type: 'number', min: 1, max: 10 },
+      { key: 'skip', label: 'Skip', placeholder: '0', defaultValue: '0', type: 'number', min: 0 },
       ...FOOD_FILTER_PARAMS,
     ],
   },
@@ -144,8 +147,8 @@ export const PLAYGROUND_ENDPOINTS: PlaygroundEndpoint[] = [
     pathTemplate: '/catalog/brands',
     params: [
       { key: 'q', label: 'Search', placeholder: 'organic' },
-      { key: 'limit', label: 'Limit', placeholder: '20', defaultValue: '20', type: 'number' },
-      { key: 'skip', label: 'Skip', placeholder: '0', defaultValue: '0', type: 'number' },
+      { key: 'limit', label: 'Limit', placeholder: '20', defaultValue: '20', type: 'number', min: 1, max: 50 },
+      { key: 'skip', label: 'Skip', placeholder: '0', defaultValue: '0', type: 'number', min: 0 },
     ],
   },
   {
@@ -156,8 +159,8 @@ export const PLAYGROUND_ENDPOINTS: PlaygroundEndpoint[] = [
     pathTemplate: '/catalog/categories',
     params: [
       { key: 'q', label: 'Search', placeholder: 'dairy' },
-      { key: 'limit', label: 'Limit', placeholder: '20', defaultValue: '20', type: 'number' },
-      { key: 'skip', label: 'Skip', placeholder: '0', defaultValue: '0', type: 'number' },
+      { key: 'limit', label: 'Limit', placeholder: '20', defaultValue: '20', type: 'number', min: 1, max: 50 },
+      { key: 'skip', label: 'Skip', placeholder: '0', defaultValue: '0', type: 'number', min: 0 },
     ],
   },
   {
@@ -168,8 +171,8 @@ export const PLAYGROUND_ENDPOINTS: PlaygroundEndpoint[] = [
     pathTemplate: '/catalog/nutrients',
     params: [
       { key: 'q', label: 'Search', placeholder: 'protein' },
-      { key: 'limit', label: 'Limit', placeholder: '20', defaultValue: '20', type: 'number' },
-      { key: 'skip', label: 'Skip', placeholder: '0', defaultValue: '0', type: 'number' },
+      { key: 'limit', label: 'Limit', placeholder: '20', defaultValue: '20', type: 'number', min: 1, max: 50 },
+      { key: 'skip', label: 'Skip', placeholder: '0', defaultValue: '0', type: 'number', min: 0 },
     ],
   },
   {

@@ -7,7 +7,7 @@ export const FOOD_DETAILS_CONTENT: DocsSectionContent = {
   blocks: [
     {
       kind: 'p',
-      text: 'Fetch the complete nutrition payload for a single food by its ID, typically after a user picks a result from search or autocomplete suggest. The response includes per-100g macro values, the full structured nutrients array (micronutrients when available), serving metadata, verified_portions / suggested_serving for verified foods, default_portion, and portion_nutrients / meal scaled to that default. Use another portion by calling /calc/portion with its grams, or multiply amount_100g * grams / 100.',
+      text: 'Fetch the complete nutrition payload for a single food by its ID, typically after a user picks a result from search or autocomplete suggest. The response includes per-100g macro values, the full structured nutrients array (micronutrients when available), serving metadata, verified_portions / suggested_serving for verified foods, default_portion, and portion_nutrients / meal scaled to that default. Use another portion by calling /calc/portion with its grams, or scale the per-100g values yourself — multiply calories_100g / protein_100g / … (or each nutrients[] item’s amount) by grams / 100.',
     },
     {
       kind: 'code',

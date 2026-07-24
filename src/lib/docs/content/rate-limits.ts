@@ -46,7 +46,8 @@ export const RATE_LIMITS_CONTENT: DocsSectionContent = {
       rows: [
         { name: '429', description: 'Per-minute rate limit exceeded. Back off and retry after X-RateLimit-Reset.' },
         { name: '402', description: 'Monthly quota exceeded. Upgrade your plan or wait for the billing cycle reset.' },
-        { name: '403', description: 'Commercial use not allowed on your plan, or an account protection limit was reached.' },
+        { name: '403', description: 'Commercial use not allowed on your plan, the endpoint is not enabled for your plan, or a food-coverage limit was reached.' },
+        { name: '423', description: 'Account temporarily on a security hold due to unusual activity (distinct from a ban; self-heals on expiry). Not retryable; contact support to restore access.' },
       ],
     },
   ],

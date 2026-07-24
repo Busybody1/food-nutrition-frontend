@@ -269,9 +269,16 @@ export const api = {
     
     refreshToken: (refreshToken: string) =>
       apiClient.post('/api/v1/auth/refresh', { refresh_token_value: refreshToken }), // Fixed: refresh_token_value
-    
+
     getProfile: () =>
       apiClient.get('/api/v1/auth/me'),
+
+    // Email verification (6-digit OTP)
+    verifyEmailCode: (data: { email: string; code: string }) =>
+      apiClient.post('/api/v1/auth/verify-email-code', data),
+
+    resendCode: (data: { email: string }) =>
+      apiClient.post('/api/v1/auth/resend-verification-code', data),
   },
 
   // API Keys

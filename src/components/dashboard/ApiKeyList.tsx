@@ -24,6 +24,7 @@ interface ApiKeyListProps {
   isLoading?: boolean
   maxKeys?: number
   currentKeys?: number
+  emailVerified?: boolean
 }
 
 export function ApiKeyList({
@@ -32,8 +33,9 @@ export function ApiKeyList({
   onCreate,
   onDelete,
   isLoading = false,
-  maxKeys = 5,
+  maxKeys = 1,
   currentKeys = 0,
+  emailVerified = true,
 }: ApiKeyListProps) {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
@@ -41,7 +43,7 @@ export function ApiKeyList({
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
   const [visibleKeys, setVisibleKeys] = useState<Set<number>>(new Set())
 
-  const canCreateMore = currentKeys < maxKeys
+  const canCreateMore = currentKeys < maxKeys && emailVerified
 
   const filteredAndSortedKeys = apiKeys
     .filter((key) => key.name.toLowerCase().includes(searchTerm.toLowerCase()))

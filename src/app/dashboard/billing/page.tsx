@@ -27,6 +27,25 @@ import {
   type PricingPlan,
 } from '@/lib/pricing/plan-display'
 
+// Per-tier fallback only for when the profile did not carry plans.max_api_keys.
+const API_KEY_LIMIT_FALLBACK: Record<string, number> = {
+  free: 1,
+  basic: 3,
+  core: 10,
+  plus: 25,
+  enterprise: 100,
+  custom: 100,
+}
+
+/** "Up to 3 API keys" / "Up to 1 API key" — prefers the backend value. */
+function apiKeyLimitText(planName: string, maxApiKeys?: number): string {
+  const count =
+    maxApiKeys != null && maxApiKeys > 0
+      ? maxApiKeys
+      : API_KEY_LIMIT_FALLBACK[planName.toLowerCase()] ?? 1
+  return `Up to ${count} API key${count === 1 ? '' : 's'}`
+}
+
 interface BillingInfo {
   user_id: number
   plan_name: string
@@ -37,6 +56,7 @@ interface BillingInfo {
   current_usage: number
   usage_limit: number
   rate_limit_per_minute?: number
+  max_api_keys?: number
 }
 
 interface Invoice {
@@ -163,7 +183,12 @@ function BillingPageContent() {
       }
 
       const userProfile = profileResponse.data as {
-        plan?: { name?: string; monthly_price?: number; monthly_quota?: number }
+        plan?: {
+          name?: string
+          monthly_price?: number
+          monthly_quota?: number
+          max_api_keys?: number
+        }
       }
       const usageStats = (usageResponse.success
         ? usageResponse.data
@@ -175,6 +200,8 @@ function BillingPageContent() {
       const usageLimit =
         usageStats?.monthly_quota ?? userProfile.plan?.monthly_quota ?? 1000
       const rateLimit = usageStats?.rate_limit_per_minute
+      // Backend plans.max_api_keys is the source of truth (only the profile carries it).
+      const maxApiKeys = userProfile.plan?.max_api_keys
 
       if (isFreePlan) {
         const billingInfo: BillingInfo = {
@@ -187,6 +214,7 @@ function BillingPageContent() {
           current_usage: currentUsage,
           usage_limit: usageLimit,
           rate_limit_per_minute: rateLimit,
+          max_api_keys: maxApiKeys,
         }
         setBillingInfo(billingInfo)
         setInvoices([])
@@ -217,6 +245,7 @@ function BillingPageContent() {
               current_usage: currentUsage,
               usage_limit: subscription.monthly_quota || usageLimit,
               rate_limit_per_minute: rateLimit,
+              max_api_keys: maxApiKeys,
             }
             setBillingInfo(billingInfo)
           }
@@ -237,6 +266,7 @@ function BillingPageContent() {
             current_usage: currentUsage,
             usage_limit: usageLimit,
             rate_limit_per_minute: rateLimit,
+            max_api_keys: maxApiKeys,
           }
           setBillingInfo(billingInfo)
           setInvoices([])
@@ -606,7 +636,7 @@ function BillingPageContent() {
                       </li>
                       <li className="flex items-center">
                         <CheckCircle className="h-4 w-4 text-green-600 mr-2" />
-                        Up to 10 API keys
+                        {apiKeyLimitText(billingInfo.plan_name, billingInfo.max_api_keys)}
                       </li>
                     </ul>
                   </div>
@@ -703,7 +733,7 @@ function BillingPageContent() {
                       </li>
                       <li className="flex items-center">
                         <CheckCircle className="h-4 w-4 text-green-600 mr-2" />
-                        Up to 2 API keys
+                        {apiKeyLimitText('Free')}
                       </li>
                     </ul>
                   </div>

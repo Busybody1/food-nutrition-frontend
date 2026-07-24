@@ -1,10 +1,12 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Key, X, AlertCircle, Copy, CheckCircle } from 'lucide-react'
+import { ApiError } from '@/types/api'
 import type { CreatedApiKeyResult } from '@/lib/api/api-keys'
 
 interface CreateApiKeyModalProps {
@@ -22,6 +24,8 @@ export function CreateApiKeyModal({
 }: CreateApiKeyModalProps) {
   const [name, setName] = useState('')
   const [error, setError] = useState('')
+  const [verifyNeeded, setVerifyNeeded] = useState(false)
+  const [upgradeNeeded, setUpgradeNeeded] = useState(false)
   const [created, setCreated] = useState<CreatedApiKeyResult | null>(null)
   const [copied, setCopied] = useState(false)
 
@@ -38,6 +42,8 @@ export function CreateApiKeyModal({
       return
     }
 
+    setVerifyNeeded(false)
+    setUpgradeNeeded(false)
     try {
       const result = await onCreate(name.trim())
       if (result?.key) {
@@ -48,7 +54,25 @@ export function CreateApiKeyModal({
         handleClose()
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create API key')
+      const isVerifyError =
+        err instanceof ApiError &&
+        err.status === 403 &&
+        /verify your email/i.test(err.message)
+      const isLimitError =
+        err instanceof ApiError &&
+        (err.status === 403 || err.status === 400) &&
+        (/api key limit/i.test(err.message) || /reached .* plan/i.test(err.message))
+      if (isVerifyError) {
+        setVerifyNeeded(true)
+        setError('Verify your email address before creating API keys.')
+      } else if (isLimitError) {
+        setUpgradeNeeded(true)
+        setError(
+          'You have reached the API key limit for your plan. Upgrade your plan to add more keys.'
+        )
+      } else {
+        setError(err instanceof Error ? err.message : 'Failed to create API key')
+      }
     }
   }
 
@@ -66,6 +90,8 @@ export function CreateApiKeyModal({
   const handleClose = () => {
     setName('')
     setError('')
+    setVerifyNeeded(false)
+    setUpgradeNeeded(false)
     setCreated(null)
     setCopied(false)
     onClose()
@@ -137,6 +163,8 @@ export function CreateApiKeyModal({
                   onChange={(e) => {
                     setName(e.target.value)
                     setError('')
+                    setVerifyNeeded(false)
+                    setUpgradeNeeded(false)
                   }}
                   placeholder="e.g., Mobile App, Web Dashboard, Production"
                   className="w-full"
@@ -151,7 +179,25 @@ export function CreateApiKeyModal({
               {error && (
                 <div className="flex items-start space-x-2 p-3 bg-red-50 border border-red-200 rounded-md">
                   <AlertCircle className="h-4 w-4 text-red-600 mt-0.5 flex-shrink-0" />
-                  <p className="text-sm text-red-800">{error}</p>
+                  <div className="text-sm text-red-800">
+                    <p>{error}</p>
+                    {verifyNeeded && (
+                      <Link
+                        href="/auth/verify-email"
+                        className="mt-1 inline-block font-medium text-red-900 underline"
+                      >
+                        Verify your email
+                      </Link>
+                    )}
+                    {upgradeNeeded && (
+                      <Link
+                        href="/dashboard/billing"
+                        className="mt-1 inline-block font-medium text-red-900 underline"
+                      >
+                        Upgrade your plan
+                      </Link>
+                    )}
+                  </div>
                 </div>
               )}
 
