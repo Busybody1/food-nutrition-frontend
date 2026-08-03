@@ -6,7 +6,17 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { useAdmin } from '@/lib/hooks/use-admin'
-import { Layers, Save, Power, Plus, Trash2, ChevronUp, ChevronDown } from 'lucide-react'
+import {
+  Layers,
+  Save,
+  Power,
+  Plus,
+  Trash2,
+  ChevronUp,
+  ChevronDown,
+  Star,
+  Users,
+} from 'lucide-react'
 import { formatCount } from '@/lib/utils/format'
 import {
   AdminPage,
@@ -172,6 +182,36 @@ export default function AdminPlansPage() {
     loadPlans()
   }
 
+  /**
+   * Move the public pricing page's "Most popular" badge to this plan (or clear
+   * it). The API demotes the previous holder, so only one plan is ever flagged.
+   */
+  const setRecommended = async (p: AdminPlan, recommended: boolean) => {
+    if (!canEdit) return
+    setSaving(true)
+    setError('')
+    setSuccess('')
+    try {
+      if (recommended) await adminAPI.setRecommendedPlan(p.id)
+      else await adminAPI.clearRecommendedPlan(p.id)
+      const refreshed = await adminAPI.getPlans()
+      setPlans(refreshed.plans)
+      const updated = refreshed.plans.find((plan) => plan.id === selected?.id)
+      if (updated) setSelected(updated)
+      setSuccess(
+        recommended
+          ? `"${p.name}" is now the recommended plan on the pricing page.`
+          : 'Recommended plan cleared — no card is highlighted.'
+      )
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Failed to update recommended plan')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const recommendedPlan = plans.find((p) => p.is_recommended) ?? null
+
   const saveFeature = async () => {
     if (!selected || !canEdit) return
     const name = newFeatureName.trim().toLowerCase().replace(/\s+/g, '_')
@@ -231,7 +271,81 @@ export default function AdminPlansPage() {
               value={plans.length - activeCount}
               accent="orange"
             />
+            <DashboardStatCard
+              label="Recommended"
+              value={recommendedPlan?.name ?? 'None'}
+              hint="Shown as “Most popular” on /pricing"
+              icon={Star}
+              accent="purple"
+            />
           </AdminStatGrid>
+
+          <AdminPanel className="mb-6">
+            <AdminPanelHeader
+              title="Recommended plan"
+              icon={Star}
+              actions={
+                recommendedPlan && canEdit ? (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={saving}
+                    onClick={() => setRecommended(recommendedPlan, false)}
+                  >
+                    Clear
+                  </Button>
+                ) : undefined
+              }
+            />
+            <AdminPanelBody>
+              <p className="text-sm text-ink-muted mb-4">
+                Pick the plan that carries the “Most popular” badge on the public pricing page.
+                Only one plan can hold it, and the change is live immediately — no redeploy.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {plans.map((p) => {
+                  const isRecommended = Boolean(p.is_recommended)
+                  return (
+                    <button
+                      key={p.id}
+                      type="button"
+                      disabled={!canEdit || saving || !p.is_active}
+                      onClick={() => setRecommended(p, !isRecommended)}
+                      title={
+                        !p.is_active
+                          ? 'Inactive plans are not shown on the pricing page'
+                          : isRecommended
+                            ? 'Clear the recommended badge'
+                            : `Make ${p.name} the recommended plan`
+                      }
+                      className={`inline-flex items-center gap-2 rounded-brand border px-3.5 py-2 text-sm font-medium transition-all disabled:cursor-not-allowed disabled:opacity-50 ${
+                        isRecommended
+                          ? 'border-violet-400 bg-violet-50 text-violet-800 shadow-sm'
+                          : 'border-surface-border/80 text-ink hover:border-brand/40 hover:bg-surface-elevated/60'
+                      }`}
+                      aria-pressed={isRecommended}
+                    >
+                      <Star
+                        className={`h-4 w-4 ${isRecommended ? 'fill-violet-500 text-violet-500' : 'text-ink-dim'}`}
+                        aria-hidden
+                      />
+                      {p.name}
+                      {!p.is_active && (
+                        <span className="text-[10px] uppercase tracking-wide text-ink-dim">
+                          off
+                        </span>
+                      )}
+                    </button>
+                  )
+                })}
+              </div>
+              {!recommendedPlan && (
+                <p className="text-xs text-ink-muted mt-3">
+                  No plan is highlighted right now — the pricing grid renders every card equally.
+                </p>
+              )}
+            </AdminPanelBody>
+          </AdminPanel>
 
           <div className="grid gap-6 lg:grid-cols-5">
             <AdminPanel className="lg:col-span-2">
@@ -252,7 +366,15 @@ export default function AdminPlansPage() {
                       }`}
                     >
                       <div className="flex justify-between items-start gap-2">
-                        <span className="font-semibold text-ink">{p.name}</span>
+                        <span className="font-semibold text-ink flex items-center gap-1.5">
+                          {p.name}
+                          {p.is_recommended && (
+                            <Star
+                              className="h-3.5 w-3.5 fill-violet-500 text-violet-500 shrink-0"
+                              aria-label="Recommended plan"
+                            />
+                          )}
+                        </span>
                         <Badge variant={p.is_active ? 'default' : 'outline'}>
                           {p.is_active ? 'Active' : 'Off'}
                         </Badge>
@@ -261,6 +383,12 @@ export default function AdminPlansPage() {
                         {formatPlanPriceLabel(p.monthly_price)}/mo · quota{' '}
                         {formatCount(p.monthly_quota ?? 0)} · {p.rate_limit_per_minute ?? '-'}/min
                       </p>
+                      {p.users_count != null && (
+                        <p className="text-xs text-ink-dim mt-1 flex items-center gap-1">
+                          <Users className="h-3 w-3" aria-hidden />
+                          {formatCount(p.users_count)} {p.users_count === 1 ? 'user' : 'users'}
+                        </p>
+                      )}
                     </button>
                   ))
                 )}

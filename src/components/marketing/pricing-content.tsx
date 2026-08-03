@@ -216,7 +216,7 @@ export function PricingContent({ initialPlans, initialError }: PricingContentPro
                     <PricingCard
                       key={plan.id}
                       plan={plan}
-                      isPopular={plan.name === 'Plus'}
+                      isPopular={plan.is_recommended === true}
                       isCurrent={currentSubscription?.plan_id === plan.id}
                       onSelect={() => handlePlanSelect(plan)}
                     />

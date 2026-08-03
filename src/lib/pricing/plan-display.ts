@@ -11,6 +11,11 @@ export interface PricingPlan {
   stripe_test_price_id?: string
   stripe_live_price_id?: string
   price_display_label?: string | null
+  /**
+   * Admin-selected "Most popular" card (plans.is_recommended). Set from
+   * Admin → Plans; at most one plan carries it.
+   */
+  is_recommended?: boolean
 }
 
 export function isEnterprisePlan(name: string): boolean {
@@ -301,6 +306,7 @@ export function transformPlanData(backendPlans: Record<string, unknown>[]): Pric
       stripe_test_price_id: plan.stripe_test_price_id as string | undefined,
       stripe_live_price_id: plan.stripe_live_price_id as string | undefined,
       price_display_label: priceLabel,
+      is_recommended: plan.is_recommended === true,
     }
   })
 }

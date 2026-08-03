@@ -46,6 +46,131 @@ export interface AdminUser {
   api_keys_count?: number
 }
 
+/** GET /admin/users/{id} — adds lifetime usage totals to the base user row. */
+export interface AdminUserDetail extends AdminUser {
+  updated_at?: string
+  is_superuser?: boolean
+  stripe_customer_id?: string | null
+  subscription_tier?: string | null
+  username?: string | null
+  uuid?: string | null
+  api_quota?: number | null
+  api_quota_used?: number | null
+  plan_monthly_quota?: number | null
+  plan_rate_limit_per_minute?: number | null
+  api_keys_total?: number
+  error_requests?: number
+  requests_last_7d?: number
+  distinct_endpoints?: number
+  active_days?: number
+  avg_response_time_ms?: number | null
+  first_request_at?: string | null
+  last_request_at?: string | null
+}
+
+/** Whole-table user counts, independent of the current list page. */
+export interface AdminUserStats {
+  total_users: number
+  active_users: number
+  inactive_users: number
+  admin_users: number
+  verified_users: number
+  new_this_month: number
+  new_last_month: number
+  new_last_30d: number
+  new_last_7d: number
+  logged_in_7d: number
+  logged_in_30d: number
+  never_logged_in: number
+  by_plan: Array<{ plan_name: string; users: number }>
+}
+
+export type UserSortKey =
+  | 'created_at'
+  | 'last_login'
+  | 'email'
+  | 'first_name'
+  | 'last_name'
+  | 'company_name'
+  | 'plan_name'
+  | 'plan_price'
+  | 'is_active'
+  | 'total_requests'
+  | 'requests_this_month'
+  | 'api_keys_count'
+
+export type SortOrder = 'asc' | 'desc'
+
+export interface AdminUserListParams {
+  skip?: number
+  limit?: number
+  search?: string
+  status?: 'active' | 'inactive' | 'admin' | 'unverified'
+  plan_id?: number
+  plan?: string
+  sort_by?: UserSortKey
+  sort_order?: SortOrder
+}
+
+export interface AdminUserListResponse {
+  users: AdminUser[]
+  total: number
+  skip: number
+  limit: number
+  sort_by: UserSortKey
+  sort_order: SortOrder
+}
+
+export type RequestSortKey =
+  | 'created_at'
+  | 'response_time_ms'
+  | 'status_code'
+  | 'endpoint'
+  | 'method'
+  | 'id'
+
+export interface UserRequestsParams {
+  skip?: number
+  limit?: number
+  endpoint?: string
+  method?: string
+  status_min?: number
+  status_max?: number
+  date_from?: string
+  date_to?: string
+  sort_by?: RequestSortKey
+  sort_order?: SortOrder
+}
+
+export interface UserRequestsResponse {
+  user_id: number
+  requests: ApiRequestRow[]
+  total: number
+  skip: number
+  limit: number
+}
+
+export interface UserRequestSummary {
+  user_id: number
+  by_endpoint: Array<{
+    endpoint: string
+    requests: number
+    errors: number
+    avg_response_time: number | null
+    last_called_at: string | null
+  }>
+  status_mix: Array<{ status_code: number; count: number }>
+  by_method: Array<{ method: string; count: number }>
+}
+
+export interface AdminApiKeyRow {
+  id: number
+  name?: string | null
+  is_active: boolean
+  created_at?: string | null
+  last_used_at?: string | null
+}
+
 export interface AdminStats {
   totalUsers: number
   activeUsers: number
@@ -162,6 +287,8 @@ export interface AdminPlan {
   monthly_quota?: number
   rate_limit_per_minute?: number
   is_active: boolean
+  /** Drives the "Most popular" badge on the public pricing grid. */
+  is_recommended?: boolean
   plan_tier?: string
   max_api_keys?: number
   stripe_price_id?: string | null
@@ -169,6 +296,7 @@ export interface AdminPlan {
   stripe_live_price_id?: string | null
   card_highlights?: string[]
   price_display_label?: string | null
+  users_count?: number
 }
 
 export interface AdminPlanFeature {
@@ -299,15 +427,20 @@ export interface TestimonialInput {
 }
 
 class AdminAPI {
-  async getUsers(params?: Record<string, unknown>): Promise<{ users: AdminUser[]; total: number }> {
-    return adminGet('/users', params)
+  async getUsers(params?: AdminUserListParams): Promise<AdminUserListResponse> {
+    return adminGet('/users', params as Record<string, unknown> | undefined)
   }
 
-  async getUser(userId: number): Promise<AdminUser> {
+  /** Account-wide counts for the Users dashboard cards (not page-limited). */
+  async getUserStats(): Promise<AdminUserStats> {
+    return adminGet('/users/stats')
+  }
+
+  async getUser(userId: number): Promise<AdminUserDetail> {
     return adminGet(`/users/${userId}`)
   }
 
-  async getAdminUser(userId: number): Promise<AdminUser> {
+  async getAdminUser(userId: number): Promise<AdminUserDetail> {
     return this.getUser(userId)
   }
 
@@ -326,15 +459,30 @@ class AdminAPI {
     await adminPut(`/users/${userId}/status`, { is_active: false })
   }
 
-  async getUserUsage(userId: number, timeRange = '30d'): Promise<UserUsagePayload> {
+  async getUserUsage(
+    userId: number,
+    timeRange: '7d' | '30d' | '90d' | '1y' | 'all' = '30d'
+  ): Promise<UserUsagePayload> {
     return adminGet(`/users/${userId}/usage`, { time_range: timeRange })
   }
 
-  async getUserRequests(userId: number, limit = 50): Promise<{ requests: ApiRequestRow[] }> {
-    return adminGet(`/users/${userId}/requests`, { limit })
+  /** Paginated request history — every call the account has made since signup. */
+  async getUserRequests(
+    userId: number,
+    params: UserRequestsParams = {}
+  ): Promise<UserRequestsResponse> {
+    return adminGet(`/users/${userId}/requests`, {
+      limit: 50,
+      ...params,
+    } as Record<string, unknown>)
   }
 
-  async getUserApiKeys(userId: number): Promise<{ api_keys: Array<Record<string, unknown>> }> {
+  /** Lifetime endpoint / status / method breakdown for one user. */
+  async getUserRequestSummary(userId: number): Promise<UserRequestSummary> {
+    return adminGet(`/users/${userId}/request-summary`)
+  }
+
+  async getUserApiKeys(userId: number): Promise<{ api_keys: AdminApiKeyRow[] }> {
     return adminGet(`/users/${userId}/api-keys`)
   }
 
@@ -350,7 +498,13 @@ class AdminAPI {
     return adminGet('/analytics', { time_range: timeRange })
   }
 
-  async getApiRequests(params?: Record<string, unknown>): Promise<{ requests: ApiRequestRow[] }> {
+  async getApiRequests(params?: Record<string, unknown>): Promise<{
+    requests: ApiRequestRow[]
+    total: number | null
+    skip: number
+    limit: number
+    keyset: boolean
+  }> {
     return adminGet('/requests', params)
   }
 
@@ -365,6 +519,7 @@ class AdminAPI {
       monthly_quota?: number
       rate_limit_per_minute?: number
       is_active?: boolean
+      is_recommended?: boolean
       description?: string
       monthly_price?: number
       stripe_price_id?: string | null
@@ -375,6 +530,18 @@ class AdminAPI {
     }
   ): Promise<{ message: string }> {
     return adminPatch(`/plans/${planId}`, data)
+  }
+
+  /**
+   * Make one plan the "Most popular" card. The backend demotes the previous
+   * holder in the same transaction, so only one plan is ever flagged.
+   */
+  async setRecommendedPlan(planId: number): Promise<{ message: string }> {
+    return adminPatch(`/plans/${planId}`, { is_recommended: true })
+  }
+
+  async clearRecommendedPlan(planId: number): Promise<{ message: string }> {
+    return adminPatch(`/plans/${planId}`, { is_recommended: false })
   }
 
   async getPlanFeatures(planId: number): Promise<{ features: AdminPlanFeature[] }> {
@@ -400,7 +567,9 @@ class AdminAPI {
     return adminDelete(`/plans/${planId}/features/${encodeURIComponent(featureName)}`)
   }
 
-  async getSubscriptions(params?: Record<string, unknown>): Promise<{ subscriptions: Array<Record<string, unknown>> }> {
+  async getSubscriptions(
+    params?: Record<string, unknown>
+  ): Promise<{ subscriptions: Array<Record<string, unknown>>; total: number }> {
     return adminGet('/subscriptions', params)
   }
 
@@ -412,7 +581,9 @@ class AdminAPI {
     return adminGet('/revenue/timeseries', { months })
   }
 
-  async getAuditLog(params?: Record<string, unknown>): Promise<{ entries: AuditEntry[] }> {
+  async getAuditLog(
+    params?: Record<string, unknown>
+  ): Promise<{ entries: AuditEntry[]; total: number }> {
     return adminGet('/audit-log', params)
   }
 

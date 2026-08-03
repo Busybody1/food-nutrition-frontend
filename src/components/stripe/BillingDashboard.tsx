@@ -320,7 +320,7 @@ export function BillingDashboard() {
             <div>
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Available Plans</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {plans.map((plan, index) => (
+                {plans.map((plan) => (
                   <SubscriptionCard
                     key={plan.id}
                     plan={plan}
@@ -330,7 +330,7 @@ export function BillingDashboard() {
                       // Plan selection handled by the component
                     }}
                     isLoading={isLoading}
-                    isPopular={index === 1} // Mark middle plan as popular
+                    isPopular={plan.is_recommended === true}
                   />
                 ))}
               </div>

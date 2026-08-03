@@ -119,6 +119,8 @@ export interface Plan {
   stripe_price_id?: string;
   features?: string[] | Record<string, unknown>;
   is_active: boolean;
+  /** Admin-selected "Most popular" plan (plans.is_recommended); at most one. */
+  is_recommended?: boolean;
   created_at?: string;
 }
 

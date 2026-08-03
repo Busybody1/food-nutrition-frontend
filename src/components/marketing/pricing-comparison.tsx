@@ -89,7 +89,7 @@ export function PricingComparison({ plans }: { plans: PricingPlan[] }) {
                         scope="col"
                         className={cn(
                           'border-b border-surface-border py-4 px-3 text-center text-xs font-semibold uppercase tracking-wider min-w-[88px]',
-                          plan.name === 'Plus'
+                          plan.is_recommended
                             ? 'border-t-2 border-t-brand bg-brand-muted text-brand-strong'
                             : 'text-ink-muted'
                         )}
@@ -139,7 +139,7 @@ export function PricingComparison({ plans }: { plans: PricingPlan[] }) {
                               className={cn(
                                 'py-3.5 px-3 text-center',
                                 cellBorder,
-                                plan.name === 'Plus' && 'bg-brand-muted/20'
+                                plan.is_recommended && 'bg-brand-muted/20'
                               )}
                             >
                               <CompareCellValue value={row.getValue(plan)} />

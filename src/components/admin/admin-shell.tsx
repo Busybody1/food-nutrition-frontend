@@ -263,16 +263,36 @@ function SystemHealthBadge() {
   )
 }
 
+/** Longest matching section in PAGE_TITLES, so detail routes keep their parent's name. */
+function sectionTitle(pathname: string | null): { section: string; leaf?: string } {
+  const path = pathname ?? ''
+  if (PAGE_TITLES[path]) return { section: PAGE_TITLES[path] }
+
+  const match = Object.keys(PAGE_TITLES)
+    .filter((href) => href !== '/admin' && path.startsWith(`${href}/`))
+    .sort((a, b) => b.length - a.length)[0]
+
+  if (!match) return { section: path.startsWith('/admin') ? 'Admin' : 'Admin console' }
+  const rest = path.slice(match.length + 1).split('/')[0]
+  return { section: PAGE_TITLES[match], leaf: rest === 'new' ? 'New' : `#${rest}` }
+}
+
 function HeaderBreadcrumb({ pathname }: { pathname: string | null }) {
-  const pageTitle =
-    PAGE_TITLES[pathname ?? ''] ??
-    (pathname?.startsWith('/admin') ? 'Admin' : 'Admin console')
+  const { section, leaf } = sectionTitle(pathname)
 
   return (
     <div className="flex items-center gap-1.5 text-sm min-w-0">
       <span className="text-ink-muted hidden md:inline">Admin</span>
       <ChevronRight className="h-3.5 w-3.5 text-ink-dim hidden md:block shrink-0" aria-hidden />
-      <span className="font-semibold text-ink truncate">{pageTitle}</span>
+      <span className={cn('truncate', leaf ? 'text-ink-muted' : 'font-semibold text-ink')}>
+        {section}
+      </span>
+      {leaf && (
+        <>
+          <ChevronRight className="h-3.5 w-3.5 text-ink-dim shrink-0" aria-hidden />
+          <span className="font-semibold text-ink truncate">{leaf}</span>
+        </>
+      )}
     </div>
   )
 }

@@ -2,7 +2,7 @@
 
 import { cn } from '@/lib/utils/cn'
 import { Button } from '@/components/ui/button'
-import { RefreshCw } from 'lucide-react'
+import { ArrowDown, ArrowUp, ChevronsUpDown, RefreshCw } from 'lucide-react'
 import {
   DashboardPage,
   DashboardPageHeader,
@@ -128,6 +128,165 @@ export function AdminTableWrap({ children }: { children: React.ReactNode }) {
 
 export function AdminTable({ children }: { children: React.ReactNode }) {
   return <table className="dashboard-table">{children}</table>
+}
+
+export type AdminSortOrder = 'asc' | 'desc'
+
+export interface AdminSortState<K extends string> {
+  key: K
+  order: AdminSortOrder
+}
+
+/**
+ * Sortable column header. Clicking toggles asc/desc on the active column and
+ * switches to `sortKey` (at `defaultOrder`) otherwise.
+ *
+ * Sorting is applied by the API, not in the browser, so the order reflects every
+ * matching row rather than just the page currently loaded.
+ */
+export function AdminSortableTh<K extends string>({
+  label,
+  sortKey,
+  sort,
+  onSort,
+  defaultOrder = 'desc',
+  align = 'left',
+  className,
+  title,
+}: {
+  label: string
+  sortKey: K
+  sort: AdminSortState<K>
+  onSort: (next: AdminSortState<K>) => void
+  /** Order applied when this column first becomes the sort column. */
+  defaultOrder?: AdminSortOrder
+  align?: 'left' | 'right'
+  className?: string
+  title?: string
+}) {
+  const isActive = sort.key === sortKey
+  const Icon = !isActive ? ChevronsUpDown : sort.order === 'asc' ? ArrowUp : ArrowDown
+
+  return (
+    <th
+      className={className}
+      aria-sort={isActive ? (sort.order === 'asc' ? 'ascending' : 'descending') : 'none'}
+    >
+      <button
+        type="button"
+        title={title ?? `Sort by ${label.toLowerCase()}`}
+        onClick={() =>
+          onSort({
+            key: sortKey,
+            order: isActive ? (sort.order === 'asc' ? 'desc' : 'asc') : defaultOrder,
+          })
+        }
+        className={cn(
+          'group inline-flex items-center gap-1 rounded-md px-1 -mx-1 py-0.5 transition-colors',
+          'hover:text-brand-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-strong/40',
+          align === 'right' && 'flex-row-reverse',
+          isActive && 'text-brand-strong'
+        )}
+      >
+        {label}
+        <Icon
+          className={cn(
+            'h-3 w-3 shrink-0 transition-opacity',
+            isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-60'
+          )}
+          aria-hidden
+        />
+      </button>
+    </th>
+  )
+}
+
+/** Offset pagination footer for server-paginated admin tables. */
+export function AdminPagination({
+  page,
+  pageSize,
+  total,
+  onPageChange,
+  onPageSizeChange,
+  pageSizeOptions = [20, 50, 100],
+  loading,
+  noun = 'rows',
+}: {
+  page: number
+  pageSize: number
+  total: number
+  onPageChange: (page: number) => void
+  onPageSizeChange?: (size: number) => void
+  pageSizeOptions?: number[]
+  loading?: boolean
+  noun?: string
+}) {
+  const totalPages = Math.max(1, Math.ceil(total / pageSize))
+  const start = total === 0 ? 0 : (page - 1) * pageSize + 1
+  const end = Math.min(page * pageSize, total)
+
+  return (
+    <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-5 py-4 border-t border-surface-border/60">
+      <div className="flex items-center gap-3">
+        <p className="text-sm text-ink-muted tabular-nums">
+          {total === 0 ? `No ${noun}` : `${start}–${end} of ${total.toLocaleString()} ${noun}`}
+        </p>
+        {onPageSizeChange && (
+          <label className="hidden sm:flex items-center gap-1.5 text-xs text-ink-muted">
+            <span className="sr-only sm:not-sr-only">Per page</span>
+            <select
+              value={pageSize}
+              onChange={(e) => onPageSizeChange(Number(e.target.value))}
+              className="rounded-md border border-surface-border/80 bg-white px-1.5 py-1 text-xs"
+            >
+              {pageSizeOptions.map((size) => (
+                <option key={size} value={size}>
+                  {size}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
+      </div>
+      <div className="flex items-center gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onPageChange(1)}
+          disabled={page <= 1 || loading}
+        >
+          First
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onPageChange(page - 1)}
+          disabled={page <= 1 || loading}
+        >
+          Previous
+        </Button>
+        <span className="text-sm text-ink-muted tabular-nums whitespace-nowrap">
+          Page {page} of {totalPages}
+        </span>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onPageChange(page + 1)}
+          disabled={page >= totalPages || loading}
+        >
+          Next
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onPageChange(totalPages)}
+          disabled={page >= totalPages || loading}
+        >
+          Last
+        </Button>
+      </div>
+    </div>
+  )
 }
 
 export function AdminFilterBar({ children }: { children: React.ReactNode }) {
