@@ -626,6 +626,71 @@ class AdminAPI {
     return adminPost(`/users/${userId}/feedback-email`)
   }
 
+  async getEmailTemplates(): Promise<{
+    templates: Array<{
+      id: string
+      email_number: number
+      label: string
+      when: string
+      commercial_variant: boolean
+    }>
+  }> {
+    return adminGet('/emails/templates')
+  }
+
+  async previewConversionEmail(data: {
+    user_id?: number
+    email?: string
+    email_number: number
+    commercial_variant?: boolean
+  }): Promise<{
+    email_number: number
+    variant: string
+    subject: string
+    html: string
+    text: string
+    endpoint_hint?: string
+  }> {
+    return adminPost('/emails/preview-conversion', data)
+  }
+
+  async sendConversionEmail(data: {
+    user_id?: number
+    email?: string
+    email_number: number
+    commercial_variant?: boolean
+  }): Promise<{
+    message: string
+    user_id: number
+    email: string
+    email_number: number
+    variant: string
+    subject: string
+    provider?: string
+  }> {
+    return adminPost('/emails/send-conversion', data)
+  }
+
+  async sendCustomEmail(data: {
+    user_id?: number
+    email?: string
+    subject: string
+    body_html?: string
+    body_text?: string
+    wrap_branded?: boolean
+    from_name?: string
+  }): Promise<{
+    message: string
+    user_id: number
+    email: string
+    subject: string
+    format: string
+    wrap_branded: boolean
+    provider?: string
+  }> {
+    return adminPost('/emails/send-custom', data)
+  }
+
   async getFeedbackSubmissions(params?: {
     user_id?: number
     skip?: number

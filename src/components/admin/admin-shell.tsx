@@ -18,6 +18,7 @@ import {
   CreditCard,
   Layers,
   Mail,
+  Send,
   FileSearch,
   FileText,
   MessageSquareQuote,
@@ -54,6 +55,7 @@ const NAV_SECTIONS = [
     label: 'Operations',
     items: [
       { name: 'Announcements', href: '/admin/announcements', icon: Mail, permission: 'admin:settings:update' },
+      { name: 'Emails', href: '/admin/emails', icon: Send, permission: 'admin:settings:update' },
       { name: 'Blog', href: '/admin/blog', icon: FileText, permission: 'admin:settings:update' },
       { name: 'Testimonials', href: '/admin/testimonials', icon: MessageSquareQuote, permission: 'admin:settings:update' },
       { name: 'Security', href: '/admin/security', icon: ShieldAlert, permission: 'admin:monitoring:view' },
@@ -72,6 +74,7 @@ const PAGE_TITLES: Record<string, string> = {
   '/admin/plans': 'Plans',
   '/admin/billing': 'Billing',
   '/admin/announcements': 'Announcements',
+  '/admin/emails': 'Emails',
   '/admin/blog': 'Blog',
   '/admin/testimonials': 'Testimonials',
   '/admin/security': 'Security',
