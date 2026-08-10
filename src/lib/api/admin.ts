@@ -629,6 +629,7 @@ class AdminAPI {
   async getEmailTemplates(): Promise<{
     templates: Array<{
       id: string
+      campaign_kind?: 'usage' | 'activation'
       email_number: number
       label: string
       when: string
@@ -643,11 +644,13 @@ class AdminAPI {
     email?: string
     email_number: number
     commercial_variant?: boolean
+    campaign_kind?: 'usage' | 'activation'
   }): Promise<{
     email_number: number
+    campaign_kind?: string
     variant: string
     subject: string
-    html: string
+    html: string | null
     text: string
     endpoint_hint?: string
   }> {
@@ -659,11 +662,13 @@ class AdminAPI {
     email?: string
     email_number: number
     commercial_variant?: boolean
+    campaign_kind?: 'usage' | 'activation'
   }): Promise<{
     message: string
     user_id: number
     email: string
     email_number: number
+    campaign_kind?: string
     variant: string
     subject: string
     provider?: string

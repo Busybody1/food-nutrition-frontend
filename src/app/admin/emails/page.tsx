@@ -28,6 +28,7 @@ type Feedback = { type: 'success' | 'error'; text: string }
 
 type EmailTemplate = {
   id: string
+  campaign_kind?: 'usage' | 'activation'
   email_number: number
   label: string
   when: string
@@ -158,7 +159,7 @@ export default function AdminEmailsPage() {
   const [templateId, setTemplateId] = useState('conv-1')
   const [preview, setPreview] = useState<{
     subject: string
-    html: string
+    html: string | null
     text: string
     variant: string
   } | null>(null)
@@ -193,6 +194,7 @@ export default function AdminEmailsPage() {
         user_id: recipient?.id,
         email_number: selectedTemplate.email_number,
         commercial_variant: selectedTemplate.commercial_variant,
+        campaign_kind: selectedTemplate.campaign_kind || 'usage',
       })
       setPreview({
         subject: res.subject,
@@ -250,10 +252,11 @@ export default function AdminEmailsPage() {
         user_id: recipient.id,
         email_number: selectedTemplate.email_number,
         commercial_variant: selectedTemplate.commercial_variant,
+        campaign_kind: selectedTemplate.campaign_kind || 'usage',
       })
       setFeedback({
         type: 'success',
-        text: `Sent conversion email #${res.email_number} (${res.variant}) to ${res.email}.`,
+        text: `Sent ${selectedTemplate.campaign_kind || 'usage'} email #${res.email_number} (${res.variant}) to ${res.email}.`,
       })
     } catch (error) {
       setFeedback({
@@ -461,7 +464,8 @@ export default function AdminEmailsPage() {
                   >
                     {templates.map((template) => (
                       <option key={template.id} value={template.id}>
-                        #{template.email_number} — {template.label} ({template.when})
+                        [{template.campaign_kind || 'usage'}] #{template.email_number} —{' '}
+                        {template.label} ({template.when})
                       </option>
                     ))}
                   </select>
@@ -506,13 +510,19 @@ export default function AdminEmailsPage() {
                       <p className="text-sm font-medium text-ink">{preview.subject}</p>
                       <p className="text-xs text-ink-dim mt-1">Variant: {preview.variant}</p>
                     </div>
-                    <div className="rounded-brand border border-surface-border/60 overflow-hidden bg-white">
-                      <iframe
-                        title="Email preview"
-                        sandbox=""
-                        srcDoc={preview.html}
-                        className="w-full h-[420px] bg-white"
-                      />
+                    <div className="rounded-brand border border-surface-border/60 overflow-hidden bg-white p-4">
+                      {preview.html ? (
+                        <iframe
+                          title="Email preview"
+                          sandbox=""
+                          srcDoc={preview.html}
+                          className="w-full h-[420px] bg-white"
+                        />
+                      ) : (
+                        <pre className="whitespace-pre-wrap text-sm text-ink font-sans leading-relaxed">
+                          {preview.text}
+                        </pre>
+                      )}
                     </div>
                   </>
                 )}
