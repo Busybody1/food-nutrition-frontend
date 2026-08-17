@@ -208,7 +208,7 @@ export const SOLUTION_PAGES: SolutionPage[] = [
     related: [
       { label: 'Nutrition analysis API overview', href: '/nutrition-analysis-api' },
       { label: 'Food Search API reference', href: '/docs/food-search' },
-      { label: 'Contact for enterprise', href: '/contact' },
+      { label: 'Contact for enterprise', href: '/contact?inquiry=enterprise' },
       { label: 'API status & uptime', href: '/api-status' },
     ],
     summary: 'Verified nutrition data for dietitian tools and patient food diaries.',
@@ -335,7 +335,7 @@ export const SOLUTION_PAGES: SolutionPage[] = [
       { label: 'Meal tracking API overview', href: '/meal-tracking-api' },
       { label: 'Nutrition analysis API overview', href: '/nutrition-analysis-api' },
       { label: 'Rate limits & quotas', href: '/docs/rate-limits' },
-      { label: 'Contact for enterprise', href: '/contact' },
+      { label: 'Contact for enterprise', href: '/contact?inquiry=enterprise' },
     ],
     summary: 'Embedded nutrition features for wellness and corporate health platforms.',
     dateModified: '2026-07-03',

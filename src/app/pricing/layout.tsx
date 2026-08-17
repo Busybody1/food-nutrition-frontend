@@ -24,7 +24,7 @@ export default function PricingLayout({ children }: { children: React.ReactNode 
         primaryHref="/auth/register"
         primaryLabel="Get started free"
         secondaryHref="/contact?inquiry=enterprise"
-        secondaryLabel="Contact Sales"
+        secondaryLabel="Schedule a call"
       />
     </>
   )

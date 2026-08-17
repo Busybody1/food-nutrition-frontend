@@ -16,7 +16,7 @@ export function PricingEnterpriseBand({
   onSelect: () => void
 }) {
   const { amount, suffix } = formatPlanPrice(plan)
-  const ctaLabel = isCurrent ? 'Current plan' : 'Contact Sales'
+  const ctaLabel = isCurrent ? 'Current plan' : 'Schedule a call'
 
   return (
     <article

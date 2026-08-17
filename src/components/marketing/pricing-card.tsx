@@ -62,7 +62,7 @@ export function PricingCard({
     : plan.name === 'Free'
       ? 'Get started free'
       : isEnterprisePlan(plan.name)
-        ? 'Contact Sales'
+        ? 'Schedule a call'
         : 'Subscribe'
 
   return (

@@ -10,6 +10,7 @@ import { PricingCard } from '@/components/marketing/pricing-card'
 import { PricingEnterpriseBand } from '@/components/marketing/pricing-enterprise-band'
 import { PricingComparison } from '@/components/marketing/pricing-comparison'
 import { RevealGroup } from '@/components/marketing/reveal'
+import { ScheduleCallDialog } from '@/components/marketing/schedule-call-dialog'
 import { StatsBand } from '@/components/marketing/stats-band'
 import { TrackedCtaLink } from '@/components/analytics/tracked-cta-link'
 import { fetchPublicPlans } from '@/lib/pricing/fetch-plans'
@@ -37,6 +38,7 @@ export function PricingContent({ initialPlans, initialError }: PricingContentPro
   const router = useRouter()
   const searchParams = useSearchParams()
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isScheduleOpen, setIsScheduleOpen] = useState(false)
   const [selectedPlan, setSelectedPlan] = useState<PricingPlan | null>(null)
   const [plans, setPlans] = useState<PricingPlan[]>(initialPlans)
   const [isLoading, setIsLoading] = useState(initialPlans.length === 0 && !initialError)
@@ -106,6 +108,11 @@ export function PricingContent({ initialPlans, initialError }: PricingContentPro
   }, [searchParams, plans, isAuthenticated])
 
   const handlePlanSelect = async (plan: PricingPlan) => {
+    if (isContactSalesPlan(plan.name)) {
+      setIsScheduleOpen(true)
+      return
+    }
+
     if (!isAuthenticated) {
       router.push('/auth/register')
       return
@@ -134,11 +141,6 @@ export function PricingContent({ initialPlans, initialError }: PricingContentPro
       return
     }
 
-    if (isContactSalesPlan(plan.name)) {
-      router.push('/contact?inquiry=enterprise')
-      return
-    }
-
     setSelectedPlan(plan)
     setIsModalOpen(true)
   }
@@ -161,13 +163,14 @@ export function PricingContent({ initialPlans, initialError }: PricingContentPro
           >
             Get started free
           </TrackedCtaLink>
-          <TrackedCtaLink
-            href="/contact?inquiry=enterprise"
-            eventLabel="Contact Sales"
+          <button
+            type="button"
             className="btn-brand-outline h-12 w-full px-8 text-base sm:w-auto"
+            onClick={() => setIsScheduleOpen(true)}
+            aria-haspopup="dialog"
           >
-            Contact Sales
-          </TrackedCtaLink>
+            Schedule a call
+          </button>
         </div>
         <MarketingTrustPills
           items={['Live limits from your plan', 'Cancel anytime', 'Enterprise image + credits']}
@@ -247,6 +250,7 @@ export function PricingContent({ initialPlans, initialError }: PricingContentPro
         plan={selectedPlan}
         onError={(error) => console.error('Subscription error:', error)}
       />
+      <ScheduleCallDialog isOpen={isScheduleOpen} onClose={() => setIsScheduleOpen(false)} />
     </div>
   )
 }

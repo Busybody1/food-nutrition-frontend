@@ -415,6 +415,12 @@ export const api = {
     
     getUsage: () =>
       apiClient.get('/api/v1/users/usage'), // Fixed: /users/ (plural)
+
+    submitFeedback: (data: {
+      category: 'feedback' | 'error'
+      message: string
+      page?: string
+    }) => apiClient.post('/api/v1/users/feedback', data),
   },
 
   // Usage Analytics

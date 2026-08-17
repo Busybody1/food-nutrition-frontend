@@ -26,6 +26,7 @@ import {
   isContactSalesPlan,
   type PricingPlan,
 } from '@/lib/pricing/plan-display'
+import { ScheduleCallDialog } from '@/components/marketing/schedule-call-dialog'
 
 // Per-tier fallback only for when the profile did not carry plans.max_api_keys.
 const API_KEY_LIMIT_FALLBACK: Record<string, number> = {
@@ -144,10 +145,10 @@ function BillingPlanCard({
       <Button
         onClick={() => onSelect(plan.id)}
         variant={isCurrent ? 'outline' : 'default'}
-        disabled={isCurrent || contactSales}
+        disabled={isCurrent}
         className="w-full"
       >
-        {isCurrent ? 'Current Plan' : contactSales ? 'Contact sales' : `Switch to ${plan.name}`}
+        {isCurrent ? 'Current Plan' : contactSales ? 'Schedule a call' : `Switch to ${plan.name}`}
       </Button>
     </div>
   )
@@ -163,6 +164,7 @@ function BillingPageContent() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
   const [successMessage, setSuccessMessage] = useState('')
+  const [isScheduleOpen, setIsScheduleOpen] = useState(false)
 
   const loadBillingData = useCallback(async () => {
     try {
@@ -329,6 +331,15 @@ function BillingPageContent() {
 
   const handleUpgradeToPlan = (planId: number) => {
     router.push(`/pricing?plan_id=${planId}`)
+  }
+
+  const handleEnterpriseOrPlan = (planId: number, fallback: (id: number) => void) => {
+    const plan = availablePlans.find((item) => item.id === planId)
+    if (plan && isContactSalesPlan(plan.name)) {
+      setIsScheduleOpen(true)
+      return
+    }
+    fallback(planId)
   }
 
   const handlePlanChange = async (newPlanId: number) => {
@@ -584,7 +595,7 @@ function BillingPageContent() {
                         key={plan.id}
                         plan={plan}
                         currentPlanName={billingInfo.plan_name}
-                        onSelect={handlePlanChange}
+                        onSelect={(planId) => handleEnterpriseOrPlan(planId, handlePlanChange)}
                       />
                     ))}
                 </div>
@@ -756,7 +767,7 @@ function BillingPageContent() {
                         key={plan.id}
                         plan={plan}
                         currentPlanName="Free"
-                        onSelect={handleUpgradeToPlan}
+                        onSelect={(planId) => handleEnterpriseOrPlan(planId, handleUpgradeToPlan)}
                       />
                     ))}
                 </div>
@@ -774,6 +785,7 @@ function BillingPageContent() {
             </Card>
           </div>
         )}
+      <ScheduleCallDialog isOpen={isScheduleOpen} onClose={() => setIsScheduleOpen(false)} />
     </DashboardPage>
   )
 }

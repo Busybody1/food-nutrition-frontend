@@ -17,16 +17,25 @@ import {
   LogOut,
   BookOpen,
   ExternalLink,
+  MessageSquare,
+  type LucideIcon,
 } from 'lucide-react'
 import { SITE_NAME } from '@/lib/site'
 import { cn } from '@/lib/utils/cn'
+import { DashboardFeedbackForm } from '@/components/dashboard/DashboardFeedbackForm'
 
-const navigation = [
+const navigation: {
+  name: string
+  href: string
+  icon: LucideIcon
+  hash?: boolean
+}[] = [
   { name: 'Overview', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Search', href: '/dashboard/search', icon: Search },
   { name: 'API Keys', href: '/dashboard/api-keys', icon: Key },
   { name: 'Usage', href: '/dashboard/usage', icon: BarChart3 },
   { name: 'Billing', href: '/dashboard/billing', icon: CreditCard },
+  { name: 'Feedback', href: '#dashboard-feedback', icon: MessageSquare, hash: true },
 ]
 
 function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
@@ -35,20 +44,29 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
   return (
     <nav className="flex flex-col gap-0.5 px-3" aria-label="Dashboard">
       {navigation.map((item) => {
+        const isHash = Boolean(item.hash)
         const isActive =
-          pathname === item.href ||
-          (item.href !== '/dashboard' && pathname?.startsWith(item.href))
+          !isHash &&
+          (pathname === item.href ||
+            (item.href !== '/dashboard' && pathname?.startsWith(item.href)))
+        const className = cn(
+          'dashboard-nav-link',
+          isActive && 'dashboard-nav-link-active'
+        )
+        const icon = <item.icon className="h-[18px] w-[18px] shrink-0 opacity-80" aria-hidden />
+
+        if (isHash) {
+          return (
+            <a key={item.name} href={item.href} onClick={onNavigate} className={className}>
+              {icon}
+              {item.name}
+            </a>
+          )
+        }
+
         return (
-          <Link
-            key={item.name}
-            href={item.href}
-            onClick={onNavigate}
-            className={cn(
-              'dashboard-nav-link',
-              isActive && 'dashboard-nav-link-active'
-            )}
-          >
-            <item.icon className="h-[18px] w-[18px] shrink-0 opacity-80" aria-hidden />
+          <Link key={item.name} href={item.href} onClick={onNavigate} className={className}>
+            {icon}
             {item.name}
           </Link>
         )
@@ -184,7 +202,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <span className="text-sm font-semibold text-ink">Dashboard</span>
         </header>
 
-        <main className="flex-1">{children}</main>
+        <main className="flex-1">
+          {children}
+          <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 pb-8">
+            <DashboardFeedbackForm />
+          </div>
+        </main>
       </div>
     </div>
   )

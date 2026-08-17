@@ -10,6 +10,7 @@ import { marketingCardClass, MarketingPageLoading } from '@/components/marketing
 import { Reveal, RevealGroup } from '@/components/marketing/reveal'
 import { SUPPORT_EMAIL } from '@/lib/site'
 import { submitContactForm } from '@/lib/contact/submit-contact'
+import { CalendlyInlineEmbed } from '@/components/marketing/calendly-embed'
 import {
   Mail,
   Send,
@@ -18,6 +19,7 @@ import {
   Building2,
   BookOpen,
   MessageSquare,
+  Calendar,
 } from 'lucide-react'
 
 const inlineLinkClass =
@@ -37,6 +39,7 @@ function ContactPageContent() {
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [honeypot, setHoneypot] = useState('')
+  const [showScheduler, setShowScheduler] = useState(false)
 
   // ?inquiry=enterprise deep-link: adjust state during render (React-docs pattern,
   // replaces the previous setState-in-effect) so the preselection is flash-free.
@@ -45,6 +48,7 @@ function ContactPageContent() {
   if (inquiry !== appliedInquiry) {
     setAppliedInquiry(inquiry)
     if (inquiry === 'enterprise') {
+      setShowScheduler(true)
       setFormData((prev) => ({
         ...prev,
         inquiryType: 'enterprise',
@@ -53,26 +57,34 @@ function ContactPageContent() {
     }
   }
 
+  const scrollToScheduler = () => {
+    const reduceMotion =
+      typeof window.matchMedia === 'function' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    document
+      .getElementById('schedule-call')
+      ?.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' })
+  }
+
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }))
+    if (e.target.name === 'inquiryType' && e.target.value === 'enterprise') {
+      setShowScheduler(true)
+      scrollToScheduler()
+    }
   }
 
-  // Mirrors the ?inquiry=enterprise deep-link: preselect Enterprise and bring the form into view.
+  // Mirrors the ?inquiry=enterprise deep-link: show the scheduler and bring it into view.
   const handleEnterpriseSelect = () => {
+    setShowScheduler(true)
     setFormData((prev) => ({
       ...prev,
       inquiryType: 'enterprise',
       subject: prev.subject || 'Enterprise plan inquiry',
     }))
-    const reduceMotion =
-      typeof window.matchMedia === 'function' &&
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    document
-      .getElementById('contact-form')
-      ?.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' })
-    document.getElementById('name')?.focus({ preventScroll: true })
+    scrollToScheduler()
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -106,15 +118,22 @@ function ContactPageContent() {
     <div className="marketing-page">
       <MarketingImageHero compact centered waveTone="elevated">
         <p className="marketing-hero-badge mb-6 inline-flex items-center gap-2">
-          <MessageSquare className="h-4 w-4" aria-hidden />
-          Get in touch
+          {showScheduler ? (
+            <Calendar className="h-4 w-4" aria-hidden />
+          ) : (
+            <MessageSquare className="h-4 w-4" aria-hidden />
+          )}
+          {showScheduler ? 'Enterprise' : 'Get in touch'}
         </p>
         <h1 className="font-display text-4xl md:text-5xl tracking-tight text-ink mb-4 text-balance">
-          Let&apos;s build something amazing together
+          {showScheduler
+            ? 'Schedule a 30-minute Enterprise call'
+            : "Let's build something amazing together"}
         </h1>
         <p className="text-lg text-ink-muted leading-relaxed max-w-xl mx-auto">
-          Questions about the API, custom volume, or enterprise plans, we typically respond within
-          one business day.
+          {showScheduler
+            ? 'Pick a time that works. We will cover custom volume, image-to-calorie API access, and credits-based usage.'
+            : 'Questions about the API, custom volume, or enterprise plans, we typically respond within one business day.'}
         </p>
       </MarketingImageHero>
 
@@ -122,12 +141,31 @@ function ContactPageContent() {
         <div className="container-narrow">
           <div className="grid lg:grid-cols-12 gap-8 lg:gap-10">
             <Reveal className="lg:col-span-8 lg:order-2 min-w-0">
+              <div id="schedule-call">
+              {showScheduler && (
+                <div className="glass-panel mb-6 p-6 md:p-8 transition-[border-color,box-shadow] duration-200">
+                  <div className="mb-4">
+                    <h2 className="font-display text-2xl text-ink mb-2">Schedule a call</h2>
+                    <p className="text-sm text-ink-muted">
+                      Choose a 30-minute slot. Prefer email? Use the form below or write{' '}
+                      <a href={`mailto:${SUPPORT_EMAIL}`} className={inlineLinkClass}>
+                        {SUPPORT_EMAIL}
+                      </a>
+                      .
+                    </p>
+                  </div>
+                  <CalendlyInlineEmbed />
+                </div>
+              )}
+
               <div
                 id="contact-form"
                 className="glass-panel p-6 md:p-8 transition-[border-color,box-shadow] duration-200 focus-within:border-brand/40 focus-within:shadow-glow"
               >
                 <div className="mb-6">
-                  <h2 className="font-display text-2xl text-ink mb-2">Send a message</h2>
+                  <h2 className="font-display text-2xl text-ink mb-2">
+                    {showScheduler ? 'Or send a message' : 'Send a message'}
+                  </h2>
                   <p className="text-sm text-ink-muted">
                     Fill out the form and we&apos;ll get back to you. You can also email{' '}
                     <a href={`mailto:${SUPPORT_EMAIL}`} className={inlineLinkClass}>
@@ -296,6 +334,7 @@ function ContactPageContent() {
                 </Link>
                 .
               </p>
+              </div>
             </Reveal>
 
             <RevealGroup
@@ -332,13 +371,12 @@ function ContactPageContent() {
                   on-premise options for large teams.
                 </p>
                 <p className="text-xs text-ink-muted">
-                  Select <strong className="text-ink-muted">Enterprise</strong> in the form or email
-                  us with your expected volume.
+                  Schedule a 30-minute call or email us with your expected volume.
                 </p>
                 <button
                   type="button"
                   onClick={handleEnterpriseSelect}
-                  aria-label="Select Enterprise in the form"
+                  aria-label="Schedule an Enterprise call"
                   className="absolute inset-0 z-10 cursor-pointer rounded-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-inset"
                 />
               </div>
