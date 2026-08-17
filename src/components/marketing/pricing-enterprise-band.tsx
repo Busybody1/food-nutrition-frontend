@@ -62,7 +62,7 @@ export function PricingEnterpriseBand({
 
         <div className="flex flex-col gap-2 lg:min-w-[180px]">
           <Button
-            className="h-11 w-full font-semibold bg-gradient-to-r from-brand to-brand-strong shadow-glow hover:shadow-glow-lg cursor-pointer"
+            className="h-11 w-full font-semibold bg-brand text-white shadow-glow hover:bg-brand-strong hover:text-white hover:shadow-glow-lg cursor-pointer"
             onClick={onSelect}
             disabled={isCurrent}
             aria-label={`${ctaLabel} — ${plan.name} plan`}

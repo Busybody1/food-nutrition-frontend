@@ -146,7 +146,7 @@ export function PricingCard({
         className={cn(
           'w-full cursor-pointer',
           isPopular &&
-            'h-11 font-semibold bg-gradient-to-r from-brand to-brand-strong shadow-glow hover:shadow-glow-lg'
+            'h-11 font-semibold bg-brand text-white shadow-glow hover:bg-brand-strong hover:text-white hover:shadow-glow-lg'
         )}
         onClick={onSelect}
         disabled={isCurrent}

@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { adminAPI, type AdminUser } from '@/lib/api/admin'
+import { adminAPI, type AdminUser, type EmailLogEntry } from '@/lib/api/admin'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
@@ -11,6 +11,7 @@ import {
   AlertCircle,
   Eye,
   Mail,
+  ScrollText,
   Search,
   Send,
   UserRound,
@@ -21,10 +22,31 @@ import {
   AdminPanel,
   AdminPanelHeader,
   AdminPanelBody,
+  AdminTableWrap,
+  AdminTable,
+  AdminPagination,
+  AdminRefreshButton,
   DashboardAlert,
+  DashboardEmpty,
+  DashboardLoading,
 } from '@/components/admin/admin-ui'
 
 type Feedback = { type: 'success' | 'error'; text: string }
+
+const EMAIL_LOG_KINDS = [
+  { value: '', label: 'All kinds' },
+  { value: 'conversion', label: 'Conversion drip' },
+  { value: 'conversion_manual', label: 'Conversion (manual)' },
+  { value: 'verification', label: 'Verification code' },
+  { value: 'feedback', label: 'Feedback request' },
+  { value: 'announcement', label: 'Announcement' },
+  { value: 'custom', label: 'Custom' },
+] as const
+
+function formatLogKind(kind: string): string {
+  const match = EMAIL_LOG_KINDS.find((item) => item.value === kind)
+  return match?.label || kind
+}
 
 type EmailTemplate = {
   id: string
@@ -166,6 +188,16 @@ export default function AdminEmailsPage() {
   const [previewing, setPreviewing] = useState(false)
   const [sendingTemplate, setSendingTemplate] = useState(false)
 
+  const [logEntries, setLogEntries] = useState<EmailLogEntry[]>([])
+  const [logTotal, setLogTotal] = useState(0)
+  const [logKind, setLogKind] = useState('')
+  const [logEmailInput, setLogEmailInput] = useState('')
+  const [logEmailFilter, setLogEmailFilter] = useState('')
+  const [logPage, setLogPage] = useState(1)
+  const [logPageSize, setLogPageSize] = useState(50)
+  const [logLoading, setLogLoading] = useState(false)
+  const [logError, setLogError] = useState('')
+
   const selectedTemplate = useMemo(
     () => templates.find((template) => template.id === templateId) || null,
     [templates, templateId]
@@ -184,6 +216,30 @@ export default function AdminEmailsPage() {
       })
       .catch(() => setTemplates([]))
   }, [])
+
+  const loadEmailLog = useCallback(async () => {
+    setLogLoading(true)
+    setLogError('')
+    try {
+      const data = await adminAPI.getEmailLog({
+        user_id: recipient?.id,
+        email: logEmailFilter.trim() || undefined,
+        kind: logKind || undefined,
+        skip: (logPage - 1) * logPageSize,
+        limit: logPageSize,
+      })
+      setLogEntries(data.entries || [])
+      setLogTotal(data.total ?? 0)
+    } catch (error) {
+      setLogError(error instanceof Error ? error.message : 'Failed to load email log')
+    } finally {
+      setLogLoading(false)
+    }
+  }, [recipient?.id, logEmailFilter, logKind, logPage, logPageSize])
+
+  useEffect(() => {
+    loadEmailLog()
+  }, [loadEmailLog])
 
   const loadPreview = useCallback(async () => {
     if (!selectedTemplate) return
@@ -294,7 +350,7 @@ export default function AdminEmailsPage() {
     <AdminPage>
       <AdminPageHeader
         title="Emails"
-        description="Send a conversion drip template, custom HTML, or plain text to one user. Broadcasts stay on Announcements."
+        description="Send mail to one user, or inspect the outbound log of who received what."
         actions={
           emailStatus ? (
             <Badge variant={emailStatus.resend_configured ? 'default' : 'secondary'}>
@@ -336,6 +392,7 @@ export default function AdminEmailsPage() {
           <TabsTrigger value="custom">Custom email</TabsTrigger>
           <TabsTrigger value="conversion">Conversion templates</TabsTrigger>
           <TabsTrigger value="feedback">Feedback template</TabsTrigger>
+          <TabsTrigger value="log">Sent log</TabsTrigger>
         </TabsList>
 
         <TabsContent value="custom" className="space-y-4">
@@ -546,6 +603,162 @@ export default function AdminEmailsPage() {
                 </Button>
               )}
             </AdminPanelBody>
+          </AdminPanel>
+        </TabsContent>
+
+        <TabsContent value="log" className="space-y-4">
+          <AdminPanel>
+            <AdminPanelHeader
+              title="Outbound log"
+              icon={ScrollText}
+              actions={<AdminRefreshButton onClick={loadEmailLog} loading={logLoading} />}
+            />
+            <AdminPanelBody className="space-y-4">
+              <p className="text-sm text-ink-muted">
+                Every send attempt is recorded here (drip, verification, feedback, custom). Selecting a
+                recipient above filters to that user. Verification codes log the subject only, never the
+                OTP.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <div className="sm:w-56">
+                  <label className="text-xs font-medium text-ink-dim block mb-1.5">Kind</label>
+                  <select
+                    className="w-full rounded-brand border border-surface-border/80 p-2.5 text-sm bg-white
+                      focus:outline-none focus:ring-2 focus:ring-brand/30"
+                    value={logKind}
+                    onChange={(event) => {
+                      setLogKind(event.target.value)
+                      setLogPage(1)
+                    }}
+                  >
+                    {EMAIL_LOG_KINDS.map((item) => (
+                      <option key={item.value || 'all'} value={item.value}>
+                        {item.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="flex-1">
+                  <label className="text-xs font-medium text-ink-dim block mb-1.5">To email contains</label>
+                  <Input
+                    placeholder="name@company.com"
+                    value={logEmailInput}
+                    onChange={(event) => setLogEmailInput(event.target.value)}
+                    onKeyDown={(event) => {
+                      if (event.key === 'Enter') {
+                        setLogEmailFilter(logEmailInput.trim())
+                        setLogPage(1)
+                      }
+                    }}
+                  />
+                </div>
+              </div>
+              {recipient && (
+                <p className="text-xs text-ink-dim">
+                  Filtered to user #{recipient.id} ({recipient.email}). Clear the recipient to see everyone.
+                </p>
+              )}
+            </AdminPanelBody>
+          </AdminPanel>
+
+          {logError && (
+            <DashboardAlert variant="error">
+              {logError}
+              <Button variant="outline" size="sm" className="ml-3" onClick={loadEmailLog}>
+                Retry
+              </Button>
+            </DashboardAlert>
+          )}
+
+          <AdminPanel>
+            <AdminPanelHeader
+              title="Sends"
+              icon={Mail}
+              actions={
+                <span className="text-xs text-ink-muted tabular-nums">
+                  {logTotal.toLocaleString()} entries
+                </span>
+              }
+            />
+            {logLoading && logEntries.length === 0 ? (
+              <DashboardLoading message="Loading email log…" />
+            ) : logEntries.length === 0 ? (
+              <DashboardEmpty
+                icon={ScrollText}
+                title="No emails logged yet"
+                description="Sends will appear here after the next verification, drip, or admin email."
+              />
+            ) : (
+              <>
+                <AdminPanelBody noPadding>
+                  <AdminTableWrap>
+                    <AdminTable>
+                      <thead>
+                        <tr>
+                          <th>Time</th>
+                          <th>User</th>
+                          <th>Kind</th>
+                          <th>Subject</th>
+                          <th>Status</th>
+                        </tr>
+                      </thead>
+                      <tbody className={logLoading ? 'opacity-60 transition-opacity' : undefined}>
+                        {logEntries.map((entry) => {
+                          const name = [entry.first_name, entry.last_name].filter(Boolean).join(' ')
+                          const template =
+                            entry.campaign_kind && entry.email_number
+                              ? `${entry.campaign_kind} #${entry.email_number}`
+                              : entry.template_key
+                          return (
+                            <tr key={entry.id}>
+                              <td className="whitespace-nowrap text-xs text-ink-muted">
+                                {new Date(entry.sent_at).toLocaleString()}
+                              </td>
+                              <td className="max-w-[220px]">
+                                <p className="text-sm text-ink truncate">
+                                  {name || entry.user_email || '—'}
+                                  {entry.user_id ? (
+                                    <span className="font-normal text-ink-muted"> #{entry.user_id}</span>
+                                  ) : null}
+                                </p>
+                                <p className="text-xs text-ink-muted truncate">{entry.to_email}</p>
+                              </td>
+                              <td>
+                                <p className="text-xs text-ink">{formatLogKind(entry.kind)}</p>
+                                {template ? (
+                                  <p className="text-xs text-ink-muted">{template}</p>
+                                ) : null}
+                              </td>
+                              <td className="max-w-[280px]">
+                                <p className="text-sm text-ink truncate">{entry.subject}</p>
+                              </td>
+                              <td>
+                                <Badge variant={entry.status === 'sent' ? 'default' : 'secondary'}>
+                                  {entry.status}
+                                </Badge>
+                              </td>
+                            </tr>
+                          )
+                        })}
+                      </tbody>
+                    </AdminTable>
+                  </AdminTableWrap>
+                </AdminPanelBody>
+                <AdminPagination
+                  page={logPage}
+                  pageSize={logPageSize}
+                  total={logTotal}
+                  onPageChange={setLogPage}
+                  onPageSizeChange={(next) => {
+                    setLogPageSize(next)
+                    setLogPage(1)
+                  }}
+                  pageSizeOptions={[25, 50, 100]}
+                  loading={logLoading}
+                  noun="emails"
+                />
+              </>
+            )}
           </AdminPanel>
         </TabsContent>
       </Tabs>

@@ -5,6 +5,7 @@
 
 import { ApiResponse, PaginatedResponse, ApiError, ApiErrorDetails } from '@/types/api';
 import { getUserFacingApiMessage } from '@/lib/api/errors';
+import { normalizePaginatedResponse, unwrapSuccessPayload } from '@/lib/api/paginated';
 
 // Types
 interface RegisterData {
@@ -164,7 +165,7 @@ class ApiClient {
       }
 
       return {
-        data: data.data || data,
+        data: unwrapSuccessPayload(data) as T,
         success: true,
         status: response.status,
       };
@@ -249,8 +250,8 @@ class ApiClient {
     endpoint: string,
     params?: Record<string, unknown>
   ): Promise<PaginatedResponse<T>> {
-    const response = await this.get<PaginatedResponse<T>>(endpoint, params);
-    return response.data;
+    const response = await this.get<PaginatedResponse<T> | T[]>(endpoint, params);
+    return normalizePaginatedResponse<T>(response.data);
   }
 }
 

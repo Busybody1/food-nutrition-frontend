@@ -27,6 +27,26 @@ async function adminDelete<T>(path: string): Promise<T> {
   return res.data
 }
 
+export interface EmailLogEntry {
+  id: number
+  user_id: number | null
+  to_email: string
+  kind: string
+  template_key?: string | null
+  campaign_kind?: string | null
+  email_number?: number | null
+  variant?: string | null
+  subject: string
+  status: 'sent' | 'failed'
+  provider?: string | null
+  resend_message_id?: string | null
+  body_preview?: string | null
+  sent_at: string
+  first_name?: string | null
+  last_name?: string | null
+  user_email?: string | null
+}
+
 export interface AdminUser {
   id: number
   email: string
@@ -624,6 +644,16 @@ class AdminAPI {
     provider?: string
   }> {
     return adminPost(`/users/${userId}/feedback-email`)
+  }
+
+  async getEmailLog(params?: {
+    user_id?: number
+    email?: string
+    kind?: string
+    skip?: number
+    limit?: number
+  }): Promise<{ entries: EmailLogEntry[]; total: number; skip: number; limit: number }> {
+    return adminGet('/emails/log', params)
   }
 
   async getEmailTemplates(): Promise<{

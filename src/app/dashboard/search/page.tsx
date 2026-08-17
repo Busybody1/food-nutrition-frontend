@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { api } from '@/lib/api/client'
+import { normalizeListPayload } from '@/lib/api/paginated'
 import { ApiError } from '@/types/api'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -23,12 +24,20 @@ interface FoodSearchHit {
   name?: string
   brand_name?: string
   category_name?: string
+  calories_100g?: number
+  protein_100g?: number
 }
 
 function optionalNumber(value: string): number | undefined {
   if (!value.trim()) return undefined
   const n = Number(value)
   return Number.isFinite(n) ? n : undefined
+}
+
+function formatMacro(value: number | undefined, unit: string): string | null {
+  if (value === undefined || !Number.isFinite(value)) return null
+  const rounded = Number.isInteger(value) ? String(value) : value.toFixed(1)
+  return `${rounded}${unit}`
 }
 
 export default function SearchPlaygroundPage() {
@@ -49,6 +58,9 @@ export default function SearchPlaygroundPage() {
   const [total, setTotal] = useState(0)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [suggestLoading, setSuggestLoading] = useState(false)
+  const [hasSearched, setHasSearched] = useState(false)
+  const [hasSuggested, setHasSuggested] = useState(false)
   const [matchMode, setMatchMode] = useState<'any' | 'all'>('any')
   const [verifiedOnly, setVerifiedOnly] = useState(false)
 
@@ -84,11 +96,17 @@ export default function SearchPlaygroundPage() {
   const runSearch = async () => {
     setLoading(true)
     setError(null)
+    setSuggestions([])
+    setHasSuggested(false)
     try {
       const res = await api.search.foods(query, buildFilterParams())
-      setResults((res.data || []) as FoodSearchHit[])
+      setResults(Array.isArray(res.data) ? (res.data as FoodSearchHit[]) : [])
       setTotal(res.total ?? 0)
+      setHasSearched(true)
     } catch (e) {
+      setResults([])
+      setTotal(0)
+      setHasSearched(true)
       setError(e instanceof ApiError ? e.message : 'Search failed')
     } finally {
       setLoading(false)
@@ -97,11 +115,18 @@ export default function SearchPlaygroundPage() {
 
   const runSuggest = async () => {
     if (query.length < 1) return
+    setSuggestLoading(true)
+    setError(null)
     try {
       const res = await api.search.suggest(query, 10)
-      setSuggestions(Array.isArray(res.data) ? (res.data as FoodSuggestItem[]) : [])
-    } catch {
+      setSuggestions(normalizeListPayload<FoodSuggestItem>(res.data ?? res))
+      setHasSuggested(true)
+    } catch (e) {
       setSuggestions([])
+      setHasSuggested(true)
+      setError(e instanceof ApiError ? e.message : 'Suggest failed')
+    } finally {
+      setSuggestLoading(false)
     }
   }
 
@@ -112,7 +137,13 @@ export default function SearchPlaygroundPage() {
         description="Test search and suggest endpoints with brand, category, and nutrient filters."
       />
 
-      <div className="dashboard-panel">
+      <form
+        className="dashboard-panel"
+        onSubmit={(event) => {
+          event.preventDefault()
+          void runSearch()
+        }}
+      >
         <div className="dashboard-panel-body space-y-4">
           <div className="flex flex-col sm:flex-row gap-3 sm:items-end">
             <div className="flex-1 min-w-[200px]">
@@ -139,12 +170,18 @@ export default function SearchPlaygroundPage() {
                 <option value="any">Match: any</option>
                 <option value="all">Match: all</option>
               </select>
-              <Button onClick={runSearch} disabled={loading} className="gap-2">
+              <Button type="submit" disabled={loading} className="gap-2">
                 {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
                 Search
               </Button>
-              <Button variant="outline" onClick={runSuggest} className="gap-2">
-                <Sparkles className="h-4 w-4" />
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => void runSuggest()}
+                disabled={suggestLoading}
+                className="gap-2"
+              >
+                {suggestLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
                 Suggest
               </Button>
             </div>
@@ -195,25 +232,26 @@ export default function SearchPlaygroundPage() {
             </div>
           </div>
         </div>
-      </div>
+      </form>
 
       {error && <DashboardAlert variant="error">{error}</DashboardAlert>}
 
-      {total > 0 && (
+      {hasSearched && !loading && (
         <p className="text-sm text-ink-muted">
           <span className="font-medium text-ink">{total.toLocaleString()}</span> results
         </p>
       )}
 
-      {suggestions.length > 0 && (
+      {hasSuggested && suggestions.length > 0 && (
         <div className="dashboard-panel">
           <div className="dashboard-panel-header">
             <h2 className="dashboard-panel-title">Suggestions</h2>
           </div>
           <ul className="divide-y divide-surface-border/60">
-            {suggestions.map((s, i) => (
-              <li key={s.id ?? i} className="px-5 py-3 text-sm text-ink">
-                {s.name}
+            {suggestions.map((item, index) => (
+              <li key={item.id ?? index} className="px-5 py-3 text-sm text-ink">
+                {item.name}
+                {item.brand_name ? <span className="text-ink-muted"> · {item.brand_name}</span> : null}
               </li>
             ))}
           </ul>
@@ -224,23 +262,44 @@ export default function SearchPlaygroundPage() {
         <div className="dashboard-panel-header">
           <h2 className="dashboard-panel-title">Results</h2>
         </div>
-        {results.length > 0 ? (
+        {loading ? (
+          <p className="px-5 py-10 text-sm text-ink-muted text-center inline-flex items-center justify-center gap-2 w-full">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            Searching…
+          </p>
+        ) : results.length > 0 ? (
           <ul className="divide-y divide-surface-border/60">
-            {results.map((item, i) => (
-              <li key={item.id ?? i} className="px-5 py-3.5 hover:bg-surface-elevated/50 transition-colors">
-                <span className="text-sm font-medium text-ink">{item.name}</span>
-                {item.brand_name && (
-                  <span className="text-sm text-ink-muted"> · {item.brand_name}</span>
-                )}
-                {item.category_name && (
-                  <span className="text-sm text-ink-muted"> · {item.category_name}</span>
-                )}
-              </li>
-            ))}
+            {results.map((item, index) => {
+              const calories = formatMacro(item.calories_100g, ' kcal')
+              const protein = formatMacro(item.protein_100g, ' g protein')
+              return (
+                <li key={item.id ?? index} className="px-5 py-3.5 hover:bg-surface-elevated/50 transition-colors">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="min-w-0">
+                      <span className="text-sm font-medium text-ink">{item.name ?? `Food ${item.id ?? index + 1}`}</span>
+                      {item.brand_name && (
+                        <span className="text-sm text-ink-muted"> · {item.brand_name}</span>
+                      )}
+                      {item.category_name && (
+                        <span className="text-sm text-ink-muted"> · {item.category_name}</span>
+                      )}
+                    </div>
+                    {(calories || protein) && (
+                      <span className="text-xs text-ink-muted shrink-0 tabular-nums">
+                        {[calories, protein].filter(Boolean).join(' · ')}
+                        <span className="text-ink-dim"> / 100 g</span>
+                      </span>
+                    )}
+                  </div>
+                </li>
+              )
+            })}
           </ul>
         ) : (
           <p className="px-5 py-10 text-sm text-ink-muted text-center">
-            {!loading && !error ? 'No results yet. Run a search to see data.' : null}
+            {hasSearched && !error
+              ? 'No matching foods for this query.'
+              : 'No results yet. Run a search to see data.'}
           </p>
         )}
       </div>
