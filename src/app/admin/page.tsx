@@ -271,7 +271,7 @@ function AdminDashboard() {
         <AdminSkeletonStats />
       ) : (
         <>
-          <AdminStatGrid className="mb-6">
+          <AdminStatGrid>
             <DashboardStatCard
               label="Total users"
               value={stats?.totalUsers.toLocaleString() ?? '-'}
@@ -310,7 +310,7 @@ function AdminDashboard() {
             />
           </AdminStatGrid>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <AdminPanel>
               <AdminPanelHeader title="API usage trends" icon={TrendingUp} />
               <AdminPanelBody>
@@ -354,7 +354,7 @@ function AdminDashboard() {
           </div>
 
           {stats?.systemMetrics && (
-            <AdminPanel className="mb-6">
+            <AdminPanel>
               <AdminPanelHeader title="System information" icon={Database} />
               <AdminPanelBody>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">

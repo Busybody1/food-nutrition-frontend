@@ -144,8 +144,8 @@ export function UsageChart({ data, endpointData, currentUsage, quota, planName }
           <CardTitle>Usage Trend (Last 7 Days)</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="h-80">
-            <ResponsiveContainer width="100%" height="100%">
+          <div className="h-80 overflow-visible">
+            <ResponsiveContainer width="100%" height="100%" style={{ overflow: 'visible' }}>
               <LineChart data={data}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis 
@@ -153,7 +153,9 @@ export function UsageChart({ data, endpointData, currentUsage, quota, planName }
                   tickFormatter={(value) => new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                 />
                 <YAxis />
-                <Tooltip 
+                <Tooltip
+                  allowEscapeViewBox={{ x: true, y: true }}
+                  wrapperStyle={{ zIndex: 30, outline: 'none' }} 
                   labelFormatter={(value) => new Date(value).toLocaleDateString('en-US', { 
                     weekday: 'long', 
                     year: 'numeric', 
@@ -192,8 +194,8 @@ export function UsageChart({ data, endpointData, currentUsage, quota, planName }
             <CardTitle>Requests by Endpoint</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
+            <div className="h-64 overflow-visible">
+              <ResponsiveContainer width="100%" height="100%" style={{ overflow: 'visible' }}>
                 <BarChart data={endpointData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis 
@@ -201,7 +203,9 @@ export function UsageChart({ data, endpointData, currentUsage, quota, planName }
                     tickFormatter={(value) => value.replace('_', ' ').toUpperCase()}
                   />
                   <YAxis />
-                  <Tooltip 
+                  <Tooltip
+                    allowEscapeViewBox={{ x: true, y: true }}
+                    wrapperStyle={{ zIndex: 30, outline: 'none' }} 
                     formatter={(value, name) => [
                       value.toLocaleString(), 
                       name === 'request_count' ? 'Requests' : 'Errors'
@@ -219,8 +223,8 @@ export function UsageChart({ data, endpointData, currentUsage, quota, planName }
             <CardTitle>Endpoint Distribution</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
+            <div className="h-64 overflow-visible">
+              <ResponsiveContainer width="100%" height="100%" style={{ overflow: 'visible' }}>
                 <PieChart>
                   <Pie
                     data={endpointData}
@@ -235,7 +239,11 @@ export function UsageChart({ data, endpointData, currentUsage, quota, planName }
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Pie>
-                  <Tooltip formatter={(value) => [value.toLocaleString(), 'Requests']} />
+                  <Tooltip
+                    allowEscapeViewBox={{ x: true, y: true }}
+                    wrapperStyle={{ zIndex: 30, outline: 'none' }}
+                    formatter={(value) => [value.toLocaleString(), 'Requests']}
+                  />
                 </PieChart>
               </ResponsiveContainer>
             </div>

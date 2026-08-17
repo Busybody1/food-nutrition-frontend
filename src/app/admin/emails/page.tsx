@@ -1,6 +1,7 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { adminAPI, type AdminUser, type EmailLogEntry } from '@/lib/api/admin'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -57,6 +58,9 @@ type EmailTemplate = {
   commercial_variant: boolean
 }
 
+const USER_PICKER_MENU_HEIGHT_PX = 224
+const USER_PICKER_FLIP_THRESHOLD_PX = 160
+
 function UserPicker({
   selected,
   onSelect,
@@ -69,13 +73,16 @@ function UserPicker({
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<AdminUser[]>([])
   const [searching, setSearching] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [menuRect, setMenuRect] = useState<DOMRect | null>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
+  const menuRef = useRef<HTMLDivElement>(null)
+
+  const trimmed = query.trim()
+  const showMenu = menuOpen && !selected && trimmed.length >= 2
 
   useEffect(() => {
-    const trimmed = query.trim()
-    if (trimmed.length < 2) {
-      setResults([])
-      return
-    }
+    if (trimmed.length < 2) return
     const timer = window.setTimeout(() => {
       setSearching(true)
       adminAPI
@@ -85,11 +92,53 @@ function UserPicker({
         .finally(() => setSearching(false))
     }, 250)
     return () => window.clearTimeout(timer)
-  }, [query])
+  }, [trimmed])
+
+  const updateMenuRect = useCallback(() => {
+    const input = inputRef.current
+    if (!input) return
+    const rect = input.getBoundingClientRect()
+    const menuHeight = USER_PICKER_MENU_HEIGHT_PX
+    const spaceBelow = window.innerHeight - rect.bottom
+    const top =
+      spaceBelow < USER_PICKER_FLIP_THRESHOLD_PX
+        ? Math.max(8, rect.top - menuHeight - 6)
+        : rect.bottom + 6
+    setMenuRect(new DOMRect(rect.left, top, rect.width, rect.height))
+  }, [])
+
+  useLayoutEffect(() => {
+    if (!showMenu) return
+    updateMenuRect()
+    const onReposition = () => updateMenuRect()
+    window.addEventListener('resize', onReposition)
+    window.addEventListener('scroll', onReposition, true)
+    return () => {
+      window.removeEventListener('resize', onReposition)
+      window.removeEventListener('scroll', onReposition, true)
+    }
+  }, [showMenu, updateMenuRect, results.length, searching])
+
+  useEffect(() => {
+    if (!showMenu) return
+    const onPointerDown = (event: MouseEvent) => {
+      const target = event.target as Node
+      if (inputRef.current?.contains(target) || menuRef.current?.contains(target)) return
+      setMenuOpen(false)
+    }
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setMenuOpen(false)
+    }
+    document.addEventListener('mousedown', onPointerDown)
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('mousedown', onPointerDown)
+      document.removeEventListener('keydown', onKey)
+    }
+  }, [showMenu])
 
   return (
-    <div className="space-y-2">
-      <label className="text-xs font-medium text-ink-dim block">Recipient</label>
+    <div>
       {selected ? (
         <div className="flex items-center justify-between gap-3 rounded-brand border border-surface-border/80 px-3 py-2.5">
           <div className="min-w-0">
@@ -107,6 +156,7 @@ function UserPicker({
             onClick={() => {
               onSelect(null)
               setQuery('')
+              setMenuOpen(false)
             }}
           >
             Change
@@ -114,41 +164,67 @@ function UserPicker({
         </div>
       ) : (
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-ink-muted" />
+          <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-ink-muted" />
           <Input
+            ref={inputRef}
             className="pl-9"
             placeholder="Search by name or email…"
             value={query}
-            onChange={(event) => setQuery(event.target.value)}
+            onChange={(event) => {
+              const next = event.target.value
+              setQuery(next)
+              setMenuOpen(true)
+              if (next.trim().length < 2) setResults([])
+            }}
+            onFocus={() => {
+              if (trimmed.length >= 2) setMenuOpen(true)
+            }}
             disabled={disabled}
+            autoComplete="off"
+            aria-autocomplete="list"
+            aria-expanded={showMenu}
           />
-          {(searching || results.length > 0 || query.trim().length >= 2) && (
-            <div className="absolute z-20 mt-1 w-full rounded-brand border border-surface-border/80 bg-white shadow-lg max-h-56 overflow-y-auto">
-              {searching && (
-                <p className="px-3 py-2 text-xs text-ink-muted">Searching…</p>
-              )}
-              {!searching && results.length === 0 && (
-                <p className="px-3 py-2 text-xs text-ink-muted">No users found</p>
-              )}
-              {results.map((user) => (
-                <button
-                  key={user.id}
-                  type="button"
-                  className="w-full text-left px-3 py-2.5 hover:bg-surface-elevated/60 border-b border-surface-border/40 last:border-0"
-                  onClick={() => {
-                    onSelect(user)
-                    setQuery('')
-                    setResults([])
-                  }}
-                >
-                  <p className="text-sm text-ink truncate">
-                    {[user.first_name, user.last_name].filter(Boolean).join(' ') || 'User'}
-                  </p>
-                  <p className="text-xs text-ink-muted truncate">{user.email}</p>
-                </button>
-              ))}
-            </div>
-          )}
+          {showMenu &&
+            menuRect &&
+            typeof document !== 'undefined' &&
+            createPortal(
+              <div
+                ref={menuRef}
+                className="dashboard-popover pointer-events-auto fixed max-h-56 overflow-y-auto"
+                style={{
+                  top: menuRect.top,
+                  left: menuRect.left,
+                  width: menuRect.width,
+                }}
+                role="listbox"
+              >
+                {searching && <p className="px-3 py-2.5 text-xs text-ink-muted">Searching…</p>}
+                {!searching && results.length === 0 && (
+                  <p className="px-3 py-2.5 text-xs text-ink-muted">No users found</p>
+                )}
+                {results.map((user) => (
+                  <button
+                    key={user.id}
+                    type="button"
+                    role="option"
+                    aria-selected={false}
+                    className="w-full cursor-pointer text-left px-3 py-2.5 hover:bg-surface-elevated/80 border-b border-surface-border/40 last:border-0"
+                    onClick={() => {
+                      onSelect(user)
+                      setQuery('')
+                      setResults([])
+                      setMenuOpen(false)
+                    }}
+                  >
+                    <p className="text-sm text-ink truncate">
+                      {[user.first_name, user.last_name].filter(Boolean).join(' ') || 'User'}
+                    </p>
+                    <p className="text-xs text-ink-muted truncate">{user.email}</p>
+                  </button>
+                ))}
+              </div>,
+              document.body
+            )}
         </div>
       )}
     </div>
@@ -380,14 +456,14 @@ export default function AdminEmailsPage() {
         </DashboardAlert>
       )}
 
-      <AdminPanel>
+      <AdminPanel className="relative z-10 overflow-visible">
         <AdminPanelHeader title="Recipient" icon={UserRound} />
         <AdminPanelBody>
           <UserPicker selected={recipient} onSelect={setRecipient} disabled={!canSend} />
         </AdminPanelBody>
       </AdminPanel>
 
-      <Tabs defaultValue="custom" className="space-y-4">
+      <Tabs defaultValue="custom">
         <TabsList>
           <TabsTrigger value="custom">Custom email</TabsTrigger>
           <TabsTrigger value="conversion">Conversion templates</TabsTrigger>
@@ -395,7 +471,7 @@ export default function AdminEmailsPage() {
           <TabsTrigger value="log">Sent log</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="custom" className="space-y-4">
+        <TabsContent value="custom" className="flex flex-col gap-4">
           <AdminPanel>
             <AdminPanelHeader title="Compose" icon={Mail} />
             <AdminPanelBody className="space-y-4">
@@ -500,7 +576,7 @@ export default function AdminEmailsPage() {
           </AdminPanel>
         </TabsContent>
 
-        <TabsContent value="conversion" className="space-y-4">
+        <TabsContent value="conversion" className="flex flex-col gap-4">
           <div className="grid gap-6 lg:grid-cols-2">
             <AdminPanel>
               <AdminPanelHeader title="Template" icon={Send} />
@@ -606,7 +682,7 @@ export default function AdminEmailsPage() {
           </AdminPanel>
         </TabsContent>
 
-        <TabsContent value="log" className="space-y-4">
+        <TabsContent value="log" className="flex flex-col gap-4">
           <AdminPanel>
             <AdminPanelHeader
               title="Outbound log"

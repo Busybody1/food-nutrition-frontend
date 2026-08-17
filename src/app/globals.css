@@ -771,11 +771,12 @@
   }
 
   .dashboard-page {
-    @apply min-h-full bg-surface-elevated;
+    @apply min-h-full min-w-0 bg-surface-elevated;
   }
 
   .dashboard-container {
-    @apply max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8;
+    @apply mx-auto flex w-full min-w-0 max-w-[1200px] flex-col gap-6 px-4 py-7 sm:px-6 sm:gap-7
+      lg:gap-8 lg:px-8 lg:py-9;
   }
 
   .dashboard-page-header {
@@ -815,12 +816,13 @@
     @apply flex h-10 w-10 shrink-0 items-center justify-center rounded-brand;
   }
 
+  /* overflow-visible so comboboxes, selects, and chart tooltips are not clipped */
   .dashboard-panel {
-    @apply bg-white border border-surface-border/80 rounded-brand shadow-glass overflow-hidden;
+    @apply w-full min-w-0 overflow-visible bg-white border border-surface-border/80 rounded-brand shadow-glass;
   }
 
   .dashboard-panel-header {
-    @apply px-5 py-4 border-b border-surface-border/60 flex items-center justify-between gap-3;
+    @apply px-5 py-4 border-b border-surface-border/60 flex items-center justify-between gap-3 rounded-t-[11px];
   }
 
   .dashboard-panel-title {
@@ -870,7 +872,7 @@
   }
 
   .dashboard-alert {
-    @apply mb-6 rounded-brand px-4 py-3 text-sm border;
+    @apply rounded-brand px-4 py-3 text-sm border;
   }
 
   .dashboard-alert-error {
@@ -899,7 +901,35 @@
   }
 
   .dashboard-table-wrap {
-    @apply overflow-x-auto;
+    @apply overflow-x-auto rounded-b-[11px];
+  }
+
+  .dashboard-tabs-list {
+    @apply flex w-full flex-wrap items-center gap-1 rounded-brand border border-surface-border/80
+      bg-surface-elevated/80 p-1;
+  }
+
+  .dashboard-tabs-trigger {
+    @apply inline-flex items-center justify-center whitespace-nowrap rounded-[8px] px-3 py-1.5 text-sm
+      font-medium text-ink-muted transition-colors hover:text-ink cursor-pointer
+      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40
+      data-[state=active]:bg-white data-[state=active]:text-ink data-[state=active]:shadow-sm;
+  }
+
+  .dashboard-tabs-content {
+    @apply mt-4 focus-visible:outline-none;
+  }
+
+  .dashboard-modal-root {
+    @apply fixed inset-0 z-[80] flex items-center justify-center p-4;
+  }
+
+  .dashboard-modal-backdrop {
+    @apply absolute inset-0 bg-ink/25 backdrop-blur-sm cursor-pointer;
+  }
+
+  .dashboard-popover {
+    @apply z-[70] rounded-brand border border-surface-border/80 bg-white shadow-lg;
   }
 
   .dashboard-table {

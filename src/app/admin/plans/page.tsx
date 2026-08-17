@@ -263,7 +263,7 @@ export default function AdminPlansPage() {
         <DashboardLoading message="Loading plans…" />
       ) : (
         <>
-          <AdminStatGrid className="mb-6">
+          <AdminStatGrid>
             <DashboardStatCard label="Total plans" value={plans.length} icon={Layers} accent="brand" />
             <DashboardStatCard label="Active" value={activeCount} accent="green" />
             <DashboardStatCard
@@ -280,7 +280,7 @@ export default function AdminPlansPage() {
             />
           </AdminStatGrid>
 
-          <AdminPanel className="mb-6">
+          <AdminPanel>
             <AdminPanelHeader
               title="Recommended plan"
               icon={Star}

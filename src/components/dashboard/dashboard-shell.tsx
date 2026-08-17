@@ -1,5 +1,7 @@
 'use client'
 
+import { useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import Link from 'next/link'
 import { cn } from '@/lib/utils/cn'
 import type { LucideIcon } from 'lucide-react'
@@ -174,5 +176,50 @@ export function DashboardEmpty({
       {description && <p className="text-sm text-ink-muted mt-1 max-w-sm">{description}</p>}
       {action && <div className="mt-4">{action}</div>}
     </div>
+  )
+}
+
+/** Portals a modal above sidebars and sticky chrome so overlays are not clipped. */
+export function DashboardModal({
+  children,
+  onClose,
+  closeOnBackdrop = true,
+  closeOnEscape = true,
+}: {
+  children: React.ReactNode
+  onClose: () => void
+  closeOnBackdrop?: boolean
+  closeOnEscape?: boolean
+}) {
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if (closeOnEscape && event.key === 'Escape') onClose()
+    }
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.body.style.overflow = previousOverflow
+      document.removeEventListener('keydown', onKey)
+    }
+  }, [onClose, closeOnEscape])
+
+  if (typeof document === 'undefined') return null
+
+  return createPortal(
+    <div className="dashboard-modal-root" role="presentation">
+      <button
+        type="button"
+        className={cn('dashboard-modal-backdrop', !closeOnBackdrop && 'cursor-default')}
+        aria-label={closeOnBackdrop ? 'Close dialog' : undefined}
+        aria-hidden={!closeOnBackdrop}
+        tabIndex={closeOnBackdrop ? 0 : -1}
+        onClick={closeOnBackdrop ? onClose : undefined}
+      />
+      <div className="relative z-[81] w-full max-w-md max-h-[min(90dvh,40rem)] overflow-y-auto">
+        {children}
+      </div>
+    </div>,
+    document.body
   )
 }

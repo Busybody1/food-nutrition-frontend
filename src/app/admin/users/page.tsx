@@ -278,7 +278,7 @@ export default function UserManagement() {
       {statsLoading && !stats ? (
         <AdminSkeletonStats />
       ) : (
-        <AdminStatGrid className="mb-6">
+        <AdminStatGrid>
           <DashboardStatCard
             label="Total users"
             value={formatCount(stats?.total_users ?? 0)}
@@ -318,7 +318,7 @@ export default function UserManagement() {
         </AdminStatGrid>
       )}
 
-      <AdminPanel className="mb-6">
+      <AdminPanel>
         <AdminPanelHeader
           title="Search & filter"
           icon={Search}

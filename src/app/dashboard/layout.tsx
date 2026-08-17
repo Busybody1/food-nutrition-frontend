@@ -149,7 +149,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <div
         className={cn(
           'fixed inset-0 z-50 lg:hidden transition-opacity',
-          sidebarOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+          sidebarOpen ? 'opacity-100 pointer-events-auto' : 'hidden'
         )}
       >
         <div
@@ -188,7 +188,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <UserBlock onLogout={handleLogout} />
       </aside>
 
-      <div className="lg:pl-[240px] flex min-h-screen flex-col">
+      <div className="lg:pl-[240px] flex min-h-screen min-w-0 flex-col">
         <header className="sticky top-0 z-20 flex h-14 items-center gap-3 border-b border-surface-border/60 bg-white/80 backdrop-blur-md px-4 lg:hidden">
           <Button
             variant="ghost"
@@ -202,9 +202,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <span className="text-sm font-semibold text-ink">Dashboard</span>
         </header>
 
-        <main className="flex-1">
+        <main id="main-content" className="relative z-0 flex-1 min-w-0">
           {children}
-          <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 pb-8">
+          <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 pb-10 pt-0">
             <DashboardFeedbackForm />
           </div>
         </main>

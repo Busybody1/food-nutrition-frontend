@@ -327,7 +327,7 @@ export function AdminShell({
       <div
         className={cn(
           'fixed inset-0 z-50 lg:hidden transition-opacity duration-200',
-          sidebarOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+          sidebarOpen ? 'opacity-100 pointer-events-auto' : 'hidden'
         )}
       >
         <div
@@ -375,7 +375,7 @@ export function AdminShell({
         />
       </aside>
 
-      <div className="lg:pl-[252px] flex min-h-screen flex-col">
+      <div className="lg:pl-[252px] flex min-h-screen min-w-0 flex-col">
         <header className="sticky top-0 z-20 flex h-14 items-center justify-between gap-3 border-b border-surface-border/60 bg-white/90 backdrop-blur-md px-4 lg:px-6">
           <div className="flex items-center gap-3 min-w-0">
             <Button
@@ -392,7 +392,9 @@ export function AdminShell({
           <SystemHealthBadge />
         </header>
 
-        <main className="flex-1">{children}</main>
+        <main id="main-content" className="relative z-0 flex-1 min-w-0">
+          {children}
+        </main>
       </div>
     </div>
   )

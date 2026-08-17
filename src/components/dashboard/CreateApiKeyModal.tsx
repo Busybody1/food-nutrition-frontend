@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Key, X, AlertCircle, Copy, CheckCircle } from 'lucide-react'
 import { ApiError } from '@/types/api'
 import type { CreatedApiKeyResult } from '@/lib/api/api-keys'
+import { DashboardModal } from '@/components/dashboard/dashboard-shell'
 
 interface CreateApiKeyModalProps {
   isOpen: boolean
@@ -100,8 +101,8 @@ export function CreateApiKeyModal({
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/25 backdrop-blur-sm">
-      <Card className="w-full max-w-md shadow-glass-lg border-surface-border/80 animate-slide-up">
+    <DashboardModal onClose={handleClose} closeOnBackdrop={false} closeOnEscape={!created}>
+      <Card className="w-full shadow-glass-lg border-surface-border/80 animate-slide-up">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
           <CardTitle className="text-lg font-semibold flex items-center">
             <Key className="h-5 w-5 mr-2 text-blue-600" />
@@ -247,6 +248,6 @@ export function CreateApiKeyModal({
           )}
         </CardContent>
       </Card>
-    </div>
+    </DashboardModal>
   )
 }

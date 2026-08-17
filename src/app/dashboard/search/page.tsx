@@ -258,7 +258,7 @@ export default function SearchPlaygroundPage() {
         </div>
       )}
 
-      <div className="dashboard-panel overflow-hidden">
+      <div className="dashboard-panel">
         <div className="dashboard-panel-header">
           <h2 className="dashboard-panel-title">Results</h2>
         </div>

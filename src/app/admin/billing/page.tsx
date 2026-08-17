@@ -118,7 +118,7 @@ export default function AdminBillingPage() {
         <DashboardLoading message="Loading billing data…" />
       ) : (
         <>
-          <AdminStatGrid className="mb-6">
+          <AdminStatGrid>
             <DashboardStatCard
               label="Total revenue"
               value={`$${Number(summary.total_revenue_usd ?? 0).toLocaleString()}`}
@@ -139,7 +139,7 @@ export default function AdminBillingPage() {
             />
           </AdminStatGrid>
 
-          <AdminPanel className="mb-6">
+          <AdminPanel>
             <AdminPanelHeader title="Revenue trend (12 months)" icon={DollarSign} />
             <AdminPanelBody>
               {series.length > 0 ? (

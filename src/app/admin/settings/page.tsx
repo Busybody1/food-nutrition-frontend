@@ -199,7 +199,7 @@ export default function AdminSettingsPage() {
       )}
 
       {settings.find((s) => s.setting_key === 'maintenance_mode') && (
-        <AdminPanel className="mb-6 border-amber-200/80 bg-amber-50/40">
+        <AdminPanel className="border-amber-200/80 bg-amber-50/40">
           <AdminPanelBody className="flex items-center justify-between gap-4 !py-5">
             <div>
               <h3 className="font-semibold text-ink">Maintenance mode</h3>

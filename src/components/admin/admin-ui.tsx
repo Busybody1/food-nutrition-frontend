@@ -30,11 +30,7 @@ export function AdminPage({
   children: React.ReactNode
   className?: string
 }) {
-  return (
-    <DashboardPage className={className}>
-      <div className="flex flex-col gap-6 sm:gap-8">{children}</div>
-    </DashboardPage>
-  )
+  return <DashboardPage className={className}>{children}</DashboardPage>
 }
 
 /** Wraps page sections below the header (charts, tables, filters). */

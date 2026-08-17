@@ -41,6 +41,12 @@ function ChartTooltip({
   )
 }
 
+const CHART_TOOLTIP = {
+  content: <ChartTooltip />,
+  allowEscapeViewBox: { x: true, y: true } as const,
+  wrapperStyle: { zIndex: 30, outline: 'none' },
+}
+
 export function AdminLineChart({
   data,
   xKey,
@@ -56,12 +62,12 @@ export function AdminLineChart({
 }) {
   if (!data.length) return null
   return (
-    <ResponsiveContainer width="100%" height={height}>
+    <ResponsiveContainer width="100%" height={height} style={{ overflow: 'visible' }}>
       <LineChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
         <CartesianGrid strokeDasharray="3 3" stroke="#e4e4e7" vertical={false} />
         <XAxis dataKey={xKey} tick={{ fontSize: 11, fill: '#71717a' }} tickLine={false} axisLine={false} />
         <YAxis tick={{ fontSize: 11, fill: '#71717a' }} tickLine={false} axisLine={false} width={40} />
-        <Tooltip content={<ChartTooltip />} />
+        <Tooltip {...CHART_TOOLTIP} />
         <Line
           type="monotone"
           dataKey={yKey}
@@ -88,12 +94,12 @@ export function AdminBarChart({
 }) {
   if (!data.length) return null
   return (
-    <ResponsiveContainer width="100%" height={height}>
+    <ResponsiveContainer width="100%" height={height} style={{ overflow: 'visible' }}>
       <BarChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
         <CartesianGrid strokeDasharray="3 3" stroke="#e4e4e7" vertical={false} />
         <XAxis dataKey={xKey} tick={{ fontSize: 10, fill: '#71717a' }} tickLine={false} axisLine={false} />
         <YAxis tick={{ fontSize: 11, fill: '#71717a' }} tickLine={false} axisLine={false} width={40} />
-        <Tooltip content={<ChartTooltip />} />
+        <Tooltip {...CHART_TOOLTIP} />
         <Bar dataKey={yKey} fill="#7c3aed" radius={[4, 4, 0, 0]} maxBarSize={48} />
       </BarChart>
     </ResponsiveContainer>
@@ -113,7 +119,7 @@ export function AdminPieChart({
 }) {
   if (!data.length) return null
   return (
-    <ResponsiveContainer width="100%" height={height}>
+    <ResponsiveContainer width="100%" height={height} style={{ overflow: 'visible' }}>
       <PieChart>
         <Pie
           data={data}
@@ -129,7 +135,7 @@ export function AdminPieChart({
             <Cell key={i} fill={COLORS[i % COLORS.length]} stroke="transparent" />
           ))}
         </Pie>
-        <Tooltip content={<ChartTooltip />} />
+        <Tooltip {...CHART_TOOLTIP} />
         <Legend
           wrapperStyle={{ fontSize: 11 }}
           formatter={(value) => <span className="text-ink-muted">{value}</span>}
@@ -152,12 +158,12 @@ export function AdminDualLineChart({
 }) {
   if (!data.length) return null
   return (
-    <ResponsiveContainer width="100%" height={height}>
+    <ResponsiveContainer width="100%" height={height} style={{ overflow: 'visible' }}>
       <LineChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
         <CartesianGrid strokeDasharray="3 3" stroke="#e4e4e7" vertical={false} />
         <XAxis dataKey={xKey} tick={{ fontSize: 11, fill: '#71717a' }} tickLine={false} axisLine={false} />
         <YAxis tick={{ fontSize: 11, fill: '#71717a' }} tickLine={false} axisLine={false} width={40} />
-        <Tooltip content={<ChartTooltip />} />
+        <Tooltip {...CHART_TOOLTIP} />
         <Legend wrapperStyle={{ fontSize: 11 }} />
         {lines.map((line) => (
           <Line
