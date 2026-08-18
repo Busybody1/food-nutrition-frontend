@@ -35,13 +35,33 @@ const agentDiscoveryPaths = [
   '/meal-tracking-api',
 ];
 
+/**
+ * Baseline security headers applied to every route.
+ *
+ * Nothing we own embeds these pages in a frame, so framing is denied outright
+ * rather than limited to same-origin. `frame-ancestors` only governs who may
+ * frame *us* — pages we embed (e.g. Stripe) are unaffected. X-Frame-Options is
+ * kept alongside the CSP for pre-CSP2 user agents.
+ */
+const securityHeaders = [
+  { key: 'X-Frame-Options', value: 'DENY' },
+  { key: 'Content-Security-Policy', value: "frame-ancestors 'none'" },
+  { key: 'X-Content-Type-Options', value: 'nosniff' },
+  { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+];
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   async headers() {
-    return agentDiscoveryPaths.map((source) => ({
-      source,
-      headers: [{ key: 'Link', value: agentDiscoveryLink }],
-    }));
+    // Both rules match '/', and Next applies every matching rule, so the
+    // discovery Link header survives the catch-all above it.
+    return [
+      { source: '/:path*', headers: securityHeaders },
+      ...agentDiscoveryPaths.map((source) => ({
+        source,
+        headers: [{ key: 'Link', value: agentDiscoveryLink }],
+      })),
+    ];
   },
   async redirects() {
     return [
