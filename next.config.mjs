@@ -1,12 +1,42 @@
-/** S3/CDN hosts serving admin-uploaded media (testimonial avatars). */
-const mediaRemotePatterns = [
-  { protocol: 'https', hostname: '**.amazonaws.com' },
-];
-// Optional CDN in front of the shared S3 bucket (mirrors AWS_S3_PUBLIC_BASE_URL on the API).
+/**
+ * S3/CDN hosts serving admin-uploaded media (testimonial avatars).
+ *
+ * Scoped to our own bucket. A blanket '**.amazonaws.com' matches every S3
+ * bucket on the internet, which turns /_next/image into an open image proxy:
+ * anyone can create a bucket and have our dynos fetch, decode, and re-encode
+ * their bytes — our bandwidth, and attacker-controlled input into sharp/libvips.
+ *
+ * Bucket name mirrors AWS_S3_BUCKET on the API; NEXT_PUBLIC_MEDIA_HOSTNAME
+ * covers a CDN in front of it (mirrors AWS_S3_PUBLIC_BASE_URL). With neither
+ * set, remote images are refused outright — deliberate: better to fail closed
+ * and visibly than to re-open the proxy.
+ */
+const mediaRemotePatterns = [];
+
+const mediaBucket = process.env.NEXT_PUBLIC_MEDIA_BUCKET?.trim();
+const mediaRegion = process.env.NEXT_PUBLIC_MEDIA_REGION?.trim();
+if (mediaBucket) {
+  // Exact hosts only — no wildcard. Next's '*' spans multiple labels, so
+  // `${bucket}.s3.*.amazonaws.com` would also match `${bucket}.s3.evil.s3.
+  // amazonaws.com`, i.e. a bucket an attacker named "<bucket>.s3.evil"
+  // (S3 permits dots in bucket names). These two forms mirror exactly what
+  // build_public_s3_url() emits on the API.
+  mediaRemotePatterns.push({
+    protocol: 'https',
+    hostname: `${mediaBucket}.s3.amazonaws.com`,
+  });
+  if (mediaRegion && mediaRegion !== 'us-east-1') {
+    mediaRemotePatterns.push({
+      protocol: 'https',
+      hostname: `${mediaBucket}.s3.${mediaRegion}.amazonaws.com`,
+    });
+  }
+}
+
 if (process.env.NEXT_PUBLIC_MEDIA_HOSTNAME) {
   mediaRemotePatterns.push({
     protocol: 'https',
-    hostname: process.env.NEXT_PUBLIC_MEDIA_HOSTNAME,
+    hostname: process.env.NEXT_PUBLIC_MEDIA_HOSTNAME.trim(),
   });
 }
 
