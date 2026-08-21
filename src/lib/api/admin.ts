@@ -695,7 +695,7 @@ class AdminAPI {
     campaign_kind?: 'usage' | 'activation'
   }): Promise<{
     message: string
-    user_id: number
+    user_id: number | null
     email: string
     email_number: number
     campaign_kind?: string
@@ -716,7 +716,7 @@ class AdminAPI {
     from_name?: string
   }): Promise<{
     message: string
-    user_id: number
+    user_id: number | null
     email: string
     subject: string
     format: string

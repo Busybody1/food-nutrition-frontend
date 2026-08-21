@@ -44,6 +44,44 @@ const EMAIL_LOG_KINDS = [
   { value: 'custom', label: 'Custom' },
 ] as const
 
+type EmailRecipient = {
+  userId: number | null
+  email: string
+  firstName?: string
+  lastName?: string
+  fromDirectory: boolean
+}
+
+function isLikelyEmail(value: string): boolean {
+  const trimmed = value.trim()
+  if (!trimmed || trimmed.length > 320) return false
+  if (/[\s,;<>\r\n]/.test(trimmed)) return false
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)
+}
+
+function recipientFromUser(user: AdminUser): EmailRecipient {
+  return {
+    userId: user.id,
+    email: user.email,
+    firstName: user.first_name,
+    lastName: user.last_name,
+    fromDirectory: true,
+  }
+}
+
+function recipientFromEmail(email: string): EmailRecipient {
+  return {
+    userId: null,
+    email: email.trim().toLowerCase(),
+    fromDirectory: false,
+  }
+}
+
+function recipientSendPayload(recipient: EmailRecipient): { user_id?: number; email?: string } {
+  if (recipient.userId != null) return { user_id: recipient.userId }
+  return { email: recipient.email }
+}
+
 function formatLogKind(kind: string): string {
   const match = EMAIL_LOG_KINDS.find((item) => item.value === kind)
   return match?.label || kind
@@ -64,10 +102,12 @@ const USER_PICKER_FLIP_THRESHOLD_PX = 160
 function UserPicker({
   selected,
   onSelect,
+  onDraftChange,
   disabled,
 }: {
-  selected: AdminUser | null
-  onSelect: (user: AdminUser | null) => void
+  selected: EmailRecipient | null
+  onSelect: (user: EmailRecipient | null) => void
+  onDraftChange?: (query: string) => void
   disabled?: boolean
 }) {
   const [query, setQuery] = useState('')
@@ -79,7 +119,20 @@ function UserPicker({
   const menuRef = useRef<HTMLDivElement>(null)
 
   const trimmed = query.trim()
-  const showMenu = menuOpen && !selected && trimmed.length >= 2
+  const typedIsEmail = isLikelyEmail(trimmed)
+  const exactEmailMatch = results.some(
+    (user) => user.email.toLowerCase() === trimmed.toLowerCase()
+  )
+  const showExternalOption = typedIsEmail && !exactEmailMatch
+  const showMenu = menuOpen && !selected && (trimmed.length >= 2 || typedIsEmail)
+
+  const applyRecipient = (next: EmailRecipient) => {
+    onSelect(next)
+    setQuery('')
+    onDraftChange?.('')
+    setResults([])
+    setMenuOpen(false)
+  }
 
   useEffect(() => {
     if (trimmed.length < 2) return
@@ -142,11 +195,22 @@ function UserPicker({
       {selected ? (
         <div className="flex items-center justify-between gap-3 rounded-brand border border-surface-border/80 px-3 py-2.5">
           <div className="min-w-0">
-            <p className="text-sm font-medium text-ink truncate">
-              {[selected.first_name, selected.last_name].filter(Boolean).join(' ') || 'User'}{' '}
-              <span className="font-normal text-ink-muted">#{selected.id}</span>
-            </p>
-            <p className="text-xs text-ink-muted truncate">{selected.email}</p>
+            {selected.fromDirectory ? (
+              <>
+                <p className="text-sm font-medium text-ink truncate">
+                  {[selected.firstName, selected.lastName].filter(Boolean).join(' ') || 'User'}{' '}
+                  {selected.userId != null ? (
+                    <span className="font-normal text-ink-muted">#{selected.userId}</span>
+                  ) : null}
+                </p>
+                <p className="text-xs text-ink-muted truncate">{selected.email}</p>
+              </>
+            ) : (
+              <>
+                <p className="text-sm font-medium text-ink truncate">{selected.email}</p>
+                <p className="text-xs text-ink-muted">Not in user list</p>
+              </>
+            )}
           </div>
           <Button
             type="button"
@@ -156,6 +220,7 @@ function UserPicker({
             onClick={() => {
               onSelect(null)
               setQuery('')
+              onDraftChange?.('')
               setMenuOpen(false)
             }}
           >
@@ -168,16 +233,25 @@ function UserPicker({
           <Input
             ref={inputRef}
             className="pl-9"
-            placeholder="Search by name or email…"
+            placeholder="Search users, or type any email…"
             value={query}
             onChange={(event) => {
               const next = event.target.value
               setQuery(next)
+              onDraftChange?.(next)
               setMenuOpen(true)
               if (next.trim().length < 2) setResults([])
             }}
             onFocus={() => {
-              if (trimmed.length >= 2) setMenuOpen(true)
+              if (trimmed.length >= 2 || typedIsEmail) setMenuOpen(true)
+            }}
+            onKeyDown={(event) => {
+              if (event.key !== 'Enter' || !typedIsEmail) return
+              event.preventDefault()
+              const match = results.find(
+                (user) => user.email.toLowerCase() === trimmed.toLowerCase()
+              )
+              applyRecipient(match ? recipientFromUser(match) : recipientFromEmail(trimmed))
             }}
             disabled={disabled}
             autoComplete="off"
@@ -198,8 +272,20 @@ function UserPicker({
                 }}
                 role="listbox"
               >
+                {showExternalOption && (
+                  <button
+                    type="button"
+                    role="option"
+                    aria-selected={false}
+                    className="w-full cursor-pointer text-left px-3 py-2.5 hover:bg-surface-elevated/80 border-b border-surface-border/40"
+                    onClick={() => applyRecipient(recipientFromEmail(trimmed))}
+                  >
+                    <p className="text-sm text-ink truncate">Send to {trimmed.toLowerCase()}</p>
+                    <p className="text-xs text-ink-muted">Not in user list</p>
+                  </button>
+                )}
                 {searching && <p className="px-3 py-2.5 text-xs text-ink-muted">Searching…</p>}
-                {!searching && results.length === 0 && (
+                {!searching && results.length === 0 && !showExternalOption && (
                   <p className="px-3 py-2.5 text-xs text-ink-muted">No users found</p>
                 )}
                 {results.map((user) => (
@@ -209,12 +295,7 @@ function UserPicker({
                     role="option"
                     aria-selected={false}
                     className="w-full cursor-pointer text-left px-3 py-2.5 hover:bg-surface-elevated/80 border-b border-surface-border/40 last:border-0"
-                    onClick={() => {
-                      onSelect(user)
-                      setQuery('')
-                      setResults([])
-                      setMenuOpen(false)
-                    }}
+                    onClick={() => applyRecipient(recipientFromUser(user))}
                   >
                     <p className="text-sm text-ink truncate">
                       {[user.first_name, user.last_name].filter(Boolean).join(' ') || 'User'}
@@ -235,7 +316,8 @@ export default function AdminEmailsPage() {
   const { hasPermission } = useAdmin()
   const canSend = hasPermission('admin:settings:update')
 
-  const [recipient, setRecipient] = useState<AdminUser | null>(null)
+  const [recipient, setRecipient] = useState<EmailRecipient | null>(null)
+  const [draftQuery, setDraftQuery] = useState('')
   const [feedback, setFeedback] = useState<Feedback | null>(null)
   const [emailStatus, setEmailStatus] = useState<{
     resend_configured: boolean
@@ -279,6 +361,11 @@ export default function AdminEmailsPage() {
     [templates, templateId]
   )
 
+  const effectiveRecipient = useMemo(() => {
+    if (recipient) return recipient
+    return isLikelyEmail(draftQuery) ? recipientFromEmail(draftQuery) : null
+  }, [recipient, draftQuery])
+
   useEffect(() => {
     adminAPI
       .getAnnouncementEmailStatus()
@@ -298,8 +385,10 @@ export default function AdminEmailsPage() {
     setLogError('')
     try {
       const data = await adminAPI.getEmailLog({
-        user_id: recipient?.id,
-        email: logEmailFilter.trim() || undefined,
+        user_id: recipient?.userId ?? undefined,
+        email:
+          logEmailFilter.trim() ||
+          (recipient && !recipient.fromDirectory ? recipient.email : undefined),
         kind: logKind || undefined,
         skip: (logPage - 1) * logPageSize,
         limit: logPageSize,
@@ -311,7 +400,7 @@ export default function AdminEmailsPage() {
     } finally {
       setLogLoading(false)
     }
-  }, [recipient?.id, logEmailFilter, logKind, logPage, logPageSize])
+  }, [recipient, logEmailFilter, logKind, logPage, logPageSize])
 
   useEffect(() => {
     loadEmailLog()
@@ -323,7 +412,7 @@ export default function AdminEmailsPage() {
     setFeedback(null)
     try {
       const res = await adminAPI.previewConversionEmail({
-        user_id: recipient?.id,
+        ...(effectiveRecipient ? recipientSendPayload(effectiveRecipient) : {}),
         email_number: selectedTemplate.email_number,
         commercial_variant: selectedTemplate.commercial_variant,
         campaign_kind: selectedTemplate.campaign_kind || 'usage',
@@ -342,10 +431,10 @@ export default function AdminEmailsPage() {
     } finally {
       setPreviewing(false)
     }
-  }, [recipient?.id, selectedTemplate])
+  }, [effectiveRecipient, selectedTemplate])
 
   const sendCustom = async () => {
-    if (!canSend || !recipient || !subject.trim()) return
+    if (!canSend || !effectiveRecipient || !subject.trim()) return
     const html = mode === 'html' ? bodyHtml.trim() : undefined
     const text = mode === 'plain' ? bodyText.trim() : undefined
     if (!html && !text) return
@@ -354,7 +443,7 @@ export default function AdminEmailsPage() {
     setFeedback(null)
     try {
       const res = await adminAPI.sendCustomEmail({
-        user_id: recipient.id,
+        ...recipientSendPayload(effectiveRecipient),
         subject: subject.trim(),
         body_html: html,
         body_text: text,
@@ -376,12 +465,12 @@ export default function AdminEmailsPage() {
   }
 
   const sendTemplate = async () => {
-    if (!canSend || !recipient || !selectedTemplate) return
+    if (!canSend || !effectiveRecipient || !selectedTemplate) return
     setSendingTemplate(true)
     setFeedback(null)
     try {
       const res = await adminAPI.sendConversionEmail({
-        user_id: recipient.id,
+        ...recipientSendPayload(effectiveRecipient),
         email_number: selectedTemplate.email_number,
         commercial_variant: selectedTemplate.commercial_variant,
         campaign_kind: selectedTemplate.campaign_kind || 'usage',
@@ -401,11 +490,11 @@ export default function AdminEmailsPage() {
   }
 
   const sendFeedbackTemplate = async () => {
-    if (!canSend || !recipient) return
+    if (!canSend || recipient?.userId == null) return
     setSendingTemplate(true)
     setFeedback(null)
     try {
-      const res = await adminAPI.sendUserFeedbackEmail(recipient.id)
+      const res = await adminAPI.sendUserFeedbackEmail(recipient.userId)
       setFeedback({
         type: 'success',
         text: res.reused_existing_send
@@ -426,7 +515,7 @@ export default function AdminEmailsPage() {
     <AdminPage>
       <AdminPageHeader
         title="Emails"
-        description="Send mail to one user, or inspect the outbound log of who received what."
+        description="Send mail to a user or any email address, or inspect the outbound log of who received what."
         actions={
           emailStatus ? (
             <Badge variant={emailStatus.resend_configured ? 'default' : 'secondary'}>
@@ -458,8 +547,17 @@ export default function AdminEmailsPage() {
 
       <AdminPanel className="relative z-10 overflow-visible">
         <AdminPanelHeader title="Recipient" icon={UserRound} />
-        <AdminPanelBody>
-          <UserPicker selected={recipient} onSelect={setRecipient} disabled={!canSend} />
+        <AdminPanelBody className="space-y-2">
+          <UserPicker
+            selected={recipient}
+            onSelect={setRecipient}
+            onDraftChange={setDraftQuery}
+            disabled={!canSend}
+          />
+          <p className="text-xs text-ink-muted">
+            Custom and conversion emails can go to an address that is not in the user list. Feedback
+            emails still require an existing user.
+          </p>
         </AdminPanelBody>
       </AdminPanel>
 
@@ -563,7 +661,7 @@ export default function AdminEmailsPage() {
                   onClick={sendCustom}
                   disabled={
                     sendingCustom ||
-                    !recipient ||
+                    !effectiveRecipient ||
                     !subject.trim() ||
                     (mode === 'html' ? !bodyHtml.trim() : !bodyText.trim())
                   }
@@ -604,7 +702,8 @@ export default function AdminEmailsPage() {
                   </select>
                 </div>
                 <p className="text-xs text-ink-muted">
-                  Manual sends do not advance or suppress the automated drip schedule.
+                  Manual sends do not advance or suppress the automated drip schedule. You can send a
+                  template to an address that is not in the database.
                 </p>
                 <div className="flex flex-wrap gap-2">
                   <Button
@@ -619,7 +718,7 @@ export default function AdminEmailsPage() {
                   {canSend && (
                     <Button
                       onClick={sendTemplate}
-                      disabled={!recipient || !selectedTemplate || sendingTemplate}
+                      disabled={!effectiveRecipient || !selectedTemplate || sendingTemplate}
                     >
                       <Send className="h-4 w-4 mr-1.5" />
                       {sendingTemplate ? 'Sending…' : 'Send template'}
@@ -670,10 +769,13 @@ export default function AdminEmailsPage() {
             <AdminPanelBody className="space-y-4">
               <p className="text-sm text-ink-muted">
                 Sends the standard plain-text feedback request (reply-to Resend Receiving inbox). Same
-                action as on the user detail page.
+                action as on the user detail page. The recipient must already exist in the user list.
               </p>
               {canSend && (
-                <Button onClick={sendFeedbackTemplate} disabled={!recipient || sendingTemplate}>
+                <Button
+                  onClick={sendFeedbackTemplate}
+                  disabled={recipient?.userId == null || sendingTemplate}
+                >
                   <Send className="h-4 w-4 mr-1.5" />
                   {sendingTemplate ? 'Sending…' : 'Send feedback email'}
                 </Button>
@@ -731,7 +833,9 @@ export default function AdminEmailsPage() {
               </div>
               {recipient && (
                 <p className="text-xs text-ink-dim">
-                  Filtered to user #{recipient.id} ({recipient.email}). Clear the recipient to see everyone.
+                  {recipient.fromDirectory && recipient.userId != null
+                    ? `Filtered to user #${recipient.userId} (${recipient.email}). Clear the recipient to see everyone.`
+                    : `Filtered to ${recipient.email}. Clear the recipient to see everyone.`}
                 </p>
               )}
             </AdminPanelBody>
