@@ -48,6 +48,7 @@ async function loadPricingPlans(): Promise<BlogDiscoveryPricingPlan[] | undefine
       monthly_price: plan.monthly_price,
       monthly_quota: plan.monthly_quota,
       rate_limit_per_minute: plan.rate_limit_per_minute,
+      max_results_per_query: plan.max_results_per_query,
     }))
   } catch {
     return undefined

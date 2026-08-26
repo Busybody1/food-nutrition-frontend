@@ -22,8 +22,10 @@ import {
 import { fetchPublicPlans } from '@/lib/pricing/fetch-plans'
 import {
   formatPlanPrice,
+  formatResultsPerQuery,
   getPlanCardHighlights,
   isContactSalesPlan,
+  resolveResultsPerQuery,
   type PricingPlan,
 } from '@/lib/pricing/plan-display'
 import { ScheduleCallDialog } from '@/components/marketing/schedule-call-dialog'
@@ -45,6 +47,11 @@ function apiKeyLimitText(planName: string, maxApiKeys?: number): string {
       ? maxApiKeys
       : API_KEY_LIMIT_FALLBACK[planName.toLowerCase()] ?? 1
   return `Up to ${count} API key${count === 1 ? '' : 's'}`
+}
+
+function foodsPerQueryText(planName: string, plans: PricingPlan[]): string {
+  const match = plans.find((p) => p.name.toLowerCase() === planName.toLowerCase())
+  return `${formatResultsPerQuery(resolveResultsPerQuery(planName, match?.max_results_per_query))} per query`
 }
 
 interface BillingInfo {
@@ -122,7 +129,13 @@ function BillingPlanCard({
 }) {
   const isCurrent = currentPlanName.toLowerCase() === plan.name.toLowerCase()
   const { amount, suffix } = formatPlanPrice(plan)
-  const highlights = getPlanCardHighlights(plan.name, plan.monthly_quota, plan.rate_limit_per_minute)
+  const highlights = getPlanCardHighlights(
+    plan.name,
+    plan.monthly_quota,
+    plan.rate_limit_per_minute,
+    plan.max_api_keys,
+    plan.max_results_per_query
+  )
   const contactSales = isContactSalesPlan(plan.name)
 
   return (
@@ -640,6 +653,10 @@ function BillingPageContent() {
                       <li className="flex items-center">
                         <CheckCircle className="h-4 w-4 text-green-600 mr-2" />
                         {billingInfo.rate_limit_per_minute || 100} requests/minute
+                      </li>
+                      <li className="flex items-center">
+                        <CheckCircle className="h-4 w-4 text-green-600 mr-2" />
+                        {foodsPerQueryText(billingInfo.plan_name, availablePlans)}
                       </li>
                       <li className="flex items-center">
                         <CheckCircle className="h-4 w-4 text-green-600 mr-2" />

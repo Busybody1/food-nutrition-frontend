@@ -62,7 +62,7 @@ export function PricingComparison({ plans }: { plans: PricingPlan[] }) {
           <MarketingSectionHeader
             id="compare-plans-heading"
             title="Compare plans"
-            description="All paid tiers include per-account rate limits and monthly quotas. Commercial apps need Plus or Enterprise. Image-to-calorie API and credits-based usage are available on Enterprise."
+            description="All paid tiers include per-account rate limits, monthly quotas, and a foods-per-query cap. Commercial apps need Plus or Enterprise. Image-to-calorie API and credits-based usage are available on Enterprise."
           />
         </Reveal>
 

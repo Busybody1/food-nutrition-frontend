@@ -8,14 +8,11 @@ import {
   Star,
   Crown,
   Building2,
-  Gauge,
-  Calendar,
 } from 'lucide-react'
 import type { PricingPlan } from '@/lib/pricing/plan-display'
 import {
   formatPlanPrice,
-  formatQuota,
-  formatRateLimit,
+  formatResultsPerQuery,
   allowsCommercialUse,
   isEnterprisePlan,
 } from '@/lib/pricing/plan-display'
@@ -56,6 +53,11 @@ export function PricingCard({
 }) {
   const { amount, suffix } = formatPlanPrice(plan)
   const commercial = allowsCommercialUse(plan.name)
+  const foodsLine = `${formatResultsPerQuery(plan.max_results_per_query)} per query`
+  const checklist = [
+    ...plan.highlights.filter((item) => !/per query/i.test(item)),
+    foodsLine,
+  ]
 
   const ctaLabel = isCurrent
     ? 'Current plan'
@@ -104,36 +106,10 @@ export function PricingCard({
         </span>
         {suffix ? <span className="text-sm font-medium text-ink-muted">{suffix}</span> : null}
       </div>
-      <p className="text-sm text-ink-muted mb-4 min-h-[3.75rem] leading-snug">{plan.description}</p>
-
-      <div
-        className={cn(
-          'grid grid-cols-2 gap-2 mb-5 rounded-brand bg-surface-elevated/80 border border-surface-border/60 p-3',
-          dense && 'xl:grid-cols-1'
-        )}
-      >
-        <div className="flex gap-2">
-          <Calendar className="h-4 w-4 text-brand shrink-0 mt-0.5" aria-hidden />
-          <div>
-            <p className="text-xs uppercase tracking-wide text-ink-muted font-medium">Monthly</p>
-            <p className="text-sm font-semibold text-ink tabular-nums">
-              {formatQuota(plan.monthly_quota)}
-            </p>
-          </div>
-        </div>
-        <div className="flex gap-2">
-          <Gauge className="h-4 w-4 text-brand shrink-0 mt-0.5" aria-hidden />
-          <div>
-            <p className="text-xs uppercase tracking-wide text-ink-muted font-medium">Rate limit</p>
-            <p className="text-sm font-semibold text-ink tabular-nums">
-              {formatRateLimit(plan.rate_limit_per_minute)}
-            </p>
-          </div>
-        </div>
-      </div>
+      <p className="text-sm text-ink-muted mb-5 min-h-[3.75rem] leading-snug">{plan.description}</p>
 
       <ul className="space-y-2 mb-6 flex-1">
-        {plan.highlights.map((item) => (
+        {checklist.map((item) => (
           <li key={item} className="flex items-start gap-2 text-sm text-ink-muted">
             <CheckCircle className="h-4 w-4 text-brand shrink-0 mt-0.5" aria-hidden />
             <span>{item}</span>

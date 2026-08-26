@@ -53,7 +53,7 @@ export const FOOD_SEARCH_CONTENT: DocsSectionContent = {
       title: 'Query parameters',
       rows: [
         { name: 'q', description: 'Search query (min 2 characters; empty returns common foods)' },
-        { name: 'limit', description: 'Results per page, 1-100 (default: 30). k is accepted as an alias.' },
+        { name: 'limit', description: 'Results per page, 1-100 (default: 30). Returned rows are capped by your plan’s foods-per-query limit (see pricing). k is accepted as an alias.' },
         { name: 'skip', description: 'Offset for pagination (default: 0)' },
         { name: 'brand', description: 'Filter by brand name (ILIKE)' },
         { name: 'brand_id', description: 'Filter by brand ID' },
@@ -75,7 +75,7 @@ export const FOOD_SEARCH_CONTENT: DocsSectionContent = {
     { kind: 'h2', text: 'Lightweight catalog', id: 'catalog' },
     {
       kind: 'p',
-      text: 'For food metadata without nutrients and higher page sizes (up to 100), use GET /api/v1/catalog/foods. Single-food meta is GET /api/v1/catalog/foods/{id}. Taxonomy lists live at /catalog/brands, /catalog/categories, and /catalog/nutrients. Full nutrition detail remains on GET /api/v1/foods/{id}.',
+      text: 'For food metadata without nutrients, use GET /api/v1/catalog/foods. Page size is capped by your plan’s foods-per-query limit (see pricing). Single-food meta is GET /api/v1/catalog/foods/{id}. Taxonomy lists live at /catalog/brands, /catalog/categories, and /catalog/nutrients. Full nutrition detail remains on GET /api/v1/foods/{id}.',
     },
     {
       kind: 'code',
@@ -124,7 +124,7 @@ export const FOOD_SEARCH_CONTENT: DocsSectionContent = {
   faqs: [
     {
       q: 'How do I paginate through search results?',
-      a: 'Use skip and limit together; the response envelope includes total, so you can compute page counts. limit accepts values up to 100.',
+      a: 'Use skip and limit together; the response envelope includes total, so you can compute page counts. limit accepts values up to 100, but the number of foods returned is capped by your plan (Free 20 by default, paid 100). See the pricing page for the live cap.',
     },
     {
       q: 'When should I use match_mode=all?',

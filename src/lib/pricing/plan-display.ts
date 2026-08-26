@@ -8,6 +8,8 @@ export interface PricingPlan {
   rate_limit_per_minute: number
   /** Backend plans.max_api_keys — single source of truth when present. */
   max_api_keys?: number
+  /** Foods returned per search/catalog request (plans.max_results_per_query). */
+  max_results_per_query: number
   stripe_test_price_id?: string
   stripe_live_price_id?: string
   price_display_label?: string | null
@@ -69,6 +71,22 @@ export function formatRateLimit(rpm: number): string {
   return `${rpm.toLocaleString()}/min`
 }
 
+/** Fail-closed display defaults matching backend plan_limits.py. */
+export function defaultResultsPerQuery(name: string): number {
+  return name.toLowerCase() === 'free' ? 20 : 100
+}
+
+export function resolveResultsPerQuery(name: string, value?: number): number {
+  if (value != null && value > 0) return value
+  return defaultResultsPerQuery(name)
+}
+
+/** Display foods returned per search/catalog request. */
+export function formatResultsPerQuery(limit: number): string {
+  if (limit <= 0) return '-'
+  return `${limit.toLocaleString()} food${limit === 1 ? '' : 's'}`
+}
+
 export function formatPlanPrice(plan: PricingPlan): { amount: string; suffix: string } {
   if (plan.price_display_label?.trim()) {
     return { amount: plan.price_display_label.trim(), suffix: '' }
@@ -92,7 +110,8 @@ export function getPlanCardHighlights(
   name: string,
   monthlyQuota: number,
   rateLimit: number,
-  maxApiKeys?: number
+  maxApiKeys?: number,
+  maxResultsPerQuery?: number
 ): string[] {
   const quota = `${formatQuota(monthlyQuota)} API calls / month`
   const rate = `${formatRateLimit(rateLimit)} rate limit (per account)`
@@ -132,6 +151,9 @@ export function getPlanCardHighlights(
       items.push('Standard support')
   }
 
+  items.push(
+    `${formatResultsPerQuery(resolveResultsPerQuery(name, maxResultsPerQuery))} per query`
+  )
   return items
 }
 
@@ -177,6 +199,11 @@ export const COMPARE_ROWS: CompareRow[] = [
     feature: 'Rate limit (per account, not IP)',
     section: 'limits',
     getValue: (p) => formatRateLimit(p.rate_limit_per_minute),
+  },
+  {
+    feature: 'Foods per query',
+    section: 'limits',
+    getValue: (p) => formatResultsPerQuery(resolveResultsPerQuery(p.name, p.max_results_per_query)),
   },
   {
     feature: 'Commercial production use',
@@ -290,6 +317,9 @@ export function transformPlanData(backendPlans: Record<string, unknown>[]): Pric
       typeof plan.price_display_label === 'string' ? plan.price_display_label : null
     const maxApiKeys =
       plan.max_api_keys != null ? parseIntField(plan.max_api_keys) : undefined
+    const maxResultsRaw =
+      plan.max_results_per_query != null ? parseIntField(plan.max_results_per_query) : undefined
+    const maxResultsPerQuery = resolveResultsPerQuery(name, maxResultsRaw)
 
     return {
       id: parseIntField(plan.id),
@@ -299,10 +329,11 @@ export function transformPlanData(backendPlans: Record<string, unknown>[]): Pric
       monthly_quota: monthlyQuota,
       rate_limit_per_minute: rateLimit,
       max_api_keys: maxApiKeys != null && maxApiKeys > 0 ? maxApiKeys : undefined,
+      max_results_per_query: maxResultsPerQuery,
       highlights:
         apiHighlights.length > 0
           ? apiHighlights
-          : getPlanCardHighlights(name, monthlyQuota, rateLimit, maxApiKeys),
+          : getPlanCardHighlights(name, monthlyQuota, rateLimit, maxApiKeys, maxResultsPerQuery),
       stripe_test_price_id: plan.stripe_test_price_id as string | undefined,
       stripe_live_price_id: plan.stripe_live_price_id as string | undefined,
       price_display_label: priceLabel,
@@ -316,6 +347,7 @@ export const FALLBACK_PLANS: PricingPlan[] = []
 
 export const PRICING_FOOTNOTES = [
   'Rate limits apply per account (user id), not per IP, suitable for multi-tenant and server-side apps.',
+  'Foods per query is the maximum number of foods returned on each search or catalog request. Requested limits above the cap are truncated.',
   'Commercial production use requires Plus or Enterprise. Send header X-API-Usage-Type: commercial when applicable.',
   'Plus and Enterprise include short-lived Redis caching on search and food GET endpoints to absorb traffic spikes.',
   'Enterprise includes image-to-calorie API access and credits-based usage. Contact sales to enable.',

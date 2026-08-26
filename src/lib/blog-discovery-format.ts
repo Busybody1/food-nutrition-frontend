@@ -13,6 +13,7 @@ export type BlogDiscoveryPricingPlan = {
   monthly_price: number
   monthly_quota: number
   rate_limit_per_minute: number
+  max_results_per_query?: number
 }
 
 export type BlogDiscoverySite = {
@@ -135,12 +136,17 @@ function commercialUseLabel(name: string): string {
   return 'No'
 }
 
+function formatDiscoveryResultsPerQuery(name: string, limit?: number): string {
+  if (limit != null && limit > 0) return String(limit)
+  return name.toLowerCase() === 'free' ? '20' : '100'
+}
+
 const FALLBACK_PRICING_ROWS: BlogDiscoveryPricingPlan[] = [
-  { name: 'Free', monthly_price: 0, monthly_quota: 1000, rate_limit_per_minute: 10 },
-  { name: 'Basic', monthly_price: 29, monthly_quota: 100_000, rate_limit_per_minute: 200 },
-  { name: 'Core', monthly_price: 99, monthly_quota: 750_000, rate_limit_per_minute: 500 },
-  { name: 'Plus', monthly_price: 299, monthly_quota: 0, rate_limit_per_minute: 5000 },
-  { name: 'Enterprise', monthly_price: 0, monthly_quota: 0, rate_limit_per_minute: 0 },
+  { name: 'Free', monthly_price: 0, monthly_quota: 1000, rate_limit_per_minute: 10, max_results_per_query: 20 },
+  { name: 'Basic', monthly_price: 29, monthly_quota: 100_000, rate_limit_per_minute: 200, max_results_per_query: 100 },
+  { name: 'Core', monthly_price: 99, monthly_quota: 750_000, rate_limit_per_minute: 500, max_results_per_query: 100 },
+  { name: 'Plus', monthly_price: 299, monthly_quota: 0, rate_limit_per_minute: 5000, max_results_per_query: 100 },
+  { name: 'Enterprise', monthly_price: 0, monthly_quota: 0, rate_limit_per_minute: 0, max_results_per_query: 100 },
 ]
 
 function buildPricingTableRows(plans?: BlogDiscoveryPricingPlan[]): string {
@@ -148,7 +154,7 @@ function buildPricingTableRows(plans?: BlogDiscoveryPricingPlan[]): string {
   return rows
     .map(
       (plan) =>
-        `| ${plan.name} | ${formatDiscoveryPlanPrice(plan)} | ${formatDiscoveryQuota(plan.monthly_quota)} | ${formatDiscoveryRateLimit(plan.rate_limit_per_minute)} | ${commercialUseLabel(plan.name)} |`
+        `| ${plan.name} | ${formatDiscoveryPlanPrice(plan)} | ${formatDiscoveryQuota(plan.monthly_quota)} | ${formatDiscoveryRateLimit(plan.rate_limit_per_minute)} | ${formatDiscoveryResultsPerQuery(plan.name, plan.max_results_per_query)} | ${commercialUseLabel(plan.name)} |`
     )
     .join('\n')
 }
@@ -194,8 +200,8 @@ ${site.siteName} is a REST API for nutrition and food data. Developers use API k
 ## Pricing (USD, monthly)
 All plans include search, suggest, and barcode endpoints. Rate limits apply per account (user id), not per IP. Live quotas: ${site.siteUrl}/pricing
 
-| Plan | Price | API calls / month | Rate limit | Commercial use |
-|------|-------|-------------------|------------|----------------|
+| Plan | Price | API calls / month | Rate limit | Foods per query | Commercial use |
+|------|-------|-------------------|------------|-----------------|----------------|
 ${buildPricingTableRows(pricingPlans)}
 
 Notes:

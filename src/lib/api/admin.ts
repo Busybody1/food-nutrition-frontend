@@ -306,6 +306,7 @@ export interface AdminPlan {
   monthly_price?: number
   monthly_quota?: number
   rate_limit_per_minute?: number
+  max_results_per_query?: number
   is_active: boolean
   /** Drives the "Most popular" badge on the public pricing grid. */
   is_recommended?: boolean
@@ -538,6 +539,7 @@ class AdminAPI {
       name?: string
       monthly_quota?: number
       rate_limit_per_minute?: number
+      max_results_per_query?: number
       is_active?: boolean
       is_recommended?: boolean
       description?: string

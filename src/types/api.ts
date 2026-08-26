@@ -114,6 +114,8 @@ export interface Plan {
   monthly_price: number;
   monthly_quota: number;
   rate_limit_per_minute: number;
+  max_api_keys?: number;
+  max_results_per_query?: number;
   stripe_test_price_id?: string;
   stripe_live_price_id?: string;
   stripe_price_id?: string;

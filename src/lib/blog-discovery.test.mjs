@@ -34,6 +34,12 @@ test('buildLlmsTxtFromInput includes dynamic blog catalog', () => {
   assert.match(body, /keywords: food api, nutrition api/);
 });
 
+test('buildLlmsTxtFromInput includes foods-per-query in pricing table', () => {
+  const body = buildLlmsTxtFromInput(SAMPLE_POSTS, SITE);
+  assert.match(body, /Foods per query/);
+  assert.match(body, /\| Free \| \$0 \| 1,000 \| 10\/min \| 20 \|/);
+});
+
 test('buildBlogRssXmlFromInput emits RSS categories', () => {
   const xml = buildBlogRssXmlFromInput(SAMPLE_POSTS, SITE);
   assert.match(xml, /<category>food api<\/category>/);

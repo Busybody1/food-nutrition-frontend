@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Check, Zap, Crown, Star, ArrowRight } from 'lucide-react'
 import { formatPrice } from '@/lib/stripe/config'
 import { DirectSubscriptionForm } from './DirectSubscriptionForm'
+import { formatResultsPerQuery, resolveResultsPerQuery } from '@/lib/pricing/plan-display'
 
 import { Plan } from '@/types/api'
 
@@ -93,6 +94,7 @@ export function SubscriptionCard({
     const baseFeatures = [
       `${formatQuota(plan.monthly_quota)} API calls/month`,
       `${plan.rate_limit_per_minute} requests/minute`,
+      `${formatResultsPerQuery(resolveResultsPerQuery(plan.name, plan.max_results_per_query))} per query`,
       'Food & Nutrition data',
       'REST API access',
       'JSON responses',

@@ -24,7 +24,7 @@ import {
 } from 'lucide-react'
 import { stripeAPI } from '@/lib/stripe/api'
 import type { PricingPlan } from '@/lib/pricing/plan-display'
-import { formatQuota, formatRateLimit } from '@/lib/pricing/plan-display'
+import { formatQuota, formatRateLimit, formatResultsPerQuery } from '@/lib/pricing/plan-display'
 
 interface SubscribeModalProps {
   isOpen: boolean
@@ -156,6 +156,12 @@ export function SubscribeModal({
                   <span className="text-gray-600">Rate Limit:</span>
                   <span className="font-medium">
                     {formatRateLimit(plan.rate_limit_per_minute)} (per account)
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Foods per query:</span>
+                  <span className="font-medium">
+                    {formatResultsPerQuery(plan.max_results_per_query)}
                   </span>
                 </div>
               </div>

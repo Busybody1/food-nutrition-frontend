@@ -23,6 +23,7 @@ import {
 import { getErrorMessage, formatPrice } from '@/lib/stripe/config'
 import { stripeAPI } from '@/lib/stripe/api'
 import { useAuth } from '@/lib/hooks/use-auth'
+import { formatResultsPerQuery, resolveResultsPerQuery } from '@/lib/pricing/plan-display'
 
 interface PlanDetails {
   id: number
@@ -31,6 +32,7 @@ interface PlanDetails {
   monthly_price: number
   monthly_quota: number
   rate_limit_per_minute: number
+  max_results_per_query?: number
   features: string[]
 }
 
@@ -305,6 +307,15 @@ function CheckoutContent() {
                       <div className="flex items-center">
                         <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
                         <span className="text-sm">{planDetails.rate_limit_per_minute} requests/minute</span>
+                      </div>
+                      <div className="flex items-center">
+                        <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
+                        <span className="text-sm">
+                          {formatResultsPerQuery(
+                            resolveResultsPerQuery(planDetails.name, planDetails.max_results_per_query)
+                          )}{' '}
+                          per query
+                        </span>
                       </div>
                       <div className="flex items-center">
                         <CheckCircle className="h-4 w-4 text-green-500 mr-2" />

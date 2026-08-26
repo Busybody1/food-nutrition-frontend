@@ -54,6 +54,7 @@ export default function AdminPlansPage() {
   const [monthlyPrice, setMonthlyPrice] = useState('')
   const [quota, setQuota] = useState('')
   const [rateLimit, setRateLimit] = useState('')
+  const [resultsPerQuery, setResultsPerQuery] = useState('')
   const [stripePriceId, setStripePriceId] = useState('')
   const [stripeTestPriceId, setStripeTestPriceId] = useState('')
   const [stripeLivePriceId, setStripeLivePriceId] = useState('')
@@ -97,6 +98,7 @@ export default function AdminPlansPage() {
     setMonthlyPrice(String(p.monthly_price ?? ''))
     setQuota(String(p.monthly_quota ?? ''))
     setRateLimit(String(p.rate_limit_per_minute ?? ''))
+    setResultsPerQuery(String(p.max_results_per_query ?? ''))
     setStripePriceId(p.stripe_price_id ?? '')
     setStripeTestPriceId(p.stripe_test_price_id ?? '')
     setStripeLivePriceId(p.stripe_live_price_id ?? '')
@@ -152,6 +154,15 @@ export default function AdminPlansPage() {
       if (monthlyPrice !== '') payload.monthly_price = Number(monthlyPrice)
       if (quota !== '') payload.monthly_quota = Number(quota)
       if (rateLimit !== '') payload.rate_limit_per_minute = Number(rateLimit)
+      if (resultsPerQuery !== '') {
+        const perQuery = Number(resultsPerQuery)
+        if (!Number.isInteger(perQuery) || perQuery < 1 || perQuery > 100) {
+          setError('Foods per query must be a whole number between 1 and 100')
+          setSaving(false)
+          return
+        }
+        payload.max_results_per_query = perQuery
+      }
 
       const legacyStripe = stripePriceId.trim()
       const testStripe = stripeTestPriceId.trim()
@@ -382,6 +393,8 @@ export default function AdminPlansPage() {
                       <p className="text-xs text-ink-muted mt-2">
                         {formatPlanPriceLabel(p.monthly_price)}/mo · quota{' '}
                         {formatCount(p.monthly_quota ?? 0)} · {p.rate_limit_per_minute ?? '-'}/min
+                        {' · '}
+                        {p.max_results_per_query ?? '-'} foods/query
                       </p>
                       {p.users_count != null && (
                         <p className="text-xs text-ink-dim mt-1 flex items-center gap-1">
@@ -470,6 +483,22 @@ export default function AdminPlansPage() {
                           disabled={!canEdit}
                           type="number"
                         />
+                      </div>
+                      <div>
+                        <label className="text-xs font-medium text-ink-dim block mb-1.5">
+                          Foods per query
+                        </label>
+                        <Input
+                          value={resultsPerQuery}
+                          onChange={(e) => setResultsPerQuery(e.target.value)}
+                          disabled={!canEdit}
+                          type="number"
+                          min="1"
+                          max="100"
+                        />
+                        <p className="text-xs text-ink-muted mt-1">
+                          Max foods returned in one search or catalog request (1–100). Free default 20; paid default 100.
+                        </p>
                       </div>
                     </div>
 
