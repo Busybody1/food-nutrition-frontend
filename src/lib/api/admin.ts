@@ -341,6 +341,14 @@ export interface AuditEntry {
   created_at: string
 }
 
+/** Target column / recent-activity label; includes email after a user.delete. */
+export function formatAuditTarget(entry: AuditEntry): string {
+  if (!entry.target_type) return '—'
+  const id = entry.target_id ?? '-'
+  const email = typeof entry.metadata?.email === 'string' ? entry.metadata.email.trim() : ''
+  return email ? `${entry.target_type}:${id} (${email})` : `${entry.target_type}:${id}`
+}
+
 export interface UserUsagePayload {
   user_id: number
   time_range: string
@@ -478,6 +486,10 @@ class AdminAPI {
 
   async deactivateUser(userId: number): Promise<void> {
     await adminPut(`/users/${userId}/status`, { is_active: false })
+  }
+
+  async deleteUser(userId: number): Promise<{ message: string; user_id: number }> {
+    return adminDelete(`/users/${userId}`)
   }
 
   async getUserUsage(

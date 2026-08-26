@@ -28,6 +28,7 @@ import {
   DashboardEmpty,
   DashboardQuickAction,
 } from '@/components/admin/admin-ui'
+import { formatAuditTarget } from '@/lib/api/admin'
 
 interface DashboardStats {
   totalUsers: number
@@ -173,10 +174,10 @@ function AdminDashboard() {
         for (const e of auditResult.value.entries) {
           activity.push({
             id: `audit-${e.id}`,
-            type: 'api_usage',
-            message: `${e.action} on ${e.target_type || 'system'}${e.target_id ? ` #${e.target_id}` : ''}`,
+            type: e.action === 'user.delete' ? 'error_occurred' : 'api_usage',
+            message: `${e.action} on ${formatAuditTarget(e)}`,
             timestamp: e.created_at,
-            severity: 'info',
+            severity: e.action === 'user.delete' ? 'warning' : 'info',
           })
         }
       }

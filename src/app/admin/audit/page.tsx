@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
-import { adminAPI, AuditEntry } from '@/lib/api/admin'
+import { adminAPI, AuditEntry, formatAuditTarget } from '@/lib/api/admin'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { FileSearch, Filter, RotateCcw } from 'lucide-react'
@@ -194,7 +194,7 @@ export default function AdminAuditPage() {
                           </code>
                         </td>
                         <td className="text-xs text-ink-muted">
-                          {e.target_type ? `${e.target_type}:${e.target_id ?? '-'}` : '—'}
+                          {formatAuditTarget(e)}
                         </td>
                       </tr>
                     ))}

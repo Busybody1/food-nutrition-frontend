@@ -15,6 +15,7 @@ import {
   RotateCcw,
   Search,
   Shield,
+  Trash2,
   TrendingUp,
   User as UserIcon,
 } from 'lucide-react'
@@ -27,6 +28,8 @@ import {
   UserRequestSummary,
   RequestSortKey,
 } from '@/lib/api/admin'
+import { DeleteUserDialog } from '@/components/admin/delete-user-dialog'
+import { useAdmin } from '@/lib/hooks/use-admin'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
@@ -101,6 +104,7 @@ function relativeAge(iso?: string | null): string {
 export default function AdminUserDetailPage() {
   const params = useParams<{ id: string }>()
   const router = useRouter()
+  const { user: adminUser } = useAdmin()
   const userId = Number(params?.id)
 
   const [user, setUser] = useState<AdminUserDetail | null>(null)
@@ -114,6 +118,7 @@ export default function AdminUserDetailPage() {
   const [usageRange, setUsageRange] = useState<UsageRange>('30d')
   const [busy, setBusy] = useState(false)
   const [confirmFeedback, setConfirmFeedback] = useState(false)
+  const [confirmDelete, setConfirmDelete] = useState(false)
   const [revokingKeyId, setRevokingKeyId] = useState<number | null>(null)
 
   // Request history (server-paginated, filtered and sorted).
@@ -221,6 +226,20 @@ export default function AdminUserDetailPage() {
     loadUsage()
     loadRequests()
   }, [loadUser, loadUsage, loadRequests])
+
+  const deleteAccount = async () => {
+    if (!user) return
+    try {
+      setBusy(true)
+      setActionError('')
+      setActionSuccess('')
+      await adminAPI.deleteUser(user.id)
+      router.push('/admin/users')
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : 'Failed to delete user')
+      setBusy(false)
+    }
+  }
 
   const toggleActive = async () => {
     if (!user) return
@@ -492,6 +511,18 @@ export default function AdminUserDetailPage() {
               <Mail className="h-4 w-4 mr-1.5" />
               Request feedback
             </Button>
+            {user && !user.is_admin && adminUser?.id !== user.id && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setConfirmDelete(true)}
+                disabled={busy}
+                className="text-red-600 hover:text-red-700"
+              >
+                <Trash2 className="h-4 w-4 mr-1.5" />
+                Delete
+              </Button>
+            )}
             <Link href={`/admin/requests?user_id=${user.id}`}>
               <Button variant="outline" size="sm">
                 <List className="h-4 w-4 mr-1.5" />
@@ -849,6 +880,13 @@ export default function AdminUserDetailPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      <DeleteUserDialog
+        open={confirmDelete}
+        email={user.email}
+        busy={busy}
+        onOpenChange={setConfirmDelete}
+        onConfirm={deleteAccount}
+      />
     </AdminPage>
   )
 }

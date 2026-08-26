@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import {
   Search, Eye, Ban, CheckCircle, Mail, Calendar,
-  Users, RotateCcw,
+  Users, RotateCcw, Trash2,
 } from 'lucide-react'
 import {
   adminAPI,
@@ -18,6 +18,8 @@ import {
   UserSortKey,
   SortOrder,
 } from '@/lib/api/admin'
+import { DeleteUserDialog } from '@/components/admin/delete-user-dialog'
+import { useAdmin } from '@/lib/hooks/use-admin'
 import {
   Dialog,
   DialogContent,
@@ -85,6 +87,7 @@ function planBadgeClass(planName: string) {
 
 export default function UserManagement() {
   const router = useRouter()
+  const { user: adminUser } = useAdmin()
 
   const [searchInput, setSearchInput] = useState('')
   const [debouncedSearch, setDebouncedSearch] = useState('')
@@ -101,6 +104,8 @@ export default function UserManagement() {
   const [selectedUsers, setSelectedUsers] = useState<number[]>([])
   const [actionError, setActionError] = useState('')
   const [feedbackTarget, setFeedbackTarget] = useState<AdminUser | null>(null)
+  const [deleteTarget, setDeleteTarget] = useState<AdminUser | null>(null)
+  const [deleting, setDeleting] = useState(false)
   const [sendingFeedback, setSendingFeedback] = useState(false)
   const [feedbackSuccess, setFeedbackSuccess] = useState('')
   const [status, setStatus] = useState<StatusFilter>('all')
@@ -224,6 +229,26 @@ export default function UserManagement() {
     }
   }
 
+  const canDeleteUser = (account: AdminUser) =>
+    !account.is_admin && adminUser?.id !== account.id
+
+  const handleDeleteUser = async () => {
+    if (!deleteTarget) return
+    try {
+      setDeleting(true)
+      setActionError('')
+      await adminAPI.deleteUser(deleteTarget.id)
+      setFeedbackSuccess(`Deleted ${deleteTarget.email}. The action is in the audit log.`)
+      setDeleteTarget(null)
+      setSelectedUsers((ids) => ids.filter((id) => id !== deleteTarget.id))
+      refreshAll()
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : 'Failed to delete user')
+    } finally {
+      setDeleting(false)
+    }
+  }
+
   const handleSendFeedbackEmail = async () => {
     if (!feedbackTarget) return
     try {
@@ -267,7 +292,7 @@ export default function UserManagement() {
     <AdminPage>
       <AdminPageHeader
         title="Users"
-        description="Search accounts, review usage, revoke API keys, and toggle access."
+        description="Search accounts, review usage, revoke API keys, deactivate, or permanently delete."
         actions={<AdminRefreshButton onClick={refreshAll} loading={isLoading || statsLoading} />}
       />
 
@@ -608,6 +633,20 @@ export default function UserManagement() {
                               <CheckCircle className="w-4 h-4" />
                             )}
                           </Button>
+                          {canDeleteUser(user) && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              title="Delete account"
+                              onClick={() => {
+                                setFeedbackSuccess('')
+                                setDeleteTarget(user)
+                              }}
+                              className="text-red-600 hover:text-red-700"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          )}
                         </div>
                       </td>
                     </tr>
@@ -661,6 +700,13 @@ export default function UserManagement() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      <DeleteUserDialog
+        open={!!deleteTarget}
+        email={deleteTarget?.email || ''}
+        busy={deleting}
+        onOpenChange={(open) => !open && setDeleteTarget(null)}
+        onConfirm={handleDeleteUser}
+      />
     </AdminPage>
   )
 }
