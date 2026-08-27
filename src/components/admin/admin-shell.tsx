@@ -25,6 +25,7 @@ import {
   List,
   ChevronRight,
   ShieldAlert,
+  LifeBuoy,
 } from 'lucide-react'
 import { useAuth } from '@/lib/hooks/use-auth'
 import { useAdmin } from '@/lib/hooks/use-admin'
@@ -54,6 +55,7 @@ const NAV_SECTIONS = [
   {
     label: 'Operations',
     items: [
+      { name: 'Support', href: '/admin/support', icon: LifeBuoy, permission: 'admin:support:view' },
       { name: 'Announcements', href: '/admin/announcements', icon: Mail, permission: 'admin:settings:update' },
       { name: 'Emails', href: '/admin/emails', icon: Send, permission: 'admin:settings:update' },
       { name: 'Blog', href: '/admin/blog', icon: FileText, permission: 'admin:settings:update' },
@@ -73,6 +75,7 @@ const PAGE_TITLES: Record<string, string> = {
   '/admin/analytics': 'Analytics',
   '/admin/plans': 'Plans',
   '/admin/billing': 'Billing',
+  '/admin/support': 'Support',
   '/admin/announcements': 'Announcements',
   '/admin/emails': 'Emails',
   '/admin/blog': 'Blog',
@@ -86,9 +89,11 @@ const PAGE_TITLES: Record<string, string> = {
 function NavLinks({
   onNavigate,
   hasPermission,
+  supportUnread,
 }: {
   onNavigate?: () => void
   hasPermission: (p: string) => boolean
+  supportUnread: number
 }) {
   const pathname = usePathname()
 
@@ -116,6 +121,11 @@ function NavLinks({
                   >
                     <item.icon className="h-[18px] w-[18px] shrink-0 opacity-80" aria-hidden />
                     {item.name}
+                    {item.href === '/admin/support' && supportUnread > 0 ? (
+                      <span className="ml-auto min-w-[18px] rounded-full bg-violet-600 px-1.5 text-[10px] font-semibold leading-4 text-white text-center">
+                        {supportUnread > 9 ? '9+' : supportUnread}
+                      </span>
+                    ) : null}
                   </Link>
                 )
               })}
@@ -316,6 +326,20 @@ export function AdminShell({
   const router = useRouter()
   const pathname = usePathname()
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [supportUnread, setSupportUnread] = useState(0)
+
+  useEffect(() => {
+    if (!hasPermission('admin:support:view')) return
+    const refresh = () => {
+      adminAPI
+        .getSupportUnreadCount()
+        .then((data) => setSupportUnread(data.count || 0))
+        .catch(() => undefined)
+    }
+    refresh()
+    const id = window.setInterval(refresh, 15_000)
+    return () => window.clearInterval(id)
+  }, [hasPermission])
 
   const handleLogout = () => {
     logout()
@@ -349,7 +373,11 @@ export function AdminShell({
             </Button>
           </div>
           <div className="flex-1 overflow-y-auto py-4">
-            <NavLinks onNavigate={() => setSidebarOpen(false)} hasPermission={hasPermission} />
+            <NavLinks
+              onNavigate={() => setSidebarOpen(false)}
+              hasPermission={hasPermission}
+              supportUnread={supportUnread}
+            />
           </div>
           <UserBlock
             email={userEmail}
@@ -365,7 +393,7 @@ export function AdminShell({
           <SidebarBrand />
         </div>
         <div className="flex-1 overflow-y-auto py-2 min-h-0">
-          <NavLinks hasPermission={hasPermission} />
+          <NavLinks hasPermission={hasPermission} supportUnread={supportUnread} />
         </div>
         <UserBlock
           email={userEmail}

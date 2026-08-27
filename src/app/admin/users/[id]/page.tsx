@@ -18,6 +18,7 @@ import {
   Trash2,
   TrendingUp,
   User as UserIcon,
+  LifeBuoy,
 } from 'lucide-react'
 import {
   adminAPI,
@@ -120,6 +121,7 @@ export default function AdminUserDetailPage() {
   const [confirmFeedback, setConfirmFeedback] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
   const [revokingKeyId, setRevokingKeyId] = useState<number | null>(null)
+  const [supportThreadId, setSupportThreadId] = useState<number | null>(null)
 
   // Request history (server-paginated, filtered and sorted).
   const [requests, setRequests] = useState<ApiRequestRow[]>([])
@@ -206,6 +208,14 @@ export default function AdminUserDetailPage() {
   useEffect(() => {
     loadRequests()
   }, [loadRequests])
+
+  useEffect(() => {
+    if (!Number.isFinite(userId) || userId <= 0) return
+    adminAPI
+      .getSupportConversations({ user_id: userId, limit: 1 })
+      .then((data) => setSupportThreadId(data.conversations[0]?.id ?? null))
+      .catch(() => setSupportThreadId(null))
+  }, [userId])
 
   // Reset paging in the setters, not an effect, so each change fetches once.
   const applyRequestFilters = (next: typeof EMPTY_FILTERS) => {
@@ -511,6 +521,19 @@ export default function AdminUserDetailPage() {
               <Mail className="h-4 w-4 mr-1.5" />
               Request feedback
             </Button>
+            {supportThreadId ? (
+              <Button variant="outline" size="sm" asChild>
+                <Link href={`/admin/support/${supportThreadId}`}>
+                  <LifeBuoy className="h-4 w-4 mr-1.5" />
+                  Open support chat
+                </Link>
+              </Button>
+            ) : (
+              <Button variant="outline" size="sm" disabled title="This user has not started a support chat">
+                <LifeBuoy className="h-4 w-4 mr-1.5" />
+                No support thread
+              </Button>
+            )}
             {user && !user.is_admin && adminUser?.id !== user.id && (
               <Button
                 variant="outline"

@@ -424,6 +424,33 @@ export const api = {
     }) => apiClient.post('/api/v1/users/feedback', data),
   },
 
+  support: {
+    getConversation: (limit?: number) =>
+      apiClient.get('/api/v1/support/conversation', limit ? { limit } : undefined),
+
+    getMessages: (afterId?: number, limit?: number) =>
+      apiClient.get('/api/v1/support/messages', {
+        ...(afterId ? { after_id: afterId } : {}),
+        ...(limit ? { limit } : {}),
+      }),
+
+    postMessage: (data: {
+      body?: string
+      attachment_url?: string
+      attachment_content_type?: string
+    }) => apiClient.post('/api/v1/support/messages', data),
+
+    markRead: () => apiClient.post('/api/v1/support/read'),
+
+    unreadCount: () => apiClient.get('/api/v1/support/unread-count'),
+
+    uploadAttachment: (file: File) => {
+      const formData = new FormData()
+      formData.append('file', file)
+      return apiClient.postFormData('/api/v1/support/attachments', formData)
+    },
+  },
+
   // Usage Analytics
   usage: {
     getUsageData: (timeRange: string) =>

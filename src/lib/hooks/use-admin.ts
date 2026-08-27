@@ -57,7 +57,10 @@ const ADMIN_PERMISSIONS = {
 
   // Reports
   VIEW_REPORTS: 'admin:reports:view',
-  GENERATE_REPORTS: 'admin:reports:generate'
+  GENERATE_REPORTS: 'admin:reports:generate',
+
+  VIEW_SUPPORT: 'admin:support:view',
+  REPLY_SUPPORT: 'admin:support:reply',
 } as const
 
 const DEFAULT_ADMIN_PERMISSIONS = Object.values(ADMIN_PERMISSIONS)

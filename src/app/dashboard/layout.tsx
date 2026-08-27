@@ -17,12 +17,14 @@ import {
   LogOut,
   BookOpen,
   ExternalLink,
+  MessageCircle,
   MessageSquare,
   type LucideIcon,
 } from 'lucide-react'
 import { SITE_NAME } from '@/lib/site'
 import { cn } from '@/lib/utils/cn'
 import { DashboardFeedbackForm } from '@/components/dashboard/DashboardFeedbackForm'
+import { SupportChatProvider, useSupportChat } from '@/components/support/SupportChatWidget'
 
 const navigation: {
   name: string
@@ -40,6 +42,7 @@ const navigation: {
 
 function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname()
+  const { openSupport, unreadCount, isOpen } = useSupportChat()
 
   return (
     <nav className="flex flex-col gap-0.5 px-3" aria-label="Dashboard">
@@ -71,6 +74,22 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
           </Link>
         )
       })}
+      <button
+        type="button"
+        onClick={() => {
+          openSupport()
+          onNavigate?.()
+        }}
+        className={cn('dashboard-nav-link w-full text-left', isOpen && 'dashboard-nav-link-active')}
+      >
+        <MessageCircle className="h-[18px] w-[18px] shrink-0 opacity-80" aria-hidden />
+        Support
+        {unreadCount > 0 ? (
+          <span className="ml-auto min-w-[18px] rounded-full bg-violet-600 px-1.5 text-[10px] font-semibold leading-4 text-white text-center">
+            {unreadCount > 9 ? '9+' : unreadCount}
+          </span>
+        ) : null}
+      </button>
     </nav>
   )
 }
@@ -144,7 +163,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }
 
   return (
-    <div className="min-h-screen bg-surface-elevated">
+    <SupportChatProvider>
+      <div className="min-h-screen bg-surface-elevated">
       {/* Mobile overlay */}
       <div
         className={cn(
@@ -209,6 +229,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </div>
         </main>
       </div>
-    </div>
+      </div>
+    </SupportChatProvider>
   )
 }

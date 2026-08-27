@@ -1,4 +1,12 @@
 import { apiClient } from '@/lib/api/client'
+import type {
+  SupportConversation,
+  SupportConversationListPayload,
+  SupportConversationPayload,
+  SupportMessage,
+  SupportMessageInput,
+  SupportMessagesPayload,
+} from '@/types/support'
 
 const BASE = '/api/v1/admin'
 
@@ -859,6 +867,75 @@ class AdminAPI {
     formData.append('file', file)
     const res = await apiClient.postFormData<{ url: string }>(
       `${BASE}/testimonials/upload-image`,
+      formData
+    )
+    return res.data
+  }
+
+  async getSupportConversations(params?: {
+    status?: string
+    q?: string
+    assigned?: string
+    user_id?: number
+    skip?: number
+    limit?: number
+    page?: number
+  }): Promise<SupportConversationListPayload> {
+    return adminGet('/support/conversations', params)
+  }
+
+  async getSupportConversation(
+    conversationId: number,
+    params?: { limit?: number }
+  ): Promise<SupportConversationPayload> {
+    return adminGet(`/support/conversations/${conversationId}`, params)
+  }
+
+  async getSupportMessages(
+    conversationId: number,
+    params?: { after_id?: number; limit?: number }
+  ): Promise<SupportMessagesPayload> {
+    return adminGet(`/support/conversations/${conversationId}/messages`, params)
+  }
+
+  async replySupportConversation(
+    conversationId: number,
+    data: SupportMessageInput
+  ): Promise<{
+    conversation: SupportConversation
+    message: SupportMessage
+  }> {
+    return adminPost(`/support/conversations/${conversationId}/messages`, data)
+  }
+
+  async markSupportRead(conversationId: number): Promise<{
+    conversation: SupportConversation
+  }> {
+    return adminPost(`/support/conversations/${conversationId}/read`)
+  }
+
+  async closeSupportConversation(conversationId: number): Promise<{
+    conversation: SupportConversation
+    message?: SupportMessage
+  }> {
+    return adminPost(`/support/conversations/${conversationId}/close`)
+  }
+
+  async reopenSupportConversation(conversationId: number): Promise<{
+    conversation: SupportConversation
+  }> {
+    return adminPost(`/support/conversations/${conversationId}/reopen`)
+  }
+
+  async getSupportUnreadCount(): Promise<{ count: number }> {
+    return adminGet('/support/unread-count')
+  }
+
+  async uploadSupportAttachment(file: File): Promise<{ url: string; content_type: string }> {
+    const formData = new FormData()
+    formData.append('file', file)
+    const res = await apiClient.postFormData<{ url: string; content_type: string }>(
+      `${BASE}/support/attachments`,
       formData
     )
     return res.data
