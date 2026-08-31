@@ -32,6 +32,7 @@ test('buildLlmsTxtFromInput includes dynamic blog catalog', () => {
   const body = buildLlmsTxtFromInput(SAMPLE_POSTS, SITE);
   assert.match(body, /what-is-a-food-api/);
   assert.match(body, /keywords: food api, nutrition api/);
+  assert.match(body, /https:\/\/calorieapi.com\/openapi.json/);
 });
 
 test('buildLlmsTxtFromInput includes foods-per-query in pricing table', () => {

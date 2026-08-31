@@ -231,6 +231,7 @@ Notes:
 
 ## Documentation
 - [Documentation hub](${site.siteUrl}/docs): API reference, quickstart, and integration guides
+- [OpenAPI spec](${site.siteUrl}/openapi.json): machine-readable OpenAPI 3 definition for catalogs and codegen
 - [llms-full.txt](${site.siteUrl}/llms-full.txt): full plain-text documentation for LLMs
 ${catalog ? `\n### API reference pages\n${catalogLines(catalog.docs)}\n\n### Integration guides\n${catalogLines(catalog.guides)}\n` : ''}
 ${catalog ? `## Product pages\n${catalogLines(catalog.capabilities)}\n\n## Solutions\n${catalogLines(catalog.solutions)}\n\n## Nutrition API comparisons\n${catalogLines(catalog.comparisons)}\n` : ''}

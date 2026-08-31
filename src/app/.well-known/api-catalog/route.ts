@@ -22,7 +22,7 @@ export function GET() {
         anchor: API_BASE_URL,
         'service-desc': [
           {
-            href: `${API_BASE_URL}/openapi.json`,
+            href: absoluteUrl('/openapi.json'),
             type: 'application/json',
             title: `${SITE_NAME} OpenAPI specification`,
           },

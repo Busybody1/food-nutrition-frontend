@@ -47,6 +47,7 @@ if (process.env.NEXT_PUBLIC_MEDIA_HOSTNAME) {
  */
 const agentDiscoveryLink = [
   '</.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"',
+  '</openapi.json>; rel="service-desc"; type="application/json"',
   '</docs>; rel="service-doc"; type="text/html"',
   '</llms.txt>; rel="describedby"; type="text/markdown"',
   '</sitemap.xml>; rel="sitemap"; type="application/xml"',
