@@ -156,6 +156,32 @@ export function CapabilityPageView({ page }: { page: CapabilityPage }) {
         </div>
       </section>
 
+      {page.extraSections?.map((section) => {
+        const slug = section.title
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/^-+|-+$/g, '')
+        const headingId = `capability-extra-${slug}`
+        return (
+          <section
+            key={section.title}
+            className="section-pad bg-white border-t border-surface-border/60"
+            aria-labelledby={headingId}
+          >
+            <div className="container-narrow">
+              <Reveal>
+                <MarketingSectionHeader id={headingId} title={section.title} />
+              </Reveal>
+              <Reveal delay={80} className="space-y-4 text-ink-muted leading-relaxed max-w-3xl mx-auto">
+                {section.paragraphs.map((paragraph) => (
+                  <p key={paragraph.slice(0, 48)}>{paragraph}</p>
+                ))}
+              </Reveal>
+            </div>
+          </section>
+        )
+      })}
+
       <RelatedResources links={page.related} />
 
       <section className="section-pad bg-surface-elevated border-b border-surface-border/60" aria-labelledby="capability-faq-heading">

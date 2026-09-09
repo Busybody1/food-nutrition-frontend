@@ -39,10 +39,12 @@ export function HomeSeoContent() {
 
             <h3 className={subheadClass}>Nutrition API data you can trust</h3>
             <p>
-              Every nutrition API response includes structured macros per 100g, micronutrients when
-              available, and serving metadata for logging apps. Whether you are building a calorie
-              counter, meal planner, or wellness coach, the nutrition API delivers consistent JSON
-              payloads that map cleanly to your data models.
+              Every{' '}
+              <SeoInlineLink href="/nutrition-api">nutrition API</SeoInlineLink> response includes
+              structured macros per 100g, micronutrients when available, and serving metadata for
+              logging apps. Whether you are building a calorie counter, meal planner, or wellness
+              coach, the nutrition API delivers consistent JSON payloads that map cleanly to your
+              data models.
             </p>
 
             <h3 className={subheadClass}>Food database API coverage</h3>
@@ -75,6 +77,8 @@ export function HomeSeoContent() {
                 wellness and corporate-health platforms
               </SeoInlineLink>
               . Product-specific capabilities are covered on the{' '}
+              <SeoInlineLink href="/nutrition-api">nutrition API</SeoInlineLink>
+              {' '}hub, plus the{' '}
               <SeoInlineLink href="/barcode-nutrition-api">
                 barcode nutrition API
               </SeoInlineLink>

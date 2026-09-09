@@ -34,6 +34,7 @@ const agentDiscoveryLink = [
 
 const agentDiscoveryPaths = [
   '/',
+  '/nutrition-api',
   '/food-database-api',
   '/nutrition-analysis-api',
   '/barcode-nutrition-api',

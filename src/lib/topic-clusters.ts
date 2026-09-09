@@ -42,6 +42,7 @@ export const TOPIC_CLUSTERS: TopicCluster[] = [
     id: 'analysis',
     triggers: ['macro', 'nutrient', 'analysis', 'protein', 'meal plan', 'diet', 'nutrition data'],
     links: [
+      { label: 'Nutrition API overview', href: '/nutrition-api' },
       { label: 'Nutrition analysis API overview', href: '/nutrition-analysis-api' },
       { label: 'Python nutrition data guide', href: '/docs/guides/python-nutrition-data' },
       { label: 'Solutions for meal planning apps', href: '/solutions/meal-planning-apps' },
@@ -109,6 +110,7 @@ const BLOG_CROSSLINKS: TopicCluster[] = [
 
 const DEFAULT_LINKS: RelatedLink[] = [
   { label: 'API documentation', href: '/docs' },
+  { label: 'Nutrition API overview', href: '/nutrition-api' },
   { label: 'Food database API overview', href: '/food-database-api' },
   { label: 'Integration guides', href: '/docs/guides' },
   { label: 'Compare nutrition APIs', href: '/compare' },

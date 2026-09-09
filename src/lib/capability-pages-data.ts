@@ -25,6 +25,7 @@ export type CapabilityPage = {
   features: CapabilityFeature[]
   faqs: FaqItem[]
   related: { label: string; href: string }[]
+  extraSections?: { title: string; paragraphs: string[] }[]
 
   summary: string
 
@@ -32,6 +33,171 @@ export type CapabilityPage = {
 }
 
 export const CAPABILITY_PAGES: CapabilityPage[] = [
+  {
+    slug: 'nutrition-api',
+    h1: 'Nutrition API',
+    metaTitle: 'Nutrition API for Food Calories and Macros',
+    description:
+      `REST nutrition API for apps: food search, barcode lookup, calorie tracking, and per-100g macros across ${FOOD_DATABASE_SIZE_LABEL}. Free developer tier.`,
+    keywords: [
+      'nutrition api',
+      'food api',
+      'food nutrition api',
+      'calorie counter api',
+      'calorie tracking api',
+      'api for food calories',
+      'calorie estimation api',
+      'barcode food api',
+    ],
+    heroBadge: 'Nutrition API',
+    heroCopy: [
+      `A nutrition API is the data layer behind meal logging, calorie counters, and macro coaching. Calorie API is a REST food nutrition API over ${FOOD_DATABASE_SIZE_LABEL}: search, autocomplete, barcode lookup, and named calories, protein, carbs, and fat per 100 g.`,
+      'Teams searching for a food API, a calorie tracking API, or an API for food calories usually need the same three calls: typeahead while the user types, full nutrition on selection, and barcode lookup for packaged foods. This hub maps those jobs to endpoints and to the more specific capability pages.',
+      'Responses are JSON with stable food IDs, so favorites, recents, and meal plans cache cleanly. Verified-only search restricts results to curated macros when your calorie counter or estimator cannot tolerate sparse labels.',
+    ],
+    stats: [
+      { value: FOOD_DATABASE_SIZE_LABEL, label: 'foods in catalog' },
+      { value: 'REST + JSON', label: 'food nutrition API' },
+      { value: 'per 100g', label: 'named macros' },
+      { value: 'UPC + EAN', label: 'barcode food API' },
+    ],
+    codeSample: {
+      title: 'GET /api/v1/search/foods',
+      code: `curl "${API_BASE}/api/v1/search/foods?q=grilled+chicken&verified_only=true" \\\n  -H "X-API-Key: your_api_key_here"`,
+    },
+    features: [
+      {
+        icon: 'search',
+        title: 'Food search and suggest',
+        description:
+          'Ranked multi-word search plus a lightweight suggest endpoint for typeahead. This is the core of a food API inside a logging UI.',
+      },
+      {
+        icon: 'scan',
+        title: 'Barcode food lookup',
+        description:
+          'Resolve UPC and EAN codes to nutrition in one request, with Open Food Facts fallback when the local catalog misses a product.',
+      },
+      {
+        icon: 'utensils',
+        title: 'Calorie tracking payloads',
+        description:
+          'Named calories and macros per 100 g, plus serving metadata, so a calorie tracking API integration is portion math rather than nutrient-ID mapping.',
+      },
+      {
+        icon: 'chart',
+        title: 'Calorie estimation building blocks',
+        description:
+          'No photo model. You resolve foods, scale per-100g values by grams, and estimate a meal. Suitable as a calorie estimation API for recipes you already parsed.',
+      },
+      {
+        icon: 'shield',
+        title: 'Verified macros',
+        description:
+          'verified_only=true keeps calorie counter math on curated entries with complete protein, carbs, fat, and energy.',
+      },
+      {
+        icon: 'code',
+        title: 'Stable IDs and JSON',
+        description:
+          'Cache by food ID. Paginated envelopes (data, total, skip, limit) keep a food nutrition API predictable under load.',
+      },
+    ],
+    extraSections: [
+      {
+        title: 'What a nutrition API is (and how it differs from a food API)',
+        paragraphs: [
+          'People type "nutrition API" and "food API" for the same shopping trip: they need calories and macros for foods their users will log. A food API emphasizes catalog search (names, brands, restaurant items). A nutrition API emphasizes the numbers on those foods (energy, macros, micronutrients when present). Calorie API is both: one REST surface for lookup and for analysis.',
+          `A food nutrition API should return a consistent shape whether the hit is a generic food, a branded product, or a barcode fallback. That is what keeps a calorie counter honest when the user switches from "chicken breast" to a UPC on a yogurt cup. The catalog here covers ${FOOD_DATABASE_SIZE_LABEL}, with Open Food Facts filling long-tail packaged goods.`,
+          'If you only need USDA generic foods for research, the free FoodData Central API may be enough. If you are shipping a consumer app, you usually also need typeahead, barcode lookup, branded coverage, and a published quota. Those are the jobs this nutrition API is built for. The USDA guide on the blog is the honest comparison when you have just hit a government rate limit.',
+        ],
+      },
+      {
+        title: 'Calorie counter API and calorie tracking API',
+        paragraphs: [
+          'A calorie counter API is the backend of a diary: search or scan a food, store the food ID and grams, sum energy for the day. A calorie tracking API is the same loop with history, favorites, and often macros next to calories. Neither requires the API to store your users. You own the logs; the API supplies foods and nutrition.',
+          'The practical integration is three endpoints. Debounce GET /api/v1/search/suggest while the user types (id, name, brand). On selection, GET /api/v1/foods/{id} for per-100g macros and serving metadata. For packaged items, GET /api/v1/search/barcode/{upc}. Unknown barcodes return 404 so you can fall back to text search or a custom food.',
+          'Quota hygiene matters more than micro-optimizing JSON. Cache food details by ID so re-logging breakfast costs zero extra calls. Debounce suggest. Page search with skip and limit (max 100). Per-account rate limits are safer for mobile fleets behind NAT than IP limits copied from research APIs.',
+        ],
+      },
+      {
+        title: 'API for food calories and calorie estimation',
+        paragraphs: [
+          'An API for food calories should expose energy as a named field, not as USDA nutrient number 1008 buried in an array. Calorie API returns calories alongside protein_g, carbohydrates_g, and fat_g per 100 g so portion scaling is one multiplication. Micronutrients, when present, arrive in a structured nutrients array.',
+          'Calorie estimation is not the same as labeled barcode data. Estimation means you matched a food (or several recipe lines) and scaled a baseline. Photo models estimate from pixels; this nutrition API does not. If you already have ingredient names and grams, resolve each ingredient once, cache the IDs, and aggregate. That pattern is the calorie estimation API most meal-planning backends actually need.',
+          'Use verified_only when estimates feed coaching or targets. Manufacturer labels can be incomplete. Verified foods keep the four macros populated so a missing carb field cannot silently under-count a meal.',
+        ],
+      },
+      {
+        title: 'Barcode food API for packaged products',
+        paragraphs: [
+          'A barcode food API turns a scanner into a logged item. Pass UPC or EAN digits; separators are stripped. The lookup checks the local catalog first, then Open Food Facts, and returns the same JSON shape either way. If neither source knows the code, you get a clean 404 instead of a fuzzy near-miss.',
+          'That last point is the usual failure mode on USDA FoodData Central. Branded FDC records include gtinUpc, but there is no dedicated barcode endpoint. Searching the GTIN as text is fuzzy: you must confirm the returned code matches, after stripping leading zeros, or you will attach the wrong product. A dedicated barcode food API exists so logging apps do not ship that bug.',
+          'Commercial grocery and retail apps typically combine barcode lookup with brand filters and allergen fields when the source provides them. Development stays on the free tier; a monetized app needs Plus or Enterprise and the X-API-Usage-Type: commercial header.',
+        ],
+      },
+      {
+        title: 'How teams integrate a nutrition API',
+        paragraphs: [
+          'Create an account, generate an API key, and send it as X-API-Key. Try search in the playground without signing up. Framework walkthroughs cover React Native food tracking, Next.js apps, Flutter barcode scanning, Node search, and Python analysis. None of those guides require a vendor SDK; the surface is HTTP and JSON.',
+          'Start with one user-visible flow. For a tracker, that is suggest plus details. For retail, that is barcode plus a 404 fallback. For analysis, that is verified search plus the nutrients array. Adding every endpoint on day one usually wastes quota on paths you will not ship in v1.',
+          'When you compare providers, look at auth, barcode behavior, whether macros are named, rate-limit headers, and commercial terms. The comparison pages cover Nutritionix, Edamam, USDA FoodData Central, Spoonacular, FatSecret, and Open Food Facts with the same hedged claims used in the rest of the site.',
+        ],
+      },
+      {
+        title: 'USDA FoodData Central vs a commercial nutrition API',
+        paragraphs: [
+          'FoodData Central is free, authoritative for US generic foods, and the right default for research. A registered api.data.gov key is typically limited to about 1,000 requests per hour per IP. DEMO_KEY is much lower (30 per hour, 50 per day). Exceeding the cap returns HTTP 429 and a one-hour block.',
+          'Consumer apps outgrow FDC at two moments: the 429, and the missing barcode-first endpoint. Autocomplete and ranked multi-word search for a logging UI are also on you to build. A commercial nutrition API is that productized layer: named macros, barcode lookup, suggest, dashboards, and a published plan quota. Curated generics in this catalog stay consistent with USDA reference data; verified_only surfaces that tier.',
+          'You do not have to pick one forever. A common architecture keeps FDC for citation-grade reference lookups and uses Calorie API on the interactive path. The USDA blog post is written for the developer who just hit the limit and needs the next step, not a bait-and-switch away from the government docs.',
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: 'What is a nutrition API?',
+        a: 'A nutrition API returns calories, macros, and related food data over HTTP so apps can log meals and compute targets without maintaining a private food catalog. Calorie API is a REST nutrition API with search, barcode lookup, and per-100g named macros.',
+      },
+      {
+        q: 'Is this a food API or a food nutrition API?',
+        a: 'Both. Search, suggest, brands, and categories are the food API. Named calories, macros, and the nutrients array are the food nutrition API. One key and one JSON shape cover both.',
+      },
+      {
+        q: 'Can I build a calorie counter or calorie tracking API integration with this?',
+        a: 'Yes. Use suggest for typeahead, food details for per-100g macros, and barcode lookup for packaged foods. Store logs in your app with the stable food ID and the logged amount. The API does not store your users’ diaries.',
+      },
+      {
+        q: 'Do you offer an API for food calories and calorie estimation from photos?',
+        a: 'Calories are named fields on each food, which is the API for food calories most trackers need. There is no photo endpoint. Calorie estimation here means resolving foods and scaling per-100g values by grams, including recipe lines you already parsed.',
+      },
+      {
+        q: 'How does the barcode food API behave on a miss?',
+        a: 'Local catalog first, then Open Food Facts, same response shape. If neither source has the UPC or EAN, you get HTTP 404 so the app can offer text search. The API does not return an unrelated product for a code it has never seen.',
+      },
+      {
+        q: 'How is this different from the USDA FoodData Central API?',
+        a: 'FDC is a free research API with nutrient number arrays, roughly 1,000 requests per hour per IP on a registered key, and no dedicated barcode endpoint. This nutrition API adds named macros, suggest, barcode lookup, branded coverage, and plan quotas. Keep FDC for reference if that is all you need.',
+      },
+      {
+        q: 'Which capability page should I read next?',
+        a: 'Food database API for search and filters, barcode nutrition API for UPC/EAN, meal tracking API for the logging loop, or nutrition analysis API for macros and micronutrient arrays. This page is the hub; those pages are the deep dives.',
+      },
+      {
+        q: 'Can I use the nutrition API in a commercial app?',
+        a: 'Yes, on Plus or Enterprise with X-API-Usage-Type: commercial. The free tier is for development and personal projects. See pricing for current quotas and rate limits.',
+      },
+    ],
+    related: [
+      { label: 'Food database API overview', href: '/food-database-api' },
+      { label: 'Barcode nutrition API overview', href: '/barcode-nutrition-api' },
+      { label: 'Meal tracking API overview', href: '/meal-tracking-api' },
+      { label: 'Nutrition analysis API overview', href: '/nutrition-analysis-api' },
+      { label: 'API documentation', href: '/docs' },
+      { label: 'Compare nutrition APIs', href: '/compare' },
+    ],
+    summary: `REST nutrition API: search, barcode, and per-100g macros over ${FOOD_DATABASE_SIZE_LABEL}.`,
+    dateModified: '2026-09-09',
+  },
   {
     slug: 'barcode-nutrition-api',
     h1: 'Barcode Nutrition API',
@@ -111,6 +277,7 @@ export const CAPABILITY_PAGES: CapabilityPage[] = [
       },
     ],
     related: [
+      { label: 'Nutrition API overview', href: '/nutrition-api' },
       { label: 'Barcode Lookup API reference', href: '/docs/barcode-lookup' },
       { label: 'Flutter barcode scanning guide', href: '/docs/guides/flutter-barcode-scanning' },
       { label: 'Solutions for grocery & retail apps', href: '/solutions/grocery-retail' },
@@ -198,6 +365,7 @@ export const CAPABILITY_PAGES: CapabilityPage[] = [
       },
     ],
     related: [
+      { label: 'Nutrition API overview', href: '/nutrition-api' },
       { label: 'Food Search API reference', href: '/docs/food-search' },
       { label: 'Node.js food search guide', href: '/docs/guides/nodejs-food-search' },
       { label: 'Next.js nutrition app guide', href: '/docs/guides/nextjs-nutrition-app' },
@@ -285,6 +453,7 @@ export const CAPABILITY_PAGES: CapabilityPage[] = [
       },
     ],
     related: [
+      { label: 'Nutrition API overview', href: '/nutrition-api' },
       { label: 'React Native food tracking guide', href: '/docs/guides/react-native-food-tracking' },
       { label: 'Food Details API reference', href: '/docs/food-details' },
       { label: 'Solutions for fitness apps', href: '/solutions/fitness-apps' },
@@ -372,6 +541,7 @@ export const CAPABILITY_PAGES: CapabilityPage[] = [
       },
     ],
     related: [
+      { label: 'Nutrition API overview', href: '/nutrition-api' },
       { label: 'Python nutrition data guide', href: '/docs/guides/python-nutrition-data' },
       { label: 'Nutrients, Brands & Categories reference', href: '/docs/reference-data' },
       { label: 'Solutions for healthcare', href: '/solutions/healthcare' },
