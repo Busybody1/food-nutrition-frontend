@@ -1,6 +1,4 @@
-/**
- * API types for Food Database Service
- */
+
 
 export interface ApiResponse<T = unknown> {
   data: T;
@@ -32,7 +30,6 @@ export class ApiError extends Error {
   }
 }
 
-// Food-related types
 export interface Food {
   id: number;
   name: string;
@@ -87,7 +84,6 @@ export interface Category {
   created_at: string;
 }
 
-// Search types
 export interface SearchParams {
   q: string;
   limit?: number;
@@ -104,7 +100,6 @@ export interface SearchResult<T = unknown> {
   took_ms: number;
 }
 
-// User types - Import from auth.ts to avoid duplication
 export type { User } from './auth';
 
 export interface Plan {
@@ -121,7 +116,7 @@ export interface Plan {
   stripe_price_id?: string;
   features?: string[] | Record<string, unknown>;
   is_active: boolean;
-  /** Admin-selected "Most popular" plan (plans.is_recommended); at most one. */
+
   is_recommended?: boolean;
   created_at?: string;
 }
@@ -129,13 +124,12 @@ export interface Plan {
 export interface ApiKey {
   id: number;
   name: string;
-  key?: string; // Only returned when creating
+  key?: string;
   is_active: boolean;
   created_at: string;
   last_used_at?: string;
 }
 
-// Billing types
 export interface Subscription {
   id: number;
   user_id: number;
@@ -164,7 +158,6 @@ export interface PaymentIntent {
   payment_intent_id: string;
 }
 
-// Usage types
 export interface UsageStats {
   requests_this_month: number;
   monthly_quota: number;
@@ -179,7 +172,6 @@ export interface UsageByType {
   count: number;
 }
 
-// Admin types
 export interface AdminUser {
   id: number;
   email: string;

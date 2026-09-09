@@ -12,18 +12,11 @@ import {
 type PageMetaInput = {
   title?: string
   description?: string
-  /**
-   * Accepted for call-site compatibility but intentionally NOT emitted:
-   * Google has ignored <meta name="keywords"> since 2009. Kept so the many
-   * callers that still pass keywords compile without churn.
-   */
+
   keywords?: string[]
   path: string
   noIndex?: boolean
-  /**
-   * Set when the route has its own opengraph-image.tsx, explicit openGraph.images
-   * here would suppress the file-convention image, so we omit them instead.
-   */
+
   hasDedicatedOgImage?: boolean
 }
 

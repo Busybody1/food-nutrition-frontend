@@ -36,7 +36,9 @@ export function SupportMessageList({
         <p className="text-sm text-ink-muted text-center max-w-xs">
           Send a message and the team will reply here. Typical response is one business day.
         </p>
+
       </div>
+
     )
   }
 
@@ -56,6 +58,7 @@ export function SupportMessageList({
             >
               {message.body}
             </p>
+
           )
         }
         const mine = align === 'right'
@@ -73,22 +76,27 @@ export function SupportMessageList({
               )}
             >
               {message.body ? <p>{message.body}</p> : null}
+
               {message.attachment_url ? (
-                // Chat screenshots are already hosted on our S3/CDN allowlist.
-                // eslint-disable-next-line @next/next/no-img-element
+
                 <img
                   src={message.attachment_url}
                   alt="Screenshot attached to this support message"
                   className={cn('mt-2 max-h-48 rounded-md object-contain', message.body ? '' : 'mt-0')}
                 />
+
               ) : null}
             </div>
+
             <span className="mt-1 text-[10px] text-ink-dim tabular-nums">
               {formatStamp(message.created_at)}
             </span>
+
           </div>
+
         )
       })}
     </div>
+
   )
 }

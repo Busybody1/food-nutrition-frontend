@@ -33,7 +33,6 @@ export function AdminPage({
   return <DashboardPage className={className}>{children}</DashboardPage>
 }
 
-/** Wraps page sections below the header (charts, tables, filters). */
 export function AdminPageBody({
   children,
   className,
@@ -133,13 +132,6 @@ export interface AdminSortState<K extends string> {
   order: AdminSortOrder
 }
 
-/**
- * Sortable column header. Clicking toggles asc/desc on the active column and
- * switches to `sortKey` (at `defaultOrder`) otherwise.
- *
- * Sorting is applied by the API, not in the browser, so the order reflects every
- * matching row rather than just the page currently loaded.
- */
 export function AdminSortableTh<K extends string>({
   label,
   sortKey,
@@ -154,7 +146,7 @@ export function AdminSortableTh<K extends string>({
   sortKey: K
   sort: AdminSortState<K>
   onSort: (next: AdminSortState<K>) => void
-  /** Order applied when this column first becomes the sort column. */
+
   defaultOrder?: AdminSortOrder
   align?: 'left' | 'right'
   className?: string
@@ -197,7 +189,6 @@ export function AdminSortableTh<K extends string>({
   )
 }
 
-/** Offset pagination footer for server-paginated admin tables. */
 export function AdminPagination({
   page,
   pageSize,

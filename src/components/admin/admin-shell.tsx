@@ -276,7 +276,6 @@ function SystemHealthBadge() {
   )
 }
 
-/** Longest matching section in PAGE_TITLES, so detail routes keep their parent's name. */
 function sectionTitle(pathname: string | null): { section: string; leaf?: string } {
   const path = pathname ?? ''
   if (PAGE_TITLES[path]) return { section: PAGE_TITLES[path] }

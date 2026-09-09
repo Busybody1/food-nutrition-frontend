@@ -1,6 +1,4 @@
-/**
- * Custom hook for authentication state management
- */
+
 
 import { useState, useEffect, useCallback } from 'react';
 import { User, LoginRequest, RegisterRequest, LoginResponse, RegisterResponse } from '@/types/auth';
@@ -10,13 +8,12 @@ import { clearStashedApiKeys } from '@/lib/api/api-keys';
 import { ApiError } from '@/types/api';
 
 export interface UseAuthReturn {
-  // State
+
   user: User | null;
   loading: boolean;
   isAuthenticated: boolean;
   error: string | null;
-  
-  // Actions
+
   login: (credentials: LoginRequest) => Promise<{ success: boolean; error?: string; user?: User }>;
   register: (data: RegisterRequest) => Promise<{ success: boolean; error?: string; user?: User }>;
   logout: () => void;
@@ -25,8 +22,7 @@ export interface UseAuthReturn {
   changePassword: (currentPassword: string, newPassword: string) => Promise<{ success: boolean; error?: string }>;
   setApiKey: (apiKey: string | null) => void;
   getApiKey: () => string | null;
-  
-  // Utilities
+
   hasRole: (role: string) => boolean;
   hasPermission: (permission: string) => boolean;
   isEmailVerified: () => boolean;
@@ -39,10 +35,8 @@ export const useAuth = (): UseAuthReturn => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Computed properties
   const isAuthenticated = !!user;
 
-  // Initialize auth state on mount
   useEffect(() => {
     const initializeAuth = async () => {
       try {
@@ -64,7 +58,6 @@ export const useAuth = (): UseAuthReturn => {
     initializeAuth();
   }, []);
 
-  // Login function
   const login = useCallback(async (credentials: LoginRequest): Promise<{ success: boolean; error?: string; user?: User }> => {
     try {
       setLoading(true);
@@ -73,11 +66,9 @@ export const useAuth = (): UseAuthReturn => {
       const response = await apiClient.post<LoginResponse>('/api/v1/auth/login', credentials);
       const { access_token, refresh_token, user: userData } = response.data;
 
-      // Store tokens
       localStorage.setItem('access_token', access_token);
       localStorage.setItem('refresh_token', refresh_token);
-      
-      // Update API client with new token
+
       apiClient.setAccessToken(access_token);
 
       setUser(userData);
@@ -91,7 +82,6 @@ export const useAuth = (): UseAuthReturn => {
     }
   }, []);
 
-  // Register function (register then login per backend contract)
   const register = useCallback(async (data: RegisterRequest): Promise<{ success: boolean; error?: string; user?: User }> => {
     try {
       setLoading(true);
@@ -115,35 +105,31 @@ export const useAuth = (): UseAuthReturn => {
     }
   }, [login]);
 
-  // Logout function
   const logout = useCallback(() => {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
     clearStashedApiKeys();
 
-    // Clear token from API client
     apiClient.setAccessToken(null);
-    
+
     setUser(null);
     setError(null);
   }, []);
 
-  // Refresh token function
   const refreshToken = useCallback(async (): Promise<boolean> => {
     try {
       const refreshTokenValue = localStorage.getItem('refresh_token');
       if (!refreshTokenValue) return false;
 
       const response = await apiClient.post<{ access_token: string }>('/api/v1/auth/refresh', {
-        refresh_token_value: refreshTokenValue // Fixed: backend expects refresh_token_value
+        refresh_token_value: refreshTokenValue
       });
 
       const { access_token } = response.data;
       localStorage.setItem('access_token', access_token);
-      
-      // Update API client with new token
+
       apiClient.setAccessToken(access_token);
-      
+
       return true;
     } catch {
       logout();
@@ -151,13 +137,12 @@ export const useAuth = (): UseAuthReturn => {
     }
   }, [logout]);
 
-  // Update profile function
   const updateProfile = useCallback(async (data: Partial<User>): Promise<{ success: boolean; error?: string; user?: User }> => {
     try {
       setLoading(true);
       setError(null);
 
-      const response = await apiClient.put<User>('/api/v1/users/profile', data); // Fixed: /users/ (plural)
+      const response = await apiClient.put<User>('/api/v1/users/profile', data);
       const updatedUser = response.data;
 
       setUser(updatedUser);
@@ -171,28 +156,36 @@ export const useAuth = (): UseAuthReturn => {
     }
   }, []);
 
-  // Change password function
   const changePassword = useCallback(async (currentPassword: string, newPassword: string): Promise<{ success: boolean; error?: string }> => {
     try {
-      setLoading(true);
       setError(null);
 
-      await apiClient.post('/api/v1/users/change-password', { // Fixed: /users/ (plural) and POST method
+      const response = await apiClient.post<{
+        access_token?: string;
+        refresh_token?: string;
+      }>('/api/v1/users/change-password', {
         current_password: currentPassword,
         new_password: newPassword
       });
+
+      const accessToken = response.data.access_token;
+      const refreshTokenValue = response.data.refresh_token;
+      if (accessToken) {
+        localStorage.setItem('access_token', accessToken);
+        apiClient.setAccessToken(accessToken);
+      }
+      if (refreshTokenValue) {
+        localStorage.setItem('refresh_token', refreshTokenValue);
+      }
 
       return { success: true };
     } catch (err: unknown) {
       const errorMessage = err instanceof ApiError ? err.message : 'Password change failed';
       setError(errorMessage);
       return { success: false, error: errorMessage };
-    } finally {
-      setLoading(false);
     }
   }, []);
 
-  // API Key management
   const setApiKey = useCallback((apiKey: string | null) => {
     if (apiKey) {
       localStorage.setItem('api_key', apiKey);
@@ -205,10 +198,9 @@ export const useAuth = (): UseAuthReturn => {
     return localStorage.getItem('api_key');
   }, []);
 
-  // Utility functions
   const hasRole = useCallback((role: string): boolean => {
     if (!user) return false;
-    
+
     switch (role.toLowerCase()) {
       case 'admin':
         return user.is_admin;
@@ -221,8 +213,7 @@ export const useAuth = (): UseAuthReturn => {
 
   const hasPermission = useCallback((permission: string): boolean => {
     if (!user) return false;
-    
-    // Admin permissions
+
     if (user.is_admin) {
       const adminPermissions = [
         'manage_users',
@@ -232,8 +223,7 @@ export const useAuth = (): UseAuthReturn => {
       ];
       return adminPermissions.includes(permission);
     }
-    
-    // Regular user permissions
+
     const userPermissions = [
       'view_profile',
       'edit_profile',
@@ -250,10 +240,10 @@ export const useAuth = (): UseAuthReturn => {
 
   const getFullName = useCallback((): string => {
     if (!user) return '';
-    
+
     const firstName = user.first_name || '';
     const lastName = user.last_name || '';
-    
+
     if (firstName && lastName) {
       return `${firstName} ${lastName}`;
     } else if (firstName) {
@@ -267,10 +257,10 @@ export const useAuth = (): UseAuthReturn => {
 
   const getInitials = useCallback((): string => {
     if (!user) return 'U';
-    
+
     const firstName = user.first_name || '';
     const lastName = user.last_name || '';
-    
+
     if (firstName && lastName) {
       return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
     } else if (firstName) {
@@ -283,13 +273,12 @@ export const useAuth = (): UseAuthReturn => {
   }, [user]);
 
   return {
-    // State
+
     user,
     loading,
     isAuthenticated,
     error,
-    
-    // Actions
+
     login,
     register,
     logout,
@@ -298,8 +287,7 @@ export const useAuth = (): UseAuthReturn => {
     changePassword,
     setApiKey,
     getApiKey,
-    
-    // Utilities
+
     hasRole,
     hasPermission,
     isEmailVerified,

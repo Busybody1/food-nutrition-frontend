@@ -9,10 +9,6 @@ declare global {
   }
 }
 
-/**
- * CTA link that reports clicks to GA4 (event: cta_click) with the source page,
- * so keyword → landing page → signup attribution is possible without prop threading.
- */
 export function TrackedCtaLink({
   href,
   className,

@@ -6,17 +6,14 @@ export interface PricingPlan {
   highlights: string[]
   monthly_quota: number
   rate_limit_per_minute: number
-  /** Backend plans.max_api_keys — single source of truth when present. */
+
   max_api_keys?: number
-  /** Foods returned per search/catalog request (plans.max_results_per_query). */
+
   max_results_per_query: number
   stripe_test_price_id?: string
   stripe_live_price_id?: string
   price_display_label?: string | null
-  /**
-   * Admin-selected "Most popular" card (plans.is_recommended). Set from
-   * Admin → Plans; at most one plan carries it.
-   */
+
   is_recommended?: boolean
 }
 
@@ -55,7 +52,6 @@ function parseHighlights(value: unknown): string[] {
     .filter(Boolean)
 }
 
-/** Display monthly quota exactly as stored in plans.monthly_quota. */
 export function formatQuota(quota: number): string {
   if (quota <= 0) return '-'
   if (quota >= 1_000_000) {
@@ -65,13 +61,11 @@ export function formatQuota(quota: number): string {
   return quota.toLocaleString()
 }
 
-/** Display rate_limit_per_minute exactly as stored in plans.rate_limit_per_minute. */
 export function formatRateLimit(rpm: number): string {
   if (rpm <= 0) return '-'
   return `${rpm.toLocaleString()}/min`
 }
 
-/** Fail-closed display defaults matching backend plan_limits.py. */
 export function defaultResultsPerQuery(name: string): number {
   return name.toLowerCase() === 'free' ? 20 : 100
 }
@@ -81,7 +75,6 @@ export function resolveResultsPerQuery(name: string, value?: number): number {
   return defaultResultsPerQuery(name)
 }
 
-/** Display foods returned per search/catalog request. */
 export function formatResultsPerQuery(limit: number): string {
   if (limit <= 0) return '-'
   return `${limit.toLocaleString()} food${limit === 1 ? '' : 's'}`
@@ -101,7 +94,6 @@ export function allowsCommercialUse(planName: string): boolean {
   return tier === 'plus' || tier === 'enterprise' || tier === 'custom'
 }
 
-/** "1 API key" / "3 API keys" — pluralized label for a key count. */
 function apiKeyLabel(count: number): string {
   return `${count} API key${count === 1 ? '' : 's'}`
 }
@@ -124,7 +116,6 @@ export function getPlanCardHighlights(
     items.push('Non-commercial use only')
   }
 
-  // Prefer the backend max_api_keys when supplied; fall back to per-tier defaults.
   const keys = (fallback: number) =>
     apiKeyLabel(maxApiKeys != null && maxApiKeys > 0 ? maxApiKeys : fallback)
 
@@ -229,7 +220,7 @@ export const COMPARE_ROWS: CompareRow[] = [
     feature: 'API keys',
     section: 'features',
     getValue: (p) => {
-      // Backend max_api_keys wins when present; otherwise fall back to per-tier map.
+
       if (p.max_api_keys != null && p.max_api_keys > 0) return String(p.max_api_keys)
       const map: Record<string, string> = {
         free: '1',
@@ -304,7 +295,6 @@ export const COMPARE_ROWS: CompareRow[] = [
   },
 ]
 
-/** Map API/DB plan rows to UI; prefer admin-managed card_highlights when present. */
 export function transformPlanData(backendPlans: Record<string, unknown>[]): PricingPlan[] {
   return backendPlans.map((plan) => {
     const name = String(plan.name ?? '')
@@ -342,7 +332,6 @@ export function transformPlanData(backendPlans: Record<string, unknown>[]): Pric
   })
 }
 
-/** Only used when the plans API is unreachable (offline / misconfigured). */
 export const FALLBACK_PLANS: PricingPlan[] = []
 
 export const PRICING_FOOTNOTES = [

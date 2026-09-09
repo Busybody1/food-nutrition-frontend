@@ -25,7 +25,6 @@ function VerifyEmailForm() {
   const [notice, setNotice] = useState('')
   const [cooldown, setCooldown] = useState(0)
 
-  // Countdown timer for the resend cooldown.
   useEffect(() => {
     if (cooldown <= 0) return
     const timer = setInterval(() => {
@@ -40,7 +39,7 @@ function VerifyEmailForm() {
   }, [])
 
   const handleCodeChange = useCallback((value: string) => {
-    // Only digits, max 6.
+
     setCode(value.replace(/\D/g, '').slice(0, 6))
     setError('')
   }, [])
@@ -65,7 +64,7 @@ function VerifyEmailForm() {
       router.push('/dashboard')
     } catch (err) {
       if (err instanceof ApiError) {
-        // 400 -> invalid/expired; 429 -> attempts exhausted; both carry a message.
+
         setError(err.message)
       } else {
         setError('Verification failed. Please try again.')
@@ -87,7 +86,7 @@ function VerifyEmailForm() {
     setIsResending(true)
     try {
       const response = await api.auth.resendCode({ email: email.trim() })
-      // Response is intentionally generic (no account-existence leak).
+
       const message =
         (response.data as { message?: string } | undefined)?.message ??
         'If your account needs verification, a new code has been sent.'
@@ -95,7 +94,7 @@ function VerifyEmailForm() {
       setCooldown(RESEND_COOLDOWN_SECONDS)
     } catch (err) {
       if (err instanceof ApiError) {
-        // 429 -> cooldown / daily cap.
+
         setError(err.message)
         if (err.status === 429) setCooldown(RESEND_COOLDOWN_SECONDS)
       } else {
@@ -147,7 +146,7 @@ function VerifyEmailForm() {
           </div>
         )}
 
-        {/* Email — editable fallback when the query param is missing. */}
+        {}
         <div>
           <label htmlFor="email" className={labelClass}>Email</label>
           <Input

@@ -2,15 +2,11 @@ import type { RelatedLink } from '@/components/seo/related-resources'
 
 type TopicCluster = {
   id: string
-  /** Substrings matched (case-insensitive) against page keywords/titles */
+
   triggers: string[]
   links: RelatedLink[]
 }
 
-/**
- * Central topic-cluster map: which hub/spoke pages belong together.
- * Consumed by blog posts (keyword matching) so cluster links are data, not ad-hoc JSX.
- */
 export const TOPIC_CLUSTERS: TopicCluster[] = [
   {
     id: 'barcode',
@@ -67,12 +63,6 @@ export const TOPIC_CLUSTERS: TopicCluster[] = [
   },
 ]
 
-/**
- * Blog-to-blog crosslinks. Kept separate from TOPIC_CLUSTERS (which points at
- * hub/product/docs pages) so every matching post surfaces a couple of sibling
- * articles in its Related grid — this is how existing posts gain inbound links
- * to newer ones without editing their stored body content.
- */
 const BLOG_CROSSLINKS: TopicCluster[] = [
   {
     id: 'blog-competitors',
@@ -125,19 +115,14 @@ const DEFAULT_LINKS: RelatedLink[] = [
 ]
 
 type RelatedLinkOptions = {
-  /** Max hub/product/docs links (from TOPIC_CLUSTERS). */
+
   maxHub?: number
-  /** Max sibling blog links (from BLOG_CROSSLINKS). */
+
   maxBlog?: number
-  /** Href of the current page, excluded so a post never links to itself. */
+
   excludeHref?: string
 }
 
-/**
- * Match text (post keywords + title) to a blend of hub links and sibling blog
- * links; falls back to core pages. Hub links come first (conversion-focused),
- * followed by up to `maxBlog` related articles.
- */
 export function getRelatedLinksForText(
   text: string,
   options: RelatedLinkOptions = {},

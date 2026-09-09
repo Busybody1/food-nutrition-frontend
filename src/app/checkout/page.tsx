@@ -8,11 +8,11 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Separator } from '@/components/ui/separator'
-import { 
-  CreditCard, 
-  CheckCircle, 
-  XCircle, 
-  Loader2, 
+import {
+  CreditCard,
+  CheckCircle,
+  XCircle,
+  Loader2,
   ArrowLeft,
   Shield,
   Zap,
@@ -42,7 +42,7 @@ function CheckoutContent() {
   const stripe = useStripe()
   const elements = useElements()
   const { user, isAuthenticated } = useAuth()
-  
+
   const [planDetails, setPlanDetails] = useState<PlanDetails | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isProcessing, setIsProcessing] = useState(false)
@@ -50,7 +50,6 @@ function CheckoutContent() {
   const [success, setSuccess] = useState(false)
   const [step, setStep] = useState<'details' | 'payment' | 'processing' | 'success'>('details')
 
-  // Get plan ID from URL parameters
   const planId = searchParams.get('plan_id')
 
   useEffect(() => {
@@ -97,7 +96,6 @@ function CheckoutContent() {
         throw new Error('Card element not found')
       }
 
-      // Step 1: Create payment method
       const { error: stripeError, paymentMethod } = await stripe.createPaymentMethod({
         type: 'card',
         card: cardElement,
@@ -111,14 +109,12 @@ function CheckoutContent() {
         throw new Error('Failed to create payment method')
       }
 
-      // Step 2: Create subscription
       setStep('processing')
       const subscriptionResponse = await stripeAPI.createSubscription({
         plan_id: planDetails.id,
         payment_method_id: paymentMethod.id,
       }) as { client_secret?: string; subscription_id?: string; status?: string }
 
-      // Step 3: Handle payment confirmation if required
       if (subscriptionResponse.client_secret) {
         const { error: confirmError, paymentIntent } = await stripe.confirmCardPayment(
           subscriptionResponse.client_secret,
@@ -137,12 +133,11 @@ function CheckoutContent() {
           throw new Error(getErrorMessage(confirmError))
         }
 
-        // Handle 3D Secure authentication if required
         if (paymentIntent?.status === 'requires_action') {
           const { error: actionError } = await stripe.confirmCardPayment(
             subscriptionResponse.client_secret
           )
-          
+
           if (actionError) {
             throw new Error(getErrorMessage(actionError))
           }
@@ -202,7 +197,7 @@ function CheckoutContent() {
   }
 
   if (!isAuthenticated) {
-    return null // Will redirect
+    return null
   }
 
   if (isLoading) {
@@ -253,7 +248,7 @@ function CheckoutContent() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
+        {}
         <div className="mb-8">
           <Button
             variant="ghost"
@@ -269,7 +264,7 @@ function CheckoutContent() {
 
         <div className="max-w-4xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Plan Details */}
+            {}
             <div className="space-y-6">
               <Card>
                 <CardHeader>
@@ -287,7 +282,7 @@ function CheckoutContent() {
                       Selected Plan
                     </Badge>
                   </div>
-                  
+
                   <div className="text-3xl font-bold text-gray-900">
                     {formatPrice(planDetails.monthly_price)}
                     <span className="text-lg font-normal text-gray-600">/month</span>
@@ -340,7 +335,7 @@ function CheckoutContent() {
                 </CardContent>
               </Card>
 
-              {/* Security Notice */}
+              {}
               <Card>
                 <CardContent className="pt-6">
                   <div className="flex items-start space-x-3">
@@ -356,7 +351,7 @@ function CheckoutContent() {
               </Card>
             </div>
 
-            {/* Payment Form */}
+            {}
             <div>
               <Card>
                 <CardHeader>
@@ -393,8 +388,8 @@ function CheckoutContent() {
 
                     <div className="space-y-4">
                       <Separator />
-                      
-                      {/* Order Summary */}
+
+                      {}
                       <div className="space-y-2">
                         <div className="flex justify-between">
                           <span className="text-sm text-gray-600">{planDetails.name} Plan</span>

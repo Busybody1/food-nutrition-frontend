@@ -2,11 +2,6 @@ import type { ReactNode } from 'react'
 
 const STRING_TOKEN = /"(?:[^"\\\n]|\\.)*"(\s*:)?/g
 
-/**
- * Lightweight JSON colorizer for the dark code windows: wraps string tokens in
- * colored spans (keys vs. string values) while keeping the rendered text
- * content byte-identical to the input. Non-JSON text passes through untouched.
- */
 export function JsonSyntax({ code }: { code: string }) {
   const nodes: ReactNode[] = []
   let last = 0

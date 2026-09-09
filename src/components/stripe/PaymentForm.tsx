@@ -46,7 +46,6 @@ export function PaymentForm({
         throw new Error('Card element not found')
       }
 
-      // Create payment method
       const { error: stripeError, paymentMethod } = await stripe.createPaymentMethod({
         type: 'card',
         card: cardElement,
@@ -60,7 +59,6 @@ export function PaymentForm({
         throw new Error('Failed to create payment method')
       }
 
-      // Call success callback
       onSuccess(paymentMethod.id)
       setSuccess(true)
     } catch (err) {

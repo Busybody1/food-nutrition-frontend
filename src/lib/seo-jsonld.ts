@@ -49,14 +49,12 @@ function buildPricingJsonLdInput(
   }
 }
 
-/** Product JSON-LD for pricing pages, satisfies Google Product/Offer required fields. */
 export function buildPricingProductJsonLd() {
   return buildPricingProductJsonLdFromInput(
     buildPricingJsonLdInput(FALLBACK_PRICING_PLANS)
   )
 }
 
-/** Server-side JSON-LD built from live plan prices in the database. */
 export async function buildPricingProductJsonLdAsync() {
   try {
     const plans = await fetchPublicPlans()
@@ -65,7 +63,7 @@ export async function buildPricingProductJsonLdAsync() {
       return buildPricingProductJsonLdFromInput(buildPricingJsonLdInput(offers))
     }
   } catch {
-    // fall back to static offers when API is unavailable
+
   }
   return buildPricingProductJsonLd()
 }
@@ -109,7 +107,6 @@ export function buildWebPageJsonLd({
   }
 }
 
-/** TechArticle JSON-LD for docs pages and framework guides. */
 export function buildTechArticleJsonLd({
   headline,
   description,
@@ -121,7 +118,7 @@ export function buildTechArticleJsonLd({
   headline: string
   description: string
   path: string
-  /** ISO date (YYYY-MM-DD), update when the article content materially changes. */
+
   dateModified: string
   proficiencyLevel?: 'Beginner' | 'Expert'
   keywords?: string[]
@@ -156,7 +153,6 @@ export function buildBlogPostingJsonLd(
   )
 }
 
-/** @deprecated Use buildBlogPostingJsonLd */
 export function buildArticleJsonLd(args: Parameters<typeof buildBlogPostingJsonLd>[0]) {
   return buildBlogPostingJsonLd(args)
 }

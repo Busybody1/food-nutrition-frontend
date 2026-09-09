@@ -5,9 +5,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { 
-  FileText, 
-  Download, 
+import {
+  FileText,
+  Download,
   ExternalLink,
   AlertCircle,
   CheckCircle,
@@ -29,12 +29,12 @@ export function InvoiceHistory() {
   const handleDownload = async (invoiceId: string, invoicePdf?: string) => {
     try {
       setDownloading(invoiceId)
-      
+
       if (invoicePdf) {
-        // Open PDF in new tab
+
         window.open(invoicePdf, '_blank')
       } else {
-        // Fallback: redirect to hosted invoice URL
+
         const invoice = invoices.find(inv => inv.id === invoiceId)
         if (invoice?.hosted_invoice_url) {
           window.open(invoice.hosted_invoice_url, '_blank')
@@ -158,7 +158,7 @@ export function InvoiceHistory() {
                     )}
                   </div>
                 </div>
-                
+
                 <div className="flex items-center space-x-4">
                   <div className="text-right">
                     <div className="font-medium text-gray-900">
@@ -170,7 +170,7 @@ export function InvoiceHistory() {
                       </div>
                     )}
                   </div>
-                  
+
                   <div className="flex items-center space-x-2">
                     {invoice.hosted_invoice_url && (
                       <Button
@@ -182,7 +182,7 @@ export function InvoiceHistory() {
                         <ExternalLink className="h-4 w-4" />
                       </Button>
                     )}
-                    
+
                     {(invoice.invoice_pdf || invoice.hosted_invoice_url) && (
                       <Button
                         variant="ghost"

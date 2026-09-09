@@ -4,11 +4,6 @@ import { useEffect, useState } from 'react'
 import { ArrowUp } from 'lucide-react'
 import { cn } from '@/lib/utils/cn'
 
-/**
- * Floating "back to top" button. Hidden until the reader scrolls down, then
- * returns them to the top (the page nav / legal pills) in one tap. Reduced-
- * motion aware. Purely progressive — no-JS readers simply never see it.
- */
 export function BackToTop({ threshold = 500 }: { threshold?: number }) {
   const [visible, setVisible] = useState(false)
 

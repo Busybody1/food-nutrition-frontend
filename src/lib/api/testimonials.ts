@@ -10,11 +10,6 @@ export type PublicTestimonial = {
   avatar_url?: string | null
 }
 
-/**
- * Published testimonials for the marketing site (admin-managed, DB-driven).
- * Returns [] on any failure so marketing pages never break on API hiccups —
- * the Testimonials section renders nothing when the list is empty.
- */
 export async function getPublicTestimonials(): Promise<PublicTestimonial[]> {
   try {
     const res = await fetch(`${API_BASE_URL}/api/v1/public/testimonials`, {

@@ -182,7 +182,7 @@ export default function AdminSecurityPage() {
       {error && <DashboardAlert variant="error">{error}</DashboardAlert>}
       {notice && <DashboardAlert variant="success">{notice}</DashboardAlert>}
 
-      {/* Detection status / arming */}
+      {}
       <AdminPanel
         className={autoblockOn ? '' : 'border-amber-200/80 bg-amber-50/40'}
       >
@@ -247,7 +247,7 @@ export default function AdminSecurityPage() {
         />
       </AdminStatGrid>
 
-      {/* Active holds */}
+      {}
       <AdminPanel>
         <AdminPanelHeader title={`Active holds (${holds.length})`} icon={Lock} />
         {loading && holds.length === 0 ? (
@@ -304,7 +304,7 @@ export default function AdminSecurityPage() {
         )}
       </AdminPanel>
 
-      {/* Incidents */}
+      {}
       <AdminPanel>
         <AdminPanelHeader
           title="Incidents"
@@ -403,7 +403,7 @@ export default function AdminSecurityPage() {
         )}
       </AdminPanel>
 
-      {/* Incident detail */}
+      {}
       <Dialog open={!!detail} onOpenChange={(open) => !open && setDetail(null)}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
@@ -489,7 +489,7 @@ export default function AdminSecurityPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Manual hold */}
+      {}
       <Dialog open={holdDialogOpen} onOpenChange={(open) => !open && setHoldDialogOpen(false)}>
         <DialogContent className="max-w-md">
           <DialogHeader>

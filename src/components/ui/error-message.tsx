@@ -96,7 +96,7 @@ export const ErrorMessage: React.FC<ErrorMessageProps> = ({
             <p className={`${config.textColor} mb-4`}>
               {message}
             </p>
-            
+
             <div className="flex flex-wrap gap-2">
               {showRetry && (
                 <Button
@@ -109,7 +109,7 @@ export const ErrorMessage: React.FC<ErrorMessageProps> = ({
                   Try Again
                 </Button>
               )}
-              
+
               {showBack && (
                 <Button
                   onClick={handleBack}
@@ -121,7 +121,7 @@ export const ErrorMessage: React.FC<ErrorMessageProps> = ({
                   Go Back
                 </Button>
               )}
-              
+
               {showHome && (
                 <Button
                   onClick={handleHome}
@@ -141,7 +141,6 @@ export const ErrorMessage: React.FC<ErrorMessageProps> = ({
   )
 }
 
-// Specific error message components for common scenarios
 export const PaymentErrorMessage: React.FC<{ onRetry?: () => void }> = ({ onRetry }) => (
   <ErrorMessage
     title="Payment Failed"

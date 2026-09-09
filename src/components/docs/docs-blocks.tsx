@@ -34,8 +34,7 @@ export function DocsBlockRenderer({ blocks }: { blocks: DocsBlock[] }) {
                 {block.text}
               </h3>
             )
-          /* Requests and JSON responses share one dark code treatment
-             (title text moves into the panel header, unchanged). */
+
           case 'code':
           case 'json':
             return (

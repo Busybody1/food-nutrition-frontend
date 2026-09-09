@@ -96,7 +96,6 @@ export const DATA_FAQS: readonly FaqItem[] = [
 
 export type FaqGroup = { id: string; title: string; items: readonly FaqItem[] }
 
-/** Grouped FAQ catalog, /faq renders every group; other pages render targeted subsets. */
 export const FAQ_GROUPS: readonly FaqGroup[] = [
   { id: 'general', title: 'Getting started', items: GENERAL_FAQS },
   { id: 'implementation', title: 'Implementation', items: IMPLEMENTATION_FAQS },
@@ -106,10 +105,6 @@ export const FAQ_GROUPS: readonly FaqGroup[] = [
 
 export const ALL_FAQ_ITEMS: readonly FaqItem[] = FAQ_GROUPS.flatMap((g) => [...g.items])
 
-/**
- * Home-page subset, intentionally distinct from the full /faq set so the two
- * URLs do not publish duplicate FAQPage JSON-LD.
- */
 export const HOME_FAQ_ITEMS: readonly FaqItem[] = [
   GENERAL_FAQS[0],
   GENERAL_FAQS[1],

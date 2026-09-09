@@ -5,11 +5,6 @@ import { cn } from '@/lib/utils/cn'
 
 export type LegalTocItem = { id: string; title: string }
 
-/**
- * Shared scroll-spy: returns the id of the section currently in the reading
- * band (just below the floating header down to the upper half of the viewport,
- * so long sections stay "active" while being read).
- */
 export function useActiveSection(items: LegalTocItem[]): string {
   const [activeId, setActiveId] = useState<string>('')
 
@@ -38,7 +33,6 @@ export function useActiveSection(items: LegalTocItem[]): string {
   return activeId
 }
 
-/** Smooth-scroll to a section (reduced-motion aware) and sync the URL hash. */
 export function smoothScrollToId(id: string): void {
   const el = document.getElementById(id)
   if (!el) return
@@ -49,12 +43,6 @@ export function smoothScrollToId(id: string): void {
   if (typeof history !== 'undefined') history.replaceState(null, '', `#${id}`)
 }
 
-/**
- * Sticky "on this page" rail for the legal documents (lg+ only).
- * Renders plain anchor links server-side (works without JS); the scroll-spy
- * hook highlights the section currently in the reading band, and clicks are
- * upgraded to smooth scrolling. Link text is the section titles, verbatim.
- */
 export function LegalToc({
   items,
   className,

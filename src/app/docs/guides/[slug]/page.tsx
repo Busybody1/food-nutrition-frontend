@@ -33,7 +33,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   })
 }
 
-/** Decorative per-framework icons (aria-hidden; icons carry no copy). */
 const GUIDE_ICONS: Record<string, typeof Code2> = {
   'React Native': Smartphone,
   'Next.js': Globe,

@@ -6,17 +6,11 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return Boolean(value) && typeof value === 'object' && !Array.isArray(value)
 }
 
-/** True when the payload is `{ data: T[], total: number, ... }`. */
 export function isPaginatedEnvelope(value: unknown): value is PaginatedResponse {
   if (!isRecord(value)) return false
   return Array.isArray(value.data) && typeof value.total === 'number'
 }
 
-/**
- * Unwrap `{ data }` wrappers without dropping paginated envelopes.
- * `data.data || data` in the client turned search hits into a bare array and
- * discarded `total`, so the playground then read `array.data` and showed empty.
- */
 export function unwrapSuccessPayload(body: unknown): unknown {
   if (!isRecord(body)) return body
   if (isPaginatedEnvelope(body)) return body
@@ -36,7 +30,6 @@ function asFiniteNumber(value: unknown, fallback: number): number {
   return typeof value === 'number' && Number.isFinite(value) ? value : fallback
 }
 
-/** Normalize search/catalog payloads whether they are envelopes, arrays, or nested wraps. */
 export function normalizePaginatedResponse<T>(payload: unknown): PaginatedResponse<T> {
   if (Array.isArray(payload)) {
     return {

@@ -35,7 +35,6 @@ function discoverySite(): BlogDiscoverySite {
   }
 }
 
-/** RSS 2.0 feed for blog syndication and LLM/crawler discovery. */
 export function buildBlogRssXml(posts: BlogListItem[]): string {
   return buildBlogRssXmlFromInput(posts, discoverySite())
 }
@@ -55,7 +54,6 @@ async function loadPricingPlans(): Promise<BlogDiscoveryPricingPlan[] | undefine
   }
 }
 
-/** Registry-derived catalog of public pages, so llms.txt never drifts from real routes. */
 function discoveryCatalog(): DiscoveryCatalog {
   return {
     docs: DOCS_SECTIONS.map((s) => ({
@@ -86,7 +84,6 @@ function discoveryCatalog(): DiscoveryCatalog {
   }
 }
 
-/** llms.txt body with a dynamic catalog of published blog posts. */
 export async function buildLlmsTxt(posts: BlogListItem[]): Promise<string> {
   const pricingPlans = await loadPricingPlans()
   return buildLlmsTxtFromInput(posts, discoverySite(), pricingPlans, discoveryCatalog())

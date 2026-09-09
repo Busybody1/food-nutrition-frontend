@@ -3,10 +3,6 @@ import { SITE_NAME } from '@/lib/site'
 
 export const OG_SIZE = { width: 1200, height: 630 }
 
-/**
- * Shared Open Graph card: brand gradient, section label, page title, subtitle.
- * Used by per-route opengraph-image files so every template family gets a unique card.
- */
 export function buildOgImage({
   label,
   title,

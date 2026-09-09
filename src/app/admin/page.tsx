@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { ErrorBoundary } from '@/components/ui/error-boundary'
 import { UnauthorizedErrorMessage } from '@/components/ui/error-message'
-import { 
+import {
   Users, Activity, TrendingUp, AlertTriangle,
   Database, Clock, Zap
 } from 'lucide-react'
@@ -130,7 +130,7 @@ function AdminDashboard() {
           adminAPI.getApiRequests({ limit: 8 }),
           apiClient.get('/api/v1/admin/environment'),
         ])
-      
+
       if (analyticsResult.status === 'rejected') {
         const reason = analyticsResult.reason
         const message =
@@ -405,7 +405,6 @@ function AdminDashboard() {
   )
 }
 
-// Admin Dashboard with Error Boundary
 function AdminDashboardContent() {
   return <AdminDashboard />
 }

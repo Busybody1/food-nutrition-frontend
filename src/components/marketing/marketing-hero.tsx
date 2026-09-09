@@ -7,10 +7,7 @@ type MarketingHeroProps = {
   subtitle?: string;
   children?: ReactNode;
   compact?: boolean;
-  /**
-   * Optional right-hand slot (code window, screenshot, product proof).
-   * When present the hero switches to a left-aligned two-column layout on lg+.
-   */
+
   aside?: ReactNode;
 };
 
@@ -73,5 +70,4 @@ export function MarketingHero({
   );
 }
 
-/** @deprecated Import from marketing-shell */
 export { marketingCardClass } from './marketing-shell';

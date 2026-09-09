@@ -36,7 +36,7 @@ export async function submitContactForm(payload: ContactFormPayload): Promise<vo
       if (first?.msg) detail = String(first.msg)
     }
   } catch {
-    /* use default message */
+
   }
   throw new Error(detail)
 }

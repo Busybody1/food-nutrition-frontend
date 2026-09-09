@@ -1,4 +1,4 @@
-/** Normalize API key list payloads from GET /users/api-keys (raw array or wrapped). */
+
 export interface ApiKeyRecord {
   id: number
   name: string
@@ -59,7 +59,7 @@ export function stashCreatedApiKeyPlaintext(id: number, plaintext: string): void
   try {
     localStorage.setItem(`${CREATED_KEY_PREFIX}${id}`, plaintext)
   } catch {
-    /* ignore quota errors */
+
   }
 }
 
@@ -91,7 +91,7 @@ export function removeStashedApiKeyPlaintext(id: number): void {
   try {
     localStorage.removeItem(`${CREATED_KEY_PREFIX}${id}`)
   } catch {
-    /* ignore */
+
   }
 }
 
@@ -105,6 +105,6 @@ export function clearStashedApiKeys(): void {
     }
     keysToRemove.forEach((k) => localStorage.removeItem(k))
   } catch {
-    /* ignore */
+
   }
 }

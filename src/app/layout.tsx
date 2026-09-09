@@ -83,8 +83,7 @@ export const metadata: Metadata = {
     : undefined,
   category: 'technology',
   alternates: {
-    // Machine-discoverable pointers for AI agents/crawlers. Rendered as
-    // <link rel="alternate" type="text/plain"> in <head> — not shown in the UI.
+
     types: {
       'text/plain': [
         { url: '/llms.txt', title: 'llms.txt' },

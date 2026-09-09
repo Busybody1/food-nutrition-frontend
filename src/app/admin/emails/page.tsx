@@ -325,7 +325,6 @@ export default function AdminEmailsPage() {
     provider: string
   } | null>(null)
 
-  // Custom compose
   const [mode, setMode] = useState<'html' | 'plain'>('html')
   const [subject, setSubject] = useState('')
   const [bodyHtml, setBodyHtml] = useState('<p>Hi {{first_name}},</p>\n<p></p>')
@@ -334,7 +333,6 @@ export default function AdminEmailsPage() {
   const [fromName, setFromName] = useState('Calorie API')
   const [sendingCustom, setSendingCustom] = useState(false)
 
-  // Conversion templates
   const [templates, setTemplates] = useState<EmailTemplate[]>([])
   const [templateId, setTemplateId] = useState('conv-1')
   const [preview, setPreview] = useState<{

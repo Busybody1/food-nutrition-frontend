@@ -81,7 +81,7 @@ export default function CompareHubPage() {
           Every provider below is good at something. This page maps who is good at what, so you
           can shortlist in minutes and verify with your own data.
         </p>
-        {/* CTA labels/hrefs duplicated verbatim from this page's MarketingCtaBand below. */}
+        {}
         <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <TrackedCtaLink
             href="/playground"

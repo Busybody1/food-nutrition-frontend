@@ -1,13 +1,9 @@
-/**
- * API client for Food Database Service
- * Handles authentication, rate limiting, and error handling
- */
+
 
 import { ApiResponse, PaginatedResponse, ApiError, ApiErrorDetails } from '@/types/api';
 import { getUserFacingApiMessage } from '@/lib/api/errors';
 import { normalizePaginatedResponse, unwrapSuccessPayload } from '@/lib/api/paginated';
 
-// Types
 interface RegisterData {
   email: string;
   password: string;
@@ -22,7 +18,6 @@ interface UpdateProfileData {
   email?: string;
 }
 
-// API Configuration
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 class ApiClient {
@@ -32,15 +27,13 @@ class ApiClient {
 
   constructor() {
     this.baseURL = API_BASE_URL;
-    
-    // Load stored credentials
+
     if (typeof window !== 'undefined') {
       this.apiKey = localStorage.getItem('api_key');
       this.accessToken = localStorage.getItem('access_token');
     }
   }
 
-  // Authentication methods
   setApiKey(apiKey: string | null) {
     this.apiKey = apiKey;
     if (typeof window !== 'undefined') {
@@ -63,14 +56,12 @@ class ApiClient {
     }
   }
 
-  // Reload credentials from storage (Next.js module init may run before localStorage exists)
   private syncCredentialsFromStorage(): void {
     if (typeof window === 'undefined') return;
     this.apiKey = localStorage.getItem('api_key');
     this.accessToken = localStorage.getItem('access_token');
   }
 
-  // Get headers for API requests
   private getHeaders(): HeadersInit {
     this.syncCredentialsFromStorage();
     const headers: HeadersInit = {
@@ -113,7 +104,6 @@ class ApiClient {
     return false;
   }
 
-  // Generic request method with enhanced error handling
   private async request<T>(
     endpoint: string,
     options: RequestInit = {},
@@ -125,7 +115,7 @@ class ApiClient {
       ...(this.getHeaders() as Record<string, string>),
       ...(options.headers as Record<string, string> | undefined),
     };
-    // Multipart bodies need the browser-generated boundary Content-Type.
+
     if (options.body instanceof FormData) {
       delete headers['Content-Type'];
     }
@@ -174,7 +164,6 @@ class ApiClient {
         throw error;
       }
 
-      // Handle network errors
       if (error instanceof TypeError && error.message.includes('fetch')) {
         throw new ApiError(
           'Unable to connect to the server. Please check your internet connection.',
@@ -191,10 +180,9 @@ class ApiClient {
     }
   }
 
-  // GET request
   async get<T>(endpoint: string, params?: Record<string, unknown>): Promise<ApiResponse<T>> {
     const url = new URL(`${this.baseURL}${endpoint}`);
-    
+
     if (params) {
       Object.entries(params).forEach(([key, value]) => {
         if (value !== undefined && value !== null) {
@@ -206,7 +194,6 @@ class ApiClient {
     return this.request<T>(url.pathname + url.search);
   }
 
-  // POST request
   async post<T>(endpoint: string, data?: unknown): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, {
       method: 'POST',
@@ -214,7 +201,6 @@ class ApiClient {
     });
   }
 
-  // Multipart POST (file uploads)
   async postFormData<T>(endpoint: string, formData: FormData): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, {
       method: 'POST',
@@ -222,7 +208,6 @@ class ApiClient {
     });
   }
 
-  // PUT request
   async put<T>(endpoint: string, data?: unknown): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, {
       method: 'PUT',
@@ -230,7 +215,6 @@ class ApiClient {
     });
   }
 
-  // PATCH request
   async patch<T>(endpoint: string, data?: unknown): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, {
       method: 'PATCH',
@@ -238,14 +222,12 @@ class ApiClient {
     });
   }
 
-  // DELETE request
   async delete<T>(endpoint: string): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, {
       method: 'DELETE',
     });
   }
 
-  // Paginated GET request
   async getPaginated<T>(
     endpoint: string,
     params?: Record<string, unknown>
@@ -255,57 +237,60 @@ class ApiClient {
   }
 }
 
-// Create singleton instance
 export const apiClient = new ApiClient();
 
-// Export individual API methods for convenience
 export const api = {
-  // Authentication
+
   auth: {
     login: (email: string, password: string) =>
       apiClient.post('/api/v1/auth/login', { email, password }),
-    
+
     register: (userData: RegisterData) =>
-      apiClient.post('/api/v1/auth/register', userData), // Removed plan_id - backend assigns default
-    
+      apiClient.post('/api/v1/auth/register', userData),
+
     refreshToken: (refreshToken: string) =>
-      apiClient.post('/api/v1/auth/refresh', { refresh_token_value: refreshToken }), // Fixed: refresh_token_value
+      apiClient.post('/api/v1/auth/refresh', { refresh_token_value: refreshToken }),
 
     getProfile: () =>
       apiClient.get('/api/v1/auth/me'),
 
-    // Email verification (6-digit OTP)
     verifyEmailCode: (data: { email: string; code: string }) =>
       apiClient.post('/api/v1/auth/verify-email-code', data),
 
     resendCode: (data: { email: string }) =>
       apiClient.post('/api/v1/auth/resend-verification-code', data),
+
+    forgotPassword: (email: string) =>
+      apiClient.post('/api/v1/auth/forgot-password', { email }),
+
+    resetPassword: (token: string, newPassword: string) =>
+      apiClient.post('/api/v1/auth/reset-password', {
+        token,
+        new_password: newPassword,
+      }),
   },
 
-  // API Keys
   apiKeys: {
     list: () =>
-      apiClient.get('/api/v1/users/api-keys'), // Fixed: /users/ (plural)
-    
+      apiClient.get('/api/v1/users/api-keys'),
+
     create: (name: string) =>
-      apiClient.post('/api/v1/users/api-keys', { name }), // Fixed: /users/ (plural)
-    
-    // Note: Backend doesn't support updating API keys - removed update method
+      apiClient.post('/api/v1/users/api-keys', { name }),
+
     revoke: (keyId: number) =>
-      apiClient.delete(`/api/v1/users/api-keys/${keyId}`), // Fixed: /users/ (plural)
+      apiClient.delete(`/api/v1/users/api-keys/${keyId}`),
   },
 
-  // Food Search
   search: {
     foods: (query: string, params?: Record<string, unknown>) =>
       apiClient.getPaginated('/api/v1/search/foods', { q: query, ...params }),
-    
+
     brands: (query: string, params?: Record<string, unknown>) =>
       apiClient.getPaginated('/api/v1/search/brands', { q: query, ...params }),
-    
+
     categories: (query: string, params?: Record<string, unknown>) =>
       apiClient.getPaginated('/api/v1/search/categories', { q: query, ...params }),
-    
+
     nutrients: (query: string, params?: Record<string, unknown>) =>
       apiClient.getPaginated('/api/v1/search/nutrients', { q: query, ...params }),
 
@@ -316,7 +301,6 @@ export const api = {
       ),
   },
 
-  // Lightweight catalog (meta-only foods; authenticated; limit max 100)
   catalog: {
     foods: (params?: Record<string, unknown>) =>
       apiClient.getPaginated('/api/v1/catalog/foods', params),
@@ -330,7 +314,6 @@ export const api = {
       apiClient.getPaginated('/api/v1/catalog/nutrients', params),
   },
 
-  // Public demo (no API key; IP rate limited; same filters, lower limits)
   public: {
     searchFoods: (query: string, params?: Record<string, unknown>) =>
       apiClient.getPaginated('/api/v1/public/search/foods', { q: query, ...params }),
@@ -346,32 +329,30 @@ export const api = {
       apiClient.getPaginated('/api/v1/public/catalog/nutrients', params),
   },
 
-  // Food Data
   foods: {
     list: (params?: Record<string, unknown>) =>
-      apiClient.getPaginated('/api/v1/foods/', params), // Fixed: added trailing slash
-    
+      apiClient.getPaginated('/api/v1/foods/', params),
+
     get: (id: number) =>
       apiClient.get(`/api/v1/foods/${id}`),
-    
+
     brands: (params?: Record<string, unknown>) =>
-      apiClient.getPaginated('/api/v1/foods/brands/', params), // Fixed: added trailing slash
-    
+      apiClient.getPaginated('/api/v1/foods/brands/', params),
+
     categories: (params?: Record<string, unknown>) =>
-      apiClient.getPaginated('/api/v1/foods/categories/', params), // Fixed: added trailing slash
-    
+      apiClient.getPaginated('/api/v1/foods/categories/', params),
+
     nutrients: (params?: Record<string, unknown>) =>
-      apiClient.getPaginated('/api/v1/foods/nutrients/', params), // Fixed: added trailing slash
+      apiClient.getPaginated('/api/v1/foods/nutrients/', params),
   },
 
-  // Billing
   billing: {
     getSubscription: () =>
       apiClient.get('/api/v1/billing/subscription'),
-    
+
     getPlans: () =>
       apiClient.get('/api/v1/billing/plans'),
-    
+
     createSubscription: (planId: number, paymentMethodId?: string) =>
       apiClient.post('/api/v1/billing/subscribe', {
         plan_id: planId,
@@ -380,19 +361,19 @@ export const api = {
 
     createCheckoutSession: (data: { plan_id: number; success_url?: string; cancel_url?: string }) =>
       apiClient.post('/api/v1/billing/checkout-sessions', data),
-    
+
     updateSubscription: (planId: number) =>
       apiClient.put('/api/v1/billing/subscription', { plan_id: planId }),
-    
+
     cancelSubscription: () =>
       apiClient.delete('/api/v1/billing/subscription'),
-    
+
     getInvoices: () =>
       apiClient.get('/api/v1/billing/invoices'),
-    
+
     createCustomerPortalSession: () =>
       apiClient.post('/api/v1/billing/customer-portal'),
-    
+
     createPaymentIntent: (amount: number, currency: string = 'usd') =>
       apiClient.post('/api/v1/billing/payment-intent', {
         amount,
@@ -400,22 +381,21 @@ export const api = {
       }),
   },
 
-  // User
   user: {
     getProfile: () =>
-      apiClient.get('/api/v1/users/profile'), // Fixed: /users/ (plural)
-    
+      apiClient.get('/api/v1/users/profile'),
+
     updateProfile: (data: UpdateProfileData) =>
-      apiClient.put('/api/v1/users/profile', data), // Fixed: /users/ (plural)
-    
+      apiClient.put('/api/v1/users/profile', data),
+
     changePassword: (currentPassword: string, newPassword: string) =>
-      apiClient.post('/api/v1/users/change-password', { // Fixed: /users/ (plural)
+      apiClient.post('/api/v1/users/change-password', {
         current_password: currentPassword,
         new_password: newPassword,
       }),
-    
+
     getUsage: () =>
-      apiClient.get('/api/v1/users/usage'), // Fixed: /users/ (plural)
+      apiClient.get('/api/v1/users/usage'),
 
     submitFeedback: (data: {
       category: 'feedback' | 'error'
@@ -451,35 +431,33 @@ export const api = {
     },
   },
 
-  // Usage Analytics
   usage: {
     getUsageData: (timeRange: string) =>
-      apiClient.get(`/api/v1/users/usage/data?time_range=${timeRange}`), // Fixed: /users/ (plural)
-    
+      apiClient.get(`/api/v1/users/usage/data?time_range=${timeRange}`),
+
     getEndpointUsage: (timeRange: string) =>
-      apiClient.get(`/api/v1/users/usage/endpoints?time_range=${timeRange}`), // Fixed: /users/ (plural)
-    
+      apiClient.get(`/api/v1/users/usage/endpoints?time_range=${timeRange}`),
+
     getUsageStats: () =>
-      apiClient.get('/api/v1/users/usage/stats'), // Fixed: /users/ (plural)
-    
+      apiClient.get('/api/v1/users/usage/stats'),
+
     exportUsageData: (timeRange: string) =>
       apiClient.get<Blob>(`/api/v1/users/usage/export?time_range=${timeRange}`),
   },
 
-  // Admin
   admin: {
     getUsers: (params?: Record<string, unknown>) =>
       apiClient.getPaginated('/api/v1/admin/users', params),
-    
+
     getUser: (id: number) =>
       apiClient.get(`/api/v1/admin/users/${id}`),
-    
+
     updateUser: (id: number, data: UpdateProfileData) =>
-      apiClient.put(`/api/v1/admin/users/${id}/status`, data), // Fixed: backend uses /status endpoint
-    
+      apiClient.put(`/api/v1/admin/users/${id}/status`, data),
+
     getPlatformUsage: () =>
       apiClient.get('/api/v1/admin/platform-usage'),
-    
+
     getAnalytics: (params?: Record<string, unknown>) =>
       apiClient.get('/api/v1/admin/analytics', params),
   },

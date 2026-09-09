@@ -5,17 +5,17 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogDescription, 
-  DialogHeader, 
-  DialogTitle 
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle
 } from '@/components/ui/dialog'
-import { 
-  Loader2, 
-  CreditCard, 
-  XCircle, 
+import {
+  Loader2,
+  CreditCard,
+  XCircle,
   Shield,
   Zap,
   Crown,
@@ -33,18 +33,17 @@ interface SubscribeModalProps {
   onError: (error: string) => void
 }
 
-export function SubscribeModal({ 
-  isOpen, 
-  onClose, 
-  plan, 
-  onError 
+export function SubscribeModal({
+  isOpen,
+  onClose,
+  plan,
+  onError
 }: SubscribeModalProps) {
-  
+
   const [isProcessing, setIsProcessing] = useState(false)
   const [step, setStep] = useState<'payment' | 'processing' | 'success'>('payment')
   const [error, setError] = useState<string | null>(null)
 
-  // Reset state when modal opens/closes
   useEffect(() => {
     if (isOpen) {
       setStep('payment')
@@ -64,14 +63,13 @@ export function SubscribeModal({
     setIsProcessing(true)
 
     try {
-      // Create checkout session
+
       const checkoutResponse = await stripeAPI.createCheckoutSession({
         plan_id: plan.id,
         success_url: `${window.location.origin}/dashboard/billing?success=true`,
         cancel_url: `${window.location.origin}/pricing?canceled=true`
       })
 
-      // Redirect to Stripe Checkout
       window.location.href = checkoutResponse.url
 
     } catch (err) {
@@ -131,7 +129,7 @@ export function SubscribeModal({
         </DialogHeader>
 
         <div className="space-y-6">
-          {/* Plan Summary */}
+          {}
           <Card>
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
@@ -168,7 +166,7 @@ export function SubscribeModal({
             </CardContent>
           </Card>
 
-          {/* Payment Form */}
+          {}
           {step === 'payment' && (
             <div className="space-y-4">
               <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
@@ -222,7 +220,7 @@ export function SubscribeModal({
             </div>
           )}
 
-          {/* Processing State */}
+          {}
           {step === 'processing' && (
             <div className="text-center py-8">
               <Loader2 className="h-12 w-12 animate-spin mx-auto mb-4 text-blue-600" />

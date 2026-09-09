@@ -33,7 +33,6 @@ export type DiscoveryCatalogEntry = {
   summary: string
 }
 
-/** Registry-derived page catalog so llms.txt lists every public surface without drift. */
 export type DiscoveryCatalog = {
   docs: DiscoveryCatalogEntry[]
   guides: DiscoveryCatalogEntry[]

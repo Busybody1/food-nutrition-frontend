@@ -1,4 +1,4 @@
-/** Parse FastAPI error `detail` (string or validation array) for display. */
+
 export function parseApiErrorDetail(detail: unknown): string | undefined {
   if (typeof detail === 'string') {
     const trimmed = detail.trim();
@@ -33,7 +33,6 @@ const STATUS_FALLBACKS: Record<number, string> = {
   504: 'Service temporarily unavailable. Please try again later.',
 };
 
-/** Prefer server message on 4xx when present; otherwise use status fallback. */
 export function getUserFacingApiMessage(status: number, data: { detail?: unknown }): string {
   const fromServer = parseApiErrorDetail(data.detail);
   if (fromServer) return fromServer;

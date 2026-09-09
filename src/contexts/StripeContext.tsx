@@ -6,7 +6,6 @@ import { Elements } from '@stripe/react-stripe-js'
 import { getStripe, stripeOptions } from '@/lib/stripe/config'
 import { stripeAPI } from '@/lib/stripe/api'
 
-// Types
 import { Plan } from '@/types/api'
 
 interface Subscription {
@@ -56,29 +55,25 @@ interface Usage {
 }
 
 interface StripeContextType {
-  // Stripe instance
+
   stripe: Stripe | null
   isStripeLoaded: boolean
-  
-  // Data
+
   plans: Plan[]
   subscription: Subscription | null
   paymentMethods: PaymentMethod[]
   invoices: Invoice[]
   usage: Usage | null
-  
-  // Loading states
+
   isLoading: boolean
   isPlansLoading: boolean
   isSubscriptionLoading: boolean
   isPaymentMethodsLoading: boolean
   isInvoicesLoading: boolean
   isUsageLoading: boolean
-  
-  // Error states
+
   error: string | null
-  
-  // Actions
+
   loadPlans: () => Promise<void>
   loadSubscription: () => Promise<void>
   loadPaymentMethods: () => Promise<void>
@@ -93,33 +88,27 @@ interface StripeContextType {
   clearError: () => void
 }
 
-// Create context
 const StripeContext = createContext<StripeContextType | undefined>(undefined)
 
-// Provider component
 export function StripeProvider({ children }: { children: ReactNode }) {
   const [stripe, setStripe] = useState<Stripe | null>(null)
   const [isStripeLoaded, setIsStripeLoaded] = useState(false)
-  
-  // Data state
+
   const [plans, setPlans] = useState<Plan[]>([])
   const [subscription, setSubscription] = useState<Subscription | null>(null)
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([])
   const [invoices, setInvoices] = useState<Invoice[]>([])
   const [usage, setUsage] = useState<Usage | null>(null)
-  
-  // Loading states
+
   const [isLoading, setIsLoading] = useState(false)
   const [isPlansLoading, setIsPlansLoading] = useState(false)
   const [isSubscriptionLoading, setIsSubscriptionLoading] = useState(false)
   const [isPaymentMethodsLoading, setIsPaymentMethodsLoading] = useState(false)
   const [isInvoicesLoading, setIsInvoicesLoading] = useState(false)
   const [isUsageLoading, setIsUsageLoading] = useState(false)
-  
-  // Error state
+
   const [error, setError] = useState<string | null>(null)
 
-  // Initialize Stripe
   useEffect(() => {
     const initializeStripe = async () => {
       try {
@@ -135,7 +124,6 @@ export function StripeProvider({ children }: { children: ReactNode }) {
     initializeStripe()
   }, [])
 
-  // Load plans
   const loadPlans = async () => {
     try {
       setIsPlansLoading(true)
@@ -150,7 +138,6 @@ export function StripeProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  // Load subscription
   const loadSubscription = async () => {
     try {
       setIsSubscriptionLoading(true)
@@ -165,7 +152,6 @@ export function StripeProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  // Load payment methods
   const loadPaymentMethods = async () => {
     try {
       setIsPaymentMethodsLoading(true)
@@ -180,7 +166,6 @@ export function StripeProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  // Load invoices
   const loadInvoices = async () => {
     try {
       setIsInvoicesLoading(true)
@@ -195,7 +180,6 @@ export function StripeProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  // Load usage
   const loadUsage = async () => {
     try {
       setIsUsageLoading(true)
@@ -210,7 +194,6 @@ export function StripeProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  // Create subscription with payment method
   const createSubscriptionAction = async (planId: number, paymentMethodId?: string) => {
     try {
       setIsLoading(true)
@@ -227,7 +210,6 @@ export function StripeProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  // Update subscription
   const updateSubscriptionAction = async (planId: number) => {
     try {
       setIsLoading(true)
@@ -243,7 +225,6 @@ export function StripeProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  // Cancel subscription
   const cancelSubscriptionAction = async (cancelAtPeriodEnd: boolean = true) => {
     try {
       setIsLoading(true)
@@ -259,7 +240,6 @@ export function StripeProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  // Create checkout session
   const createCheckoutSessionAction = async (
     planId: number,
     successUrl?: string,
@@ -280,7 +260,6 @@ export function StripeProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  // Create customer portal session
   const createCustomerPortalSessionAction = async (): Promise<string> => {
     try {
       setError(null)
@@ -293,7 +272,6 @@ export function StripeProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  // Detach payment method
   const detachPaymentMethodAction = async (paymentMethodId: string) => {
     try {
       setIsLoading(true)
@@ -309,35 +287,30 @@ export function StripeProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  // Clear error
   const clearError = () => {
     setError(null)
   }
 
   const contextValue: StripeContextType = {
-    // Stripe instance
+
     stripe,
     isStripeLoaded,
-    
-    // Data
+
     plans,
     subscription,
     paymentMethods,
     invoices,
     usage,
-    
-    // Loading states
+
     isLoading,
     isPlansLoading,
     isSubscriptionLoading,
     isPaymentMethodsLoading,
     isInvoicesLoading,
     isUsageLoading,
-    
-    // Error state
+
     error,
-    
-    // Actions
+
     loadPlans,
     loadSubscription,
     loadPaymentMethods,
@@ -361,7 +334,6 @@ export function StripeProvider({ children }: { children: ReactNode }) {
   )
 }
 
-// Hook to use Stripe context
 export function useStripe() {
   const context = useContext(StripeContext)
   if (context === undefined) {
@@ -370,7 +342,6 @@ export function useStripe() {
   return context
 }
 
-// Hook for Stripe Elements
 export function useStripeElements() {
   const { stripe, isStripeLoaded } = useStripe()
   return { stripe, isStripeLoaded }

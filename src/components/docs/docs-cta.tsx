@@ -1,11 +1,6 @@
 import Link from 'next/link'
 import { ArrowRight, FlaskConical } from 'lucide-react'
 
-/**
- * Compact conversion band for docs subpages. Reuses the existing
- * "Open API playground" CTA from /docs verbatim — no new copy.
- * Server component; safe below metadata-exporting pages.
- */
 export function DocsCta() {
   return (
     <aside

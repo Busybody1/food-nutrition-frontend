@@ -44,7 +44,6 @@ const FEATURE_ICONS: Record<CapabilityPage['features'][number]['icon'], LucideIc
   heart: HeartPulse,
 }
 
-/** Inline text links: persistent underline so they never rely on color alone. */
 const INLINE_LINK_CLASS =
   'text-brand-strong font-medium underline decoration-brand/40 underline-offset-2 ' +
   'hover:decoration-brand-strong rounded-sm focus-visible:outline-none ' +
@@ -74,7 +73,7 @@ export function CapabilityPageView({ page }: { page: CapabilityPage }) {
         <p className="text-lg text-ink-muted leading-relaxed max-w-2xl mx-auto">
           {page.heroCopy[0]}
         </p>
-        {/* CTA labels duplicated verbatim from this page's CTA band below. */}
+        {}
         <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <TrackedCtaLink
             href="/auth/register"

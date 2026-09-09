@@ -1,14 +1,6 @@
 import { NextResponse } from 'next/server'
 import { absoluteUrl, SITE_NAME } from '@/lib/site'
 
-/**
- * RFC 9727 API catalog served as an RFC 9264 linkset. Advertised from the
- * homepage `Link` header (rel="api-catalog") so agents can discover our
- * machine-readable spec, docs, and health endpoint without scraping the page.
- *
- * `anchor` is the API's base URL; service-desc/service-doc/status point at the
- * live OpenAPI spec, human docs, and health check respectively.
- */
 export const dynamic = 'force-static'
 
 const API_BASE_URL = (

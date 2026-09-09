@@ -2,7 +2,6 @@ import { Reveal } from '@/components/marketing/reveal'
 import { SeoInlineLink } from '@/components/seo/marketing-seo-section'
 import { SITE_NAME } from '@/lib/site'
 
-/** Same treatment as SeoInlineLink, for external anchors. */
 const externalLinkClass =
   'text-brand-strong font-medium underline decoration-brand/40 underline-offset-2 transition-colors duration-200 hover:decoration-brand-strong rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2'
 

@@ -15,8 +15,8 @@ import {
   DashboardAlert,
   DashboardProgress,
 } from '@/components/dashboard/dashboard-shell'
-import { 
-  CreditCard, DollarSign, 
+import {
+  CreditCard, DollarSign,
   CheckCircle, ExternalLink, RefreshCw, Download
 } from 'lucide-react'
 import { fetchPublicPlans } from '@/lib/pricing/fetch-plans'
@@ -30,7 +30,6 @@ import {
 } from '@/lib/pricing/plan-display'
 import { ScheduleCallDialog } from '@/components/marketing/schedule-call-dialog'
 
-// Per-tier fallback only for when the profile did not carry plans.max_api_keys.
 const API_KEY_LIMIT_FALLBACK: Record<string, number> = {
   free: 1,
   basic: 3,
@@ -40,7 +39,6 @@ const API_KEY_LIMIT_FALLBACK: Record<string, number> = {
   custom: 100,
 }
 
-/** "Up to 3 API keys" / "Up to 1 API key" — prefers the backend value. */
 function apiKeyLimitText(planName: string, maxApiKeys?: number): string {
   const count =
     maxApiKeys != null && maxApiKeys > 0
@@ -215,7 +213,7 @@ function BillingPageContent() {
       const usageLimit =
         usageStats?.monthly_quota ?? userProfile.plan?.monthly_quota ?? 1000
       const rateLimit = usageStats?.rate_limit_per_minute
-      // Backend plans.max_api_keys is the source of truth (only the profile carries it).
+
       const maxApiKeys = userProfile.plan?.max_api_keys
 
       if (isFreePlan) {
@@ -234,7 +232,7 @@ function BillingPageContent() {
         setBillingInfo(billingInfo)
         setInvoices([])
       } else {
-        // For paid plan users, load subscription and payment methods
+
         try {
           const [billingResponse, invoicesResponse] = await Promise.all([
             api.billing.getSubscription(),
@@ -270,7 +268,7 @@ function BillingPageContent() {
             setInvoices(invoices)
           }
         } catch {
-          // If subscription API fails, fall back to free plan
+
           const billingInfo: BillingInfo = {
             user_id: user?.id || 0,
             plan_name: planName,
@@ -294,42 +292,38 @@ function BillingPageContent() {
     }
   }, [user])
 
-  // Redirect if not authenticated
   useEffect(() => {
     if (!loading && !isAuthenticated) {
       router.push('/auth/login')
     }
   }, [isAuthenticated, loading, router])
 
-  // Load billing data
   useEffect(() => {
     if (!loading && isAuthenticated) {
       loadBillingData()
     }
   }, [isAuthenticated, loading, loadBillingData])
 
-  // Handle URL parameters for success/cancel redirects
   useEffect(() => {
     const success = searchParams.get('success')
     const canceled = searchParams.get('canceled')
-    
+
     if (success === 'true') {
       setSuccessMessage('Payment successful! Your subscription has been activated.')
-      // Clear the URL parameters
+
       router.replace('/dashboard/billing')
     } else if (canceled === 'true') {
       setError('Payment was canceled. You can try again anytime.')
-      // Clear the URL parameters
+
       router.replace('/dashboard/billing')
     }
   }, [searchParams, router])
 
   const handleManageBilling = async () => {
     try {
-      // Import API client
+
       const { api } = await import('@/lib/api/client')
-      
-      // Create customer portal session
+
       const response = await api.billing.createCustomerPortalSession()
       const portalUrl = (response.data as { url: string }).url
       window.open(portalUrl, '_blank')
@@ -357,15 +351,14 @@ function BillingPageContent() {
 
   const handlePlanChange = async (newPlanId: number) => {
     try {
-      // Import API client
+
       const { api } = await import('@/lib/api/client')
-      
-      // Update subscription to new plan
+
       const response = await api.billing.updateSubscription(newPlanId)
-      
+
       if (response.success) {
         setSuccessMessage('Plan updated successfully!')
-        // Reload billing data to reflect changes
+
         await loadBillingData()
       } else {
         setError('Failed to update plan. Please try again.')
@@ -394,12 +387,11 @@ function BillingPageContent() {
   }
 
   const getStatusColor = () => {
-    // For paid plans, always show green (active)
+
     if (billingInfo && (billingInfo.plan_name !== 'Free' && billingInfo.plan_price > 0)) {
       return 'bg-green-100 text-green-800'
     }
-    
-    // For free plans, show yellow
+
     return 'bg-yellow-100 text-yellow-800'
   }
 
@@ -446,7 +438,7 @@ function BillingPageContent() {
 
         {billingInfo ? (
           <div className="space-y-6">
-            {/* Current Plan */}
+            {}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center">
@@ -468,8 +460,8 @@ function BillingPageContent() {
                   <div>
                     <p className="text-sm text-gray-600 mb-1">Status</p>
                     <Badge className={getStatusColor()}>
-                      {billingInfo.plan_name === 'Free' || billingInfo.plan_price === 0 
-                        ? 'Free Plan' 
+                      {billingInfo.plan_name === 'Free' || billingInfo.plan_price === 0
+                        ? 'Free Plan'
                         : 'Active'
                       }
                     </Badge>
@@ -511,7 +503,7 @@ function BillingPageContent() {
               limit={billingInfo.usage_limit}
             />
 
-            {/* Payment Method - Only for paid plans */}
+            {}
             {(billingInfo.plan_name !== 'Free' && billingInfo.plan_price > 0) && (
               <Card>
                 <CardHeader>
@@ -544,7 +536,7 @@ function BillingPageContent() {
               </Card>
             )}
 
-            {/* Billing History - Only for paid plans */}
+            {}
             {(billingInfo.plan_name !== 'Free' && billingInfo.plan_price > 0) && (
               <Card>
                 <CardHeader>
@@ -594,7 +586,7 @@ function BillingPageContent() {
               </Card>
             )}
 
-            {/* Plan Management */}
+            {}
             <Card>
               <CardHeader>
                 <CardTitle>Plan Management</CardTitle>
@@ -615,7 +607,7 @@ function BillingPageContent() {
               </CardContent>
             </Card>
 
-            {/* Plan Features */}
+            {}
             <Card>
               <CardHeader>
                 <CardTitle>Current Plan Features</CardTitle>
@@ -673,7 +665,7 @@ function BillingPageContent() {
             </Card>
           </div>
         ) : (
-          // Fallback: Show free plan if no billing info but no error
+
           <div className="space-y-6">
             <Card>
               <CardHeader>
@@ -716,7 +708,7 @@ function BillingPageContent() {
 
             <UsageThisMonthCard used={0} limit={1000} />
 
-            {/* Plan Features */}
+            {}
             <Card>
               <CardHeader>
                 <CardTitle>Free Plan Features</CardTitle>
@@ -769,7 +761,7 @@ function BillingPageContent() {
               </CardContent>
             </Card>
 
-            {/* Quick Upgrade Options */}
+            {}
             <Card>
               <CardHeader>
                 <CardTitle>Upgrade Options</CardTitle>
@@ -788,7 +780,7 @@ function BillingPageContent() {
                       />
                     ))}
                 </div>
-                
+
                 <div className="mt-4 text-center">
                   <Button
                     variant="outline"

@@ -33,7 +33,6 @@ export const metadata: Metadata = buildPageMetadata({
   path: '/solutions',
 })
 
-/** Decorative card icons keyed by solution slug (data file stays untouched). */
 const SOLUTION_ICONS: Record<string, LucideIcon> = {
   'fitness-apps': Dumbbell,
   'meal-planning-apps': UtensilsCrossed,
@@ -42,11 +41,6 @@ const SOLUTION_ICONS: Record<string, LucideIcon> = {
   'wellness-saas': Sparkles,
 }
 
-/**
- * 5 cards on a 6-track lg grid: row of three, then a centered pair
- * (no left-hugging orphan row under the centered hero). The 5th card
- * spans the full 2-col row between sm and lg for the same reason.
- */
 const CARD_PLACEMENT = [
   'lg:col-span-2',
   'lg:col-span-2',

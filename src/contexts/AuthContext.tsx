@@ -1,9 +1,5 @@
 'use client'
 
-/**
- * Authentication context for managing user state across the application
- */
-
 import React, { createContext, useContext } from 'react';
 import { useAuth } from '@/lib/hooks/use-auth';
 import { User } from '@/types/auth';

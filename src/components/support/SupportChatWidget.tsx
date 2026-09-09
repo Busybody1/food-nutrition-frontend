@@ -77,7 +77,7 @@ export function SupportChatProvider({ children }: { children: ReactNode }) {
       const count = (res.data as { count?: number } | undefined)?.count ?? 0
       setUnreadCount(typeof count === 'number' ? count : 0)
     } catch {
-      // Badge polling should stay silent.
+
     }
   }, [isAuthenticated])
 
@@ -89,7 +89,7 @@ export function SupportChatProvider({ children }: { children: ReactNode }) {
       setConversation(payload.conversation)
       setMessages(payload.messages || [])
     } catch {
-      // Keep the last good snapshot.
+
     }
   }, [isAuthenticated])
 
@@ -102,7 +102,7 @@ export function SupportChatProvider({ children }: { children: ReactNode }) {
         setMessages((current) => mergeMessages(current, payload.messages))
       }
     } catch {
-      // Ignore transient poll errors.
+
     }
   }, [conversation, isAuthenticated, lastMessageId])
 
@@ -112,7 +112,7 @@ export function SupportChatProvider({ children }: { children: ReactNode }) {
       await api.support.markRead()
       setUnreadCount(0)
     } catch {
-      // Read receipts are best-effort.
+
     }
   }, [conversation, isAuthenticated])
 

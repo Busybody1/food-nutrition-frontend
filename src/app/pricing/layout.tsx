@@ -14,7 +14,7 @@ export default function PricingLayout({ children }: { children: React.ReactNode 
       <PublicPageSchema path="/pricing" pageName="Pricing" includeProduct />
       {children}
       <PricingSeoContent />
-      {/* Existing pricing FAQ copy (lib/faq-data), then the page closes on a CTA band. */}
+      {}
       <div className="bg-surface-elevated">
         <FaqSection items={PRICING_FAQS} />
       </div>

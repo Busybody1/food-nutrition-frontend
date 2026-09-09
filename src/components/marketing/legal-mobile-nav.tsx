@@ -5,13 +5,6 @@ import { List, X } from 'lucide-react'
 import { cn } from '@/lib/utils/cn'
 import { smoothScrollToId, useActiveSection, type LegalTocItem } from './legal-toc'
 
-/**
- * Mobile section navigation for the legal documents (the sticky desktop rail is
- * lg+ only). A floating "Contents" button opens a bottom sheet listing every
- * section; tapping one smooth-scrolls to it and closes the sheet, so readers
- * can jump anywhere without scrolling the whole document. The currently-read
- * section is highlighted via the shared scroll-spy hook.
- */
 export function LegalMobileNav({ items }: { items: LegalTocItem[] }) {
   const [open, setOpen] = useState(false)
   const activeId = useActiveSection(items)
@@ -30,7 +23,7 @@ export function LegalMobileNav({ items }: { items: LegalTocItem[] }) {
   const handleSelect = (id: string) => (e: React.MouseEvent) => {
     e.preventDefault()
     setOpen(false)
-    // Let the sheet unmount first, then scroll.
+
     requestAnimationFrame(() => smoothScrollToId(id))
   }
 

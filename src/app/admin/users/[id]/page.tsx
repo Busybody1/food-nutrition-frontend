@@ -30,6 +30,7 @@ import {
   RequestSortKey,
 } from '@/lib/api/admin'
 import { DeleteUserDialog } from '@/components/admin/delete-user-dialog'
+import { ResetUserPasswordDialog } from '@/components/admin/reset-user-password-dialog'
 import { useAdmin } from '@/lib/hooks/use-admin'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -89,7 +90,6 @@ function formatDateTime(value?: string | null): string {
   return value ? new Date(value).toLocaleString() : '—'
 }
 
-/** "3 months" style age of the account, for the header subtitle. */
 function relativeAge(iso?: string | null): string {
   if (!iso) return '—'
   const days = Math.floor((Date.now() - new Date(iso).getTime()) / 86_400_000)
@@ -120,10 +120,10 @@ export default function AdminUserDetailPage() {
   const [busy, setBusy] = useState(false)
   const [confirmFeedback, setConfirmFeedback] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
+  const [confirmReset, setConfirmReset] = useState(false)
   const [revokingKeyId, setRevokingKeyId] = useState<number | null>(null)
   const [supportThreadId, setSupportThreadId] = useState<number | null>(null)
 
-  // Request history (server-paginated, filtered and sorted).
   const [requests, setRequests] = useState<ApiRequestRow[]>([])
   const [requestsTotal, setRequestsTotal] = useState(0)
   const [requestsLoading, setRequestsLoading] = useState(true)
@@ -217,7 +217,6 @@ export default function AdminUserDetailPage() {
       .catch(() => setSupportThreadId(null))
   }, [userId])
 
-  // Reset paging in the setters, not an effect, so each change fetches once.
   const applyRequestFilters = (next: typeof EMPTY_FILTERS) => {
     setAppliedFilters(next)
     setRequestsPage(1)
@@ -282,6 +281,21 @@ export default function AdminUserDetailPage() {
       setConfirmFeedback(false)
     } catch (err) {
       setActionError(err instanceof Error ? err.message : 'Failed to send feedback email')
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  const resetPassword = async () => {
+    if (!user) return
+    try {
+      setBusy(true)
+      setActionError('')
+      const result = await adminAPI.resetUserPassword(user.id)
+      setActionSuccess(`Temporary password emailed to ${result.email}.`)
+      setConfirmReset(false)
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : 'Failed to reset password')
     } finally {
       setBusy(false)
     }
@@ -521,6 +535,17 @@ export default function AdminUserDetailPage() {
               <Mail className="h-4 w-4 mr-1.5" />
               Request feedback
             </Button>
+            {user && !user.is_admin && adminUser?.id !== user.id && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setConfirmReset(true)}
+                disabled={busy}
+              >
+                <KeyRound className="h-4 w-4 mr-1.5" />
+                Reset password
+              </Button>
+            )}
             {supportThreadId ? (
               <Button variant="outline" size="sm" asChild>
                 <Link href={`/admin/support/${supportThreadId}`}>
@@ -909,6 +934,13 @@ export default function AdminUserDetailPage() {
         busy={busy}
         onOpenChange={setConfirmDelete}
         onConfirm={deleteAccount}
+      />
+      <ResetUserPasswordDialog
+        open={confirmReset}
+        email={user.email}
+        busy={busy}
+        onOpenChange={setConfirmReset}
+        onConfirm={resetPassword}
       />
     </AdminPage>
   )

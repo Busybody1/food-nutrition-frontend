@@ -10,7 +10,7 @@ type DocsCodeBlockProps = {
   copyId?: string
   copiedId?: string | null
   onCopy?: (code: string, id: string) => void
-  /** Show a self-managed copy button (no external state needed). */
+
   copyable?: boolean
   className?: string
 }
@@ -63,7 +63,7 @@ export function DocsCodeBlock({
           )}
         </div>
       )}
-      {/* Focusable so keyboard users can horizontally scroll wide code. */}
+      {}
       <pre
         className="docs-code-pre focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand/60"
         tabIndex={0}

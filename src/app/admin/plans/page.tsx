@@ -193,10 +193,6 @@ export default function AdminPlansPage() {
     loadPlans()
   }
 
-  /**
-   * Move the public pricing page's "Most popular" badge to this plan (or clear
-   * it). The API demotes the previous holder, so only one plan is ever flagged.
-   */
   const setRecommended = async (p: AdminPlan, recommended: boolean) => {
     if (!canEdit) return
     setSaving(true)

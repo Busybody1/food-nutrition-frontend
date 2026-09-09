@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import {
   Search, Eye, Ban, CheckCircle, Mail, Calendar,
-  Users, RotateCcw, Trash2,
+  Users, RotateCcw, Trash2, KeyRound,
 } from 'lucide-react'
 import {
   adminAPI,
@@ -19,6 +19,7 @@ import {
   SortOrder,
 } from '@/lib/api/admin'
 import { DeleteUserDialog } from '@/components/admin/delete-user-dialog'
+import { ResetUserPasswordDialog } from '@/components/admin/reset-user-password-dialog'
 import { useAdmin } from '@/lib/hooks/use-admin'
 import {
   Dialog,
@@ -105,7 +106,9 @@ export default function UserManagement() {
   const [actionError, setActionError] = useState('')
   const [feedbackTarget, setFeedbackTarget] = useState<AdminUser | null>(null)
   const [deleteTarget, setDeleteTarget] = useState<AdminUser | null>(null)
+  const [resetTarget, setResetTarget] = useState<AdminUser | null>(null)
   const [deleting, setDeleting] = useState(false)
+  const [resetting, setResetting] = useState(false)
   const [sendingFeedback, setSendingFeedback] = useState(false)
   const [feedbackSuccess, setFeedbackSuccess] = useState('')
   const [status, setStatus] = useState<StatusFilter>('all')
@@ -123,8 +126,6 @@ export default function UserManagement() {
     return () => window.clearTimeout(timer)
   }, [searchInput])
 
-  // Whole-table counts: computed server-side so they stay correct no matter how
-  // many rows the current page holds.
   const loadStats = useCallback(async () => {
     try {
       setStatsLoading(true)
@@ -171,9 +172,6 @@ export default function UserManagement() {
       .catch(() => setPlans([]))
   }, [loadStats])
 
-  // Anything that changes the result set restarts paging at page 1. Done in the
-  // setters rather than an effect so the list is fetched once, not twice (the
-  // first fetch would otherwise use the previous page against the new filters).
   const applyStatus = (next: StatusFilter) => {
     setStatus(next)
     setPage(1)
@@ -231,6 +229,24 @@ export default function UserManagement() {
 
   const canDeleteUser = (account: AdminUser) =>
     !account.is_admin && adminUser?.id !== account.id
+
+  const canResetUserPassword = (account: AdminUser) =>
+    !account.is_admin && adminUser?.id !== account.id
+
+  const handleResetUserPassword = async () => {
+    if (!resetTarget) return
+    try {
+      setResetting(true)
+      setActionError('')
+      const result = await adminAPI.resetUserPassword(resetTarget.id)
+      setFeedbackSuccess(`Temporary password emailed to ${result.email}.`)
+      setResetTarget(null)
+    } catch (err) {
+      setActionError(err instanceof Error ? err.message : 'Failed to reset password')
+    } finally {
+      setResetting(false)
+    }
+  }
 
   const handleDeleteUser = async () => {
     if (!deleteTarget) return
@@ -390,7 +406,7 @@ export default function UserManagement() {
                 <option value="admin">Admins</option>
                 <option value="unverified">Unverified email</option>
               </select>
-              {/* Plan options come from the plans table, so a new plan shows up here automatically. */}
+              {}
               <select
                 value={planId === 'all' ? 'all' : String(planId)}
                 onChange={(e) =>
@@ -614,6 +630,19 @@ export default function UserManagement() {
                           >
                             <Mail className="w-4 h-4" />
                           </Button>
+                          {canResetUserPassword(user) && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              title="Reset password and email a temporary password"
+                              onClick={() => {
+                                setFeedbackSuccess('')
+                                setResetTarget(user)
+                              }}
+                            >
+                              <KeyRound className="w-4 h-4" />
+                            </Button>
+                          )}
                           <Button
                             variant="ghost"
                             size="sm"
@@ -706,6 +735,13 @@ export default function UserManagement() {
         busy={deleting}
         onOpenChange={(open) => !open && setDeleteTarget(null)}
         onConfirm={handleDeleteUser}
+      />
+      <ResetUserPasswordDialog
+        open={!!resetTarget}
+        email={resetTarget?.email || ''}
+        busy={resetting}
+        onOpenChange={(open) => !open && setResetTarget(null)}
+        onConfirm={handleResetUserPassword}
       />
     </AdminPage>
   )

@@ -8,7 +8,7 @@ export type ComparisonRow = {
 }
 
 export type ComparisonPage = {
-  /** URL segment under /compare/ */
+
   slug: string
   competitor: string
   h1: string
@@ -17,19 +17,18 @@ export type ComparisonPage = {
   keywords: string[]
   intro: string[]
   matrix: ComparisonRow[]
-  /** Honest "when the competitor is the better fit", credibility earns citations */
+
   whenTheyFit: string[]
   whenWeFit: string[]
   migration: string[]
   faqs: FaqItem[]
   related: { label: string; href: string }[]
   summary: string
-  /** Month the competitor claims were last reviewed, e.g. 'July 2026' */
+
   asOf: string
   dateModified: string
 }
 
-/** Rendered under every comparison table. */
 export const COMPARISON_DISCLAIMER = (asOf: string) =>
   `Comparison notes reviewed as of ${asOf}. Competitor capabilities and pricing change; verify details against their current documentation before deciding.`
 
@@ -539,7 +538,6 @@ export function comparisonPath(slug: string): string {
   return `/compare/${slug}`
 }
 
-/** Hub-page summary rows: one honest line per provider. */
 export const COMPARE_HUB_ROWS = [
   {
     provider: SITE_NAME,

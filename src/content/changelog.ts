@@ -1,13 +1,12 @@
 export type ChangelogEntry = {
-  /** Anchor id, stable once published */
+
   id: string
-  /** ISO date (YYYY-MM-DD) or month (YYYY-MM) */
+
   date: string
   title: string
   body: string
 }
 
-/** Newest first. Adding a release = one entry here; the page renders from this data. */
 export const CHANGELOG_ENTRIES: ChangelogEntry[] = [
   {
     id: 'docs-and-site-expansion',

@@ -25,7 +25,6 @@ export const metadata: Metadata = buildPageMetadata({
   path: '/docs/guides',
 })
 
-/** Decorative per-framework icons (aria-hidden; icons carry no copy). */
 const GUIDE_ICONS: Record<string, typeof Code2> = {
   'React Native': Smartphone,
   'Next.js': Globe,

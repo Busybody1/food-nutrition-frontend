@@ -31,19 +31,16 @@ export class ErrorBoundary extends Component<Props, State> {
       errorInfo
     })
 
-    // Log error to console in development
     if (process.env.NODE_ENV === 'development') {
       console.error('ErrorBoundary caught an error:', error, errorInfo)
     }
 
-    // Call custom error handler
     if (this.props.onError) {
       this.props.onError(error, errorInfo)
     }
 
-    // Log to external service in production
     if (process.env.NODE_ENV === 'production') {
-      // You can integrate with services like Sentry here
+
       console.error('Production error:', error.message)
     }
   }
@@ -68,7 +65,7 @@ export class ErrorBoundary extends Component<Props, State> {
             showHome={true}
             showBack={true}
           />
-          
+
           {process.env.NODE_ENV === 'development' && this.state.error && (
             <details className="mt-4 text-sm">
               <summary className="cursor-pointer text-gray-500 hover:text-gray-700">
@@ -88,15 +85,13 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 }
 
-// Hook for functional components to trigger error boundary
 export const useErrorHandler = () => {
   return (error: Error) => {
-    // This will trigger the error boundary if called during render
+
     throw error
   }
 }
 
-// Higher-order component for easier error boundary wrapping
 export const withErrorBoundary = <P extends object>(
   Component: React.ComponentType<P>,
   errorBoundaryProps?: Omit<Props, 'children'>
@@ -108,6 +103,6 @@ export const withErrorBoundary = <P extends object>(
   )
 
   WrappedComponent.displayName = `withErrorBoundary(${Component.displayName || Component.name})`
-  
+
   return WrappedComponent
 }

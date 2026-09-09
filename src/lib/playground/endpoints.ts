@@ -6,7 +6,7 @@ export type PlaygroundParam = {
   required?: boolean
   type?: 'text' | 'number' | 'select'
   options?: { value: string; label: string }[]
-  /** Numeric bounds for `type: 'number'` inputs (mirror the public demo caps). */
+
   min?: number
   max?: number
 }
@@ -16,10 +16,10 @@ export type PlaygroundEndpoint = {
   name: string
   description: string
   method: 'GET' | 'POST'
-  /** Path under `/api/v1/public`, may include `{param}` segments. */
+
   pathTemplate: string
   params: PlaygroundParam[]
-  /** Default JSON body string for POST endpoints. */
+
   defaultBody?: string
 }
 

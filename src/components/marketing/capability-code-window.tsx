@@ -3,12 +3,6 @@
 import { useState } from 'react'
 import { Check, Copy } from 'lucide-react'
 
-/**
- * Marketing-surface code sample for capability pages: `marketing-code-window`
- * chrome (window dots + title + copy button) instead of the docs-surface
- * `docs-code-panel` language. Title and code render byte-identical to the
- * page data — this component only changes the frame.
- */
 export function CapabilityCodeWindow({ title, code }: { title: string; code: string }) {
   const [copied, setCopied] = useState(false)
 

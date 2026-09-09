@@ -109,7 +109,7 @@ export default function RegisterPage() {
           </div>
         )}
 
-        {/* Identity */}
+        {}
         <div className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-3">
             <div>
@@ -133,7 +133,7 @@ export default function RegisterPage() {
           </div>
         </div>
 
-        {/* Security */}
+        {}
         <div className="space-y-4 border-t border-surface-border/70 pt-5">
           <div>
             <label htmlFor="password" className={labelClass}>Password</label>

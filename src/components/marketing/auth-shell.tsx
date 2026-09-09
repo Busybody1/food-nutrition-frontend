@@ -14,7 +14,7 @@ export function AuthShell({
 }) {
   return (
     <div className="marketing-page hero-glow flex min-h-[calc(100svh-var(--site-header-offset))] items-center justify-center px-4 pb-16 pt-[calc(var(--site-header-offset)+2rem)]">
-      {/* Decorative depth blobs — clipped by hero-glow's overflow-hidden. */}
+      {}
       <div
         aria-hidden
         className="pointer-events-none absolute -top-24 right-[8%] h-72 w-72 rounded-full bg-brand/10 blur-3xl"

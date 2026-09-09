@@ -7,11 +7,6 @@ export type DocsTocItem = { id: string; text: string }
 const TOC_LINK_BASE =
   '-ml-px block rounded-r-lg border-l-2 py-1.5 pl-3 pr-2 transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50'
 
-/**
- * "On this page" rail for long docs articles (xl+ only). Links reuse the
- * existing h2 heading text verbatim; a scroll-spy highlights the section
- * currently in view. Purely additive navigation — no visible copy of its own.
- */
 export function DocsToc({ items }: { items: DocsTocItem[] }) {
   const [activeId, setActiveId] = useState<string | null>(null)
 

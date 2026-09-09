@@ -16,21 +16,8 @@ export type LegalSection = {
   blocks: LegalBlock[]
 }
 
-/**
- * Numbered sub-clauses ("2.1 Account Registration", "3.2 Attribution", ...)
- * are stored as plain paragraph blocks in the content files. Detect them so
- * they can carry sub-heading *styling* (visual only — they stay <p> elements,
- * the document outline is frozen).
- */
 const SUBCLAUSE_PATTERN = /^\d+\.\d+\s/
 
-/**
- * Cookie-inventory leads look like `session_id - ...` / `_ga, _gid (Google
- * Analytics) - ...`. Wrap the leading identifier in a mono <code> chip.
- * Rendered characters stay byte-identical: token + qualifier + rest === item.
- * Leads starting with an uppercase letter (vendor names, "Privacy Team - ...")
- * are left untouched.
- */
 function renderInventoryItem(item: string): ReactNode {
   const sepIndex = item.indexOf(' - ')
   if (sepIndex === -1 || !/^[a-z_]/.test(item)) return item
@@ -55,7 +42,7 @@ export function LegalDocumentBody({
   codeListLeads,
 }: {
   sections: LegalSection[]
-  /** Cookie policy only: style leading cookie identifiers in lists as code chips. */
+
   codeListLeads?: boolean
 }) {
   return (
@@ -131,7 +118,7 @@ export function LegalPageShell({
   title: string
   tagline: string
   effectiveDate: string
-  /** Route of the current page — highlights the matching pill in the legal nav. */
+
   path: LegalPath
   sections: LegalSection[]
   footerNote?: ReactNode

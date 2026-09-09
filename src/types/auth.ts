@@ -1,6 +1,4 @@
-/**
- * Authentication types
- */
+
 
 import { Plan } from './api'
 
@@ -16,8 +14,6 @@ export interface User {
   created_at: string;
   plan?: Plan;
 }
-
-// Plan interface is defined in api.ts
 
 export interface AuthState {
   user: User | null;
@@ -55,7 +51,6 @@ export interface LoginResponse {
   user: User;
 }
 
-/** Backend returns user only; client logs in after register. */
 export type RegisterResponse = User;
 
 export interface ApiKey {

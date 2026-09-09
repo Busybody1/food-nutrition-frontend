@@ -150,7 +150,7 @@ export function ApiPlaygroundPage() {
           result={result}
         />
 
-        {/* Mobile/tablet never see the sidebar — repeat the demo limits so 429s aren't a surprise. */}
+        {}
         <RateLimitCallout className="lg:hidden mt-8 max-w-4xl" />
 
         <div className="marketing-callout mt-10 max-w-4xl">

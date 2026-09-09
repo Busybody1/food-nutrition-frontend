@@ -2,11 +2,6 @@ import { MarketingStatStrip } from '@/components/marketing/marketing-shell'
 import { Reveal } from '@/components/marketing/reveal'
 import { FOOD_DATABASE_SIZE_LABEL } from '@/lib/site'
 
-/**
- * Trust stats: catalog facts always show; performance claims (uptime, latency)
- * only render when set via env so we never publish unmeasured numbers.
- * NEXT_PUBLIC_STAT_UPTIME e.g. "99.9%" · NEXT_PUBLIC_STAT_LATENCY e.g. "120ms"
- */
 export function StatsBand() {
   const uptime = process.env.NEXT_PUBLIC_STAT_UPTIME?.trim()
   const latency = process.env.NEXT_PUBLIC_STAT_LATENCY?.trim()

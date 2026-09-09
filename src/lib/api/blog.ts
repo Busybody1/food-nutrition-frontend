@@ -1,7 +1,4 @@
-/**
- * Public blog data access for Server Components.
- * Reads published posts from the backend; never sends auth credentials.
- */
+
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
@@ -106,20 +103,13 @@ export async function getBlogPostsPage(options?: {
   return normalizeListResponse(raw, limit, skip, q)
 }
 
-/** Fetch up to `limit` posts (used by RSS, llms.txt, and other full feeds). */
 export async function getBlogPosts(limit = 100): Promise<BlogListItem[]> {
   const page = await getBlogPostsPage({ limit, skip: 0 })
   return page.items
 }
 
 export async function getBlogPost(slug: string): Promise<BlogPost | null> {
-  // Unlike the list helpers, a single-post fetch must distinguish a genuine
-  // 404 (post doesn't exist → null → the page renders notFound() + noindex,
-  // which is correct) from a transient upstream failure (5xx / network /
-  // timeout). Returning null on a transient error would emit noindex + 404 on
-  // a REAL published post and let a crawler cache that. So we throw on
-  // transient errors instead: Next then keeps serving the last-good ISR page
-  // rather than baking a bad noindex.
+
   let res: Response
   try {
     res = await fetch(`${API_BASE_URL}/api/v1/public/blog/${encodeURIComponent(slug)}`, {

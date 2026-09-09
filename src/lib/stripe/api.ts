@@ -1,6 +1,5 @@
 import { STRIPE_API_ENDPOINTS } from './config'
 
-// API client for Stripe-related endpoints
 class StripeAPI {
   private baseURL: string
 
@@ -13,12 +12,11 @@ class StripeAPI {
     options: RequestInit = {}
   ): Promise<T> {
     const url = `${this.baseURL}${endpoint}`
-    
+
     const defaultHeaders: Record<string, string> = {
       'Content-Type': 'application/json',
     }
 
-    // Add auth token if available
     if (typeof window !== 'undefined') {
       const token = localStorage.getItem('access_token')
       if (token) {
@@ -36,7 +34,7 @@ class StripeAPI {
 
     try {
       const response = await fetch(url, config)
-      
+
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}))
         throw new Error(errorData.detail || `HTTP ${response.status}`)
@@ -49,7 +47,6 @@ class StripeAPI {
     }
   }
 
-  // Customer management
   async createCustomer(): Promise<{ customer_id: string }> {
     return this.request(STRIPE_API_ENDPOINTS.CUSTOMERS, {
       method: 'POST',
@@ -60,7 +57,6 @@ class StripeAPI {
     return this.request(`${STRIPE_API_ENDPOINTS.CUSTOMERS}/me`)
   }
 
-  // Subscription management
   async createSubscription(data: {
     plan_id: number
     payment_method_id?: string
@@ -89,7 +85,6 @@ class StripeAPI {
     })
   }
 
-  // Checkout sessions
   async createCheckoutSession(data: {
     plan_id: number
     success_url?: string
@@ -101,14 +96,12 @@ class StripeAPI {
     })
   }
 
-  // Customer portal
   async createCustomerPortalSession(): Promise<{ url: string }> {
     return this.request(STRIPE_API_ENDPOINTS.CUSTOMER_PORTAL, {
       method: 'POST',
     })
   }
 
-  // Payment methods
   async getPaymentMethods(): Promise<Record<string, unknown>[]> {
     return this.request(STRIPE_API_ENDPOINTS.PAYMENT_METHODS)
   }
@@ -119,12 +112,10 @@ class StripeAPI {
     })
   }
 
-  // Invoices
   async getInvoices(limit: number = 10): Promise<Record<string, unknown>[]> {
     return this.request(`${STRIPE_API_ENDPOINTS.INVOICES}?limit=${limit}`)
   }
 
-  // Plans
   async getPlans(): Promise<Record<string, unknown>[]> {
     return this.request(STRIPE_API_ENDPOINTS.PLANS)
   }
@@ -133,12 +124,10 @@ class StripeAPI {
     return this.request(`${STRIPE_API_ENDPOINTS.PLANS}/${plan_id}`)
   }
 
-  // Usage
   async getUsage(): Promise<Record<string, unknown>> {
     return this.request(STRIPE_API_ENDPOINTS.USAGE)
   }
 
-  // Payment intents
   async createPaymentIntent(data: {
     amount: number
     currency?: string
@@ -150,10 +139,8 @@ class StripeAPI {
   }
 }
 
-// Export singleton instance
 export const stripeAPI = new StripeAPI()
 
-// Export individual methods for convenience
 export const {
   createCustomer,
   getCustomer,

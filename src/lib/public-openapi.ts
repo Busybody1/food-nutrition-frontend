@@ -1,4 +1,4 @@
-/** Public OpenAPI for /openapi.json: allowlist product paths, brand the spec, drop unused schemas. */
+
 
 export type PublicOpenApiSite = {
   siteName: string
@@ -23,13 +23,11 @@ const PRODUCT_PATH_PREFIXES = [
   '/api/v1/auth',
 ] as const
 
-/** True when the path is a public product endpoint (not admin/webhooks/demo). */
 export function isPublicProductPath(path: string): boolean {
   if (path === '/health') return true
   return PRODUCT_PATH_PREFIXES.some((prefix) => path === prefix || path.startsWith(`${prefix}/`))
 }
 
-/** Hardcoded /openapi.json on the configured API origin only — never a caller URL. */
 export function resolveOpenApiSourceUrl(apiBase: string): string | null {
   const trimmed = apiBase.trim()
   if (!trimmed) return null
@@ -122,7 +120,6 @@ function usedTagNames(paths: JsonObject): Set<string> {
   return names
 }
 
-/** Filter a FastAPI spec down to the public product API and brand it. */
 export function toPublicOpenApiDocument(raw: unknown, site: PublicOpenApiSite): JsonObject {
   if (!isJsonObject(raw) || !isJsonObject(raw.paths) || typeof raw.openapi !== 'string') {
     throw new Error('invalid_openapi')
@@ -186,7 +183,6 @@ export function toPublicOpenApiDocument(raw: unknown, site: PublicOpenApiSite): 
   return document
 }
 
-/** Fetch the backend spec from the configured API origin and publish a sanitized copy. */
 export async function loadPublicOpenApiDocument(
   site: PublicOpenApiSite,
   fetchImpl: typeof fetch = fetch

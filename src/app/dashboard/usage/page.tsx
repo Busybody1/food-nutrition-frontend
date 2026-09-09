@@ -47,7 +47,6 @@ export default function UsagePage() {
   const [error, setError] = useState('')
   const [timeRange, setTimeRange] = useState<'7d' | '30d' | '90d'>('7d')
 
-  // Redirect if not authenticated
   useEffect(() => {
     if (!loading && !isAuthenticated) {
       router.push('/auth/login')
@@ -59,9 +58,8 @@ export default function UsagePage() {
       setIsLoading(true)
       setError('')
 
-      // Import API client
       const { api } = await import('@/lib/api/client')
-      
+
       const [usageResponse, endpointResponse, statsResponse] = await Promise.all([
         api.usage.getUsageData(timeRange),
         api.usage.getEndpointUsage(timeRange),
@@ -88,7 +86,6 @@ export default function UsagePage() {
     }
   }, [timeRange])
 
-  // Load usage data
   useEffect(() => {
     if (!loading && isAuthenticated) {
       loadUsageData()
@@ -98,14 +95,13 @@ export default function UsagePage() {
   const handleExport = async () => {
     try {
       setIsExporting(true)
-      
-      // Import API client
+
       const { api } = await import('@/lib/api/client')
-      
+
       const response = await api.usage.exportUsageData(timeRange)
-      
+
       if (response.success) {
-        // Create download link for the exported data
+
         const blob = new Blob([response.data as BlobPart], { type: 'text/csv' })
         const url = window.URL.createObjectURL(blob)
         const a = document.createElement('a')
@@ -188,10 +184,10 @@ export default function UsagePage() {
                 <div className="flex justify-between">
                   <span className="text-sm text-ink-muted">Start Date</span>
                   <span className="text-sm font-medium">
-                    {new Date().toLocaleDateString('en-US', { 
-                      month: 'long', 
-                      day: 'numeric', 
-                      year: 'numeric' 
+                    {new Date().toLocaleDateString('en-US', {
+                      month: 'long',
+                      day: 'numeric',
+                      year: 'numeric'
                     })}
                   </span>
                 </div>
@@ -199,10 +195,10 @@ export default function UsagePage() {
                   <span className="text-sm text-gray-600">End Date</span>
                   <span className="text-sm font-medium">
                     {new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0)
-                      .toLocaleDateString('en-US', { 
-                        month: 'long', 
-                        day: 'numeric', 
-                        year: 'numeric' 
+                      .toLocaleDateString('en-US', {
+                        month: 'long',
+                        day: 'numeric',
+                        year: 'numeric'
                       })}
                   </span>
                 </div>
@@ -253,7 +249,7 @@ export default function UsagePage() {
                 <div className="flex justify-between">
                   <span className="text-sm text-gray-600">Avg Response Time</span>
                   <span className="text-sm font-medium">
-                    {usageData.length > 0 
+                    {usageData.length > 0
                       ? Math.round(usageData.reduce((sum, d) => sum + d.avgResponseTime, 0) / usageData.length)
                       : 0}ms
                   </span>
@@ -261,7 +257,7 @@ export default function UsagePage() {
                 <div className="flex justify-between">
                   <span className="text-sm text-gray-600">Error Rate</span>
                   <span className="text-sm font-medium">
-                    {usageData.length > 0 
+                    {usageData.length > 0
                       ? ((usageData.reduce((sum, d) => sum + d.errors, 0) / usageData.reduce((sum, d) => sum + d.requests, 0)) * 100).toFixed(2)
                       : 0}%
                   </span>

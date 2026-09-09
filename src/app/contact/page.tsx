@@ -41,8 +41,6 @@ function ContactPageContent() {
   const [honeypot, setHoneypot] = useState('')
   const [showScheduler, setShowScheduler] = useState(false)
 
-  // ?inquiry=enterprise deep-link: adjust state during render (React-docs pattern,
-  // replaces the previous setState-in-effect) so the preselection is flash-free.
   const inquiry = searchParams.get('inquiry')
   const [appliedInquiry, setAppliedInquiry] = useState<string | null>(null)
   if (inquiry !== appliedInquiry) {
@@ -76,7 +74,6 @@ function ContactPageContent() {
     }
   }
 
-  // Mirrors the ?inquiry=enterprise deep-link: show the scheduler and bring it into view.
   const handleEnterpriseSelect = () => {
     setShowScheduler(true)
     setFormData((prev) => ({

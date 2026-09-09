@@ -8,8 +8,8 @@ import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
-import { 
-  Settings, Save, RefreshCw, AlertCircle, 
+import {
+  Settings, Save, RefreshCw, AlertCircle,
   ToggleLeft, Hash, Type, Code
 } from 'lucide-react'
 import { apiClient } from '@/lib/api/client'
@@ -50,7 +50,7 @@ export default function AdminSettingsPage() {
     try {
       setIsLoading(true)
       setError('')
-      
+
       const response = await apiClient.get<SystemSetting[]>('/api/v1/admin/settings')
       setSettings(response.data)
     } catch (error) {
@@ -73,18 +73,17 @@ export default function AdminSettingsPage() {
   const handleSave = async (settingKey: string) => {
     try {
       setSaving(settingKey)
-      
+
       const response = await apiClient.put(`/api/v1/admin/settings/${settingKey}`, {
         setting_value: editValue
       })
-      
-      // Update the settings list
-      setSettings(prev => prev.map(s => 
-        s.setting_key === settingKey 
+
+      setSettings(prev => prev.map(s =>
+        s.setting_key === settingKey
           ? { ...s, setting_value: editValue, updated_at: (response.data as SettingUpdateResponse).updated_at }
           : s
       ))
-      
+
       setEditingKey(null)
       setEditValue('')
     } catch (error) {
@@ -148,7 +147,6 @@ export default function AdminSettingsPage() {
       }
     }
 
-    // Display current value
     if (setting.setting_type === 'boolean') {
       return (
         <div className="flex items-center space-x-2">
@@ -220,7 +218,7 @@ export default function AdminSettingsPage() {
         </AdminPanel>
       )}
 
-      {/* Settings List */}
+      {}
       <div className="space-y-4">
         {settings.map((setting) => (
           <Card key={setting.setting_key}>
@@ -241,11 +239,11 @@ export default function AdminSettingsPage() {
                       </Badge>
                     )}
                   </div>
-                  
+
                   <p className="text-sm text-gray-600 mb-4">
                     {setting.description}
                   </p>
-                  
+
                   <div className="mb-4">
                     <Label className="text-sm font-medium text-gray-700">
                       Current Value:
@@ -254,12 +252,12 @@ export default function AdminSettingsPage() {
                       {renderSettingValue(setting)}
                     </div>
                   </div>
-                  
+
                   <div className="text-xs text-gray-500">
                     Last updated: {new Date(setting.updated_at).toLocaleString()}
                   </div>
                 </div>
-                
+
                 <div className="ml-4 flex space-x-2">
                   {editingKey === setting.setting_key ? (
                     <>

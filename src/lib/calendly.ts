@@ -1,7 +1,6 @@
 const CALENDLY_HOST = 'calendly.com'
 const DEFAULT_CALENDLY_ENTERPRISE_URL = 'https://calendly.com/busybodycomp/30min'
 
-/** Only allow https Calendly URLs so an env misconfig cannot become an iframe XSS vector. */
 export function resolveCalendlyUrl(raw: string | undefined): string {
   const candidate = raw?.trim() || DEFAULT_CALENDLY_ENTERPRISE_URL
   try {

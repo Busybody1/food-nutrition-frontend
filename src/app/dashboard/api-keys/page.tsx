@@ -32,14 +32,12 @@ export default function ApiKeysPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
 
-  // Redirect if not authenticated
   useEffect(() => {
     if (!loading && !isAuthenticated) {
       router.push('/auth/login')
     }
   }, [isAuthenticated, loading, router])
 
-  // Load API keys and user plan
   useEffect(() => {
     if (!loading && isAuthenticated) {
       loadData()
@@ -51,10 +49,8 @@ export default function ApiKeysPage() {
       setIsLoading(true)
       setError('')
 
-      // Import API client
       const { api } = await import('@/lib/api/client')
-      
-      // Load API keys and user profile
+
       const [apiKeysResponse, profileResponse] = await Promise.all([
         api.apiKeys.list(),
         api.user.getProfile()
@@ -71,7 +67,7 @@ export default function ApiKeysPage() {
       if (profileResponse.success) {
         const userProfile = profileResponse.data as { plan?: { name?: string; max_api_keys?: number } }
         const userPlan: UserPlan = {
-          // Backend plans.max_api_keys is the source of truth; default to 1 only when truly absent.
+
           max_api_keys: userProfile.plan?.max_api_keys ?? 1,
           plan_name: userProfile.plan?.name || 'Free'
         }
@@ -106,12 +102,11 @@ export default function ApiKeysPage() {
 
   const handleDelete = async (id: number): Promise<void> => {
     try {
-      // Import API client
+
       const { api } = await import('@/lib/api/client')
-      
-      // Delete API key
+
       const response = await api.apiKeys.revoke(id)
-      
+
       if (response.success) {
         removeStashedApiKeyPlaintext(id)
         setApiKeys(prev => prev.filter(key => key.id !== id))

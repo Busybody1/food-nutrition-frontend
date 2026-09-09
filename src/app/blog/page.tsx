@@ -20,10 +20,6 @@ function parsePage(value?: string): number {
   return Number.isFinite(n) && n > 0 ? n : 1
 }
 
-/**
- * Self-referencing canonicals per pagination page (canonical-to-page-1 hides
- * deep pages from crawlers); search-result variants are noindexed.
- */
 export async function generateMetadata({ searchParams }: PageProps): Promise<Metadata> {
   const { page: pageParam, q } = await searchParams
   const page = parsePage(pageParam)

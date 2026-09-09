@@ -38,12 +38,12 @@ export function SubscriptionCard({
 
     try {
       setIsProcessing(true)
-      
+
       if (isUpgrade || isDowngrade) {
-        // Handle plan change
+
         onSelect(plan)
       } else {
-        // Redirect to checkout page for new subscriptions
+
         window.location.href = `/checkout?plan_id=${plan.id}`
       }
     } catch (error) {
@@ -55,7 +55,7 @@ export function SubscriptionCard({
 
   const handleDirectSubscriptionSuccess = () => {
     setShowDirectForm(false)
-    // Reload subscription data
+
     window.location.reload()
   }
 

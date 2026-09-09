@@ -18,7 +18,7 @@ import { isContactSalesPlan, isEnterprisePlan, type PricingPlan } from '@/lib/pr
 import { cn } from '@/lib/utils/cn'
 
 type PricingContentProps = {
-  /** Server-fetched plans so the grid is in the SSR HTML (crawlable prices). */
+
   initialPlans: PricingPlan[]
   initialError: string | null
 }
@@ -58,7 +58,6 @@ export function PricingContent({ initialPlans, initialError }: PricingContentPro
     return { selfServePlans: selfServe, enterprisePlans: enterprise }
   }, [plans])
 
-  // Client-side fallback when server-side plan loading failed or returned nothing.
   useEffect(() => {
     if (initialPlans.length > 0) return
     const loadPlans = async () => {
@@ -90,7 +89,7 @@ export function PricingContent({ initialPlans, initialError }: PricingContentPro
           )
         }
       } catch {
-        // no subscription
+
       }
     }
     loadSubscription()

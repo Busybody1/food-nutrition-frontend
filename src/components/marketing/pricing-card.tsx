@@ -47,7 +47,7 @@ export function PricingCard({
   plan: PricingPlan
   isCurrent: boolean
   isPopular?: boolean
-  /** Tightens intra-card layout when five tiers share one row at xl. */
+
   dense?: boolean
   onSelect: () => void
 }) {
@@ -73,7 +73,7 @@ export function PricingCard({
         'relative flex h-full w-full flex-col rounded-brand border bg-white transition-all duration-200',
         dense ? 'p-6 xl:p-5' : 'p-6',
         isPopular
-          ? // Featured tier: brand hairline, warm tint, glow, and a resting lift at lg+.
+          ?
             'border-brand/50 bg-gradient-to-b from-brand-muted/40 via-white to-white shadow-glow hover:shadow-glow-lg motion-safe:hover:-translate-y-0.5 lg:-translate-y-1.5 motion-safe:lg:hover:-translate-y-2 before:pointer-events-none before:absolute before:inset-x-0 before:top-0 before:h-[3px] before:rounded-t-brand before:bg-gradient-to-r before:from-brand/60 before:via-brand before:to-brand-soft before:content-[""]'
           : 'border-surface-border/80 shadow-glass hover:border-brand/30 hover:shadow-glass-lg motion-safe:hover:-translate-y-0.5'
       )}
@@ -91,7 +91,7 @@ export function PricingCard({
         <h3 className="text-lg font-semibold text-ink">{plan.name}</h3>
       </div>
 
-      {/* Reserved line on every card so prices baseline-align across the row. */}
+      {}
       <div className="mb-3 flex min-h-6 items-center">
         {commercial && (
           <span className="inline-flex items-center rounded-full bg-brand-muted px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-brand-strong">

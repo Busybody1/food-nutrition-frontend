@@ -1,4 +1,4 @@
-/** Trimmed barcode lookup example for docs (Nutella via Open Food Facts fallback). */
+
 export const BARCODE_LOOKUP_EXAMPLE = {
   barcode: '3017620422003',
   product: {

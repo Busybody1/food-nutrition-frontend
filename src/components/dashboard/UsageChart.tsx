@@ -35,10 +35,10 @@ export function UsageChart({ data, endpointData, currentUsage, quota, planName }
 
   const getTrendIcon = () => {
     if (data.length < 2) return <Minus className="h-4 w-4 text-ink-dim" />
-    
+
     const latest = data[data.length - 1].requests
     const previous = data[data.length - 2].requests
-    
+
     if (latest > previous) return <TrendingUp className="h-4 w-4 text-green-600" />
     if (latest < previous) return <TrendingDown className="h-4 w-4 text-red-600" />
     return <Minus className="h-4 w-4 text-ink-dim" />
@@ -46,11 +46,11 @@ export function UsageChart({ data, endpointData, currentUsage, quota, planName }
 
   const getTrendText = () => {
     if (data.length < 2) return 'No trend data'
-    
+
     const latest = data[data.length - 1].requests
     const previous = data[data.length - 2].requests
     const change = latest - previous
-    
+
     if (change > 0) return `+${change} from yesterday`
     if (change < 0) return `${change} from yesterday`
     return 'Same as yesterday'
@@ -58,7 +58,7 @@ export function UsageChart({ data, endpointData, currentUsage, quota, planName }
 
   return (
     <div className="space-y-6">
-      {/* Usage Overview */}
+      {}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardContent className="p-4">
@@ -138,7 +138,7 @@ export function UsageChart({ data, endpointData, currentUsage, quota, planName }
         </Card>
       </div>
 
-      {/* Usage Trend Chart */}
+      {}
       <Card>
         <CardHeader>
           <CardTitle>Usage Trend (Last 7 Days)</CardTitle>
@@ -148,36 +148,36 @@ export function UsageChart({ data, endpointData, currentUsage, quota, planName }
             <ResponsiveContainer width="100%" height="100%" style={{ overflow: 'visible' }}>
               <LineChart data={data}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis 
-                  dataKey="date" 
+                <XAxis
+                  dataKey="date"
                   tickFormatter={(value) => new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                 />
                 <YAxis />
                 <Tooltip
                   allowEscapeViewBox={{ x: true, y: true }}
-                  wrapperStyle={{ zIndex: 30, outline: 'none' }} 
-                  labelFormatter={(value) => new Date(value).toLocaleDateString('en-US', { 
-                    weekday: 'long', 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
+                  wrapperStyle={{ zIndex: 30, outline: 'none' }}
+                  labelFormatter={(value) => new Date(value).toLocaleDateString('en-US', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
                   })}
                   formatter={(value, name) => [
-                    value.toLocaleString(), 
+                    value.toLocaleString(),
                     name === 'requests' ? 'Requests' : name === 'errors' ? 'Errors' : 'Avg Response Time (ms)'
                   ]}
                 />
-                <Line 
-                  type="monotone" 
-                  dataKey="requests" 
-                  stroke="#3b82f6" 
+                <Line
+                  type="monotone"
+                  dataKey="requests"
+                  stroke="#3b82f6"
                   strokeWidth={2}
                   dot={{ fill: '#3b82f6', strokeWidth: 2, r: 4 }}
                 />
-                <Line 
-                  type="monotone" 
-                  dataKey="errors" 
-                  stroke="#ef4444" 
+                <Line
+                  type="monotone"
+                  dataKey="errors"
+                  stroke="#ef4444"
                   strokeWidth={2}
                   dot={{ fill: '#ef4444', strokeWidth: 2, r: 4 }}
                 />
@@ -187,7 +187,7 @@ export function UsageChart({ data, endpointData, currentUsage, quota, planName }
         </CardContent>
       </Card>
 
-      {/* Endpoint Usage Breakdown */}
+      {}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
@@ -198,16 +198,16 @@ export function UsageChart({ data, endpointData, currentUsage, quota, planName }
               <ResponsiveContainer width="100%" height="100%" style={{ overflow: 'visible' }}>
                 <BarChart data={endpointData}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis 
-                    dataKey="endpoint" 
+                  <XAxis
+                    dataKey="endpoint"
                     tickFormatter={(value) => value.replace('_', ' ').toUpperCase()}
                   />
                   <YAxis />
                   <Tooltip
                     allowEscapeViewBox={{ x: true, y: true }}
-                    wrapperStyle={{ zIndex: 30, outline: 'none' }} 
+                    wrapperStyle={{ zIndex: 30, outline: 'none' }}
                     formatter={(value, name) => [
-                      value.toLocaleString(), 
+                      value.toLocaleString(),
                       name === 'request_count' ? 'Requests' : 'Errors'
                     ]}
                   />
@@ -251,7 +251,7 @@ export function UsageChart({ data, endpointData, currentUsage, quota, planName }
         </Card>
       </div>
 
-      {/* Endpoint Details Table */}
+      {}
       <Card>
         <CardHeader>
           <CardTitle>Endpoint Performance</CardTitle>
@@ -277,15 +277,15 @@ export function UsageChart({ data, endpointData, currentUsage, quota, planName }
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {endpointData.map((endpoint, index) => {
-                  const errorRate = endpoint.request_count > 0 
+                  const errorRate = endpoint.request_count > 0
                     ? ((endpoint.error_count / endpoint.request_count) * 100).toFixed(1)
                     : '0.0'
-                  
+
                   return (
                     <tr key={endpoint.endpoint}>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
-                          <div 
+                          <div
                             className="h-3 w-3 rounded-full mr-3"
                             style={{ backgroundColor: COLORS[index % COLORS.length] }}
                           />
@@ -302,7 +302,7 @@ export function UsageChart({ data, endpointData, currentUsage, quota, planName }
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                          parseFloat(errorRate) > 5 
+                          parseFloat(errorRate) > 5
                             ? 'bg-red-100 text-red-800'
                             : parseFloat(errorRate) > 1
                             ? 'bg-yellow-100 text-yellow-800'

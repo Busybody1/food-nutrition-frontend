@@ -42,8 +42,6 @@ export default function AdminTestimonialsPage() {
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  // isLoading starts true and only clears in async callbacks, so the mount
-  // effect never sets state synchronously (react-hooks/set-state-in-effect).
   const load = useCallback(() => {
     adminAPI
       .getTestimonials({ limit: 200 })

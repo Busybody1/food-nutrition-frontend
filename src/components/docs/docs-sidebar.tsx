@@ -38,7 +38,7 @@ export function DocsSidebar({ groups }: { groups: DocsNavGroup[] }) {
 
   useEffect(() => {
     if (!sidebarOpen) {
-      // Restore focus to the FAB after the drawer closes (mobile only).
+
       if (wasOpenRef.current) {
         wasOpenRef.current = false
         fabRef.current?.focus()
@@ -54,7 +54,7 @@ export function DocsSidebar({ groups }: { groups: DocsNavGroup[] }) {
         setSidebarOpen(false)
         return
       }
-      // Keep Tab focus inside the open drawer (dialog behavior).
+
       if (e.key !== 'Tab' || !asideRef.current) return
       const focusable = Array.from(
         asideRef.current.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)

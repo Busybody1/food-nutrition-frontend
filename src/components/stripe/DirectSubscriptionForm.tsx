@@ -50,7 +50,6 @@ export function DirectSubscriptionForm({
         throw new Error('Card element not found')
       }
 
-      // Step 1: Create payment method
       const { error: stripeError, paymentMethod } = await stripe.createPaymentMethod({
         type: 'card',
         card: cardElement,
@@ -64,14 +63,12 @@ export function DirectSubscriptionForm({
         throw new Error('Failed to create payment method')
       }
 
-      // Step 2: Create subscription with payment method
       setStep('confirming')
       const subscriptionResponse = await stripeAPI.createSubscription({
         plan_id: planId,
         payment_method_id: paymentMethod.id,
       }) as { client_secret?: string; subscription_id?: string; status?: string }
 
-      // Step 3: Handle payment confirmation if required
       if (subscriptionResponse.client_secret) {
         const { error: confirmError } = await stripe.confirmCardPayment(
           subscriptionResponse.client_secret

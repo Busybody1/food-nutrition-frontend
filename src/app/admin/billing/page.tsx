@@ -94,7 +94,6 @@ export default function AdminBillingPage() {
     loadSubs()
   }, [loadSubs])
 
-  // Reset paging in the setters, not an effect, so each change fetches once.
   const applySort = (next: AdminSortState<SubSortKey>) => {
     setSort(next)
     setPage(1)

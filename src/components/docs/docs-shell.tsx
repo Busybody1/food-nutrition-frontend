@@ -5,7 +5,6 @@ import { buildDocsNavGroups } from '@/lib/docs/nav'
 const FOOTER_LINK_CLASS =
   'rounded-lg font-medium text-brand-strong underline decoration-brand/40 underline-offset-2 hover:decoration-brand-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2'
 
-/** Shared docs chrome: sidebar + main column. Server component; sidebar hydrates on the client. */
 export function DocsShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="docs-layout bg-white">

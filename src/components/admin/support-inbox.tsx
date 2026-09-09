@@ -153,7 +153,7 @@ export function SupportInbox({ initialConversationId }: { initialConversationId?
           setMessages((current) => mergeMessages(current, data.messages))
         }
       } catch {
-        // Ignore poll errors.
+
       }
     }, 3000)
     return () => window.clearInterval(timer)

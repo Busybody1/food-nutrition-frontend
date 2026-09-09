@@ -43,7 +43,6 @@ export function Header() {
   const dashboardHref = getDashboardPath(user)
   const dashboardActive = isDashboardPathActive(pathname, user)
 
-  // Elevate the floating bar once the page scrolls past the hero seam.
   useEffect(() => {
     const onScroll = () => setIsScrolled(window.scrollY > 24)
     onScroll()
@@ -51,7 +50,6 @@ export function Header() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  // Lock page scroll behind the mobile menu while it is open.
   useEffect(() => {
     if (!isMenuOpen) return
     const previousOverflow = document.body.style.overflow

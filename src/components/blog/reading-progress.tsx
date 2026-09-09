@@ -2,12 +2,6 @@
 
 import { useEffect, useRef } from 'react'
 
-/**
- * Fixed scroll-progress hairline for long-form articles. Purely decorative
- * (aria-hidden) and scroll-driven only — it never animates on its own, so it
- * is safe under prefers-reduced-motion. Sits at the very top edge of the
- * viewport, above the floating header pill (which starts 1rem down).
- */
 export function ReadingProgress() {
   const barRef = useRef<HTMLDivElement | null>(null)
 

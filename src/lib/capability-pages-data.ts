@@ -11,9 +11,9 @@ export type CapabilityFeature = {
 }
 
 export type CapabilityPage = {
-  /** Top-level URL segment, e.g. 'barcode-nutrition-api' → /barcode-nutrition-api */
+
   slug: string
-  /** Primary query, used as h1 */
+
   h1: string
   metaTitle: string
   description: string
@@ -25,9 +25,9 @@ export type CapabilityPage = {
   features: CapabilityFeature[]
   faqs: FaqItem[]
   related: { label: string; href: string }[]
-  /** One-line summary for hubs and llms.txt */
+
   summary: string
-  /** ISO date, update when content materially changes */
+
   dateModified: string
 }
 

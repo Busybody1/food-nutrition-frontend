@@ -42,10 +42,6 @@ function sectionLabel(section: CompareRow['section']): string | null {
   return SECTION_LABELS[section]
 }
 
-/**
- * Sticky first column needs opaque backgrounds; these are the flattened
- * (over-white) equivalents of bg-brand-muted/50 and bg-surface-elevated/50.
- */
 const STICKY_HEAD_BG = 'bg-[#F4FDFE]'
 const STICKY_ZEBRA_BG = 'bg-[#FBFDFE]'
 const STICKY_EDGE_SHADOW = 'max-lg:shadow-[inset_-8px_0_8px_-8px_rgba(0,0,0,0.08)]'
@@ -69,7 +65,7 @@ export function PricingComparison({ plans }: { plans: PricingPlan[] }) {
         <Reveal delay={120}>
           <div className="relative">
             <div className="overflow-x-auto max-w-full rounded-brand border border-surface-border/80 bg-white shadow-glass [-webkit-overflow-scrolling:touch]">
-              {/* border-separate (not collapse) so the sticky row headers keep working while scrolling. */}
+              {}
               <table className="w-full min-w-[720px] text-left border-separate border-spacing-0">
                 <thead>
                   <tr className="bg-brand-muted/50">
@@ -114,7 +110,7 @@ export function PricingComparison({ plans }: { plans: PricingPlan[] }) {
                               colSpan={plans.length + 1}
                               className="border-b border-surface-border/60 py-2 pl-5 pr-4 text-xs font-semibold uppercase tracking-wider text-ink-muted"
                             >
-                              {/* Sticky label so section names stay readable mid horizontal scroll. */}
+                              {}
                               <span className="sticky left-5 inline-block">
                                 {sectionLabel(row.section)}
                               </span>
@@ -152,7 +148,7 @@ export function PricingComparison({ plans }: { plans: PricingPlan[] }) {
                 </tbody>
               </table>
             </div>
-            {/* Mobile affordance: the table continues past the right edge. */}
+            {}
             <div
               aria-hidden
               className="pointer-events-none absolute inset-y-0 right-0 w-12 rounded-r-brand bg-gradient-to-l from-white lg:hidden"

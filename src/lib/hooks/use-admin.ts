@@ -25,37 +25,31 @@ interface AdminAuthState {
 }
 
 const ADMIN_PERMISSIONS = {
-  // User Management
+
   VIEW_USERS: 'admin:users:view',
   CREATE_USERS: 'admin:users:create',
   UPDATE_USERS: 'admin:users:update',
   DELETE_USERS: 'admin:users:delete',
   MANAGE_USER_STATUS: 'admin:users:status',
 
-  // Analytics
   VIEW_ANALYTICS: 'admin:analytics:view',
   EXPORT_DATA: 'admin:analytics:export',
 
-  // Monitoring
   VIEW_MONITORING: 'admin:monitoring:view',
   MANAGE_ALERTS: 'admin:monitoring:alerts',
   VIEW_LOGS: 'admin:monitoring:logs',
 
-  // Settings
   VIEW_SETTINGS: 'admin:settings:view',
   UPDATE_SETTINGS: 'admin:settings:update',
   SYSTEM_ACTIONS: 'admin:system:actions',
 
-  // Billing
   VIEW_BILLING: 'admin:billing:view',
   MANAGE_BILLING: 'admin:billing:manage',
 
-  // API Management
   VIEW_API_KEYS: 'admin:api:view',
   MANAGE_API_KEYS: 'admin:api:manage',
   VIEW_RATE_LIMITS: 'admin:api:rate_limits',
 
-  // Reports
   VIEW_REPORTS: 'admin:reports:view',
   GENERATE_REPORTS: 'admin:reports:generate',
 
@@ -162,7 +156,7 @@ export function useAdmin(): AdminAuthState {
         hasPermission: buildHasPermission(enrichedUser.permissions)
       })
     } catch {
-      // Profile enrichment is optional; session admin access is sufficient.
+
     }
   }, [authLoading, authIsAuthenticated, authUser])
 
@@ -192,13 +186,11 @@ export function useAdmin(): AdminAuthState {
   return adminState
 }
 
-// Hook for checking specific permissions
 export function useAdminPermission(permission: string): boolean {
   const { hasPermission } = useAdmin()
   return hasPermission(permission)
 }
 
-// Hook for admin-only components
 export function useRequireAdmin() {
   const { isAdmin, isLoading } = useAdmin()
 
@@ -209,7 +201,6 @@ export function useRequireAdmin() {
   return { isAdmin, isLoading }
 }
 
-// Hook for super admin-only components
 export function useRequireSuperAdmin() {
   const { isSuperAdmin, isLoading } = useAdmin()
 
@@ -220,5 +211,4 @@ export function useRequireSuperAdmin() {
   return { isSuperAdmin, isLoading }
 }
 
-// Permission constants for easy use
 export { ADMIN_PERMISSIONS }

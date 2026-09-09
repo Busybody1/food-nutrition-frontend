@@ -31,7 +31,6 @@ function readingMinutes(excerpt?: string | null): number {
   return Math.max(3, Math.min(12, Math.round(words / 40) + 4))
 }
 
-/** Deterministic decorative icon per post so the text-only grid gets visual variety. */
 const CARD_ICONS = [Code2, ScanBarcode, Database, Utensils, LineChart, Salad] as const
 
 function slugHash(slug: string): number {
@@ -156,7 +155,6 @@ function BlogSidebar() {
   )
 }
 
-/** Below-lg duplicate of the sidebar conversion card so mobile users see it in the reading flow. */
 function BlogMobileSignup({ className }: { className?: string }) {
   return (
     <aside className={`flex flex-col gap-4 lg:hidden ${className ?? ''}`} aria-label="Get started">

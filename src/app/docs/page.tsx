@@ -86,7 +86,6 @@ print_r($data);
 ?>`,
 }
 
-/** Legacy /docs#anchor ids → new sub-route cards, so old deep links still land nearby. */
 const SECTION_CARD_IDS: Record<string, string> = {
   'food-search': 'search',
   'barcode-lookup': 'barcode-lookup',
@@ -97,7 +96,6 @@ const SECTION_CARD_IDS: Record<string, string> = {
   authentication: 'api-keys',
 }
 
-/** Decorative per-section icons (aria-hidden; icons carry no copy). */
 const SECTION_ICONS: Record<string, typeof Key> = {
   authentication: Key,
   'food-search': Search,
@@ -108,7 +106,6 @@ const SECTION_ICONS: Record<string, typeof Key> = {
   errors: AlertTriangle,
 }
 
-/** Decorative per-framework icons (aria-hidden; icons carry no copy). */
 const GUIDE_ICONS: Record<string, typeof Key> = {
   'React Native': Smartphone,
   'Next.js': Globe,

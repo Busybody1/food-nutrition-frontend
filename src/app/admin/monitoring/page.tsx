@@ -57,9 +57,9 @@ export default function APIMonitoring() {
 
   useEffect(() => {
     loadMonitoringData()
-    
+
     if (autoRefresh) {
-      const interval = setInterval(loadMonitoringData, 30000) // Refresh every 30 seconds
+      const interval = setInterval(loadMonitoringData, 30000)
       return () => clearInterval(interval)
     }
   }, [autoRefresh])
@@ -217,7 +217,7 @@ export default function APIMonitoring() {
         }
       />
 
-      {/* System Overview */}
+      {}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card>
           <CardContent className="p-6">
@@ -298,7 +298,7 @@ export default function APIMonitoring() {
         </Card>
       </div>
 
-      {/* Services Status */}
+      {}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center">
@@ -343,9 +343,9 @@ export default function APIMonitoring() {
         </CardContent>
       </Card>
 
-      {/* Alerts and Logs */}
+      {}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Active Alerts */}
+        {}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center justify-between">
@@ -387,7 +387,7 @@ export default function APIMonitoring() {
           </CardContent>
         </Card>
 
-        {/* Recent Logs */}
+        {}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center">

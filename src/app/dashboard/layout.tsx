@@ -19,6 +19,7 @@ import {
   ExternalLink,
   MessageCircle,
   MessageSquare,
+  Settings,
   type LucideIcon,
 } from 'lucide-react'
 import { SITE_NAME } from '@/lib/site'
@@ -37,6 +38,7 @@ const navigation: {
   { name: 'API Keys', href: '/dashboard/api-keys', icon: Key },
   { name: 'Usage', href: '/dashboard/usage', icon: BarChart3 },
   { name: 'Billing', href: '/dashboard/billing', icon: CreditCard },
+  { name: 'Account', href: '/dashboard/account', icon: Settings },
   { name: 'Feedback', href: '#dashboard-feedback', icon: MessageSquare, hash: true },
 ]
 
@@ -165,7 +167,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <SupportChatProvider>
       <div className="min-h-screen bg-surface-elevated">
-      {/* Mobile overlay */}
+      {}
       <div
         className={cn(
           'fixed inset-0 z-50 lg:hidden transition-opacity',
@@ -197,7 +199,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </aside>
       </div>
 
-      {/* Desktop sidebar */}
+      {}
       <aside className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-[240px] lg:flex-col bg-white shadow-sidebar z-30">
         <div className="pt-6 pb-4">
           <SidebarBrand />

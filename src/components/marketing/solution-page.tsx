@@ -31,10 +31,6 @@ import { buildFaqPageJsonLd } from '@/lib/faq-data'
 import { RelatedResources } from '@/components/seo/related-resources'
 import { solutionPath, type SolutionPage } from '@/lib/solutions-data'
 
-/**
- * Decorative icons for the pain-point cards, keyed by solution slug and
- * ordered to match `painPoints` in solutions-data (data file stays untouched).
- */
 const PAIN_POINT_ICONS: Record<string, LucideIcon[]> = {
   'fitness-apps': [Zap, ShieldCheck, Database],
   'meal-planning-apps': [Database, Scale, Tags],

@@ -3,7 +3,6 @@ import { absoluteUrl, LEGAL_EMAIL, LEGAL_NAME } from '@/lib/site'
 
 const PRICING_URL = absoluteUrl('/pricing')
 
-/** Event-based effective date — rendered after "Effective" in the hero badge. */
 export const COMMERCIAL_LICENSE_EFFECTIVE_DATE = 'upon Plus Plan subscription'
 
 export const commercialLicenseSections: LegalSection[] = [

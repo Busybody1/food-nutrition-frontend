@@ -7,7 +7,6 @@ import { REFERENCE_DATA_CONTENT } from '@/lib/docs/content/reference-data'
 import { RATE_LIMITS_CONTENT } from '@/lib/docs/content/rate-limits'
 import { ERRORS_CONTENT } from '@/lib/docs/content/errors'
 
-/** Ordered registry, order drives sidebar, hub cards, and prev/next links. */
 export const DOCS_SECTIONS: DocsSectionMeta[] = [
   {
     slug: 'authentication',
@@ -145,7 +144,6 @@ export function docsSectionPath(slug: string): string {
   return `/docs/${slug}`
 }
 
-/** Previous/next sections in registry order, for pagination links. */
 export function getDocsSectionNeighbors(slug: string): {
   prev?: DocsSectionMeta
   next?: DocsSectionMeta

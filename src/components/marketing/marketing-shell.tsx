@@ -3,11 +3,6 @@ import { cn } from '@/lib/utils/cn'
 import { TrackedCtaLink } from '@/components/analytics/tracked-cta-link'
 import { CountUp } from '@/components/marketing/count-up'
 
-/**
- * Single source of truth for card chrome is the `.marketing-card` CSS class
- * (border, radius, p-5, shadow + hover lift). This constant exists for
- * consumers that compose the class string; keep it a pure alias.
- */
 export const marketingCardClass = 'marketing-card'
 
 export function MarketingSectionHeader({
@@ -21,7 +16,7 @@ export function MarketingSectionHeader({
   title: React.ReactNode
   description?: string
   className?: string
-  /** Optional id on the h2 so sections can reference it via aria-labelledby. */
+
   id?: string
 }) {
   return (
@@ -86,7 +81,7 @@ export function MarketingCtaBand({
   primaryLabel: string
   secondaryHref?: string
   secondaryLabel?: string
-  /** Optional trust/risk-reducer slot rendered under the CTA row (e.g. MarketingTrustPills). */
+
   footnote?: React.ReactNode
   children?: React.ReactNode
 }) {
@@ -124,7 +119,6 @@ export function MarketingCtaBand({
   )
 }
 
-/** Brand gradient with a genuine solid-ink fallback where bg-clip:text is unsupported. */
 const STAT_VALUE_CLASS =
   'font-display text-3xl md:text-4xl tracking-tight whitespace-nowrap text-ink ' +
   'supports-[background-clip:text]:bg-gradient-to-r supports-[background-clip:text]:from-brand-strong ' +

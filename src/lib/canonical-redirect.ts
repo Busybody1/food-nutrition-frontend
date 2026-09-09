@@ -2,7 +2,6 @@ type CanonicalSite = {
   host: string;
 };
 
-/** Parse production canonical host from NEXT_PUBLIC_SITE_URL (no www, no trailing slash). */
 export function parseCanonicalSite(siteUrl: string | undefined): CanonicalSite | null {
   if (!siteUrl?.trim()) return null;
 
@@ -33,7 +32,6 @@ type RedirectInput = {
   siteUrl: string | undefined;
 };
 
-/** Returns an absolute https URL when the request should 301 to the canonical host. */
 export function getCanonicalRedirectUrl(input: RedirectInput): string | null {
   const canonical = parseCanonicalSite(input.siteUrl);
   if (!canonical) return null;

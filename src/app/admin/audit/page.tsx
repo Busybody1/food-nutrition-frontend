@@ -63,7 +63,6 @@ export default function AdminAuditPage() {
     load()
   }, [load])
 
-  // Reset paging in the setters, not an effect, so each change fetches once.
   const applyAction = (next: string) => {
     setActionFilter(next)
     setPage(1)

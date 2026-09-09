@@ -10,15 +10,14 @@ interface ConditionalLayoutProps {
 
 export function ConditionalLayout({ children }: ConditionalLayoutProps) {
   const pathname = usePathname()
-  
-  // App shells provide their own chrome (no marketing header/footer)
+
   const isAppShell =
     pathname?.startsWith('/dashboard') || pathname?.startsWith('/admin')
 
   if (isAppShell) {
     return <>{children}</>
   }
-  
+
   return (
     <div className="site-layout">
       <Header />

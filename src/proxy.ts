@@ -21,9 +21,7 @@ export function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    /*
-     * Skip SEO/crawler files, no canonical redirects; avoids GSC fetch edge cases.
-     */
+
     '/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|openapi.json|llms.txt|llms-full.txt|blog/feed.xml|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)',
   ],
 };

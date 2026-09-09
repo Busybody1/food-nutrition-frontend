@@ -5,10 +5,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { 
-  CreditCard, 
-  Trash2, 
-  Plus, 
+import {
+  CreditCard,
+  Trash2,
+  Plus,
   AlertCircle,
   CheckCircle,
   Loader2
@@ -47,7 +47,7 @@ export function PaymentMethodManager() {
 
   const handlePaymentSuccess = async () => {
     try {
-      // Reload payment methods to show the new one
+
       await loadPaymentMethods()
       setShowAddForm(false)
       setSelectedPlan(null)

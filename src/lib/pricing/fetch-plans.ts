@@ -1,12 +1,10 @@
 import { transformPlanData, type PricingPlan } from '@/lib/pricing/plan-display'
 
-/** Resolved API base for browser and server (no trailing slash). */
 export function getApiBaseUrl(): string {
   const raw = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
   return raw.replace(/\/$/, '')
 }
 
-/** Load plans from database (public endpoint, no auth). */
 export async function fetchPublicPlans(): Promise<PricingPlan[]> {
   const base = getApiBaseUrl()
   const url = `${base}/api/v1/billing/plans/public`

@@ -2,7 +2,6 @@ import type { DocsNavGroup } from '@/components/docs/docs-sidebar'
 import { DOCS_SECTIONS, docsSectionPath } from '@/lib/docs/registry'
 import { GUIDES, guidePath } from '@/lib/docs/guides-data'
 
-/** Sidebar navigation for all docs pages, derived from the section/guide registries. */
 export function buildDocsNavGroups(): DocsNavGroup[] {
   return [
     {

@@ -4,17 +4,12 @@ import { MarketingSectionHeader, marketingCardClass } from '@/components/marketi
 import { Reveal, RevealGroup } from '@/components/marketing/reveal'
 import { getPublicTestimonials } from '@/lib/api/testimonials'
 
-/** Deterministic, count-aware grid so DB-driven quote counts never leave orphan cells. */
 function gridClassFor(count: number): string {
   if (count === 1) return 'grid grid-cols-1 max-w-xl mx-auto gap-4 md:gap-5'
   if (count === 2 || count === 4) return 'grid sm:grid-cols-2 max-w-4xl mx-auto gap-4 md:gap-5'
   return 'grid sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5'
 }
 
-/**
- * Customer quotes managed in the admin dashboard (DB-driven, avatars on S3).
- * Renders nothing while no testimonials are published.
- */
 export async function Testimonials() {
   const testimonials = await getPublicTestimonials()
   if (testimonials.length === 0) return null

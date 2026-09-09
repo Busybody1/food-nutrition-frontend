@@ -7,13 +7,8 @@ import { CAPABILITY_PAGES, capabilityPath } from '@/lib/capability-pages-data'
 import { SOLUTION_PAGES, solutionPath } from '@/lib/solutions-data'
 import { COMPARISON_PAGES, comparisonPath } from '@/lib/comparisons-data'
 
-/** Revalidated sitemap so newly published blog posts get indexed. */
 export const revalidate = 300
 
-/**
- * Per-page content dates, bump when a page materially changes.
- * A fixed date is an honest freshness signal; `new Date()` on every crawl is not.
- */
 const STATIC_PAGE_DATES: Record<string, string> = {
   '/': '2026-07-03',
   '/docs': '2026-07-03',
@@ -118,7 +113,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     }))
   } catch {
-    // Keep static URLs in the sitemap when the blog API is unavailable.
+
   }
 
   return [...staticEntries, ...blogEntries]

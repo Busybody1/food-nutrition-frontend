@@ -5,10 +5,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { 
-  CreditCard, 
-  FileText, 
-  Settings, 
+import {
+  CreditCard,
+  FileText,
+  Settings,
   ExternalLink,
   Calendar,
   DollarSign,
@@ -20,7 +20,6 @@ import { formatPrice, formatDate } from '@/lib/stripe/config'
 import { SubscriptionCard } from './SubscriptionCard'
 import { PaymentMethodManager } from './PaymentMethodManager'
 import { InvoiceHistory } from './InvoiceHistory'
-
 
 export function BillingDashboard() {
   const {
@@ -103,7 +102,7 @@ export function BillingDashboard() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
+        {}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Billing & Subscription</h1>
           <p className="text-gray-600">Manage your subscription, payment methods, and billing history.</p>
@@ -135,7 +134,7 @@ export function BillingDashboard() {
           </div>
         )}
 
-        {/* Current Subscription Overview */}
+        {}
         {subscription && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <Card>
@@ -202,7 +201,7 @@ export function BillingDashboard() {
           </div>
         )}
 
-        {/* Main Content Tabs */}
+        {}
         <Tabs defaultValue="overview" className="space-y-6">
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="overview">Overview</TabsTrigger>
@@ -211,10 +210,10 @@ export function BillingDashboard() {
             <TabsTrigger value="usage">Usage</TabsTrigger>
           </TabsList>
 
-          {/* Overview Tab */}
+          {}
           <TabsContent value="overview" className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Current Subscription Details */}
+              {}
               <Card>
                 <CardHeader>
                   <CardTitle>Subscription Details</CardTitle>
@@ -265,7 +264,7 @@ export function BillingDashboard() {
                 </CardContent>
               </Card>
 
-              {/* Quick Actions */}
+              {}
               <Card>
                 <CardHeader>
                   <CardTitle>Quick Actions</CardTitle>
@@ -284,7 +283,7 @@ export function BillingDashboard() {
                     {isPortalLoading ? 'Opening...' : 'Manage Subscription'}
                     <ExternalLink className="h-4 w-4 ml-auto" />
                   </Button>
-                  
+
                   <Button
                     onClick={() => {
                       setIsPaymentMethodsLoading(true)
@@ -297,7 +296,7 @@ export function BillingDashboard() {
                     <CreditCard className="h-4 w-4 mr-2" />
                     {isPaymentMethodsLoading ? 'Loading...' : 'Manage Payment Methods'}
                   </Button>
-                  
+
                   <Button
                     onClick={() => {
                       setIsInvoicesLoading(true)
@@ -315,7 +314,7 @@ export function BillingDashboard() {
             </div>
           </TabsContent>
 
-          {/* Plans Tab */}
+          {}
           <TabsContent value="plans" className="space-y-6">
             <div>
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Available Plans</h3>
@@ -326,8 +325,7 @@ export function BillingDashboard() {
                     plan={plan}
                     currentPlan={subscription ? plans.find(p => p.id === subscription.plan_id) : null}
                     onSelect={() => {
-                      // Handle plan selection
-                      // Plan selection handled by the component
+
                     }}
                     isLoading={isLoading}
                     isPopular={plan.is_recommended === true}
@@ -337,7 +335,7 @@ export function BillingDashboard() {
             </div>
           </TabsContent>
 
-          {/* Billing Tab */}
+          {}
           <TabsContent value="billing" className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <PaymentMethodManager />
@@ -345,7 +343,7 @@ export function BillingDashboard() {
             </div>
           </TabsContent>
 
-          {/* Usage Tab */}
+          {}
           <TabsContent value="usage" className="space-y-6">
             <div className="text-center py-8">
               <p className="text-gray-500">Usage analytics coming soon</p>

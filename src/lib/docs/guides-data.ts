@@ -13,9 +13,9 @@ export type Guide = {
   description: string
   keywords: string[]
   framework: string
-  /** One-line summary for index cards and llms.txt */
+
   summary: string
-  /** ISO date, update when the guide content materially changes */
+
   dateModified: string
   blocks: DocsBlock[]
   faqs: readonly FaqItem[]

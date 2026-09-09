@@ -7,7 +7,7 @@ export type SolutionEndpointRow = {
 }
 
 export type SolutionPage = {
-  /** URL segment under /solutions/ */
+
   slug: string
   h1: string
   metaTitle: string
@@ -16,7 +16,7 @@ export type SolutionPage = {
   heroBadge: string
   intro: string[]
   painPoints: { title: string; description: string }[]
-  /** Which product needs map to which endpoints */
+
   endpointMap: SolutionEndpointRow[]
   faqs: FaqItem[]
   related: { label: string; href: string }[]

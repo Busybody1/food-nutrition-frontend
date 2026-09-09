@@ -44,7 +44,7 @@ export function ComparisonPageView({ page }: { page: ComparisonPage }) {
           {page.h1}: {SITE_NAME} vs {page.competitor}
         </h1>
         <p className="text-lg text-ink-muted leading-relaxed max-w-2xl mx-auto">{page.intro[0]}</p>
-        {/* CTA labels/hrefs duplicated verbatim from this page's MarketingCtaBand below. */}
+        {}
         <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <TrackedCtaLink
             href="/playground"

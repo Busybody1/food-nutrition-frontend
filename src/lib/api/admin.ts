@@ -74,7 +74,6 @@ export interface AdminUser {
   api_keys_count?: number
 }
 
-/** GET /admin/users/{id} — adds lifetime usage totals to the base user row. */
 export interface AdminUserDetail extends AdminUser {
   updated_at?: string
   is_superuser?: boolean
@@ -96,7 +95,6 @@ export interface AdminUserDetail extends AdminUser {
   last_request_at?: string | null
 }
 
-/** Whole-table user counts, independent of the current list page. */
 export interface AdminUserStats {
   total_users: number
   active_users: number
@@ -316,7 +314,7 @@ export interface AdminPlan {
   rate_limit_per_minute?: number
   max_results_per_query?: number
   is_active: boolean
-  /** Drives the "Most popular" badge on the public pricing grid. */
+
   is_recommended?: boolean
   plan_tier?: string
   max_api_keys?: number
@@ -349,7 +347,6 @@ export interface AuditEntry {
   created_at: string
 }
 
-/** Target column / recent-activity label; includes email after a user.delete. */
 export function formatAuditTarget(entry: AuditEntry): string {
   if (!entry.target_type) return '—'
   const id = entry.target_id ?? '-'
@@ -468,7 +465,6 @@ class AdminAPI {
     return adminGet('/users', params as Record<string, unknown> | undefined)
   }
 
-  /** Account-wide counts for the Users dashboard cards (not page-limited). */
   async getUserStats(): Promise<AdminUserStats> {
     return adminGet('/users/stats')
   }
@@ -507,7 +503,6 @@ class AdminAPI {
     return adminGet(`/users/${userId}/usage`, { time_range: timeRange })
   }
 
-  /** Paginated request history — every call the account has made since signup. */
   async getUserRequests(
     userId: number,
     params: UserRequestsParams = {}
@@ -518,7 +513,6 @@ class AdminAPI {
     } as Record<string, unknown>)
   }
 
-  /** Lifetime endpoint / status / method breakdown for one user. */
   async getUserRequestSummary(userId: number): Promise<UserRequestSummary> {
     return adminGet(`/users/${userId}/request-summary`)
   }
@@ -574,10 +568,6 @@ class AdminAPI {
     return adminPatch(`/plans/${planId}`, data)
   }
 
-  /**
-   * Make one plan the "Most popular" card. The backend demotes the previous
-   * holder in the same transaction, so only one plan is ever flagged.
-   */
   async setRecommendedPlan(planId: number): Promise<{ message: string }> {
     return adminPatch(`/plans/${planId}`, { is_recommended: true })
   }
@@ -668,6 +658,14 @@ class AdminAPI {
     return adminPost(`/users/${userId}/feedback-email`)
   }
 
+  async resetUserPassword(userId: number): Promise<{
+    sent: boolean
+    email: string
+    message: string
+  }> {
+    return adminPost(`/users/${userId}/reset-password`)
+  }
+
   async getEmailLog(params?: {
     user_id?: number
     email?: string
@@ -755,8 +753,6 @@ class AdminAPI {
   }): Promise<{ feedback: Array<Record<string, unknown>>; count: number }> {
     return adminGet('/feedback', params)
   }
-
-  // --- Security holds & anomaly incidents ---
 
   async getSecurityHolds(): Promise<{ holds: SecurityHoldRow[]; count: number }> {
     return adminGet('/security/holds')

@@ -74,7 +74,6 @@ function AdminRequestsContent() {
     user_id: userIdParam,
   })
 
-  // Deep link from a user detail page (?user_id=42) pre-fills and applies the filter.
   useEffect(() => {
     if (!userIdParam) return
     setDraftFilters((f) => ({ ...f, user_id: userIdParam }))
@@ -113,8 +112,6 @@ function AdminRequestsContent() {
     load()
   }, [load])
 
-  // Reset paging in the setters, not an effect, so a filter/sort change fetches
-  // once instead of firing a stale-page request first.
   const applyFilters = (next: typeof EMPTY_FILTERS) => {
     setAppliedFilters(next)
     setPage(1)
@@ -400,7 +397,7 @@ function AdminRequestsContent() {
 }
 
 export default function AdminRequestsPage() {
-  // useSearchParams (for the ?user_id deep link) needs a Suspense boundary.
+
   return (
     <Suspense
       fallback={

@@ -7,7 +7,7 @@ type MarketingImageHeroProps = {
   children: ReactNode
   compact?: boolean
   centered?: boolean
-  /** Tailwind text-* color for the bottom wave fill (e.g. text-white, text-surface-elevated). */
+
   waveTone?: 'elevated' | 'white'
 }
 
@@ -61,7 +61,7 @@ export function MarketingImageHero({
               : 'max-w-xl lg:max-w-2xl text-center lg:text-left'
           )}
         >
-          {/* Below lg the photo shows through more — glass panel keeps text ≥ AA contrast. */}
+          {}
           <div className="max-lg:rounded-2xl max-lg:bg-surface-elevated/75 max-lg:backdrop-blur-sm max-lg:p-6 max-lg:shadow-glass">
             {children}
           </div>

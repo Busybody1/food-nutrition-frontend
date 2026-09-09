@@ -8,10 +8,6 @@ function headingIdFor(title: string): string {
   return `related-resources-${title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')}`
 }
 
-/**
- * Cluster-linking section: descriptive contextual links between docs, guides,
- * capability, solution, comparison, and blog pages.
- */
 export function RelatedResources({
   links,
   title = 'Related resources',

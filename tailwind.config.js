@@ -1,4 +1,4 @@
-/** @type {import('tailwindcss').Config} */
+
 module.exports = {
   content: [
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
@@ -10,8 +10,7 @@ module.exports = {
       colors: {
         brand: {
           DEFAULT: '#0AC5D7',
-          // Darkened from #0891A3 → #067A88 (= primary.700) for WCAG AA:
-          // as small text on light/muted backgrounds this now clears 4.5:1.
+
           strong: '#067A88',
           soft: '#8FE8F0',
           muted: '#E8FBFD',

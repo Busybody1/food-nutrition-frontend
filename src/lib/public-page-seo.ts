@@ -22,7 +22,6 @@ export type PageSeoConfig = {
   keywords: string[]
 }
 
-/** Per-route SEO copy, unique titles/descriptions for crawlers and AI indexes. */
 export const PUBLIC_PAGE_SEO: Record<PublicPagePath, PageSeoConfig> = {
   '/': {
     description:

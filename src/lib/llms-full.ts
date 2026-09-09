@@ -8,7 +8,6 @@ import {
 } from '@/lib/docs/registry'
 import { GUIDES, guidePath } from '@/lib/docs/guides-data'
 
-/** Render docs blocks as markdown-ish plain text for LLM ingestion. */
 function blocksToText(blocks: DocsBlock[]): string {
   return blocks
     .map((block) => {
@@ -37,7 +36,6 @@ function faqsToText(faqs: readonly FaqItem[]): string {
   return `### FAQ\n\n${faqs.map((f) => `Q: ${f.q}\nA: ${f.a}`).join('\n\n')}`
 }
 
-/** Full plain-text documentation (llms-full.txt) generated from the docs registries. */
 export function buildLlmsFullTxt(): string {
   const sections = DOCS_SECTIONS.map((meta) => {
     const content = getDocsSectionContent(meta.slug)

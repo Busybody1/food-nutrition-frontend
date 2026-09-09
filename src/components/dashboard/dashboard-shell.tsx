@@ -179,7 +179,6 @@ export function DashboardEmpty({
   )
 }
 
-/** Portals a modal above sidebars and sticky chrome so overlays are not clipped. */
 export function DashboardModal({
   children,
   onClose,

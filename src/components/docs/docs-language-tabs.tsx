@@ -4,7 +4,6 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { DocsCodeBlock } from '@/components/docs/docs-code-block'
 
-/** Self-contained language switcher for multi-language code samples. */
 export function DocsLanguageTabs({
   title,
   examples,

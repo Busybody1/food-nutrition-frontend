@@ -1,13 +1,11 @@
 import { loadStripe, Stripe } from '@stripe/stripe-js'
 
-// Stripe configuration
 const STRIPE_PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
 
 if (!STRIPE_PUBLISHABLE_KEY) {
   console.warn('NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY is not set. Stripe features will be disabled.')
 }
 
-// Initialize Stripe
 let stripePromise: Promise<Stripe | null>
 
 export const getStripe = () => {
@@ -21,7 +19,6 @@ export const getStripe = () => {
   return stripePromise
 }
 
-// Stripe configuration options
 export const stripeOptions = {
   appearance: {
     theme: 'stripe' as const,
@@ -62,7 +59,6 @@ export const stripeOptions = {
   locale: 'en' as const,
 }
 
-// API endpoints - aligned with backend
 export const STRIPE_API_ENDPOINTS = {
   CUSTOMERS: '/api/v1/billing/customers',
   SUBSCRIPTIONS: '/api/v1/billing/subscription',
@@ -74,7 +70,6 @@ export const STRIPE_API_ENDPOINTS = {
   USAGE: '/api/v1/billing/usage',
 } as const
 
-// Error messages
 export const STRIPE_ERROR_MESSAGES = {
   CARD_DECLINED: 'Your card was declined. Please try a different payment method.',
   INSUFFICIENT_FUNDS: 'Your card has insufficient funds. Please try a different payment method.',
@@ -85,7 +80,6 @@ export const STRIPE_ERROR_MESSAGES = {
   GENERIC_ERROR: 'Something went wrong. Please try again.',
 } as const
 
-// Plan tiers
 export const PLAN_TIERS = {
   FREE: 'free',
   BASIC: 'basic',
@@ -93,7 +87,6 @@ export const PLAN_TIERS = {
   ENTERPRISE: 'enterprise',
 } as const
 
-// Subscription statuses
 export const SUBSCRIPTION_STATUS = {
   ACTIVE: 'active',
   CANCELED: 'canceled',
@@ -104,14 +97,12 @@ export const SUBSCRIPTION_STATUS = {
   UNPAID: 'unpaid',
 } as const
 
-// Payment method types
 export const PAYMENT_METHOD_TYPES = {
   CARD: 'card',
   BANK_ACCOUNT: 'us_bank_account',
   SEPA_DEBIT: 'sepa_debit',
 } as const
 
-// Currency codes
 export const CURRENCY_CODES = {
   USD: 'usd',
   EUR: 'eur',
@@ -120,7 +111,6 @@ export const CURRENCY_CODES = {
   AUD: 'aud',
 } as const
 
-// Webhook events
 export const WEBHOOK_EVENTS = {
   CUSTOMER_SUBSCRIPTION_CREATED: 'customer.subscription.created',
   CUSTOMER_SUBSCRIPTION_UPDATED: 'customer.subscription.updated',
@@ -132,7 +122,6 @@ export const WEBHOOK_EVENTS = {
   PAYMENT_METHOD_DETACHED: 'payment_method.detached',
 } as const
 
-// Helper functions
 export const formatPrice = (amount: number, currency: string = 'usd'): string => {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -151,7 +140,7 @@ export const formatDate = (timestamp: number): string => {
 export const getErrorMessage = (error: unknown): string => {
   if (error && typeof error === 'object' && 'type' in error) {
     const stripeError = error as { type: string; code?: string; message?: string }
-    
+
     if (stripeError.type === 'card_error') {
       switch (stripeError.code) {
         case 'card_declined':
@@ -166,34 +155,32 @@ export const getErrorMessage = (error: unknown): string => {
           return stripeError.message || STRIPE_ERROR_MESSAGES.GENERIC_ERROR
       }
     }
-    
+
     if (stripeError.type === 'validation_error') {
       return stripeError.message || STRIPE_ERROR_MESSAGES.GENERIC_ERROR
     }
-    
+
     if (stripeError.type === 'api_error') {
       return STRIPE_ERROR_MESSAGES.NETWORK_ERROR
     }
   }
-  
-  // Handle Error objects
+
   if (error instanceof Error) {
     return error.message || STRIPE_ERROR_MESSAGES.GENERIC_ERROR
   }
-  
+
   return STRIPE_ERROR_MESSAGES.GENERIC_ERROR
 }
 
-// Validation helpers
 export const validateEmail = (email: string): boolean => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   return emailRegex.test(email)
 }
 
 export const validateCardNumber = (cardNumber: string): boolean => {
-  // Remove spaces and non-digits
+
   const cleaned = cardNumber.replace(/\D/g, '')
-  // Basic length validation (13-19 digits)
+
   return cleaned.length >= 13 && cleaned.length <= 19
 }
 
@@ -206,13 +193,13 @@ export const validateExpiryDate = (month: string, year: string): boolean => {
   const currentDate = new Date()
   const currentYear = currentDate.getFullYear()
   const currentMonth = currentDate.getMonth() + 1
-  
+
   const expMonth = parseInt(month, 10)
   const expYear = parseInt(year, 10)
-  
+
   if (expMonth < 1 || expMonth > 12) return false
   if (expYear < currentYear) return false
   if (expYear === currentYear && expMonth < currentMonth) return false
-  
+
   return true
 }
