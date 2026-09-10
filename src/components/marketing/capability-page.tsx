@@ -137,7 +137,7 @@ export function CapabilityPageView({ page }: { page: CapabilityPage }) {
           <Reveal>
             <MarketingSectionHeader
               label="Capabilities"
-              title={`What the ${page.h1.toLowerCase()} gives you`}
+              title={`What the ${page.h1} gives you`}
             />
           </Reveal>
           <RevealGroup

@@ -18,9 +18,9 @@ import {
 
 const FALLBACK_PRICING_PLANS = [
   { name: 'Free', price: '0' },
-  { name: 'Basic', price: '29' },
-  { name: 'Core', price: '99' },
-  { name: 'Plus', price: '299' },
+  { name: 'Basic', price: '15' },
+  { name: 'Core', price: '50' },
+  { name: 'Plus', price: '150' },
 ] as const
 
 function plansToJsonLdOffers(
@@ -43,7 +43,6 @@ function buildPricingJsonLdInput(
     siteDescription: SITE_DESCRIPTION,
     imageUrl: OG_IMAGE_URL,
     pricingUrl: absoluteUrl('/pricing'),
-    termsUrl: absoluteUrl('/terms'),
     plans,
     priceValidUntil: `${new Date().getFullYear() + 1}-12-31`,
   }

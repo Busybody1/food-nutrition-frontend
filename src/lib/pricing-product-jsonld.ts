@@ -6,7 +6,6 @@ export type PricingProductJsonLdInput = {
   siteDescription: string
   imageUrl: string
   pricingUrl: string
-  termsUrl: string
   plans: readonly PricingPlanOffer[]
   priceValidUntil: string
 }
@@ -33,40 +32,6 @@ function buildDigitalProductOffer(
       value: 1,
       unitCode: 'MON',
     },
-    shippingDetails: {
-      '@type': 'OfferShippingDetails',
-      shippingRate: {
-        '@type': 'MonetaryAmount',
-        value: '0',
-        currency: 'USD',
-      },
-      deliveryTime: {
-        '@type': 'ShippingDeliveryTime',
-        handlingTime: {
-          '@type': 'QuantitativeValue',
-          minValue: 0,
-          maxValue: 0,
-          unitCode: 'DAY',
-        },
-        transitTime: {
-          '@type': 'QuantitativeValue',
-          minValue: 0,
-          maxValue: 0,
-          unitCode: 'DAY',
-        },
-      },
-      shippingDestination: {
-        '@type': 'DefinedRegion',
-        addressCountry: 'US',
-      },
-    },
-    hasMerchantReturnPolicy: {
-      '@type': 'MerchantReturnPolicy',
-      applicableCountry: 'US',
-      returnPolicyCategory: 'https://schema.org/MerchantReturnNotPermitted',
-      merchantReturnDays: 0,
-      returnPolicyUrl: input.termsUrl,
-    },
     seller: {
       '@type': 'Organization',
       name: input.siteName,
@@ -83,13 +48,14 @@ function buildDigitalProductOffer(
 export function buildPricingProductJsonLdFromInput(input: PricingProductJsonLdInput) {
   return {
     '@context': 'https://schema.org',
-    '@type': 'Product',
+    '@type': 'SoftwareApplication',
     name: `${input.siteName} - Nutrition & Food Database API`,
     description: input.siteDescription,
     url: input.pricingUrl,
     image: [input.imageUrl],
     brand: { '@type': 'Brand', name: input.siteName },
-    category: 'DeveloperApplication',
+    applicationCategory: 'DeveloperApplication',
+    operatingSystem: 'Any',
     offers: input.plans.map(({ name, price }) => buildDigitalProductOffer(input, name, price)),
   }
 }

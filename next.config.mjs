@@ -66,6 +66,11 @@ const nextConfig = {
       { source: '/register', destination: '/auth/register', permanent: true },
 
       { source: '/blog/free-food-apis-2025', destination: '/blog/free-food-apis', permanent: true },
+
+      // Legacy tutorial paths: the hub was replaced by /docs/guides. No page was ever
+      // emitted at /tutorials, so these only exist to recover external links.
+      { source: '/tutorials', destination: '/docs/guides', permanent: true },
+      { source: '/tutorials/:slug', destination: '/docs/guides/:slug', permanent: true },
     ];
   },
   experimental: {

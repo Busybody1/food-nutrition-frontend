@@ -31,6 +31,37 @@ export const SITE_KEYWORDS = (
 export const FOOD_DATABASE_SIZE_LABEL =
   process.env.NEXT_PUBLIC_FOOD_DATABASE_SIZE?.trim() || '4M+ foods';
 
+/**
+ * Headline plan facts used in page titles, comparison tables and marketing copy.
+ *
+ * These are deliberately static so titles stay stable at build time, but they MUST
+ * match the live plans shown on /pricing (which are fetched from the API). If a plan
+ * price or quota changes, update these too, or override per environment.
+ *
+ * Concrete numbers in a title are the single strongest lever for both click-through
+ * and AI-answer citation, so keep them exact - never round or soften them.
+ */
+export const FREE_TIER_CALLS = Number(
+  process.env.NEXT_PUBLIC_FREE_TIER_CALLS?.trim() || 1000
+);
+export const ENTRY_PLAN_PRICE_USD = Number(
+  process.env.NEXT_PUBLIC_ENTRY_PLAN_PRICE_USD?.trim() || 15
+);
+export const ENTRY_PLAN_CALLS = Number(
+  process.env.NEXT_PUBLIC_ENTRY_PLAN_CALLS?.trim() || 20000
+);
+
+const nf = new Intl.NumberFormat('en-US');
+
+/** e.g. "1,000 free calls/month" */
+export const FREE_TIER_LABEL = `${nf.format(FREE_TIER_CALLS)} free calls/month`;
+/** e.g. "$15 for 20,000" - used after the free-tier label in titles */
+export const ENTRY_PLAN_LABEL = `$${ENTRY_PLAN_PRICE_USD} for ${nf.format(ENTRY_PLAN_CALLS)}`;
+/** e.g. "Free tier: 1,000 calls/month. Paid from $15/mo for 20,000 calls." */
+export const PRICING_SENTENCE =
+  `Free tier: ${nf.format(FREE_TIER_CALLS)} calls/month. ` +
+  `Paid from $${ENTRY_PLAN_PRICE_USD}/mo for ${nf.format(ENTRY_PLAN_CALLS)} calls.`;
+
 export const HERO_IMAGE_VERSION =
   process.env.NEXT_PUBLIC_HERO_IMAGE_VERSION?.trim() || '3';
 

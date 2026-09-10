@@ -1,4 +1,10 @@
-import { FOOD_DATABASE_SIZE_LABEL, SITE_NAME } from '@/lib/site'
+import {
+  FOOD_DATABASE_SIZE_LABEL,
+  SITE_NAME,
+  FREE_TIER_LABEL,
+  ENTRY_PLAN_LABEL,
+  PRICING_SENTENCE,
+} from '@/lib/site'
 import type { FaqItem } from '@/lib/faq-data'
 
 export type ComparisonRow = {
@@ -37,9 +43,9 @@ export const COMPARISON_PAGES: ComparisonPage[] = [
     slug: 'nutritionix-alternative',
     competitor: 'Nutritionix',
     h1: 'Nutritionix Alternative',
-    metaTitle: 'Nutritionix Alternative: Calorie API Comparison',
+    metaTitle: 'Nutritionix Alternative: 1,000 Free Calls/Mo',
     description:
-      'Comparing Calorie API and Nutritionix for developers: food database coverage, barcode lookup, verified data, commercial licensing, and migration notes.',
+      `Calorie API vs Nutritionix: REST food search, barcode lookup, verified per-100g macros. ${PRICING_SENTENCE}`,
     keywords: [
       'Nutritionix alternative',
       'Nutritionix vs Calorie API',
@@ -75,6 +81,11 @@ export const COMPARISON_PAGES: ComparisonPage[] = [
         dimension: 'Getting started',
         us: 'Free tier, no credit card; public playground without signup',
         them: 'Free tier available for development',
+      },
+      {
+        dimension: 'Pricing',
+        us: `${FREE_TIER_LABEL}, then ${ENTRY_PLAN_LABEL} - flat monthly, no per-request metering`,
+        them: 'Tiered plans; free development tier, paid tiers scale with usage',
       },
     ],
     whenTheyFit: [
@@ -120,9 +131,9 @@ export const COMPARISON_PAGES: ComparisonPage[] = [
     slug: 'edamam-alternative',
     competitor: 'Edamam',
     h1: 'Edamam Alternative',
-    metaTitle: 'Edamam Alternative: Calorie API Comparison',
+    metaTitle: 'Edamam Alternative: Flat Pricing from $15/mo',
     description:
-      'Comparing Calorie API and Edamam for developers: food search vs recipe analysis, barcode support, pricing model, and migration notes.',
+      `Calorie API vs Edamam: food-level data and barcode lookup instead of recipe analysis. ${PRICING_SENTENCE}`,
     keywords: [
       'Edamam alternative',
       'Edamam vs Calorie API',
@@ -158,6 +169,11 @@ export const COMPARISON_PAGES: ComparisonPage[] = [
         dimension: 'Data normalization',
         us: 'Per-100g macros guaranteed on every food',
         them: 'Per-serving and per-recipe outputs depending on endpoint',
+      },
+      {
+        dimension: 'Pricing',
+        us: `${FREE_TIER_LABEL}, then ${ENTRY_PLAN_LABEL} - flat monthly, no per-request metering`,
+        them: 'Free developer tier with low limits; paid plans priced per tier and service',
       },
     ],
     whenTheyFit: [
@@ -202,9 +218,9 @@ export const COMPARISON_PAGES: ComparisonPage[] = [
     slug: 'usda-fooddata-central-alternative',
     competitor: 'USDA FoodData Central',
     h1: 'USDA FoodData Central Alternative',
-    metaTitle: 'USDA FoodData Central Alternative: Calorie API Comparison',
+    metaTitle: 'USDA FDC Alternative: Barcode & Typeahead API',
     description:
-      'When to use Calorie API vs the free USDA FoodData Central API: branded coverage, barcode lookup, autocomplete, rate limits, and production readiness.',
+      `Calorie API vs USDA FoodData Central: barcode lookup, typeahead and support on top of reference data. ${PRICING_SENTENCE}`,
     keywords: [
       'USDA FoodData Central alternative',
       'USDA API vs commercial nutrition API',
@@ -240,6 +256,11 @@ export const COMPARISON_PAGES: ComparisonPage[] = [
         dimension: 'Support & guarantees',
         us: 'Support, dashboards, and enterprise terms available',
         them: 'Public service, no SLA or support channel',
+      },
+      {
+        dimension: 'Pricing',
+        us: `${FREE_TIER_LABEL}, then ${ENTRY_PLAN_LABEL} - flat monthly, no per-request metering`,
+        them: 'Free, US government funded; DEMO_KEY or a free API key',
       },
     ],
     whenTheyFit: [
@@ -284,9 +305,9 @@ export const COMPARISON_PAGES: ComparisonPage[] = [
     slug: 'spoonacular-alternative',
     competitor: 'Spoonacular',
     h1: 'Spoonacular Alternative',
-    metaTitle: 'Spoonacular Alternative: Calorie API Comparison',
+    metaTitle: 'Spoonacular Alternative: Flat $15/mo, No Points',
     description:
-      'Comparing Calorie API and Spoonacular: food/nutrition data vs recipe content, pricing models, barcode lookup, and when each API fits.',
+      `Calorie API vs Spoonacular: nutrition data infrastructure, not recipe content, with no per-request points. ${PRICING_SENTENCE}`,
     keywords: [
       'Spoonacular alternative',
       'Spoonacular vs Calorie API',
@@ -322,6 +343,11 @@ export const COMPARISON_PAGES: ComparisonPage[] = [
         dimension: 'Content licensing',
         us: 'Data API: your UI and content are your own',
         them: 'Recipe content licensing terms apply to displayed recipes',
+      },
+      {
+        dimension: 'Pricing',
+        us: `${FREE_TIER_LABEL}, then ${ENTRY_PLAN_LABEL} - flat monthly, no per-request metering`,
+        them: 'Freemium; paid usage metered in points per request',
       },
     ],
     whenTheyFit: [
@@ -366,9 +392,9 @@ export const COMPARISON_PAGES: ComparisonPage[] = [
     slug: 'fatsecret-alternative',
     competitor: 'FatSecret',
     h1: 'FatSecret Alternative',
-    metaTitle: 'FatSecret Alternative: Calorie API Comparison',
+    metaTitle: 'FatSecret Alternative: API Key, Not OAuth',
     description:
-      'Comparing Calorie API and the FatSecret Platform API for developers: authentication, verified macro data, barcode lookup, pricing, and migration notes.',
+      `Calorie API vs FatSecret: one API-key header instead of OAuth, with verified per-100g macros. ${PRICING_SENTENCE}`,
     keywords: [
       'FatSecret alternative',
       'FatSecret Platform API alternative',
@@ -404,6 +430,11 @@ export const COMPARISON_PAGES: ComparisonPage[] = [
         dimension: 'Pricing & licensing',
         us: 'Flat self-serve plans; commercial use is a plan feature plus a request header',
         them: 'Freemium; free tier typically carries attribution requirements, paid tier for scale',
+      },
+      {
+        dimension: 'Pricing',
+        us: `${FREE_TIER_LABEL}, then ${ENTRY_PLAN_LABEL} - flat monthly, no per-request metering`,
+        them: 'Free basic tier; premium tiers by request volume',
       },
     ],
     whenTheyFit: [
@@ -449,9 +480,9 @@ export const COMPARISON_PAGES: ComparisonPage[] = [
     slug: 'open-food-facts-alternative',
     competitor: 'Open Food Facts',
     h1: 'Open Food Facts Alternative',
-    metaTitle: 'Open Food Facts Alternative: Calorie API Comparison',
+    metaTitle: 'Open Food Facts Alternative: Verified Macros',
     description:
-      'When to use Calorie API vs the free Open Food Facts API: verified curation, normalized macros, ranked search, support, and how the two work together.',
+      `Calorie API vs Open Food Facts: verified, normalized macros with OFF built in as barcode fallback. ${PRICING_SENTENCE}`,
     keywords: [
       'Open Food Facts alternative',
       'Open Food Facts API alternative',
@@ -487,6 +518,11 @@ export const COMPARISON_PAGES: ComparisonPage[] = [
         dimension: 'Support & reliability',
         us: 'Support, dashboards, and enterprise terms available',
         them: 'Community project, no SLA or dedicated support channel',
+      },
+      {
+        dimension: 'Pricing',
+        us: `${FREE_TIER_LABEL}, then ${ENTRY_PLAN_LABEL} - flat monthly, no per-request metering`,
+        them: 'Free and open data; no paid plan, quota or SLA',
       },
     ],
     whenTheyFit: [
