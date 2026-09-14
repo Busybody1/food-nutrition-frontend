@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
-import { Search } from 'lucide-react'
+import { Apple, Inbox, Search } from 'lucide-react'
 import {
   adminAPI,
   type AdminFoodListItem,
@@ -185,7 +185,11 @@ export default function AdminFoodsPage() {
               {queueLoading ? (
                 <DashboardLoading />
               ) : queueItems.length === 0 ? (
-                <DashboardEmpty title="No open issues" description="The review queue is empty." />
+                <DashboardEmpty
+                  icon={Inbox}
+                  title="No open issues"
+                  description="The review queue is empty."
+                />
               ) : (
                 <>
                   <AdminTableWrap>
@@ -249,7 +253,11 @@ export default function AdminFoodsPage() {
               {foodsLoading ? (
                 <DashboardLoading />
               ) : foods.length === 0 ? (
-                <DashboardEmpty title="No foods" description="No verified foods matched." />
+                <DashboardEmpty
+                  icon={Apple}
+                  title="No foods"
+                  description="No verified foods matched."
+                />
               ) : (
                 <>
                   <AdminTableWrap>

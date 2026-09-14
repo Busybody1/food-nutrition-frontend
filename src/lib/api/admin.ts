@@ -1096,7 +1096,7 @@ class AdminAPI {
   }
 
   async getFoods(params?: AdminFoodListParams): Promise<AdminFoodListResponse> {
-    return adminGet('/foods', params)
+    return adminGet('/foods', params as Record<string, unknown> | undefined)
   }
 
   async getFood(foodId: number): Promise<AdminFoodDetail> {
@@ -1115,7 +1115,7 @@ class AdminAPI {
   }
 
   async getFoodReviewQueue(params?: AdminFoodReviewQueueParams): Promise<AdminFoodReviewQueueResponse> {
-    return adminGet('/foods/review-queue', params)
+    return adminGet('/foods/review-queue', params as Record<string, unknown> | undefined)
   }
 
   async resolveFoodReview(
