@@ -460,6 +460,170 @@ export interface TestimonialInput {
   display_order: number
 }
 
+export interface AdminFoodStats {
+  total_verified: number
+  reviewed: number
+  locked: number
+  open_issues: number
+  by_issue_class: Record<string, number>
+}
+
+export interface AdminFoodListItem {
+  id: number
+  name: string
+  external_id?: string | null
+  category_id?: number | null
+  category_name?: string | null
+  nutrition_source?: string | null
+  nutrition_reviewed_at?: string | null
+  nutrition_reviewed_by?: number | null
+  nutrition_locked?: boolean
+  serving_size?: string | null
+  serving_unit?: string | null
+  kcal?: number | null
+  protein?: number | null
+  carbs?: number | null
+  fat?: number | null
+  atwater_kcal?: number | null
+  atwater_kcal_min?: number | null
+  atwater_kcal_max?: number | null
+  atwater_in_band?: boolean
+  atwater_delta_pct?: number | null
+  open_issue_classes?: string[]
+}
+
+export interface AdminFoodListParams {
+  skip?: number
+  limit?: number
+  search?: string
+  issue_class?: string
+  category_id?: number
+  status?: 'all' | 'open_issues' | 'reviewed'
+  sort_by?: string
+  sort_order?: 'asc' | 'desc'
+}
+
+export interface AdminFoodListResponse {
+  items: AdminFoodListItem[]
+  total: number
+  skip: number
+  limit: number
+}
+
+export interface AdminFoodNutrientRow {
+  nutrient_id: number
+  amount: number
+  name?: string
+  unit?: string
+}
+
+export interface AdminFoodQueueItem {
+  id: number
+  food_id: number
+  issue_class: string
+  severity: number
+  detail?: Record<string, unknown>
+  status: string
+  detected_at?: string
+  resolved_at?: string | null
+  resolved_by?: number | null
+  resolution_note?: string | null
+  name?: string
+  external_id?: string | null
+  nutrition_source?: string | null
+  nutrition_locked?: boolean
+}
+
+export interface AdminFoodReviewQueueParams {
+  skip?: number
+  limit?: number
+  issue_class?: string
+  severity?: number
+  status?: 'open' | 'resolved' | 'dismissed' | 'autofixed'
+}
+
+export interface AdminFoodReviewQueueResponse {
+  items: AdminFoodQueueItem[]
+  total: number
+  skip: number
+  limit: number
+}
+
+export interface AdminFoodVerifiedPortion {
+  label: string
+  grams: number
+}
+
+export interface AdminFoodSuggestedServing {
+  label: string
+  grams: number
+}
+
+export interface AdminFoodDetail {
+  id: number
+  name: string
+  description?: string | null
+  external_id?: string | null
+  brand_name?: string | null
+  category_id?: number | null
+  category_name?: string | null
+  serving_size?: string | null
+  serving_unit?: string | null
+  serving?: string | null
+  verified_portions?: AdminFoodVerifiedPortion[] | null
+  suggested_serving?: AdminFoodSuggestedServing | null
+  nutrition_source?: string | null
+  nutrition_reviewed_at?: string | null
+  nutrition_reviewed_by?: number | null
+  nutrition_locked?: boolean
+  nutrients: AdminFoodNutrientRow[]
+  macros?: {
+    kcal?: number | null
+    protein?: number | null
+    carbs?: number | null
+    fat?: number | null
+    atwater_kcal?: number | null
+    atwater_kcal_min?: number | null
+    atwater_kcal_max?: number | null
+    atwater_in_band?: boolean
+    atwater_delta_pct?: number | null
+  }
+  queue?: AdminFoodQueueItem[]
+  audit?: Array<{
+    id: number
+    action: string
+    metadata?: Record<string, unknown>
+    created_at?: string
+    admin_user_id?: number | null
+  }>
+}
+
+export interface AdminFoodMetadataPatch {
+  name?: string
+  description?: string | null
+  serving_size?: string
+  serving_unit?: string
+  serving?: string
+  category_id?: number | null
+  verified_portions?: AdminFoodVerifiedPortion[]
+  suggested_serving?: AdminFoodSuggestedServing | null
+  nutrition_locked?: boolean
+}
+
+export interface AdminFoodNutrientPatchResponse {
+  id: number
+  nutrients: AdminFoodNutrientRow[]
+  macros?: AdminFoodDetail['macros']
+  warning?: {
+    stated_kcal?: number | null
+    atwater_kcal?: number | null
+    atwater_kcal_min?: number | null
+    atwater_kcal_max?: number | null
+    deviation_pct?: number | null
+    message: string
+  } | null
+}
+
 class AdminAPI {
   async getUsers(params?: AdminUserListParams): Promise<AdminUserListResponse> {
     return adminGet('/users', params as Record<string, unknown> | undefined)
@@ -925,6 +1089,40 @@ class AdminAPI {
 
   async getSupportUnreadCount(): Promise<{ count: number }> {
     return adminGet('/support/unread-count')
+  }
+
+  async getFoodStats(): Promise<AdminFoodStats> {
+    return adminGet('/foods/stats')
+  }
+
+  async getFoods(params?: AdminFoodListParams): Promise<AdminFoodListResponse> {
+    return adminGet('/foods', params)
+  }
+
+  async getFood(foodId: number): Promise<AdminFoodDetail> {
+    return adminGet(`/foods/${foodId}`)
+  }
+
+  async patchFoodNutrients(
+    foodId: number,
+    body: { nutrients: Record<number, number | null> }
+  ): Promise<AdminFoodNutrientPatchResponse> {
+    return adminPatch(`/foods/${foodId}/nutrients`, body)
+  }
+
+  async patchFood(foodId: number, body: AdminFoodMetadataPatch): Promise<AdminFoodDetail> {
+    return adminPatch(`/foods/${foodId}`, body)
+  }
+
+  async getFoodReviewQueue(params?: AdminFoodReviewQueueParams): Promise<AdminFoodReviewQueueResponse> {
+    return adminGet('/foods/review-queue', params)
+  }
+
+  async resolveFoodReview(
+    foodId: number,
+    body: { issue_class: string; action: 'resolved' | 'dismissed'; note: string }
+  ): Promise<AdminFoodQueueItem> {
+    return adminPost(`/foods/${foodId}/review`, body)
   }
 
   async uploadSupportAttachment(file: File): Promise<{ url: string; content_type: string }> {

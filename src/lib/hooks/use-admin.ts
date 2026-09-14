@@ -55,6 +55,9 @@ const ADMIN_PERMISSIONS = {
 
   VIEW_SUPPORT: 'admin:support:view',
   REPLY_SUPPORT: 'admin:support:reply',
+
+  VIEW_FOODS: 'admin:foods:view',
+  UPDATE_FOODS: 'admin:foods:update',
 } as const
 
 const DEFAULT_ADMIN_PERMISSIONS = Object.values(ADMIN_PERMISSIONS)

@@ -26,6 +26,7 @@ import {
   ChevronRight,
   ShieldAlert,
   LifeBuoy,
+  Apple,
 } from 'lucide-react'
 import { useAuth } from '@/lib/hooks/use-auth'
 import { useAdmin } from '@/lib/hooks/use-admin'
@@ -53,6 +54,12 @@ const NAV_SECTIONS = [
     ],
   },
   {
+    label: 'Catalog',
+    items: [
+      { name: 'Verified foods', href: '/admin/foods', icon: Apple, permission: 'admin:foods:view' },
+    ],
+  },
+  {
     label: 'Operations',
     items: [
       { name: 'Support', href: '/admin/support', icon: LifeBuoy, permission: 'admin:support:view' },
@@ -75,6 +82,7 @@ const PAGE_TITLES: Record<string, string> = {
   '/admin/analytics': 'Analytics',
   '/admin/plans': 'Plans',
   '/admin/billing': 'Billing',
+  '/admin/foods': 'Verified foods',
   '/admin/support': 'Support',
   '/admin/announcements': 'Announcements',
   '/admin/emails': 'Emails',
