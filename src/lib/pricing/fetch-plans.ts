@@ -5,9 +5,10 @@ export function getApiBaseUrl(): string {
   return raw.replace(/\/$/, '')
 }
 
-export async function fetchPublicPlans(): Promise<PricingPlan[]> {
+export async function fetchPublicPlans(tier?: string): Promise<PricingPlan[]> {
   const base = getApiBaseUrl()
-  const url = `${base}/api/v1/billing/plans/public`
+  const query = tier ? `?tier=${encodeURIComponent(tier)}` : ''
+  const url = `${base}/api/v1/billing/plans/public${query}`
 
   let res: Response
   try {

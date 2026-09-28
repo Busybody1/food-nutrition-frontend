@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input'
 import { AuthShell } from '@/components/marketing/auth-shell'
 import { useAuth } from '@/lib/hooks/use-auth'
 import { getPostLoginPath } from '@/lib/auth/post-login-path'
+import { safeNextPath } from '@/lib/mcp/catalog'
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
 
 export default function LoginPage() {
@@ -22,7 +23,8 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (!loading && isAuthenticated && user) {
-      router.push(getPostLoginPath(user))
+      const next = safeNextPath(new URLSearchParams(window.location.search).get('next'))
+      router.push(next || getPostLoginPath(user))
     }
   }, [isAuthenticated, loading, user, router])
 
@@ -34,7 +36,8 @@ export default function LoginPage() {
     try {
       const result = await login({ email, password })
       if (result.success) {
-        router.push(getPostLoginPath(result.user))
+        const next = safeNextPath(new URLSearchParams(window.location.search).get('next'))
+        router.push(next || getPostLoginPath(result.user))
       } else {
         setError(result.error || 'Login failed')
       }

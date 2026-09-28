@@ -3,7 +3,8 @@
 import { Building2, CheckCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { PricingPlan } from '@/lib/pricing/plan-display'
-import { formatPlanPrice } from '@/lib/pricing/plan-display'
+import { formatPlanPrice, isMcpPlan } from '@/lib/pricing/plan-display'
+import { PricingMcpExclusionNote } from '@/components/marketing/pricing-mcp-note'
 import { cn } from '@/lib/utils/cn'
 
 export function PricingEnterpriseBand({
@@ -60,7 +61,8 @@ export function PricingEnterpriseBand({
           ))}
         </ul>
 
-        <div className="flex flex-col gap-2 lg:min-w-[180px]">
+        <div className="flex flex-col gap-2 lg:min-w-[200px]">
+          {!isMcpPlan(plan) && <PricingMcpExclusionNote className="mb-2" />}
           <Button
             className="h-11 w-full font-semibold bg-brand text-white shadow-glow hover:bg-brand-strong hover:text-white hover:shadow-glow-lg cursor-pointer"
             onClick={onSelect}

@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useState } from 'react'
 import { api } from '@/lib/api/client'
 import { normalizeListPayload } from '@/lib/api/paginated'
@@ -34,6 +35,19 @@ function optionalNumber(value: string): number | undefined {
   return Number.isFinite(n) ? n : undefined
 }
 
+function searchFailure(error: unknown, fallback: string): { message: string; mcpOnly: boolean } {
+  if (error instanceof ApiError && error.status === 403) {
+    return {
+      message: 'This plan calls MCP tools only. It does not include REST search.',
+      mcpOnly: true,
+    }
+  }
+  return {
+    message: error instanceof ApiError ? error.message : fallback,
+    mcpOnly: false,
+  }
+}
+
 function formatMacro(value: number | undefined, unit: string): string | null {
   if (value === undefined || !Number.isFinite(value)) return null
   const rounded = Number.isInteger(value) ? String(value) : value.toFixed(1)
@@ -57,6 +71,7 @@ export default function SearchPlaygroundPage() {
   const [suggestions, setSuggestions] = useState<FoodSuggestItem[]>([])
   const [total, setTotal] = useState(0)
   const [error, setError] = useState<string | null>(null)
+  const [mcpOnly, setMcpOnly] = useState(false)
   const [loading, setLoading] = useState(false)
   const [suggestLoading, setSuggestLoading] = useState(false)
   const [hasSearched, setHasSearched] = useState(false)
@@ -96,6 +111,7 @@ export default function SearchPlaygroundPage() {
   const runSearch = async () => {
     setLoading(true)
     setError(null)
+    setMcpOnly(false)
     setSuggestions([])
     setHasSuggested(false)
     try {
@@ -104,10 +120,12 @@ export default function SearchPlaygroundPage() {
       setTotal(res.total ?? 0)
       setHasSearched(true)
     } catch (e) {
+      const failure = searchFailure(e, 'Search failed')
       setResults([])
       setTotal(0)
       setHasSearched(true)
-      setError(e instanceof ApiError ? e.message : 'Search failed')
+      setError(failure.message)
+      setMcpOnly(failure.mcpOnly)
     } finally {
       setLoading(false)
     }
@@ -117,14 +135,17 @@ export default function SearchPlaygroundPage() {
     if (query.length < 1) return
     setSuggestLoading(true)
     setError(null)
+    setMcpOnly(false)
     try {
       const res = await api.search.suggest(query, 10)
       setSuggestions(normalizeListPayload<FoodSuggestItem>(res.data ?? res))
       setHasSuggested(true)
     } catch (e) {
+      const failure = searchFailure(e, 'Suggest failed')
       setSuggestions([])
       setHasSuggested(true)
-      setError(e instanceof ApiError ? e.message : 'Suggest failed')
+      setError(failure.message)
+      setMcpOnly(failure.mcpOnly)
     } finally {
       setSuggestLoading(false)
     }
@@ -234,7 +255,19 @@ export default function SearchPlaygroundPage() {
         </div>
       </form>
 
-      {error && <DashboardAlert variant="error">{error}</DashboardAlert>}
+      {error && (
+        <DashboardAlert variant="error">
+          {error}
+          {mcpOnly ? (
+            <>
+              {' '}
+              <Link href="/docs/mcp" className="underline">
+                How to connect
+              </Link>
+            </>
+          ) : null}
+        </DashboardAlert>
+      )}
 
       {hasSearched && !loading && (
         <p className="text-sm text-ink-muted">

@@ -66,11 +66,23 @@ function discoveryCatalog(): DiscoveryCatalog {
       title: g.title,
       summary: g.summary,
     })),
-    capabilities: CAPABILITY_PAGES.map((p) => ({
-      url: absoluteUrl(capabilityPath(p.slug)),
-      title: p.h1,
-      summary: p.summary,
-    })),
+    capabilities: [
+      ...CAPABILITY_PAGES.map((p) => ({
+        url: absoluteUrl(capabilityPath(p.slug)),
+        title: p.h1,
+        summary: p.summary,
+      })),
+      {
+        url: absoluteUrl('/mcp'),
+        title: 'Nutrition MCP for Claude Code and Cursor',
+        summary: 'Personal-use MCP tools. Claude Code and Cursor use an API key. Claude apps use browser sign-in when the API has OAuth enabled.',
+      },
+      {
+        url: absoluteUrl('/mcp/pricing'),
+        title: 'MCP pricing',
+        summary: '$29 per month or $228 per year. 7-day trial. No REST access.',
+      },
+    ],
     solutions: SOLUTION_PAGES.map((p) => ({
       url: absoluteUrl(solutionPath(p.slug)),
       title: p.h1,

@@ -52,12 +52,15 @@ export default function AdminPlansPage() {
   const [priceDisplayLabel, setPriceDisplayLabel] = useState('')
   const [highlights, setHighlights] = useState<string[]>([])
   const [monthlyPrice, setMonthlyPrice] = useState('')
+  const [annualPrice, setAnnualPrice] = useState('')
   const [quota, setQuota] = useState('')
   const [rateLimit, setRateLimit] = useState('')
   const [resultsPerQuery, setResultsPerQuery] = useState('')
   const [stripePriceId, setStripePriceId] = useState('')
   const [stripeTestPriceId, setStripeTestPriceId] = useState('')
   const [stripeLivePriceId, setStripeLivePriceId] = useState('')
+  const [stripeTestAnnualPriceId, setStripeTestAnnualPriceId] = useState('')
+  const [stripeLiveAnnualPriceId, setStripeLiveAnnualPriceId] = useState('')
   const [features, setFeatures] = useState<AdminPlanFeature[]>([])
   const [newFeatureName, setNewFeatureName] = useState('')
   const [newFeatureLimit, setNewFeatureLimit] = useState('')
@@ -96,12 +99,15 @@ export default function AdminPlansPage() {
     setPriceDisplayLabel(p.price_display_label ?? '')
     setHighlights(Array.isArray(p.card_highlights) ? [...p.card_highlights] : [])
     setMonthlyPrice(String(p.monthly_price ?? ''))
+    setAnnualPrice(p.annual_price == null ? '' : String(p.annual_price))
     setQuota(String(p.monthly_quota ?? ''))
     setRateLimit(String(p.rate_limit_per_minute ?? ''))
     setResultsPerQuery(String(p.max_results_per_query ?? ''))
     setStripePriceId(p.stripe_price_id ?? '')
     setStripeTestPriceId(p.stripe_test_price_id ?? '')
     setStripeLivePriceId(p.stripe_live_price_id ?? '')
+    setStripeTestAnnualPriceId(p.stripe_test_annual_price_id ?? '')
+    setStripeLiveAnnualPriceId(p.stripe_live_annual_price_id ?? '')
     setSuccess('')
     setShowFeatures(false)
     void loadFeatures(p.id)
@@ -152,6 +158,17 @@ export default function AdminPlansPage() {
       if (cleanedName) payload.name = cleanedName
       payload.description = sanitizeHighlight(description)
       if (monthlyPrice !== '') payload.monthly_price = Number(monthlyPrice)
+      if (annualPrice !== '') {
+        const annual = Number(annualPrice)
+        if (!Number.isFinite(annual) || annual < 0) {
+          setError('Annual price must be zero or greater')
+          setSaving(false)
+          return
+        }
+        payload.annual_price = annual
+      } else if (selected.annual_price != null) {
+        payload.annual_price = null
+      }
       if (quota !== '') payload.monthly_quota = Number(quota)
       if (rateLimit !== '') payload.rate_limit_per_minute = Number(rateLimit)
       if (resultsPerQuery !== '') {
@@ -173,6 +190,23 @@ export default function AdminPlansPage() {
       else if (selected.stripe_test_price_id) payload.stripe_test_price_id = null
       if (liveStripe) payload.stripe_live_price_id = liveStripe
       else if (selected.stripe_live_price_id) payload.stripe_live_price_id = null
+      const testAnnual = stripeTestAnnualPriceId.trim()
+      const liveAnnual = stripeLiveAnnualPriceId.trim()
+      const priceIdOk = (value: string) => /^price_[A-Za-z0-9]+$/.test(value)
+      if (testAnnual && !priceIdOk(testAnnual)) {
+        setError('Test annual price ID must look like price_abc123')
+        setSaving(false)
+        return
+      }
+      if (liveAnnual && !priceIdOk(liveAnnual)) {
+        setError('Live annual price ID must look like price_abc123')
+        setSaving(false)
+        return
+      }
+      if (testAnnual) payload.stripe_test_annual_price_id = testAnnual
+      else if (selected.stripe_test_annual_price_id) payload.stripe_test_annual_price_id = null
+      if (liveAnnual) payload.stripe_live_annual_price_id = liveAnnual
+      else if (selected.stripe_live_annual_price_id) payload.stripe_live_annual_price_id = null
 
       await adminAPI.patchPlan(selected.id, payload)
       const refreshed = await adminAPI.getPlans()
@@ -387,7 +421,8 @@ export default function AdminPlansPage() {
                         </Badge>
                       </div>
                       <p className="text-xs text-ink-muted mt-2">
-                        {formatPlanPriceLabel(p.monthly_price)}/mo · quota{' '}
+                        {formatPlanPriceLabel(p.monthly_price)}/mo
+                        {p.annual_price != null ? ` · ${formatPlanPriceLabel(p.annual_price)}/yr` : ''} · quota{' '}
                         {formatCount(p.monthly_quota ?? 0)} · {p.rate_limit_per_minute ?? '-'}/min
                         {' · '}
                         {p.max_results_per_query ?? '-'} foods/query
@@ -451,6 +486,20 @@ export default function AdminPlansPage() {
                         <Input
                           value={monthlyPrice}
                           onChange={(e) => setMonthlyPrice(e.target.value)}
+                          disabled={!canEdit}
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          placeholder="0.00"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-xs font-medium text-ink-dim block mb-1.5">
+                          Annual price (USD)
+                        </label>
+                        <Input
+                          value={annualPrice}
+                          onChange={(e) => setAnnualPrice(e.target.value)}
                           disabled={!canEdit}
                           type="number"
                           min="0"
@@ -604,6 +653,28 @@ export default function AdminPlansPage() {
                         <Input
                           value={stripeLivePriceId}
                           onChange={(e) => setStripeLivePriceId(e.target.value)}
+                          disabled={!canEdit}
+                          placeholder="price_..."
+                        />
+                      </div>
+                      <div>
+                        <label className="text-xs font-medium text-ink-dim block mb-1.5">
+                          Test annual price ID
+                        </label>
+                        <Input
+                          value={stripeTestAnnualPriceId}
+                          onChange={(e) => setStripeTestAnnualPriceId(e.target.value)}
+                          disabled={!canEdit}
+                          placeholder="price_..."
+                        />
+                      </div>
+                      <div>
+                        <label className="text-xs font-medium text-ink-dim block mb-1.5">
+                          Live annual price ID
+                        </label>
+                        <Input
+                          value={stripeLiveAnnualPriceId}
+                          onChange={(e) => setStripeLiveAnnualPriceId(e.target.value)}
                           disabled={!canEdit}
                           placeholder="price_..."
                         />

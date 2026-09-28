@@ -6,8 +6,20 @@ import { FOOD_DETAILS_CONTENT } from '@/lib/docs/content/food-details'
 import { REFERENCE_DATA_CONTENT } from '@/lib/docs/content/reference-data'
 import { RATE_LIMITS_CONTENT } from '@/lib/docs/content/rate-limits'
 import { ERRORS_CONTENT } from '@/lib/docs/content/errors'
+import { MCP_CONTENT } from '@/lib/docs/content/mcp'
 
 export const DOCS_SECTIONS: DocsSectionMeta[] = [
+  {
+    slug: 'mcp',
+    title: 'MCP server',
+    metaTitle: 'MCP Server',
+    description:
+      'Connect Claude Code or Cursor to the Calorie API MCP server: API key header, eight tools, trial and paid limits, photo input, and errors.',
+    keywords: ['nutrition mcp server', 'claude code mcp setup', 'mcp api key', 'calorie api mcp'],
+    summary: 'Install, auth, tools, limits, and photo input for the MCP server.',
+    dateModified: '2026-09-28',
+    group: 'MCP',
+  },
   {
     slug: 'authentication',
     title: 'Authentication',
@@ -123,6 +135,7 @@ export const DOCS_SECTIONS: DocsSectionMeta[] = [
 ]
 
 const CONTENT_BY_SLUG: Record<string, DocsSectionContent> = {
+  mcp: MCP_CONTENT,
   authentication: AUTHENTICATION_CONTENT,
   'food-search': FOOD_SEARCH_CONTENT,
   'barcode-lookup': BARCODE_LOOKUP_CONTENT,

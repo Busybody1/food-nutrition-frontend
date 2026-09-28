@@ -16,7 +16,7 @@ export type DocsSectionContent = {
   faqs: readonly FaqItem[]
 }
 
-export type DocsGroup = 'Endpoints' | 'Advanced'
+export type DocsGroup = 'Endpoints' | 'Advanced' | 'MCP'
 
 export type DocsSectionMeta = {
 

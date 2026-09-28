@@ -15,7 +15,9 @@ import {
   formatResultsPerQuery,
   allowsCommercialUse,
   isEnterprisePlan,
+  isMcpPlan,
 } from '@/lib/pricing/plan-display'
+import { PricingMcpExclusionNote } from '@/components/marketing/pricing-mcp-note'
 import { cn } from '@/lib/utils/cn'
 
 function PlanIcon({ name }: { name: string }) {
@@ -116,6 +118,10 @@ export function PricingCard({
           </li>
         ))}
       </ul>
+
+      {!isMcpPlan(plan) && (
+        <PricingMcpExclusionNote className="mb-4 border-t border-surface-border/70 pt-4" />
+      )}
 
       <Button
         variant={isPopular ? 'default' : 'outline'}

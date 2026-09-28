@@ -359,7 +359,12 @@ export const api = {
         payment_method_id: paymentMethodId,
       }),
 
-    createCheckoutSession: (data: { plan_id: number; success_url?: string; cancel_url?: string }) =>
+    createCheckoutSession: (data: {
+      plan_id: number
+      success_url?: string
+      cancel_url?: string
+      billing_interval?: 'month' | 'year'
+    }) =>
       apiClient.post('/api/v1/billing/checkout-sessions', data),
 
     updateSubscription: (planId: number) =>

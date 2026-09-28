@@ -12,6 +12,13 @@ export function buildDocsNavGroups(): DocsNavGroup[] {
       ],
     },
     {
+      title: 'MCP',
+      items: DOCS_SECTIONS.filter((s) => s.group === 'MCP').map((s) => ({
+        name: s.title,
+        href: docsSectionPath(s.slug),
+      })),
+    },
+    {
       title: 'Endpoints',
       items: DOCS_SECTIONS.filter((s) => s.group === 'Endpoints').map((s) => ({
         name: s.title,

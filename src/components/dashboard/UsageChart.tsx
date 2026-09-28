@@ -29,6 +29,12 @@ interface UsageChartProps {
 
 const COLORS = ['#0AC5D7', '#0891A3', '#22C55E', '#8FE8F0', '#52525B']
 
+function usageEndpointLabel(endpoint: string): string {
+  const match = endpoint.match(/\/api\/v1\/mcp\/([a-z0-9_]+)/i)
+  if (match) return `MCP ${match[1].replace(/_/g, ' ')}`
+  return endpoint.replace(/_/g, ' ')
+}
+
 export function UsageChart({ data, endpointData, currentUsage, quota, planName }: UsageChartProps) {
   const usagePercentage = quota > 0 ? (currentUsage / quota) * 100 : 0
   const remainingUsage = Math.max(0, quota - currentUsage)
@@ -200,7 +206,7 @@ export function UsageChart({ data, endpointData, currentUsage, quota, planName }
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis
                     dataKey="endpoint"
-                    tickFormatter={(value) => value.replace('_', ' ').toUpperCase()}
+                    tickFormatter={(value) => usageEndpointLabel(String(value))}
                   />
                   <YAxis />
                   <Tooltip
@@ -290,7 +296,7 @@ export function UsageChart({ data, endpointData, currentUsage, quota, planName }
                             style={{ backgroundColor: COLORS[index % COLORS.length] }}
                           />
                           <span className="text-sm font-medium text-gray-900">
-                            {endpoint.endpoint.replace('_', ' ').toUpperCase()}
+                            {usageEndpointLabel(endpoint.endpoint)}
                           </span>
                         </div>
                       </td>

@@ -89,6 +89,7 @@ class StripeAPI {
     plan_id: number
     success_url?: string
     cancel_url?: string
+    billing_interval?: 'month' | 'year'
   }): Promise<{ id: string; url: string }> {
     return this.request(STRIPE_API_ENDPOINTS.CHECKOUT_SESSIONS, {
       method: 'POST',

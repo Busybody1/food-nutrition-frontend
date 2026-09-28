@@ -18,6 +18,7 @@ const primaryLinks: NavLink[] = [
   { href: '/playground', label: 'Playground' },
   { href: '/solutions', label: 'Solutions' },
   { href: '/pricing', label: 'Pricing' },
+  { href: '/mcp', label: 'MCP' },
 ]
 
 const resourceLinks: NavLink[] = [

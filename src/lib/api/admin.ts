@@ -310,6 +310,7 @@ export interface AdminPlan {
   name: string
   description?: string
   monthly_price?: number
+  annual_price?: number | null
   monthly_quota?: number
   rate_limit_per_minute?: number
   max_results_per_query?: number
@@ -321,6 +322,8 @@ export interface AdminPlan {
   stripe_price_id?: string | null
   stripe_test_price_id?: string | null
   stripe_live_price_id?: string | null
+  stripe_test_annual_price_id?: string | null
+  stripe_live_annual_price_id?: string | null
   card_highlights?: string[]
   price_display_label?: string | null
   users_count?: number
@@ -725,6 +728,9 @@ class AdminAPI {
       stripe_price_id?: string | null
       stripe_test_price_id?: string | null
       stripe_live_price_id?: string | null
+      stripe_test_annual_price_id?: string | null
+      stripe_live_annual_price_id?: string | null
+      annual_price?: number | null
       card_highlights?: string[]
       price_display_label?: string | null
     }

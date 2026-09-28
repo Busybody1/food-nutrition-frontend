@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { ApiKeyList } from '@/components/dashboard/ApiKeyList'
+import { ConnectToClaude } from '@/components/dashboard/ConnectToClaude'
 import {
   DashboardPage,
   DashboardLoading,
@@ -139,6 +140,9 @@ export default function ApiKeysPage() {
             </Link>
           </DashboardAlert>
         )}
+        <div className="mb-6">
+          <ConnectToClaude apiKeys={apiKeys} />
+        </div>
         <ApiKeyList
           apiKeys={apiKeys}
           onRefresh={loadData}

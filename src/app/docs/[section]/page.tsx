@@ -108,7 +108,7 @@ export default async function DocsSectionPage({ params }: PageProps) {
 
             <header className="relative">
               <p className="marketing-section-label mb-2 block">
-                {meta.group === 'Endpoints' ? 'API Reference' : 'Advanced'}
+                {meta.group === 'Endpoints' ? 'API Reference' : meta.group}
               </p>
               <h1 className="font-display text-3xl md:text-4xl tracking-tight text-ink mb-3">
                 {meta.title}

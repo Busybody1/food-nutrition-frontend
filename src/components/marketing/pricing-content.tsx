@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useState, useEffect, useMemo } from 'react'
 import { useAuth } from '@/lib/hooks/use-auth'
@@ -153,6 +154,13 @@ export function PricingContent({ initialPlans, initialError }: PricingContentPro
         <p className="text-lg text-ink-muted mb-8 max-w-2xl mx-auto">
           Per-account rate limits and monthly quotas for every tier. Commercial production use
           starts on Plus. Enterprise adds image-to-calorie API and credits-based usage.
+        </p>
+        <p className="mb-8 text-sm text-ink-muted">
+          Using Claude Code or Cursor?{' '}
+          <Link href="/mcp/pricing" className="text-brand-strong underline">
+            See the MCP plan
+          </Link>
+          .
         </p>
         <div className="mb-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <TrackedCtaLink

@@ -2,6 +2,8 @@ export interface PricingPlan {
   id: number
   name: string
   monthly_price: number
+  annual_price?: number
+  plan_tier?: string
   description: string
   highlights: string[]
   monthly_quota: number
@@ -24,6 +26,10 @@ export function isEnterprisePlan(name: string): boolean {
 
 export function isContactSalesPlan(name: string): boolean {
   return isEnterprisePlan(name)
+}
+
+export function isMcpPlan(plan: Pick<PricingPlan, 'name' | 'plan_tier'>): boolean {
+  return plan.plan_tier?.toLowerCase() === 'mcp' || plan.name.toLowerCase() === 'mcp'
 }
 
 function parseIntField(value: unknown): number {
@@ -315,6 +321,8 @@ export function transformPlanData(backendPlans: Record<string, unknown>[]): Pric
       id: parseIntField(plan.id),
       name,
       monthly_price: parseFloatField(plan.monthly_price),
+      annual_price: plan.annual_price != null ? parseFloatField(plan.annual_price) : undefined,
+      plan_tier: typeof plan.plan_tier === 'string' ? plan.plan_tier : undefined,
       description: getPlanDescription(name, description),
       monthly_quota: monthlyQuota,
       rate_limit_per_minute: rateLimit,

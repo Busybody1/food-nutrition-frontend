@@ -8,6 +8,7 @@ const productLinks = [
   { href: '/docs', label: 'Documentation' },
   { href: '/playground', label: 'API Playground' },
   { href: '/pricing', label: 'Pricing' },
+  { href: '/mcp', label: 'MCP for Claude and Cursor' },
   { href: '/blog', label: 'Blog' },
   { href: '/api-status', label: 'API status' },
   { href: '/changelog', label: 'Changelog' },
