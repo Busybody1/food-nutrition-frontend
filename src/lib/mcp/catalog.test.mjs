@@ -6,6 +6,7 @@ import {
   annualSavingsUsd,
   claudeCodeCommand,
   cursorConfig,
+  mcpTrialClick,
   safeNextPath,
   isSafeOAuthRedirect,
 } from './catalog.ts'
@@ -52,4 +53,23 @@ test('oauth return urls stay on the client host', () => {
   assert.equal(isSafeOAuthRedirect('http://localhost:53123/callback?code=1', 'claude.ai'), false)
   assert.equal(isSafeOAuthRedirect('https://evil.example/callback', 'claude.ai'), false)
   assert.equal(isSafeOAuthRedirect('javascript:alert(1)', 'claude.ai'), false)
+})
+
+test('trial click signs out users in and only checks out an open plan', () => {
+  assert.equal(
+    mcpTrialClick({ loading: true, isAuthenticated: false, hasSession: false, checkoutOpen: false }),
+    'login'
+  )
+  assert.equal(
+    mcpTrialClick({ loading: true, isAuthenticated: false, hasSession: true, checkoutOpen: true }),
+    'wait'
+  )
+  assert.equal(
+    mcpTrialClick({ loading: false, isAuthenticated: true, hasSession: true, checkoutOpen: false }),
+    'closed'
+  )
+  assert.equal(
+    mcpTrialClick({ loading: false, isAuthenticated: true, hasSession: true, checkoutOpen: true }),
+    'checkout'
+  )
 })

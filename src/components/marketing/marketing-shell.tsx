@@ -14,7 +14,7 @@ export function MarketingSectionHeader({
 }: {
   label?: string
   title: React.ReactNode
-  description?: string
+  description?: React.ReactNode
   className?: string
 
   id?: string
@@ -76,7 +76,7 @@ export function MarketingCtaBand({
   children,
 }: {
   title: string
-  description: string
+  description: React.ReactNode
   primaryHref: string
   primaryLabel: string
   secondaryHref?: string

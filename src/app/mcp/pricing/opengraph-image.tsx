@@ -7,7 +7,7 @@ export const alt = 'MCP pricing'
 export default function OgImage() {
   return buildOgImage({
     label: 'Pricing',
-    title: '$29/month or $228/year',
-    subtitle: '7-day trial. MCP tools only. Personal use.',
+    title: '$29/month or $19/month',
+    subtitle: '$120 USD Off on annual. 7-day trial. MCP tools only.',
   })
 }

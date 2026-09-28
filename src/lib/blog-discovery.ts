@@ -80,7 +80,7 @@ function discoveryCatalog(): DiscoveryCatalog {
       {
         url: absoluteUrl('/mcp/pricing'),
         title: 'MCP pricing',
-        summary: '$29 per month or $228 per year. 7-day trial. No REST access.',
+        summary: '$29/month, or $19/month if you buy annual. $120 USD Off. 7-day trial. No REST access.',
       },
     ],
     solutions: SOLUTION_PAGES.map((p) => ({

@@ -9,7 +9,7 @@ import { buildBreadcrumbJsonLd } from '@/lib/seo-jsonld'
 export const metadata: Metadata = buildPageMetadata({
   title: 'Nutrition MCP',
   description:
-    'Nutrition MCP server for Claude Code and Cursor. The catalog answers food search, portions, recipes, barcodes, and photos. $29/month or $228/year, 7-day trial.',
+    'Nutrition MCP server for Claude Code and Cursor. The catalog answers food search, portions, recipes, barcodes, and photos. $29/month or $19/month. $120 USD Off on annual. 7-day trial.',
   keywords: [
     'nutrition mcp server',
     'claude code mcp',

@@ -106,7 +106,7 @@ export const MCP_PAGE_FAQS: readonly FaqItem[] = [
   },
   {
     q: 'Will I be charged when the trial ends?',
-    a: 'Yes, unless you cancel before the trial ends. Cancel from the billing page. Annual is $228 ($19/month, billed once). Monthly is $29.',
+    a: 'Yes, unless you cancel before the trial ends. Cancel from the billing page. Annual is $19/month. Monthly is $29. $120 USD Off on annual.',
   },
   {
     q: 'Where do I get the API key?',
@@ -155,13 +155,18 @@ export const MCP_FAQS: readonly FaqItem[] = [
   },
   {
     q: 'How is annual billing priced?',
-    a: '$228 per year ($19/month, billed once). Monthly is $29. Annual saves $120.',
+    a: '$19/month if you buy annual. Monthly is $29. $120 USD Off.',
   },
 ]
 
 export function mcpEndpoint(): string {
   const base = (process.env.NEXT_PUBLIC_API_URL || 'https://calorieapiadmin.com').replace(/\/$/, '')
   return `${base}/mcp`
+}
+
+export function annualAsMonthlyUsd(annual: number): number {
+  if (!Number.isFinite(annual) || annual <= 0) return 0
+  return Math.round(annual / 12)
 }
 
 export function annualSavingsUsd(monthly: number, annual: number): number {
@@ -230,6 +235,22 @@ export function safeNextPath(raw: string | null | undefined): string | null {
     return null
   }
   return value
+}
+
+export type McpTrialClick = 'login' | 'wait' | 'closed' | 'checkout'
+
+export function mcpTrialClick(input: {
+  loading: boolean
+  isAuthenticated: boolean
+  hasSession: boolean
+  checkoutOpen: boolean
+}): McpTrialClick {
+  if (!input.isAuthenticated) {
+    if (input.loading && input.hasSession) return 'wait'
+    return 'login'
+  }
+  if (!input.checkoutOpen) return 'closed'
+  return 'checkout'
 }
 
 export function isSafeOAuthRedirect(raw: string, expectedHost: string): boolean {
