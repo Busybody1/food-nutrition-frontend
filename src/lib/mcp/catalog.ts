@@ -86,7 +86,7 @@ export const MCP_PAGE_FAQS: readonly FaqItem[] = [
   },
   {
     q: 'Which clients work?',
-    a: 'Claude Code and Cursor, with an API key in the X-API-Key header. Claude.ai, Claude Desktop, and Claude mobile use browser sign-in once OAuth is enabled on the API.',
+    a: 'Claude Code, GPT, Codex, and Cursor, with an API key in the X-API-Key header. Claude.ai, Claude Desktop, and Claude mobile use browser sign-in once OAuth is enabled on the API.',
   },
   {
     q: 'Does this include the REST API?',

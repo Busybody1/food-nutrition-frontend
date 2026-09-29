@@ -15,7 +15,6 @@ import {
   MarketingCtaBand,
   MarketingFeatureCard,
   MarketingSectionHeader,
-  MarketingStatStrip,
   MarketingTrustPills,
 } from '@/components/marketing/marketing-shell'
 import { Reveal, RevealGroup } from '@/components/marketing/reveal'
@@ -37,11 +36,11 @@ import { FOOD_DATABASE_SIZE_LABEL } from '@/lib/site'
 
 const USES: { icon: LucideIcon; title: string; description: string }[] = [
   { icon: Search, title: 'Search', description: 'Name a food. Get calories and a food_id.' },
+  { icon: Camera, title: 'Photo', description: 'You pass image_base64. The chat does not attach it.' },
   { icon: Scale, title: 'Portion', description: 'Scale that food to the grams you ate.' },
   { icon: UtensilsCrossed, title: 'Recipe', description: 'Total the ingredients, then split per serving.' },
   { icon: ScanBarcode, title: 'Barcode', description: 'UPC or EAN. A fallback if the catalog misses.' },
   { icon: Target, title: 'Daily target', description: 'Calories from age, weight, and goal.' },
-  { icon: Camera, title: 'Photo', description: 'You pass image_base64. The chat does not attach it.' },
 ]
 
 const STEPS = [
@@ -61,7 +60,7 @@ const TRANSCRIPT: { who: string; text: string; code?: string }[] = [
   { who: 'You', text: 'How many calories and how much protein are in 180 g of cooked chicken breast?' },
   {
     who: 'search_foods',
-    text: 'The catalog answers before any number is named.',
+    text: 'Cooked chicken breast, per 100 g.',
     code: '{ "kcal": 165, "protein_g": 31 } per 100 g',
   },
   {
@@ -80,53 +79,27 @@ export function McpLanding() {
   return (
     <div className="marketing-page pb-24 lg:pb-0">
       <MarketingImageHero centered waveTone="elevated">
-        <p className="marketing-hero-badge mb-4 inline-flex">Nutrition MCP</p>
+        <p className="marketing-hero-badge mb-4 inline-flex">Calorie MCP</p>
         <h1 className="font-display text-4xl text-ink text-balance md:text-6xl">
-          Your nutrition database, inside Claude.
+          Make your agent a personal fitness coach.
         </h1>
         <p className="mx-auto mt-5 max-w-xl text-lg leading-relaxed text-ink-muted">
-          Ask in the chat. The catalog returns the macros.
+          Ask for calories and your Claude returns verified macros for over {FOOD_DATABASE_SIZE_LABEL}.
         </p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
           <Link href="/mcp/pricing" className="btn-brand h-12 px-8 text-base">
             Start 7-day trial
           </Link>
-          <Link href="#connect" className="btn-brand-outline h-12 px-8 text-base">
-            Connect
-          </Link>
         </div>
-        <p className="mt-4 text-sm font-medium text-ink">
-          ${MCP_MONTHLY_USD}/month or ${annualMonthly}/month
-          {savings > 0 ? (
-            <span className="font-semibold text-red-600"> · ${savings} USD Off</span>
-          ) : null}
-        </p>
         <McpEndpointBar endpoint={endpoint} />
         <div className="mt-6">
-          <MarketingTrustPills items={['Claude Code and Cursor', 'Personal use', 'Cancel anytime']} />
+          <MarketingTrustPills items={['Claude, GPT, Cursor', 'Cancel anytime']} />
         </div>
       </MarketingImageHero>
 
-      <section className="section-pad-sm bg-surface-elevated" aria-label="Catalog and plan facts">
-        <div className="container-narrow">
-          <Reveal>
-            <div className="rounded-brand border border-brand/15 bg-white px-4 py-8 shadow-glass sm:px-6 md:px-8 md:py-10">
-              <MarketingStatStrip
-                stats={[
-                  { value: FOOD_DATABASE_SIZE_LABEL, label: 'foods' },
-                  { value: '8 tools', label: 'search through photos' },
-                  { value: 'UPC + EAN', label: 'barcode lookup' },
-                  { value: `$${annualMonthly}/month`, label: 'if you buy annual' },
-                ]}
-              />
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
       <section className="section-pad bg-white" aria-labelledby="mcp-steps-heading">
         <div className="container-narrow">
-          <MarketingSectionHeader id="mcp-steps-heading" label="How it works" title="Three steps. Then you ask." />
+          <MarketingSectionHeader id="mcp-steps-heading" title="How It Works" />
           <RevealGroup className="grid gap-4 md:grid-cols-3" itemClassName="h-full min-w-0">
             {STEPS.map((step, index) => (
               <div key={step.title} className={index === 0 ? 'marketing-card card-hairline h-full p-6' : 'marketing-card h-full p-6'}>
@@ -145,7 +118,6 @@ export function McpLanding() {
         <div className="container-narrow">
           <MarketingSectionHeader
             id="mcp-connect-heading"
-            label="Connect"
             title="Add the server."
             description="Paste this into Claude Code or Cursor. Replace YOUR_KEY after checkout."
           />
@@ -159,8 +131,7 @@ export function McpLanding() {
         <div className="container-narrow">
           <MarketingSectionHeader
             id="mcp-uses-heading"
-            label="Tools"
-            title="The jobs a food log already does."
+            title="What can you do with the MCP"
             description={
               <>
                 Eight calls. The{' '}
@@ -183,8 +154,7 @@ export function McpLanding() {
         <div className="container-narrow">
           <MarketingSectionHeader
             id="mcp-session-heading"
-            label="A real ask"
-            title="Search first. Then scale."
+            title="Ask for 180 g of cooked chicken breast."
           />
           <Reveal>
             <ol className="mx-auto max-w-2xl space-y-3">
@@ -199,7 +169,9 @@ export function McpLanding() {
                           : 'max-w-[90%] rounded-brand border border-surface-border bg-white p-4 shadow-glass'
                       }
                     >
-                      <p className="text-xs font-semibold uppercase tracking-wide text-ink-dim">{turn.who}</p>
+                      <p className={isYou ? 'text-sm font-semibold text-ink' : 'text-xs font-semibold uppercase tracking-wide text-ink-dim'}>
+                        {turn.who}
+                      </p>
                       <p className="mt-1.5 leading-relaxed text-ink">{turn.text}</p>
                       {turn.code ? (
                         <pre className="mt-3 overflow-x-auto rounded-brand bg-ink px-4 py-3 font-mono text-xs leading-relaxed text-white">
@@ -218,16 +190,12 @@ export function McpLanding() {
       <section className="section-pad bg-white" aria-labelledby="mcp-photo-heading">
         <div className="container-narrow grid items-center gap-8 lg:grid-cols-2 lg:gap-14">
           <div>
-            <p className="marketing-section-label">Photos</p>
-            <h2 id="mcp-photo-heading" className="mt-3 font-display text-3xl tracking-tight text-ink text-balance md:text-4xl">
-              The image has to be in the call.
+            <h2 id="mcp-photo-heading" className="font-display text-3xl tracking-tight text-ink text-balance md:text-4xl">
+              Send the photo as base64.
             </h2>
             <p className="mt-4 max-w-md leading-relaxed text-ink-muted">
               Dropping a picture into the chat does not send it. Pass raw base64, no data: prefix.
               JPEG, PNG, or WebP, up to 2 MB.
-            </p>
-            <p className="mt-3 text-sm text-ink-muted">
-              Trial: {MCP_TRIAL_LIMITS.visionTotal} photos. Paid: {MCP_PAID_LIMITS.visionMonth} a month.
             </p>
           </div>
           <Reveal className="marketing-card p-6">
@@ -287,7 +255,7 @@ export function McpLanding() {
 
       <section className="section-pad bg-white" id="faq" aria-labelledby="mcp-faq-heading">
         <div className="container-narrow">
-          <MarketingSectionHeader id="mcp-faq-heading" title="Before you start" />
+          <MarketingSectionHeader id="mcp-faq-heading" title="FAQ" />
           <FaqList items={faqs} />
         </div>
       </section>

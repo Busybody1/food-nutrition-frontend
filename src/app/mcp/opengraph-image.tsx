@@ -7,7 +7,7 @@ export const alt = 'Nutrition MCP for Claude Code and Cursor'
 export default function OgImage() {
   return buildOgImage({
     label: 'MCP',
-    title: 'Your nutrition database, inside Claude.',
-    subtitle: 'Claude Code and Cursor. Personal use. 7-day trial.',
+    title: 'Make your agent a personal fitness coach.',
+    subtitle: 'Ask for calories. Claude returns verified macros.',
   })
 }

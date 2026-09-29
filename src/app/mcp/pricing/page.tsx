@@ -1,13 +1,7 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
 import { McpPricingCard } from '@/components/marketing/mcp-pricing-card'
 import { FaqList } from '@/components/marketing/faq-section'
-import { MarketingImageHero } from '@/components/marketing/marketing-image-hero'
-import {
-  MarketingCtaBand,
-  MarketingSectionHeader,
-  MarketingTrustPills,
-} from '@/components/marketing/marketing-shell'
+import { MarketingCtaBand, MarketingSectionHeader } from '@/components/marketing/marketing-shell'
 import { JsonLdScript } from '@/components/seo/structured-data'
 import { buildPageMetadata } from '@/lib/metadata'
 import { fetchPublicPlans } from '@/lib/pricing/fetch-plans'
@@ -15,8 +9,6 @@ import {
   MCP_ANNUAL_USD,
   MCP_FAQS,
   MCP_MONTHLY_USD,
-  MCP_PAID_LIMITS,
-  MCP_TRIAL_LIMITS,
   annualAsMonthlyUsd,
   annualSavingsUsd,
 } from '@/lib/mcp/catalog'
@@ -74,69 +66,16 @@ export default async function McpPricingPage() {
     <div className="marketing-page">
       <JsonLdScript id="mcp-pricing-product" data={product} />
       <JsonLdScript id="mcp-pricing-faq" data={buildFaqPageJsonLd(BILLING_FAQS)} />
-      <MarketingImageHero compact centered waveTone="elevated">
-        <p className="marketing-hero-badge mb-4 inline-flex">Pricing</p>
-        <h1 className="font-display text-4xl text-ink text-balance md:text-6xl">
-          The catalog in Claude, for ${annualMonthly}/month.
-        </h1>
-        <p className="mx-auto mt-5 max-w-xl text-lg leading-relaxed text-ink-muted">
-          ${monthly}/month, or ${annualMonthly}/month if you buy annual.
-          {savings > 0 ? (
-            <span className="font-semibold text-red-600"> ${savings} USD Off.</span>
-          ) : null}{' '}
-          Seven days to try it. A card is required.
-        </p>
-        <div className="mt-6">
-          <MarketingTrustPills
-            items={['Claude Code and Cursor', 'Cancel anytime', 'MCP tools only']}
-          />
-        </div>
-      </MarketingImageHero>
-
       <section className="section-pad bg-surface-elevated" aria-labelledby="mcp-choose-plan">
         <div className="container-narrow">
-          <h2 id="mcp-choose-plan" className="sr-only">
-            Choose annual or monthly
-          </h2>
+          <h1 id="mcp-choose-plan" className="mb-10 text-center font-display text-4xl text-ink text-balance md:text-5xl">
+            Start the 7-day trial.
+          </h1>
           <McpPricingCard plan={plan} />
         </div>
       </section>
 
-      <section className="section-pad" aria-labelledby="mcp-after-trial">
-        <div className="container-narrow">
-          <MarketingSectionHeader
-            id="mcp-after-trial"
-            label="The trial"
-            title="Try it for 7 days. Then the paid limits apply."
-            description="Cancel from billing before the trial ends if you do not want to be charged."
-          />
-          <div className="mx-auto grid max-w-4xl gap-5 md:grid-cols-2">
-            <div className="rounded-brand border border-brand/30 bg-brand-muted/30 p-6 ring-2 ring-brand/20 md:p-8">
-              <p className="text-xs font-semibold uppercase tracking-wide text-brand-strong">First 7 days</p>
-              <ul className="mt-4 space-y-2 text-sm text-ink">
-                <li>{MCP_TRIAL_LIMITS.perMinute} calls per minute</li>
-                <li>{MCP_TRIAL_LIMITS.totalCalls} calls total</li>
-                <li>{MCP_TRIAL_LIMITS.results} foods per search</li>
-                <li>{MCP_TRIAL_LIMITS.visionTotal} photos total</li>
-              </ul>
-              <Link href="#mcp-choose-plan" className="btn-brand mt-6 h-11 w-full">
-                Start 7-day trial
-              </Link>
-            </div>
-            <div className="rounded-brand border border-surface-border/80 bg-white p-6 shadow-glass md:p-8">
-              <p className="text-xs font-semibold uppercase tracking-wide text-ink-muted">After the trial</p>
-              <ul className="mt-4 space-y-2 text-sm text-ink">
-                <li>{MCP_PAID_LIMITS.perMinute} calls per minute</li>
-                <li>{MCP_PAID_LIMITS.perMonth.toLocaleString()} calls a month</li>
-                <li>{MCP_PAID_LIMITS.results} foods per search</li>
-                <li>{MCP_PAID_LIMITS.visionMonth} photos a month, {MCP_PAID_LIMITS.visionDay} a day</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="section-pad bg-surface-elevated" id="faq" aria-labelledby="mcp-billing-faq">
+      <section className="section-pad bg-white" id="faq" aria-labelledby="mcp-billing-faq">
         <div className="container-narrow">
           <MarketingSectionHeader id="mcp-billing-faq" title="Billing" />
           <FaqList items={BILLING_FAQS} />

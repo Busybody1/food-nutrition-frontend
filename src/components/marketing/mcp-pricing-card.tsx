@@ -90,45 +90,13 @@ export function McpPricingCard({ plan }: { plan: PricingPlan | null }) {
           published plan: ${monthly}/month or ${annualMonthly}/month.
         </p>
       )}
-      <div className="mx-auto grid max-w-4xl items-stretch gap-5 md:grid-cols-2">
-        <article
-          className={cn(
-            'relative flex flex-col rounded-brand border border-brand/40 bg-white p-6 shadow-glow md:p-8',
-            'motion-safe:md:-translate-y-2',
-            'before:pointer-events-none before:absolute before:inset-x-0 before:top-0 before:h-[3px]',
-            'before:rounded-t-brand before:bg-brand before:content-[""]'
-          )}
-        >
-          <p className="text-xs font-semibold uppercase tracking-wide text-brand-strong">Recommended</p>
-          <h2 className="mt-2 font-display text-2xl text-ink">Annual</h2>
-          <p className="mt-4 font-display text-5xl tabular-nums text-ink">
-            ${annualMonthly}
-            <span className="text-lg text-ink-muted">/month</span>
-          </p>
-          {savings > 0 ? (
-            <p className="mt-2 text-sm font-semibold text-red-600">${savings} USD Off</p>
-          ) : (
-            <p className="mt-2 text-sm text-ink-muted">If you buy annual</p>
-          )}
-          <button
-            type="button"
-            className="btn-brand mt-6 h-12 w-full cursor-pointer text-base disabled:cursor-wait disabled:opacity-70"
-            onClick={() => void start('year')}
-            disabled={pending !== null}
-          >
-            {pending === 'year' ? 'Opening checkout' : 'Start 7-day trial'}
-          </button>
-          <p className="mt-2 text-center text-xs text-ink-muted">Card required. Cancel anytime.</p>
-        </article>
-
-        <article className="flex flex-col rounded-brand border border-surface-border/80 bg-white p-6 shadow-glass md:p-8">
-          <p className="text-xs font-semibold uppercase tracking-wide text-ink-muted">Pay as you go</p>
-          <h2 className="mt-2 font-display text-2xl text-ink">Monthly</h2>
+      <div className="mx-auto grid max-w-4xl items-stretch gap-5 pt-4 md:grid-cols-2">
+        <article className="flex h-full flex-col rounded-brand border border-surface-border/80 bg-white p-6 shadow-glass md:p-8">
+          <h2 className="font-display text-2xl text-ink">Monthly</h2>
           <p className="mt-4 font-display text-5xl tabular-nums text-ink">
             ${monthly}
             <span className="text-lg text-ink-muted">/month</span>
           </p>
-          <p className="mt-2 text-sm text-ink-muted">Same tools. No discount.</p>
           <button
             type="button"
             className="btn-brand-outline mt-6 h-12 w-full cursor-pointer text-base disabled:cursor-wait disabled:opacity-70"
@@ -137,7 +105,36 @@ export function McpPricingCard({ plan }: { plan: PricingPlan | null }) {
           >
             {pending === 'month' ? 'Opening checkout' : 'Start 7-day trial'}
           </button>
-          <p className="mt-2 text-center text-xs text-ink-muted">Card required. Cancel anytime.</p>
+        </article>
+
+        <article
+          className={cn(
+            'relative flex h-full flex-col rounded-brand border border-brand/40 bg-white p-6 shadow-glow md:p-8',
+            'before:pointer-events-none before:absolute before:inset-x-0 before:top-0 before:h-[3px]',
+            'before:rounded-t-brand before:bg-brand before:content-[""]'
+          )}
+        >
+          <p className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2 rounded-pill bg-brand px-3 py-1 text-xs font-semibold text-ink">
+            Recommended
+          </p>
+          <h2 className="font-display text-2xl text-ink">Annual</h2>
+          <div className="mt-4 flex flex-wrap items-end gap-x-3 gap-y-1">
+            <p className="font-display text-5xl tabular-nums text-ink">
+              ${annualMonthly}
+              <span className="text-lg text-ink-muted">/month</span>
+            </p>
+            {savings > 0 ? (
+              <p className="pb-1.5 text-sm font-semibold text-red-600">${savings} USD Off</p>
+            ) : null}
+          </div>
+          <button
+            type="button"
+            className="btn-brand mt-6 h-12 w-full cursor-pointer text-base disabled:cursor-wait disabled:opacity-70"
+            onClick={() => void start('year')}
+            disabled={pending !== null}
+          >
+            {pending === 'year' ? 'Opening checkout' : 'Start 7-day trial'}
+          </button>
         </article>
       </div>
       <ul className="mx-auto mt-8 grid max-w-4xl gap-3 sm:grid-cols-2">
