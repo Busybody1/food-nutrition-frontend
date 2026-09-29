@@ -7,7 +7,7 @@ type MarketingImageHeroProps = {
   children: ReactNode
   compact?: boolean
   centered?: boolean
-
+  className?: string
   waveTone?: 'elevated' | 'white'
 }
 
@@ -20,6 +20,7 @@ export function MarketingImageHero({
   children,
   compact = false,
   centered = false,
+  className,
   waveTone = 'elevated',
 }: MarketingImageHeroProps) {
   return (
@@ -27,7 +28,8 @@ export function MarketingImageHero({
       className={cn(
         'hero-home',
         compact && 'hero-home--compact',
-        centered && 'hero-home--center'
+        centered && 'hero-home--center',
+        className
       )}
     >
       <div className="absolute inset-0">

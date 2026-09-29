@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { McpPricingCard } from '@/components/marketing/mcp-pricing-card'
 import { FaqList } from '@/components/marketing/faq-section'
+import { MarketingImageHero } from '@/components/marketing/marketing-image-hero'
 import { MarketingCtaBand, MarketingSectionHeader } from '@/components/marketing/marketing-shell'
 import { JsonLdScript } from '@/components/seo/structured-data'
 import { buildPageMetadata } from '@/lib/metadata'
@@ -66,11 +67,20 @@ export default async function McpPricingPage() {
     <div className="marketing-page">
       <JsonLdScript id="mcp-pricing-product" data={product} />
       <JsonLdScript id="mcp-pricing-faq" data={buildFaqPageJsonLd(BILLING_FAQS)} />
-      <section className="section-pad bg-surface-elevated" aria-labelledby="mcp-choose-plan">
+      <MarketingImageHero compact centered waveTone="elevated" className="!min-h-0">
+        <h1 className="font-display text-4xl text-ink text-balance md:text-6xl">
+          Stop letting your agent invent the calories.
+        </h1>
+        <p className="mx-auto mt-4 max-w-xl text-lg leading-relaxed text-ink-muted">
+          Seven days in Claude, GPT, Codex, and Cursor.
+        </p>
+      </MarketingImageHero>
+
+      <section className="bg-surface-elevated pb-20 pt-6 md:pb-28 md:pt-8" aria-labelledby="mcp-choose-plan">
         <div className="container-narrow">
-          <h1 id="mcp-choose-plan" className="mb-10 text-center font-display text-4xl text-ink text-balance md:text-5xl">
-            Start the 7-day trial.
-          </h1>
+          <h2 id="mcp-choose-plan" className="sr-only">
+            Choose monthly or annual
+          </h2>
           <McpPricingCard plan={plan} />
         </div>
       </section>
