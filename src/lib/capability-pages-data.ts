@@ -213,7 +213,7 @@ export const CAPABILITY_PAGES: CapabilityPage[] = [
     ],
     heroBadge: 'Barcode lookup',
     heroCopy: [
-      'Turn a barcode scan into a logged meal with a single request. The barcode nutrition API resolves UPC and EAN codes against a verified local catalog first, then falls back to Open Food Facts automatically, with one normalized response shape either way.',
+      'A barcode nutrition API turns a UPC or EAN scan into a logged meal in one request. The local catalog is checked first, then Open Food Facts, and both return the same response shape.',
       'Every response is trimmed to what logging apps actually need: product name and brand, ingredients and allergens, serving metadata, macros per 100 g and per serving when available, and micronutrients when present.',
     ],
     stats: [
@@ -301,7 +301,7 @@ export const CAPABILITY_PAGES: CapabilityPage[] = [
     ],
     heroBadge: 'Food database',
     heroCopy: [
-      `Query ${FOOD_DATABASE_SIZE_LABEL} (generic foods, branded products, and restaurant items) through one REST food database API. Multi-word search with relevance ranking, brand and category filters, and a verified-only mode when data quality matters most.`,
+      `A food database API covers ${FOOD_DATABASE_SIZE_LABEL}: generic foods, branded products, and restaurant items over REST. Multi-word search, brand and category filters, and a verified-only mode are on the same endpoint.`,
       'Every food returns complete nutrition data: per-100g macros, a structured nutrients array with micronutrients when available, and serving metadata that maps cleanly to meal-logging data models.',
     ],
     stats: [
@@ -389,7 +389,7 @@ export const CAPABILITY_PAGES: CapabilityPage[] = [
     ],
     heroBadge: 'Meal tracking',
     heroCopy: [
-      'A meal tracker lives or dies by its logging flow: type a few letters, pick a food, adjust the portion, done. The meal tracking API is built around that flow, a fast suggest endpoint for typeahead, full nutrition on selection, and barcode scanning for packaged foods.',
+      'A meal tracking API is the logging flow: type a few letters, pick a food, adjust the portion. Suggest returns the short list, food details return macros per 100 g, and barcode lookup covers packaged foods.',
       'Stable food IDs make re-logging favorites instant, and per-100g normalized macros keep portion math consistent across generic foods, branded products, and scanned items.',
     ],
     stats: [
@@ -477,7 +477,7 @@ export const CAPABILITY_PAGES: CapabilityPage[] = [
     ],
     heroBadge: 'Nutrition analysis',
     heroCopy: [
-      'Build macro calculators, meal-plan generators, and health analytics on structured nutrition data instead of scraped labels. Every food exposes calories, protein, carbohydrates, and fat per 100 g, plus a nutrients array covering micronutrients when available.',
+      'A nutrition analysis API returns calories, protein, carbohydrates, and fat per 100 g, plus a nutrients array when micronutrients are present. Meal-plan and calculator code scales those values by grams.',
       'The verified-only search mode restricts analysis to curated foods with complete, quality-checked macro data, the right default for anything that computes recommendations from the numbers.',
     ],
     stats: [

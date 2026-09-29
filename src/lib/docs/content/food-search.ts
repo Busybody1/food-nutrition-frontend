@@ -41,7 +41,7 @@ export const FOOD_SEARCH_CONTENT: DocsSectionContent = {
   blocks: [
     {
       kind: 'p',
-      text: 'Search foods by name or brand with multi-word matching and relevance ranking. Results include complete nutrition data, per-100g macros, the nutrients array, and serving metadata, and only foods with complete macro data are returned. An empty query returns common and popular foods.',
+      text: 'A food search API looks up foods by name or brand and returns macros per 100 g. An empty query returns common foods. Results include the nutrients array and serving metadata, and only foods with complete macro data are returned.',
     },
     {
       kind: 'code',

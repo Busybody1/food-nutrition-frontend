@@ -45,6 +45,12 @@ function getStructuredData(type: StructuredDataProps['type'], data?: Record<stri
         },
         ...(ORG_FOUNDING_DATE ? { foundingDate: ORG_FOUNDING_DATE } : {}),
         ...(ORG_SAMEAS.length > 0 ? { sameAs: ORG_SAMEAS } : {}),
+        knowsAbout: [
+          'Food calorie API',
+          'Nutrition database',
+          'Nutrition MCP server',
+          'Barcode nutrition lookup',
+        ],
       }
 
     case 'website':

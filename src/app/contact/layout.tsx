@@ -13,7 +13,8 @@ export default function ContactLayout({ children }: { children: React.ReactNode 
     <>
       <PublicPageSchema
         path="/contact"
-        pageName="Contact"
+        pageName={seo.title ?? 'Contact Calorie API'}
+        speakable
         extraJsonLd={[buildContactPageJsonLd(seo.description)]}
       />
       {children}

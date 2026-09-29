@@ -1,4 +1,5 @@
-import { SITE_NAME } from '@/lib/site'
+import { FOOD_DATABASE_SIZE_LABEL, FREE_TIER_LABEL, SITE_NAME } from '@/lib/site'
+import { MCP_MONTHLY_USD } from '@/lib/mcp/catalog'
 
 export type PublicPagePath =
   | '/'
@@ -24,8 +25,9 @@ export type PageSeoConfig = {
 
 export const PUBLIC_PAGE_SEO: Record<PublicPagePath, PageSeoConfig> = {
   '/': {
+    title: 'Food calorie API for developers',
     description:
-      'Food calorie API for developers: REST search, barcode lookup, macros per 100g, and autocomplete across our food database API. Free tier for nutrition apps.',
+      `Food calorie API: REST search, barcode lookup, and macros per 100 g across ${FOOD_DATABASE_SIZE_LABEL}. ${FREE_TIER_LABEL}.`,
     keywords: [
       'food calorie api',
       'food API',
@@ -40,9 +42,9 @@ export const PUBLIC_PAGE_SEO: Record<PublicPagePath, PageSeoConfig> = {
     ],
   },
   '/pricing': {
-    title: 'Pricing',
+    title: 'Nutrition API pricing',
     description:
-      'Nutrition API pricing: Free developer tier, Core and Plus plans with monthly quotas, rate limits, and enterprise custom volume.',
+      `Nutrition API pricing starts with ${FREE_TIER_LABEL}. Paid plans raise quotas and rate limits. Commercial apps need Plus or Enterprise.`,
     keywords: [
       'nutrition API pricing',
       'food API plans',
@@ -52,9 +54,9 @@ export const PUBLIC_PAGE_SEO: Record<PublicPagePath, PageSeoConfig> = {
     ],
   },
   '/docs': {
-    title: 'API Documentation',
+    title: 'Nutrition API documentation',
     description:
-      'Integrate the Calorie API: authentication, food search, barcode lookup, suggest, rate limits, and code examples in curl, JavaScript, and Python.',
+      `Nutrition API documentation for search, barcode lookup, and food details. Send an X-API-Key header. The catalog covers ${FOOD_DATABASE_SIZE_LABEL}.`,
     keywords: [
       'nutrition API documentation',
       'food API reference',
@@ -64,9 +66,9 @@ export const PUBLIC_PAGE_SEO: Record<PublicPagePath, PageSeoConfig> = {
     ],
   },
   '/playground': {
-    title: 'API Playground',
+    title: 'Nutrition API playground',
     description:
-      'Try Calorie API endpoints live: food search, autocomplete suggest, barcode lookup, and food details. Rate-limited public demo, no API key required.',
+      'Nutrition API playground for food search, suggest, barcode lookup, and food details. The public demo is rate limited and needs no API key.',
     keywords: [
       'nutrition API playground',
       'food API demo',
@@ -76,9 +78,9 @@ export const PUBLIC_PAGE_SEO: Record<PublicPagePath, PageSeoConfig> = {
     ],
   },
   '/faq': {
-    title: 'FAQ',
+    title: 'Nutrition API FAQ',
     description:
-      'Answers about Calorie API authentication, food search, pricing tiers, commercial use, rate limits, and integration for health apps.',
+      'Nutrition API FAQ: API keys use the X-API-Key header, the free tier is for development, and commercial apps need Plus or Enterprise.',
     keywords: [
       'nutrition API FAQ',
       'food API questions',
@@ -89,7 +91,7 @@ export const PUBLIC_PAGE_SEO: Record<PublicPagePath, PageSeoConfig> = {
   '/about': {
     title: `About ${SITE_NAME}`,
     description:
-      'Learn how Calorie API helps developers ship meal tracking, macro logging, and barcode features with reliable nutrition data.',
+      `About ${SITE_NAME}: a REST food calorie API over ${FOOD_DATABASE_SIZE_LABEL} for meal tracking, macros per 100 g, and barcode lookup.`,
     keywords: [
       'about Calorie API',
       'nutrition data platform',
@@ -97,9 +99,9 @@ export const PUBLIC_PAGE_SEO: Record<PublicPagePath, PageSeoConfig> = {
     ],
   },
   '/contact': {
-    title: 'Contact',
+    title: `Contact ${SITE_NAME}`,
     description:
-      'Contact Calorie API for technical support, sales, and enterprise plans. We respond within one business day.',
+      `Contact ${SITE_NAME} for technical support, sales, and enterprise plans. We respond within one business day.`,
     keywords: [
       'Calorie API support',
       'nutrition API sales',
@@ -119,9 +121,9 @@ export const PUBLIC_PAGE_SEO: Record<PublicPagePath, PageSeoConfig> = {
     keywords: ['API changelog', 'nutrition API updates', 'release notes'],
   },
   '/blog': {
-    title: 'Blog',
+    title: 'Calorie API blog',
     description:
-      'Developer guides on the nutrition & food API: calorie data, macros, barcode lookup, integrations, and how to build calorie tracker apps.',
+      `Calorie API blog: guides on food search, barcode lookup, and a nutrition MCP server at $${MCP_MONTHLY_USD} a month for personal use.`,
     keywords: [
       'calorie API blog',
       'nutrition & food API guides',

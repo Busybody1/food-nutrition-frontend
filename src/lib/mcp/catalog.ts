@@ -3,6 +3,24 @@ import type { FaqItem } from '@/lib/faq-data'
 export const MCP_MONTHLY_USD = 29
 export const MCP_ANNUAL_USD = 228
 
+export const MCP_LANDING_H1 = 'Nutrition MCP server for Claude and Cursor'
+export const MCP_PRICING_H1 = 'Nutrition MCP server pricing'
+
+export function mcpLandingMetaDescription(): string {
+  return `A nutrition MCP server lets Claude Code and Cursor look up calories and macros instead of guessing. Personal use is $${MCP_MONTHLY_USD} a month or $${MCP_ANNUAL_USD} a year.`
+}
+
+export function mcpLandingLead(foodCountLabel: string): string {
+  const apps = mcpOauthConnectEnabled()
+    ? 'Claude.ai, Claude Desktop, and Claude mobile use the sign-in screen.'
+    : 'Browser sign-in for Claude apps is off until OAuth is enabled.'
+  return `${mcpLandingMetaDescription()} The catalog covers ${foodCountLabel}. ${apps}`
+}
+
+export function mcpPricingLead(): string {
+  return `Nutrition MCP server pricing is $${MCP_MONTHLY_USD} a month, or $${MCP_ANNUAL_USD} a year. The 7-day trial requires a card. REST search, foods, calc, and vision return 403 on this plan.`
+}
+
 export const MCP_PAID_LIMITS = {
   perMinute: 20,
   perMonth: 10000,
@@ -24,6 +42,30 @@ export type McpTool = {
   summary: string
   args: string
 }
+
+export const MCP_CONNECT_STEPS = [
+  {
+    name: 'Start the nutrition MCP trial',
+    text: 'A card is required. The API key is shown once in the dashboard.',
+  },
+  {
+    name: 'Connect Claude Code or Cursor',
+    text: 'Paste the server URL and the X-API-Key header into Claude Code or Cursor.',
+  },
+  {
+    name: 'Track calories in the chat',
+    text: 'Ask for a food and a weight. The assistant calls the tools. You do not write the request.',
+  },
+] as const
+
+export const MCP_FEATURE_TITLES = [
+  'Search foods',
+  'Food photo calories',
+  'Portion calculator',
+  'Recipe macros',
+  'Barcode lookup',
+  'Daily calorie target',
+] as const
 
 export const MCP_TOOLS: readonly McpTool[] = [
   {
@@ -81,81 +123,77 @@ export function claudeAppsConnectSentence(): string {
 
 export const MCP_PAGE_FAQS: readonly FaqItem[] = [
   {
-    q: 'What is this MCP service?',
-    a: 'A nutrition server for assistants. Claude Code and Cursor call it over the Model Context Protocol to search foods, scale portions, total recipes, look up barcodes, set daily targets, or estimate a photo. The answers come from the catalog, not from the model guessing.',
+    q: 'What is a nutrition MCP server?',
+    a: 'A nutrition MCP server is a Model Context Protocol endpoint that looks up foods, portions, recipes, barcodes, daily calorie targets, and food photos. Claude Code and Cursor call it with an API key. The numbers come from the catalog, not from the model guessing.',
   },
   {
-    q: 'Which clients work?',
-    a: 'Claude Code, GPT, Codex, and Cursor, with an API key in the X-API-Key header. Claude.ai, Claude Desktop, and Claude mobile use browser sign-in once OAuth is enabled on the API.',
+    q: 'How do I connect a nutrition MCP server to Claude Code or Cursor?',
+    a: 'Start the trial, create an API key in the dashboard, and add the server URL with an X-API-Key header. Claude.ai, Claude Desktop, and Claude mobile use browser sign-in only after OAuth is enabled on the API.',
   },
   {
-    q: 'Does this include the REST API?',
-    a: 'No. This plan calls the MCP tools only. REST search, foods, calc, and vision return 403. Account and billing pages still work.',
+    q: 'Can I track calories with Claude AI?',
+    a: 'Yes. Ask for a food and a gram weight. The assistant calls search_foods, then calculate_portion on the food_id that search returned. The server does not store a food diary. You keep the log.',
   },
   {
-    q: 'How do photos work?',
-    a: 'analyze_food_photo takes image_base64 (JPEG, PNG, or WebP, up to 2 MB, no data: prefix). The chat app does not attach the file for you. A URL is not accepted.',
+    q: 'How do I estimate calories from a food photo?',
+    a: 'Call analyze_food_photo with image_base64. JPEG, PNG, or WebP, up to 2 MB, with no data: prefix. Pasting a picture into the chat does not attach the file. A URL is not accepted.',
   },
   {
-    q: 'What does the trial include?',
-    a: '7 days, card required. Trial: 5 calls/min, 200 calls total, 10 results, 10 photos. Paid: 20/min, 10,000/month, 25 results, 150 photos/month and 20 photos/day.',
+    q: 'How much does a nutrition MCP server cost?',
+    a: 'Personal use is $29 a month, or $228 a year, which is $19 a month and $120 off the monthly price. The 7-day trial requires a card. Paid limits are 20 calls a minute, 10,000 calls a month, 25 foods per search, and 150 photos a month.',
   },
   {
-    q: 'Is this for a commercial app?',
-    a: 'No. Personal use only. A commercial header is rejected. An app that resells the data needs a REST plan and a commercial license.',
+    q: 'Does the nutrition MCP plan include the REST API?',
+    a: 'No. REST search, foods, calc, and vision return 403. Account and billing pages still work. An app that needs HTTP endpoints needs a REST plan.',
   },
   {
-    q: 'Will I be charged when the trial ends?',
-    a: 'Yes, unless you cancel before the trial ends. Cancel from the billing page. Annual is $19/month. Monthly is $29. $120 USD Off on annual.',
+    q: 'Is a nutrition MCP server a MyFitnessPal alternative?',
+    a: 'It can replace the lookup: you log food in Claude instead of in a tracking app. It does not scan with a camera, store history, or chart the week. Those stay in a file or app you already use.',
   },
   {
-    q: 'Where do I get the API key?',
-    a: 'Dashboard, API keys, after checkout. The full key is shown once, when you create it. It is not emailed. Do not put it in a public repo.',
-  },
-  {
-    q: 'What does personal use mean?',
-    a: 'You use the tools in your own assistant. Reselling the data, or putting it in a product other people pay for, needs a commercial REST plan. Limits are sized for one person, not for scraping the catalog.',
+    q: 'Can I use a nutrition MCP server in a commercial app?',
+    a: 'No. This plan is personal use. A commercial header is rejected. Reselling the data, or putting it in a product other people pay for, needs a REST plan and a commercial license.',
   },
 ]
 
 export const MCP_FAQS: readonly FaqItem[] = [
   {
-    q: 'Which clients can connect?',
+    q: 'Which clients can connect to a nutrition MCP server?',
     a: mcpOauthConnectEnabled()
       ? 'Claude Code and Cursor send an X-API-Key header. Claude.ai, Claude Desktop, and Claude mobile add the server URL and open a Calorie API sign-in. Approve access there. The account must be on the MCP plan. Do not paste the API key into those apps.'
       : 'Claude Code and Cursor send an X-API-Key header. Browser sign-in for Claude.ai, Claude Desktop, and Claude mobile stays off until the API enables OAuth. The account must be on the MCP plan.',
   },
   {
-    q: 'Does this plan include the REST API?',
+    q: 'Does the nutrition MCP plan include the REST API?',
     a: 'No. MCP tools only. REST search, foods, calc, and vision return 403. Billing and account pages still work.',
   },
   {
-    q: 'What are the trial limits?',
+    q: 'What are the nutrition MCP server trial limits?',
     a: '7 days, card required. Trial: 5/min, 200 calls total, 10 results, 10 photos. Paid: 20/min, 10,000/month, 25 results, 150 photos/month, 20 photos/day.',
   },
   {
-    q: 'Is this for a commercial app?',
+    q: 'Can I use a nutrition MCP server in a commercial app?',
     a: 'No. Personal use only. A commercial header is rejected. Apps that resell the data need a REST plan and a commercial license.',
   },
   {
-    q: 'How do food photos work?',
-    a: 'Pass image_base64 yourself. JPEG, PNG, or WebP, up to 2 MB, no data: prefix.',
+    q: 'How do I estimate calories from a food photo?',
+    a: 'Pass image_base64 yourself. JPEG, PNG, or WebP, up to 2 MB, no data: prefix. Pasting a picture into the chat does not attach the file.',
   },
   {
-    q: 'Will I be charged when the trial ends?',
+    q: 'Will I be charged when the nutrition MCP trial ends?',
     a: 'Yes, unless you cancel before the trial ends. Cancel from the billing page.',
   },
   {
-    q: 'Where do I get the API key?',
+    q: 'Where do I get the nutrition MCP API key?',
     a: 'Dashboard, API keys, after checkout. The full key is shown once, when you create it. It is not emailed.',
   },
   {
-    q: 'What does personal use mean?',
+    q: 'What does personal use mean for a nutrition MCP server?',
     a: 'You use the tools in your own assistant. Reselling the data or putting it in a product other people pay for needs a commercial REST plan.',
   },
   {
-    q: 'How is annual billing priced?',
-    a: '$19/month if you buy annual. Monthly is $29. $120 USD Off.',
+    q: 'How much does nutrition MCP server pricing cost per year?',
+    a: '$228 a year, which is $19 a month. Monthly is $29. That is $120 off versus paying monthly.',
   },
 ]
 

@@ -21,19 +21,25 @@ import {
 
 export function ComparisonPageView({ page }: { page: ComparisonPage }) {
   const path = comparisonPath(page.slug)
+  const headline = `${page.h1}: ${SITE_NAME} vs ${page.competitor}`
 
   return (
     <div className="marketing-page">
       <JsonLdScript
         id={`webpage-compare-${page.slug}`}
-        data={buildWebPageJsonLd({ name: page.h1, description: page.description, path })}
+        data={buildWebPageJsonLd({
+          name: headline,
+          description: page.intro[0],
+          path,
+          speakable: true,
+        })}
       />
       <JsonLdScript
         id={`breadcrumb-compare-${page.slug}`}
         data={buildBreadcrumbJsonLd([
           { name: 'Home', path: '/' },
           { name: 'Compare', path: '/compare' },
-          { name: page.h1, path },
+          { name: headline, path },
         ])}
       />
       <JsonLdScript id={`faq-compare-${page.slug}`} data={buildFaqPageJsonLd(page.faqs)} />
@@ -41,9 +47,9 @@ export function ComparisonPageView({ page }: { page: ComparisonPage }) {
       <MarketingImageHero compact centered waveTone="white">
         <p className="marketing-hero-badge mb-4 inline-flex">Comparison</p>
         <h1 className="font-display text-4xl md:text-5xl text-ink mb-4 text-balance">
-          {page.h1}: {SITE_NAME} vs {page.competitor}
+          {headline}
         </h1>
-        <p className="text-lg text-ink-muted leading-relaxed max-w-2xl mx-auto">{page.intro[0]}</p>
+        <p className="aeo-answer text-lg text-ink-muted leading-relaxed max-w-2xl mx-auto">{page.intro[0]}</p>
         {}
         <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <TrackedCtaLink

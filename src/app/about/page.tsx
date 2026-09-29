@@ -26,7 +26,8 @@ export default function AboutPage() {
     <div className="marketing-page">
       <PublicPageSchema
         path="/about"
-        pageName="About"
+        pageName={aboutSeo.title ?? 'About Calorie API'}
+        speakable
         extraJsonLd={[buildAboutPageJsonLd(aboutSeo.description)]}
       />
       <MarketingImageHero compact centered waveTone="elevated">
@@ -35,12 +36,10 @@ export default function AboutPage() {
           Our story
         </p>
         <h1 className="font-display text-4xl md:text-5xl tracking-tight text-ink mb-4 text-balance">
-          Building the future of{' '}
-          <span className="text-gradient-brand">nutrition technology</span>
+          {aboutSeo.title}
         </h1>
-        <p className="text-lg text-ink-muted leading-relaxed max-w-xl mx-auto">
-          We democratize access to comprehensive nutrition data so developers can ship health and
-          fitness products faster.
+        <p className="aeo-answer text-lg text-ink-muted leading-relaxed max-w-xl mx-auto">
+          {aboutSeo.description}
         </p>
         <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
           <TrackedCtaLink

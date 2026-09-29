@@ -39,7 +39,7 @@ export const SOLUTION_PAGES: SolutionPage[] = [
     ],
     heroBadge: 'Fitness apps',
     intro: [
-      'Fitness users log meals between sets, so the food search has to feel instant, and the macros have to be right. The API pairs a keystroke-fast suggest endpoint with verified per-100g macro data, so calorie budgets and macro splits stay trustworthy.',
+      'A nutrition API for fitness apps pairs a suggest endpoint with verified macros per 100 g. Paid plans scale to 5,000 requests a minute, and limits are per account rather than per end user.',
       'Barcode scanning covers packaged foods and protein products, and stable food IDs make favorites and recents cost zero extra API calls once cached.',
     ],
     painPoints: [
@@ -102,7 +102,7 @@ export const SOLUTION_PAGES: SolutionPage[] = [
     ],
     heroBadge: 'Meal planning',
     intro: [
-      'Meal planners are constraint solvers: hit protein targets, respect calorie budgets, vary the menu. That only works when every candidate food carries consistent, complete macro data, which is exactly what per-100g normalization and the verified-foods filter provide.',
+      'A food API for meal planning apps needs the same macros per 100 g on every ingredient so a protein target can be scored. Search resolves the food. Your code scales the grams.',
       'Resolve each ingredient with food search, aggregate macros by quantity, and score plans against user targets. Reference endpoints for nutrients, brands, and categories power filter UIs and dietary constraints.',
     ],
     painPoints: [
@@ -165,7 +165,7 @@ export const SOLUTION_PAGES: SolutionPage[] = [
     ],
     heroBadge: 'Healthcare',
     intro: [
-      'Dietitian platforms, patient food diaries, and clinical wellness programs need nutrition data that practitioners can defend. The verified-foods mode restricts results to curated entries with complete, quality-checked macros, the right default for professional tools.',
+      'A food database API for healthcare is the verified-foods filter: curated entries with complete macros for dietitian tools and patient diaries. The API sees the food query. The diary stays in your system.',
       'Structured micronutrient arrays support deeper dietary review, and your patient data never touches the API: you send food queries, we return food data, and diaries stay in your system.',
     ],
     painPoints: [
@@ -228,7 +228,7 @@ export const SOLUTION_PAGES: SolutionPage[] = [
     ],
     heroBadge: 'Grocery & retail',
     intro: [
-      'Shoppers point their camera at a product and expect an answer: what is in it, what are the macros, does it fit my diet. The barcode endpoint resolves UPC and EAN codes to product name, brand, ingredients, allergens, and normalized nutrition in one request.',
+      'A barcode food API for grocery and retail resolves a UPC or EAN to a name, brand, and macros per 100 g in one request. Open Food Facts is the fallback when the catalog misses.',
       'The two-source design, verified local catalog plus Open Food Facts fallback, matters most in retail, where new products appear on shelves weekly. Misses return a clean 404 so your app can offer text search instead.',
     ],
     painPoints: [
@@ -291,7 +291,7 @@ export const SOLUTION_PAGES: SolutionPage[] = [
     ],
     heroBadge: 'Wellness SaaS',
     intro: [
-      'Wellness platforms win deals with breadth: challenges, coaching, habit tracking, and nutrition. Embedding food logging and macro insights through an API turns a quarter-long data project into a sprint.',
+      'A nutrition API for wellness platforms is food logging and macro data behind a coaching product. Commercial use is a Plus or Enterprise plan plus the header X-API-Usage-Type: commercial.',
       'Commercial licensing is explicit (one header on a Plus or Enterprise plan), limits are per account so multi-tenant architectures just work, and stable food IDs keep your per-tenant caches simple.',
     ],
     painPoints: [

@@ -14,10 +14,13 @@ import {
   Utensils,
 } from 'lucide-react'
 import type { BlogListItem } from '@/lib/api/blog'
-import { FOOD_DATABASE_SIZE_LABEL } from '@/lib/site'
-import { BlogSearchForm } from '@/components/blog/blog-search-form'
 import { BlogPagination } from '@/components/blog/blog-pagination'
+import { BlogSearchForm } from '@/components/blog/blog-search-form'
 import { Reveal } from '@/components/marketing/reveal'
+import { getPublicPageSeo } from '@/lib/public-page-seo'
+import { FOOD_DATABASE_SIZE_LABEL } from '@/lib/site'
+
+const BLOG_SEO = getPublicPageSeo('/blog')
 
 function formatDate(value?: string | null): string | null {
   if (!value) return null
@@ -197,11 +200,10 @@ export function BlogIndex({
           <div className="max-w-3xl">
             <p className="marketing-hero-badge mb-5 animate-rise">Developer guides</p>
             <h1 className="blog-index-hero__title md:text-5xl md:leading-[1.1] animate-rise stagger-2">
-              Calorie API <span className="text-gradient-brand">Blog</span>
+              {BLOG_SEO.title}
             </h1>
-            <p className="blog-index-hero__subtitle animate-rise stagger-3">
-              Practical guides on nutrition APIs, food search, barcode integration, and shipping
-              production health apps.
+            <p className="aeo-answer blog-index-hero__subtitle animate-rise stagger-3">
+              {BLOG_SEO.description}
             </p>
             <div className="blog-index-hero__actions animate-rise stagger-4">
               <Link href="/auth/register" className="btn-brand" prefetch={false}>

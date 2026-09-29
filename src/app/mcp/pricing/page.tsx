@@ -10,29 +10,36 @@ import {
   MCP_ANNUAL_USD,
   MCP_FAQS,
   MCP_MONTHLY_USD,
+  MCP_PRICING_H1,
   annualAsMonthlyUsd,
   annualSavingsUsd,
+  mcpPricingLead,
 } from '@/lib/mcp/catalog'
-import { buildFaqPageJsonLd } from '@/lib/faq-data'
-import { buildPricingProductJsonLdFromInput } from '@/lib/pricing-product-jsonld'
-import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, absoluteUrl } from '@/lib/site'
+import { buildMcpPricingJsonLd } from '@/lib/mcp/landing-jsonld'
+import { ORGANIZATION_ID, SITE_NAME, SITE_URL, absoluteUrl } from '@/lib/site'
+
+const DESCRIPTION = mcpPricingLead()
 
 const BILLING_FAQS = MCP_FAQS.filter((item) =>
   [
-    'Does this plan include the REST API?',
-    'What are the trial limits?',
-    'Will I be charged when the trial ends?',
-    'Is this for a commercial app?',
-    'How is annual billing priced?',
-    'What does personal use mean?',
+    'Does the nutrition MCP plan include the REST API?',
+    'What are the nutrition MCP server trial limits?',
+    'Will I be charged when the nutrition MCP trial ends?',
+    'Can I use a nutrition MCP server in a commercial app?',
+    'How much does nutrition MCP server pricing cost per year?',
+    'What does personal use mean for a nutrition MCP server?',
   ].includes(item.q)
 )
 
 export const metadata: Metadata = buildPageMetadata({
-  title: 'MCP pricing',
-  description:
-    'MCP plan for Claude Code and Cursor: $29/month, or $19/month if you buy annual. $120 USD Off. 7-day card-required trial at reduced limits. MCP tools only, no REST API.',
-  keywords: ['mcp pricing', 'nutrition mcp server price', 'claude code nutrition'],
+  title: MCP_PRICING_H1,
+  description: DESCRIPTION,
+  keywords: [
+    'nutrition mcp server pricing',
+    'mcp pricing',
+    'nutrition mcp server price',
+    'claude code nutrition',
+  ],
   path: '/mcp/pricing',
   hasDedicatedOgImage: true,
 })
@@ -50,36 +57,36 @@ export default async function McpPricingPage() {
   const annual = plan?.annual_price && plan.annual_price > 0 ? plan.annual_price : MCP_ANNUAL_USD
   const annualMonthly = annualAsMonthlyUsd(annual)
   const savings = annualSavingsUsd(monthly, annual)
-  const product = buildPricingProductJsonLdFromInput({
+  const product = buildMcpPricingJsonLd({
+    pageUrl: absoluteUrl('/mcp/pricing'),
+    pageName: MCP_PRICING_H1,
     siteName: SITE_NAME,
     siteUrl: SITE_URL,
-    siteDescription: SITE_DESCRIPTION,
+    organizationId: ORGANIZATION_ID,
+    description: DESCRIPTION,
     imageUrl: absoluteUrl('/mcp/pricing/opengraph-image'),
-    pricingUrl: absoluteUrl('/mcp/pricing'),
-    plans: [
-      { name: 'MCP monthly', price: String(monthly) },
-      { name: 'MCP annual', price: String(annual) },
-    ],
+    monthlyPrice: monthly,
+    annualPrice: annual,
     priceValidUntil: '2027-12-31',
+    faqs: BILLING_FAQS,
   })
 
   return (
     <div className="marketing-page">
       <JsonLdScript id="mcp-pricing-product" data={product} />
-      <JsonLdScript id="mcp-pricing-faq" data={buildFaqPageJsonLd(BILLING_FAQS)} />
       <MarketingImageHero compact centered waveTone="elevated" className="!min-h-0">
         <h1 className="font-display text-4xl text-ink text-balance md:text-6xl">
-          Stop letting your agent invent the calories.
+          {MCP_PRICING_H1}
         </h1>
-        <p className="mx-auto mt-4 max-w-xl text-lg leading-relaxed text-ink-muted">
-          Seven days in Claude, GPT, Codex, and Cursor.
+        <p id="mcp-pricing-answer" className="aeo-answer mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-ink-muted">
+          {DESCRIPTION}
         </p>
       </MarketingImageHero>
 
       <section className="bg-surface-elevated pb-20 pt-6 md:pb-28 md:pt-8" aria-labelledby="mcp-choose-plan">
         <div className="container-narrow">
           <h2 id="mcp-choose-plan" className="sr-only">
-            Choose monthly or annual
+            Nutrition MCP server monthly and annual pricing
           </h2>
           <McpPricingCard plan={plan} />
         </div>
@@ -87,13 +94,13 @@ export default async function McpPricingPage() {
 
       <section className="section-pad bg-white" id="faq" aria-labelledby="mcp-billing-faq">
         <div className="container-narrow">
-          <MarketingSectionHeader id="mcp-billing-faq" title="Billing" />
+          <MarketingSectionHeader id="mcp-billing-faq" title="Nutrition MCP pricing questions" />
           <FaqList items={BILLING_FAQS} />
         </div>
       </section>
 
       <MarketingCtaBand
-        title="Start the trial. Connect Claude tonight."
+        title="Start a nutrition MCP server trial"
         description={
           <>
             ${monthly}/month, or ${annualMonthly}/month if you buy annual.

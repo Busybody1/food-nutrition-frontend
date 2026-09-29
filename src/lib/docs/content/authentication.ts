@@ -7,7 +7,7 @@ export const AUTHENTICATION_CONTENT: DocsSectionContent = {
   blocks: [
     {
       kind: 'p',
-      text: 'Developer API requests are authenticated with an API key sent in the X-API-Key header (the public demo endpoints under /api/v1/public/ require no key and are IP rate limited). Keys are generated in the developer dashboard after creating an account, and each key is tied to your plan’s rate limits and monthly quota.',
+      text: 'Nutrition API authentication is an API key in the X-API-Key header. Public demo routes under /api/v1/public/ need no key and are limited by IP. Keys are created in the dashboard and follow the plan quota.',
     },
     {
       kind: 'code',

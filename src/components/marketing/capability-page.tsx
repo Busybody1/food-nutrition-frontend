@@ -56,7 +56,12 @@ export function CapabilityPageView({ page }: { page: CapabilityPage }) {
     <div className="marketing-page">
       <JsonLdScript
         id={`webpage-${page.slug}`}
-        data={buildWebPageJsonLd({ name: page.h1, description: page.description, path })}
+        data={buildWebPageJsonLd({
+          name: page.h1,
+          description: page.heroCopy[0],
+          path,
+          speakable: true,
+        })}
       />
       <JsonLdScript
         id={`breadcrumb-${page.slug}`}
@@ -70,7 +75,7 @@ export function CapabilityPageView({ page }: { page: CapabilityPage }) {
       <MarketingImageHero compact centered waveTone="elevated">
         <p className="marketing-hero-badge mb-4 inline-flex">{page.heroBadge}</p>
         <h1 className="font-display text-4xl md:text-5xl text-ink mb-4 text-balance">{page.h1}</h1>
-        <p className="text-lg text-ink-muted leading-relaxed max-w-2xl mx-auto">
+        <p className="aeo-answer text-lg text-ink-muted leading-relaxed max-w-2xl mx-auto">
           {page.heroCopy[0]}
         </p>
         {}

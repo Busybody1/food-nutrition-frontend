@@ -18,11 +18,12 @@ import { Reveal } from '@/components/marketing/reveal'
 import { TrackedCtaLink } from '@/components/analytics/tracked-cta-link'
 import { SOLUTION_PAGES, solutionPath } from '@/lib/solutions-data'
 
+const SOLUTIONS_H1 = 'Nutrition API for apps'
 const DESCRIPTION =
-  'How teams use the Calorie API: fitness and calorie tracking apps, meal planners, healthcare software, grocery and retail scanning, and wellness platforms.'
+  'Nutrition API for apps: fitness logging, meal planning, healthcare diaries, grocery barcode scans, and wellness platforms. Macros are per 100 g.'
 
 export const metadata: Metadata = buildPageMetadata({
-  title: 'Solutions',
+  title: SOLUTIONS_H1,
   description: DESCRIPTION,
   keywords: [
     'nutrition API use cases',
@@ -54,22 +55,27 @@ export default function SolutionsIndexPage() {
     <div className="marketing-page">
       <JsonLdScript
         id="webpage-solutions"
-        data={buildWebPageJsonLd({ name: 'Solutions', description: DESCRIPTION, path: '/solutions' })}
+        data={buildWebPageJsonLd({
+          name: SOLUTIONS_H1,
+          description: DESCRIPTION,
+          path: '/solutions',
+          speakable: true,
+        })}
       />
       <JsonLdScript
         id="breadcrumb-solutions"
         data={buildBreadcrumbJsonLd([
           { name: 'Home', path: '/' },
-          { name: 'Solutions', path: '/solutions' },
+          { name: SOLUTIONS_H1, path: '/solutions' },
         ])}
       />
 
       <MarketingImageHero compact centered waveTone="white">
         <p className="marketing-hero-badge mb-4 inline-flex">Solutions</p>
         <h1 className="font-display text-4xl md:text-5xl text-ink mb-4 text-balance">
-          One nutrition API, every food product
+          {SOLUTIONS_H1}
         </h1>
-        <p className="text-lg text-ink-muted leading-relaxed max-w-2xl mx-auto">{DESCRIPTION}</p>
+        <p className="aeo-answer text-lg text-ink-muted leading-relaxed max-w-2xl mx-auto">{DESCRIPTION}</p>
         <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
           <TrackedCtaLink
             href="/contact"

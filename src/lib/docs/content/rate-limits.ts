@@ -4,7 +4,7 @@ export const RATE_LIMITS_CONTENT: DocsSectionContent = {
   blocks: [
     {
       kind: 'p',
-      text: 'Limits apply per account (user id), not per IP, which keeps NAT and multi-tenant apps safe. Each plan combines a per-minute rate limit with a monthly request quota; see the pricing page for current quotas.',
+      text: 'API rate limits apply per account, not per IP. The free plan is 10 requests a minute. Plus is 5,000 requests a minute. Monthly quotas are on the pricing page.',
     },
     {
       kind: 'params',

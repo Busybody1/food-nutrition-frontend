@@ -21,8 +21,9 @@ import {
   comparisonPath,
 } from '@/lib/comparisons-data'
 
+const COMPARE_H1 = 'Nutrition API comparison'
 const DESCRIPTION =
-  'How to choose a nutrition API: an honest comparison of Calorie API, Nutritionix, Edamam, USDA FoodData Central, and Spoonacular for developers.'
+  'Nutrition API comparison of Calorie API, Nutritionix, Edamam, USDA, Spoonacular, FatSecret, and Open Food Facts. Notes reviewed in July 2026.'
 
 const HUB_FAQS = [
   {
@@ -40,7 +41,7 @@ const HUB_FAQS = [
 ]
 
 export const metadata: Metadata = buildPageMetadata({
-  title: 'Compare Nutrition APIs',
+  title: COMPARE_H1,
   description: DESCRIPTION,
   keywords: [
     'best nutrition API',
@@ -58,16 +59,17 @@ export default function CompareHubPage() {
       <JsonLdScript
         id="webpage-compare"
         data={buildWebPageJsonLd({
-          name: 'Compare Nutrition APIs',
+          name: COMPARE_H1,
           description: DESCRIPTION,
           path: '/compare',
+          speakable: true,
         })}
       />
       <JsonLdScript
         id="breadcrumb-compare"
         data={buildBreadcrumbJsonLd([
           { name: 'Home', path: '/' },
-          { name: 'Compare', path: '/compare' },
+          { name: COMPARE_H1, path: '/compare' },
         ])}
       />
       <JsonLdScript id="faq-compare-hub" data={buildFaqPageJsonLd(HUB_FAQS)} />
@@ -75,11 +77,10 @@ export default function CompareHubPage() {
       <MarketingImageHero compact centered waveTone="white">
         <p className="marketing-hero-badge mb-4 inline-flex">Compare</p>
         <h1 className="font-display text-4xl md:text-5xl text-ink mb-4 text-balance">
-          Choosing a nutrition API
+          {COMPARE_H1}
         </h1>
-        <p className="text-lg text-ink-muted leading-relaxed max-w-2xl mx-auto">
-          Every provider below is good at something. This page maps who is good at what, so you
-          can shortlist in minutes and verify with your own data.
+        <p className="aeo-answer text-lg text-ink-muted leading-relaxed max-w-2xl mx-auto">
+          {DESCRIPTION}
         </p>
         {}
         <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">

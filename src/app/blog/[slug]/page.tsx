@@ -76,7 +76,7 @@ export default async function BlogArticlePage({ params }: PageProps) {
   const image = OG_IMAGE_URL
 
   const articleJsonLd = buildBlogPostingJsonLd({
-    title: post.meta_title || post.title,
+    title: post.title,
     description: post.meta_description || post.excerpt || post.title,
     path,
     datePublished: post.published_at,

@@ -6,10 +6,13 @@ import { MarketingImageHero } from '@/components/marketing/marketing-image-hero'
 import { MarketingCtaBand } from '@/components/marketing/marketing-shell'
 import { Reveal } from '@/components/marketing/reveal'
 import { buildPublicPageMetadata } from '@/lib/build-public-metadata'
+import { getPublicPageSeo } from '@/lib/public-page-seo'
 import { PublicPageSchema } from '@/components/seo/public-page-schema'
 import { FaqSeoIntro } from '@/components/seo/public-page-seo-content'
 
 export const metadata: Metadata = buildPublicPageMetadata('/faq')
+
+const FAQ_SEO = getPublicPageSeo('/faq')
 
 const FAQ_NAV_LINK_CLASS =
   'inline-flex items-center rounded-pill px-3.5 py-1.5 text-sm font-medium text-ink-muted ' +
@@ -19,13 +22,13 @@ const FAQ_NAV_LINK_CLASS =
 export default function FaqPage() {
   return (
     <div className="marketing-page">
-      <PublicPageSchema path="/faq" pageName="FAQ" />
+      <PublicPageSchema path="/faq" pageName={FAQ_SEO.title ?? 'Nutrition API FAQ'} speakable />
       <MarketingImageHero compact centered waveTone="white">
         <h1 className="font-display text-4xl md:text-5xl tracking-tight text-ink mb-4 text-balance">
-          FAQ
+          {FAQ_SEO.title}
         </h1>
-        <p className="text-lg text-ink-muted leading-relaxed max-w-xl mx-auto">
-          Authentication, search, pricing, and integration, answered for developers.
+        <p className="aeo-answer text-lg text-ink-muted leading-relaxed max-w-xl mx-auto">
+          {FAQ_SEO.description}
         </p>
       </MarketingImageHero>
       <section

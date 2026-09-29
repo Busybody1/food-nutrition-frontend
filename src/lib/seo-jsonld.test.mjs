@@ -18,14 +18,15 @@ const INPUT = {
   priceValidUntil: '2027-12-31',
 };
 
-test('buildPricingProductJsonLdFromInput includes required Product image', () => {
+test('buildPricingProductJsonLdFromInput includes a crawlable image', () => {
   const data = buildPricingProductJsonLdFromInput(INPUT);
-  assert.equal(data['@type'], 'Product');
+  assert.equal(data['@type'], 'SoftwareApplication');
   assert.ok(Array.isArray(data.image) && data.image.length > 0);
   assert.match(data.image[0], /^https?:\/\//);
+  assert.equal(data.aggregateRating, undefined);
 });
 
-test('buildPricingProductJsonLdFromInput includes complete Offer fields', () => {
+test('buildPricingProductJsonLdFromInput uses the billed offer price', () => {
   const data = buildPricingProductJsonLdFromInput(INPUT);
   assert.equal(data.offers.length, 4);
 
@@ -33,9 +34,8 @@ test('buildPricingProductJsonLdFromInput includes complete Offer fields', () => 
     assert.equal(offer['@type'], 'Offer');
     assert.equal(offer.availability, 'https://schema.org/InStock');
     assert.ok(offer.url);
-    assert.ok(offer.shippingDetails);
-    assert.ok(offer.hasMerchantReturnPolicy);
     assert.equal(offer.priceCurrency, 'USD');
+    assert.equal(offer.eligibleDuration.unitCode, 'MON');
   }
 
   const core = data.offers.find((o) => o.name === 'Core');

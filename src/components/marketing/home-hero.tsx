@@ -1,6 +1,9 @@
 import { ArrowRight, Braces, CreditCard, ShieldCheck, Sparkles } from 'lucide-react'
 import { TrackedCtaLink } from '@/components/analytics/tracked-cta-link'
+import { getPublicPageSeo } from '@/lib/public-page-seo'
 import { MarketingImageHero } from './marketing-image-hero'
+
+const HOME_SEO = getPublicPageSeo('/')
 
 const TRUST_ITEMS = [
   { icon: CreditCard, label: 'No credit card for free tier' },
@@ -16,11 +19,10 @@ export function HomeHero() {
         Food calorie API for developers
       </p>
       <h1 className="font-display text-4xl sm:text-5xl lg:text-[3.25rem] xl:text-[3.5rem] text-ink leading-[1.05] tracking-tight text-balance animate-rise stagger-2">
-        Food Calorie API for production health apps
+        {HOME_SEO.title}
       </h1>
-      <p className="mt-5 md:mt-6 text-lg md:text-xl text-ink-muted leading-relaxed animate-rise stagger-3">
-        Ship meal tracking, macro logging, and barcode scan features faster with our nutrition API,
-        food database API, and verified calorie data built for production health apps.
+      <p className="aeo-answer mt-5 md:mt-6 text-lg md:text-xl text-ink-muted leading-relaxed animate-rise stagger-3">
+        {HOME_SEO.description}
       </p>
       <div className="mt-8 md:mt-10 flex flex-col sm:flex-row gap-3 justify-center lg:justify-start animate-rise stagger-4">
         <TrackedCtaLink

@@ -49,7 +49,12 @@ export function SolutionPageView({ page }: { page: SolutionPage }) {
     <div className="marketing-page">
       <JsonLdScript
         id={`webpage-solution-${page.slug}`}
-        data={buildWebPageJsonLd({ name: page.h1, description: page.description, path })}
+        data={buildWebPageJsonLd({
+          name: page.h1,
+          description: page.intro[0],
+          path,
+          speakable: true,
+        })}
       />
       <JsonLdScript
         id={`breadcrumb-solution-${page.slug}`}
@@ -64,7 +69,7 @@ export function SolutionPageView({ page }: { page: SolutionPage }) {
       <MarketingImageHero compact centered waveTone="elevated">
         <p className="marketing-hero-badge mb-4 inline-flex">{page.heroBadge}</p>
         <h1 className="font-display text-4xl md:text-5xl text-ink mb-4 text-balance">{page.h1}</h1>
-        <p className="text-lg text-ink-muted leading-relaxed max-w-2xl mx-auto">{page.intro[0]}</p>
+        <p className="aeo-answer text-lg text-ink-muted leading-relaxed max-w-2xl mx-auto">{page.intro[0]}</p>
         <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
           <TrackedCtaLink
             href="/auth/register"

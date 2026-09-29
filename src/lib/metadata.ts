@@ -28,12 +28,7 @@ export function buildPageMetadata({
   hasDedicatedOgImage = false,
 }: PageMetaInput): Metadata {
   const canonical = absoluteUrl(path)
-  const pageTitle =
-    path === '/'
-      ? SITE_TITLE
-      : title
-        ? `${title} | ${SITE_NAME}`
-        : SITE_TITLE
+  const pageTitle = title ? `${title} | ${SITE_NAME}` : SITE_TITLE
   const pageDescription = description ?? SITE_DESCRIPTION
 
   const titleMeta: Metadata['title'] = { absolute: pageTitle }

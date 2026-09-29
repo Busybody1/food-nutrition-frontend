@@ -8,7 +8,10 @@ import { Input } from '@/components/ui/input'
 import { MarketingImageHero } from '@/components/marketing/marketing-image-hero'
 import { marketingCardClass, MarketingPageLoading } from '@/components/marketing/marketing-shell'
 import { Reveal, RevealGroup } from '@/components/marketing/reveal'
+import { getPublicPageSeo } from '@/lib/public-page-seo'
 import { SUPPORT_EMAIL } from '@/lib/site'
+
+const CONTACT_SEO = getPublicPageSeo('/contact')
 import { submitContactForm } from '@/lib/contact/submit-contact'
 import { CalendlyInlineEmbed } from '@/components/marketing/calendly-embed'
 import {
@@ -123,14 +126,12 @@ function ContactPageContent() {
           {showScheduler ? 'Enterprise' : 'Get in touch'}
         </p>
         <h1 className="font-display text-4xl md:text-5xl tracking-tight text-ink mb-4 text-balance">
-          {showScheduler
-            ? 'Schedule a 30-minute Enterprise call'
-            : "Let's build something amazing together"}
+          {CONTACT_SEO.title}
         </h1>
-        <p className="text-lg text-ink-muted leading-relaxed max-w-xl mx-auto">
+        <p className="aeo-answer text-lg text-ink-muted leading-relaxed max-w-xl mx-auto">
           {showScheduler
-            ? 'Pick a time that works. We will cover custom volume, image-to-calorie API access, and credits-based usage.'
-            : 'Questions about the API, custom volume, or enterprise plans, we typically respond within one business day.'}
+            ? 'Schedule an enterprise call for custom volume and image-to-calorie access. We respond within one business day.'
+            : CONTACT_SEO.description}
         </p>
       </MarketingImageHero>
 

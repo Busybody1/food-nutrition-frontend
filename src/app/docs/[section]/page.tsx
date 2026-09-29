@@ -65,7 +65,7 @@ export default async function DocsSectionPage({ params }: PageProps) {
       <JsonLdScript
         id={`techarticle-${meta.slug}`}
         data={buildTechArticleJsonLd({
-          headline: meta.metaTitle,
+          headline: meta.title,
           description: meta.description,
           path,
           dateModified: meta.dateModified,

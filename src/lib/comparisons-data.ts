@@ -53,7 +53,7 @@ export const COMPARISON_PAGES: ComparisonPage[] = [
       'food database API alternative',
     ],
     intro: [
-      'Nutritionix is one of the most established nutrition data providers, known for its natural-language food parsing and restaurant-chain coverage. Calorie API takes a different shape: a lean REST food database API with verified macro data, explicit barcode fallback, and self-serve commercial licensing.',
+      `A Nutritionix alternative for REST food search is ${SITE_NAME}: verified macros per 100 g, barcode lookup, and ${FREE_TIER_LABEL}. Notes on this page were reviewed in July 2026. Nutritionix is known for natural-language food parsing and restaurant-chain coverage.`,
       'Which is right depends on what your product actually does with food data. This page lays out the differences honestly so you can decide quickly.',
     ],
     matrix: [
@@ -141,7 +141,7 @@ export const COMPARISON_PAGES: ComparisonPage[] = [
       'food API alternative',
     ],
     intro: [
-      'Edamam is best known for recipe-level nutrition analysis: send a full ingredient list and get back an aggregate nutrition label. Calorie API is food-level infrastructure: fast search over a verified catalog, barcode lookup with fallback, and per-100g macros your own code aggregates.',
+      `An Edamam alternative for food-level data is ${SITE_NAME}: search, barcode lookup, and macros per 100 g, with ${FREE_TIER_LABEL}. Notes were reviewed in July 2026. Edamam is known for recipe-level analysis, which is a different job.`,
       'If your product needs recipe ingestion as a service, Edamam earns its place. If it logs foods, scans barcodes, or computes its own plans, food-level data with predictable licensing is usually the simpler foundation.',
     ],
     matrix: [
@@ -228,7 +228,7 @@ export const COMPARISON_PAGES: ComparisonPage[] = [
       'FDC API production',
     ],
     intro: [
-      'USDA FoodData Central is a genuinely great resource: free, authoritative, and the reference standard for US generic foods. Plenty of products should just use it. This page is about the cases where teams outgrow it.',
+      `A USDA FoodData Central alternative is what a commercial app adds when it needs barcode lookup and autocomplete. ${SITE_NAME} is that REST API, with ${FREE_TIER_LABEL}. USDA FoodData Central remains free reference data for US generic foods. Notes were reviewed in July 2026.`,
       'The gaps show up in production consumer apps: international and long-tail branded coverage, barcode lookup UX, autocomplete endpoints, and support commitments. That is the layer a commercial food API adds.',
     ],
     matrix: [
@@ -315,7 +315,7 @@ export const COMPARISON_PAGES: ComparisonPage[] = [
       'nutrition data API comparison',
     ],
     intro: [
-      'Spoonacular is a recipe-content platform first: recipes with instructions and images, meal-plan content, and product data, priced on a points system. Calorie API is nutrition data infrastructure: search, barcode, and verified macros over plain REST with flat plans.',
+      `A Spoonacular alternative for nutrition data, rather than recipe content, is ${SITE_NAME}: search, barcode lookup, and verified macros, with ${FREE_TIER_LABEL}. Notes were reviewed in July 2026. Spoonacular is a recipe-content platform priced on points.`,
       'Products that need recipe content should look at Spoonacular seriously. Products that need reliable food data underneath their own content usually want the infrastructure shape.',
     ],
     matrix: [
@@ -402,7 +402,7 @@ export const COMPARISON_PAGES: ComparisonPage[] = [
       'nutrition API comparison',
     ],
     intro: [
-      'FatSecret is a long-established nutrition data provider with a large branded and user-generated food catalog, a Platform API accessed via OAuth request signing, and add-ons like image recognition and regional databases. Calorie API takes a leaner shape: a REST food database API with verified per-100g macros, plain API-key authentication, barcode lookup with fallback, and flat self-serve plans.',
+      `A FatSecret alternative that uses an API key, not OAuth request signing, is ${SITE_NAME}: verified macros per 100 g, barcode lookup, and ${FREE_TIER_LABEL}. Notes were reviewed in July 2026. FatSecret is a long-established catalog with OAuth request signing.`,
       'Both cover the core food-data job. The differences that usually decide it are auth model, how much you trust user-generated entries, and whether you want image recognition and regional catalogs or a simpler, predictable data layer.',
     ],
     matrix: [
@@ -490,7 +490,7 @@ export const COMPARISON_PAGES: ComparisonPage[] = [
       'food database API comparison',
     ],
     intro: [
-      'Open Food Facts is a free, open, crowdsourced product database with excellent international barcode coverage, released under an open data license. It is a genuinely great resource, and Calorie API actually uses it as a barcode fallback, so a lot of that coverage already reaches you through our endpoints, returned in one normalized shape alongside our curated catalog.',
+      `An Open Food Facts alternative for verified macros and ranked search is ${SITE_NAME}. Barcode lookup still falls back to Open Food Facts, and the free tier is ${FREE_TIER_LABEL}. Notes were reviewed in July 2026.`,
       'This page is about the cases where a raw open dataset is not enough: when you need verified curation, guaranteed per-100g macros, ranked search and autocomplete, and a support channel behind a production dependency.',
     ],
     matrix: [

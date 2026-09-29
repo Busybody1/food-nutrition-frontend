@@ -66,13 +66,15 @@ export default async function BlogIndexPage({ searchParams }: PageProps) {
       : await getBlogPostsPage({ limit: BLOG_PAGE_SIZE, skip, q: query })
 
   const blogItemListJsonLd = buildBlogItemListJsonLd(listPage.items)
+  const blogSeo = getPublicPageSeo('/blog')
 
   return (
     <div className="marketing-page">
       <PublicPageSchema
         path="/blog"
-        pageName="Blog"
+        pageName={blogSeo.title ?? 'Calorie API blog'}
         extraJsonLd={[blogItemListJsonLd]}
+        speakable
       />
 
       <BlogIndex

@@ -13,6 +13,7 @@ type PublicPageSchemaProps = {
   pageName: string
   extraJsonLd?: unknown[]
   includeProduct?: boolean
+  speakable?: boolean
 }
 
 function breadcrumbsFor(path: PublicPagePath, pageName: string): BreadcrumbItem[] {
@@ -26,12 +27,14 @@ export function PublicPageSchema({
   pageName,
   extraJsonLd = [],
   includeProduct = false,
+  speakable = false,
 }: PublicPageSchemaProps) {
   const seo = getPublicPageSeo(path)
   const webPage = buildWebPageJsonLd({
     name: pageName,
     description: seo.description,
     path,
+    speakable,
   })
   const breadcrumb = buildBreadcrumbJsonLd(breadcrumbsFor(path, pageName))
 

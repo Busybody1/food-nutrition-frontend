@@ -18,13 +18,14 @@ import {
   Terminal,
   Zap,
 } from 'lucide-react'
-import { SITE_NAME, FOOD_DATABASE_SIZE_LABEL } from '@/lib/site'
+import { FOOD_DATABASE_SIZE_LABEL } from '@/lib/site'
 import { API_CONFIG } from '@/lib/config/api'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { MarketingImageHero } from '@/components/marketing/marketing-image-hero'
 import { Reveal } from '@/components/marketing/reveal'
 import { buildPublicPageMetadata } from '@/lib/build-public-metadata'
+import { getPublicPageSeo } from '@/lib/public-page-seo'
 import { PublicPageSchema } from '@/components/seo/public-page-schema'
 import { DocsSeoContent } from '@/components/seo/public-page-seo-content'
 import { StructuredData } from '@/components/seo/structured-data'
@@ -35,6 +36,8 @@ import { DOCS_SECTIONS, docsSectionPath } from '@/lib/docs/registry'
 import { GUIDES, guidePath } from '@/lib/docs/guides-data'
 
 export const metadata: Metadata = buildPublicPageMetadata('/docs')
+
+const DOCS_SEO = getPublicPageSeo('/docs')
 
 const API_BASE = API_CONFIG.baseURL.replace(/\/$/, '')
 const SEARCH_URL = `${API_BASE}/api/v1/search/foods`
@@ -126,16 +129,16 @@ const ICON_CHIP_CLASS =
 export default function DocsPage() {
   return (
     <div className="marketing-page docs-page min-h-screen">
-      <PublicPageSchema path="/docs" pageName="Documentation" />
+      <PublicPageSchema path="/docs" pageName={DOCS_SEO.title ?? 'Nutrition API documentation'} speakable />
       <StructuredData type="api" />
 
       <MarketingImageHero compact centered waveTone="white">
         <p className="marketing-hero-badge mb-4 inline-flex">Documentation</p>
         <h1 className="font-display text-4xl md:text-5xl text-ink mb-4 text-balance">
-          {SITE_NAME} reference
+          {DOCS_SEO.title}
         </h1>
-        <p className="text-lg text-ink-muted max-w-2xl mx-auto">
-          Search, retrieve, and analyze nutritional information with our REST API over HTTPS.
+        <p className="aeo-answer text-lg text-ink-muted max-w-2xl mx-auto">
+          {DOCS_SEO.description}
         </p>
         <div className="mt-5 flex flex-wrap justify-center gap-2">
           <Badge variant="secondary" className="gap-1">

@@ -5,6 +5,12 @@ export type BlogJsonLdSite = {
   absoluteUrl: (path: string) => string
 }
 
+export function articleSectionForPost(title: string, keywords?: string[] | null): string {
+  const blob = `${title} ${(keywords ?? []).join(' ')}`.toLowerCase()
+  if (/\bmcp\b|\bclaude\b|\bcursor\b/.test(blob)) return 'Nutrition MCP'
+  return 'Developer guides'
+}
+
 export function buildBlogPostingJsonLdFromInput(
   site: BlogJsonLdSite,
   {
@@ -28,24 +34,36 @@ export function buildBlogPostingJsonLdFromInput(
   }
 ) {
   const url = site.absoluteUrl(path)
-  const keywordText = keywords?.filter(Boolean).join(', ') || undefined
+  const organizationId = `${site.siteUrl}/#organization`
+  const keywordList = keywords?.filter(Boolean) ?? []
+  const keywordText = keywordList.join(', ') || undefined
 
   return {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
-    '@id': url,
+    '@id': `${url}#article`,
     headline: title,
     description,
+    abstract: description,
     mainEntityOfPage: { '@type': 'WebPage', '@id': url },
     url,
     inLanguage: 'en-US',
     isAccessibleForFree: true,
-    articleSection: 'Developer guides',
+    articleSection: articleSectionForPost(title, keywordList),
+    isPartOf: { '@type': 'WebSite', '@id': `${site.siteUrl}/#website` },
+    speakable: {
+      '@type': 'SpeakableSpecification',
+      cssSelector: ['article h1', '.aeo-answer'],
+    },
+    ...(keywordList.length
+      ? { about: keywordList.slice(0, 3).map((name) => ({ '@type': 'Thing', name })) }
+      : {}),
     ...(datePublished ? { datePublished } : {}),
     dateModified: dateModified || datePublished || undefined,
-    author: { '@type': 'Organization', name: site.siteName, url: site.siteUrl },
+    author: { '@type': 'Organization', '@id': organizationId, name: site.siteName, url: site.siteUrl },
     publisher: {
       '@type': 'Organization',
+      '@id': organizationId,
       name: site.siteName,
       url: site.siteUrl,
       logo: { '@type': 'ImageObject', url: site.logoUrl },

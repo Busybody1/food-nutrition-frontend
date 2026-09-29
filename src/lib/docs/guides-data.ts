@@ -26,7 +26,7 @@ export const GUIDES: Guide[] = [
   {
     slug: 'react-native-food-tracking',
     title: 'Build a Food Tracking App with React Native',
-    metaTitle: 'React Native Food Tracking API Integration',
+    metaTitle: 'Build a Food Tracking App with React Native',
     description:
       'Integrate the Calorie API in a React Native food tracking app: debounced autocomplete, food details, barcode scanning, and quota-friendly patterns.',
     keywords: [
@@ -37,11 +37,11 @@ export const GUIDES: Guide[] = [
     ],
     framework: 'React Native',
     summary: 'Food logging in React Native: suggest, details, and barcode scanning.',
-    dateModified: '2026-07-03',
+    dateModified: '2026-09-29',
     blocks: [
       {
         kind: 'p',
-        text: 'This guide wires the three endpoints a food tracker needs (autocomplete suggest, food details, and barcode lookup) into a React Native app. Requests are routed through a small backend proxy so your API key never ships inside the app binary.',
+        text: 'Build a food tracking app with React Native by wiring suggest, food details, and barcode lookup through a backend proxy. The API key stays on the server so it is not inside the app binary.',
       },
       { kind: 'h2', text: 'Set up a backend proxy', id: 'proxy' },
       {
@@ -152,7 +152,7 @@ export function useFoodSuggest(query: string) {
   {
     slug: 'nextjs-nutrition-app',
     title: 'Build a Nutrition App with Next.js',
-    metaTitle: 'Next.js Nutrition API Integration',
+    metaTitle: 'Build a Nutrition App with Next.js',
     description:
       'Use the Calorie API in a Next.js App Router project: server-side route handlers that keep your key secret, cached food search, and server components.',
     keywords: [
@@ -163,11 +163,11 @@ export function useFoodSuggest(query: string) {
     ],
     framework: 'Next.js',
     summary: 'App Router route handlers, caching, and server components for food data.',
-    dateModified: '2026-07-03',
+    dateModified: '2026-09-29',
     blocks: [
       {
         kind: 'p',
-        text: 'Next.js route handlers are a natural fit for the Calorie API: the API key lives in server-only environment variables, and fetch caching gives you request deduplication and revalidation for free.',
+        text: 'Build a nutrition app with Next.js by keeping the API key in a server route handler. Fetch caching deduplicates food detail requests.',
       },
       { kind: 'h2', text: 'Server-side search route', id: 'route-handler' },
       {
@@ -258,7 +258,7 @@ CALORIE_API_KEY=your_api_key_here`,
   {
     slug: 'flutter-barcode-scanning',
     title: 'Barcode Nutrition Scanning in Flutter',
-    metaTitle: 'Flutter Barcode Nutrition API Integration',
+    metaTitle: 'Barcode Nutrition Scanning in Flutter',
     description:
       'Add barcode nutrition scanning to a Flutter app with the Calorie API: mobile_scanner setup, a typed lookup client, and handling unknown products.',
     keywords: [
@@ -269,11 +269,11 @@ CALORIE_API_KEY=your_api_key_here`,
     ],
     framework: 'Flutter',
     summary: 'Scan UPC/EAN codes in Flutter and resolve them to nutrition data.',
-    dateModified: '2026-07-03',
+    dateModified: '2026-09-29',
     blocks: [
       {
         kind: 'p',
-        text: 'With the mobile_scanner package and the barcode lookup endpoint, a Flutter app can go from camera frame to logged meal in one request. As with any mobile client, route API calls through your backend so the key stays server-side.',
+        text: 'Barcode nutrition scanning in Flutter uses mobile_scanner and the barcode lookup endpoint. Route the call through your backend so the API key stays off the device.',
       },
       { kind: 'h2', text: 'Scanner widget', id: 'scanner' },
       {
@@ -355,7 +355,7 @@ class BarcodeFood {
   {
     slug: 'nodejs-food-search',
     title: 'Food Search with Node.js',
-    metaTitle: 'Node.js Food Search API Integration',
+    metaTitle: 'Food Search with Node.js',
     description:
       'Build a food search backend in Node.js with the Calorie API: a typed client, pagination, caching, and rate-limit-aware retries.',
     keywords: [
@@ -366,11 +366,11 @@ class BarcodeFood {
     ],
     framework: 'Node.js',
     summary: 'A quota-friendly Node.js client with caching and 429-aware retries.',
-    dateModified: '2026-07-03',
+    dateModified: '2026-09-29',
     blocks: [
       {
         kind: 'p',
-        text: 'A thin Node.js client around the search endpoints gives every service in your stack one quota-friendly path to food data. This guide covers the client, pagination, an in-memory cache, and retry behavior that respects the rate-limit headers.',
+        text: 'Food search with Node.js is a thin client around the search endpoints, with pagination, a cache, and retries that read the rate-limit headers.',
       },
       { kind: 'h2', text: 'A minimal typed client', id: 'client' },
       {
@@ -451,7 +451,7 @@ async function getFoodCached(id) {
   {
     slug: 'python-nutrition-data',
     title: 'Working with Nutrition Data in Python',
-    metaTitle: 'Python Nutrition Data API Integration',
+    metaTitle: 'Working with Nutrition Data in Python',
     description:
       'Fetch and analyze Calorie API nutrition data in Python: a requests session with retries, pagination helpers, and macro analysis with pandas.',
     keywords: [
@@ -462,11 +462,11 @@ async function getFoodCached(id) {
     ],
     framework: 'Python',
     summary: 'Requests-based client with retries, plus pandas macro analysis.',
-    dateModified: '2026-07-03',
+    dateModified: '2026-09-29',
     blocks: [
       {
         kind: 'p',
-        text: 'Python is a common consumer of nutrition data for meal-plan generation, analytics, and ML features. This guide sets up a resilient client with requests, then loads results into pandas for macro analysis.',
+        text: 'Working with nutrition data in Python starts with a requests session and retries, then a pandas frame for macro analysis.',
       },
       { kind: 'h2', text: 'A session with retries', id: 'session' },
       {

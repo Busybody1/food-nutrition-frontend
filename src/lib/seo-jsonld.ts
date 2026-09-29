@@ -86,23 +86,35 @@ export function buildWebPageJsonLd({
   name,
   description,
   path,
+  speakable = false,
 }: {
   name: string
   description: string
   path: string
+  speakable?: boolean
 }) {
+  const url = absoluteUrl(path)
   return {
     '@context': 'https://schema.org',
     '@type': 'WebPage',
+    '@id': url,
     name,
     description,
-    url: absoluteUrl(path),
+    url,
     isPartOf: {
       '@type': 'WebSite',
       '@id': WEBSITE_ID,
       name: SITE_NAME,
       url: SITE_URL,
     },
+    ...(speakable
+      ? {
+          speakable: {
+            '@type': 'SpeakableSpecification',
+            cssSelector: ['h1', '.aeo-answer'],
+          },
+        }
+      : {}),
   }
 }
 
@@ -122,19 +134,33 @@ export function buildTechArticleJsonLd({
   proficiencyLevel?: 'Beginner' | 'Expert'
   keywords?: string[]
 }) {
+  const url = absoluteUrl(path)
   return {
     '@context': 'https://schema.org',
     '@type': 'TechArticle',
+    '@id': `${url}#article`,
     headline,
     description,
-    url: absoluteUrl(path),
+    url,
     dateModified,
     proficiencyLevel,
+    speakable: {
+      '@type': 'SpeakableSpecification',
+      cssSelector: ['article h1', '.aeo-answer'],
+    },
     ...(keywords?.length ? { keywords: keywords.join(', ') } : {}),
     isPartOf: { '@type': 'WebSite', '@id': WEBSITE_ID },
-    about: { '@type': 'WebAPI', '@id': WEBAPI_ID },
+    about: [
+      { '@type': 'WebAPI', '@id': WEBAPI_ID },
+      ...(keywords ?? []).slice(0, 4).map((name) => ({ '@type': 'Thing', name })),
+    ],
     author: { '@type': 'Organization', '@id': ORGANIZATION_ID, name: SITE_NAME },
-    publisher: { '@type': 'Organization', '@id': ORGANIZATION_ID, name: SITE_NAME },
+    publisher: {
+      '@type': 'Organization',
+      '@id': ORGANIZATION_ID,
+      name: SITE_NAME,
+      logo: { '@type': 'ImageObject', url: absoluteUrl('/logos/busybody-logo.png') },
+    },
   }
 }
 

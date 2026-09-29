@@ -1,26 +1,10 @@
+import { buildRobotsTxt } from '@/lib/robots-txt'
 import { SITE_URL } from '@/lib/site'
 
 export const dynamic = 'force-static'
 
-const DISALLOW = [
-  '/dashboard/',
-  '/admin/',
-  '/auth/',
-  '/checkout',
-  '/feedback/',
-  '/api/',
-]
-
 export function GET() {
-  const body = [
-    'User-agent: *',
-    'Content-Signal: search=yes, ai-input=yes, ai-train=no',
-    'Allow: /',
-    ...DISALLOW.map((path) => `Disallow: ${path}`),
-    '',
-    `Sitemap: ${SITE_URL}/sitemap.xml`,
-    '',
-  ].join('\n')
+  const body = buildRobotsTxt(SITE_URL)
 
   return new Response(body, {
     headers: {

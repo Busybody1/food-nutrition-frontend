@@ -12,12 +12,15 @@ import {
 } from '@/components/marketing/marketing-shell'
 import { Reveal, RevealGroup } from '@/components/marketing/reveal'
 import { StructuredData, JsonLdScript } from '@/components/seo/structured-data'
-import { PricingProductSchema } from '@/components/seo/pricing-product-schema'
+import { PublicPageSchema } from '@/components/seo/public-page-schema'
+import { getPublicPageSeo } from '@/lib/public-page-seo'
 import { HomeSeoContent } from '@/components/marketing/home-seo-content'
 import { StatsBand } from '@/components/marketing/stats-band'
 import { Testimonials } from '@/components/marketing/testimonials'
 
 export const metadata: Metadata = buildPublicPageMetadata('/')
+
+const HOME_SEO = getPublicPageSeo('/')
 
 const features = [
   {
@@ -55,6 +58,7 @@ const features = [
 export default function HomePage() {
   return (
     <div className="marketing-page">
+      <PublicPageSchema path="/" pageName={HOME_SEO.title ?? 'Food calorie API'} speakable />
       <HomeHero />
 
       <section className="section-pad bg-surface-elevated" id="demo">
@@ -108,7 +112,6 @@ export default function HomePage() {
       />
 
       <StructuredData type="api" />
-      <PricingProductSchema />
       <JsonLdScript id="faq-jsonld" data={buildFaqPageJsonLd(HOME_FAQ_ITEMS)} />
     </div>
   )

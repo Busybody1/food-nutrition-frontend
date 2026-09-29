@@ -5,13 +5,21 @@ import { PricingSeoContent } from '@/components/seo/public-page-seo-content'
 import { FaqSection } from '@/components/marketing/faq-section'
 import { MarketingCtaBand } from '@/components/marketing/marketing-shell'
 import { PRICING_FAQS } from '@/lib/faq-data'
+import { getPublicPageSeo } from '@/lib/public-page-seo'
 
 export const metadata: Metadata = buildPublicPageMetadata('/pricing')
+
+const PRICING_SEO = getPublicPageSeo('/pricing')
 
 export default function PricingLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <PublicPageSchema path="/pricing" pageName="Pricing" includeProduct />
+      <PublicPageSchema
+        path="/pricing"
+        pageName={PRICING_SEO.title ?? 'Nutrition API pricing'}
+        includeProduct
+        speakable
+      />
       {children}
       <PricingSeoContent />
       {}

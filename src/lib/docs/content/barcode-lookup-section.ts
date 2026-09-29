@@ -11,7 +11,7 @@ export const BARCODE_LOOKUP_CONTENT: DocsSectionContent = {
   blocks: [
     {
       kind: 'p',
-      text: 'Resolve a UPC or EAN barcode to product and nutrition data. The API checks the local food database first; when no match is found, it falls back to Open Food Facts and returns only the fields needed for logging: product details, serving size, macros per 100 g (and per serving when available), and micronutrients when present.',
+      text: 'A barcode lookup API resolves a UPC or EAN to nutrition. The local catalog is checked first, then Open Food Facts. A miss on both is HTTP 404. A hit returns product details, serving size, and macros per 100 g.',
     },
     {
       kind: 'code',

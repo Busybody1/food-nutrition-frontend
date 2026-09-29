@@ -4,13 +4,21 @@ import type { DocsBlock } from '@/lib/docs/types'
 import type { FaqItem } from '@/lib/faq-data'
 
 export function DocsBlockRenderer({ blocks }: { blocks: DocsBlock[] }) {
+  const answerIndex = blocks.findIndex((block) => block.kind === 'p')
   return (
     <>
       {blocks.map((block, i) => {
         switch (block.kind) {
           case 'p':
             return (
-              <p key={i} className="text-ink-muted leading-relaxed mb-6 max-w-3xl">
+              <p
+                key={i}
+                className={
+                  i === answerIndex
+                    ? 'aeo-answer text-ink-muted leading-relaxed mb-6 max-w-3xl'
+                    : 'text-ink-muted leading-relaxed mb-6 max-w-3xl'
+                }
+              >
                 {block.text}
               </p>
             )

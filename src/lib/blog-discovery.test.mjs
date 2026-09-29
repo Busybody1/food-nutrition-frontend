@@ -4,6 +4,12 @@ import {
   buildBlogRssXmlFromInput,
   buildLlmsTxtFromInput,
 } from './blog-discovery-format.ts';
+import {
+  MCP_ANNUAL_USD,
+  MCP_MONTHLY_USD,
+  MCP_PAID_LIMITS,
+  MCP_TRIAL_LIMITS,
+} from './mcp/catalog.ts';
 
 const SITE = {
   siteName: 'Calorie API',
@@ -33,6 +39,12 @@ test('buildLlmsTxtFromInput includes dynamic blog catalog', () => {
   assert.match(body, /what-is-a-food-api/);
   assert.match(body, /keywords: food api, nutrition api/);
   assert.match(body, /https:\/\/calorieapi.com\/openapi.json/);
+  assert.match(body, /## Nutrition MCP server/);
+  assert.match(body, /https:\/\/modelcontextprotocol.io/);
+  assert.match(body, /https:\/\/calorieapi.com\/mcp/);
+  assert.match(body, new RegExp(`\\$${MCP_MONTHLY_USD}/month or \\$${MCP_ANNUAL_USD}/year`));
+  assert.match(body, new RegExp(`${MCP_PAID_LIMITS.perMonth} calls/month`));
+  assert.match(body, new RegExp(`${MCP_TRIAL_LIMITS.totalCalls} calls total`));
 });
 
 test('buildLlmsTxtFromInput includes foods-per-query in pricing table', () => {

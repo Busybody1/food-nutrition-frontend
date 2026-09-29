@@ -14,9 +14,12 @@ import { RevealGroup } from '@/components/marketing/reveal'
 import { ScheduleCallDialog } from '@/components/marketing/schedule-call-dialog'
 import { StatsBand } from '@/components/marketing/stats-band'
 import { TrackedCtaLink } from '@/components/analytics/tracked-cta-link'
+import { getPublicPageSeo } from '@/lib/public-page-seo'
 import { fetchPublicPlans } from '@/lib/pricing/fetch-plans'
 import { isContactSalesPlan, isEnterprisePlan, type PricingPlan } from '@/lib/pricing/plan-display'
 import { cn } from '@/lib/utils/cn'
+
+const PRICING_SEO = getPublicPageSeo('/pricing')
 
 type PricingContentProps = {
 
@@ -149,11 +152,10 @@ export function PricingContent({ initialPlans, initialError }: PricingContentPro
     <div className="marketing-page">
       <MarketingImageHero compact centered waveTone="elevated">
         <h1 className="font-display text-4xl md:text-5xl text-ink mb-4">
-          Simple, transparent pricing
+          {PRICING_SEO.title}
         </h1>
-        <p className="text-lg text-ink-muted mb-8 max-w-2xl mx-auto">
-          Per-account rate limits and monthly quotas for every tier. Commercial production use
-          starts on Plus. Enterprise adds image-to-calorie API and credits-based usage.
+        <p className="aeo-answer text-lg text-ink-muted mb-8 max-w-2xl mx-auto">
+          {PRICING_SEO.description}
         </p>
         <p className="mb-8 text-sm text-ink-muted">
           Using Claude Code or Cursor?{' '}

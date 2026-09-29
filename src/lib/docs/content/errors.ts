@@ -4,7 +4,7 @@ export const ERRORS_CONTENT: DocsSectionContent = {
   blocks: [
     {
       kind: 'p',
-      text: 'Errors use conventional HTTP status codes with a JSON body containing a human-readable detail message. Client errors (4xx) indicate a problem with the request or account state; 5xx indicates a problem on our side.',
+      text: 'API error handling uses HTTP status codes and a JSON detail string. A missing API key is 401. A monthly quota miss is 402. A problem on our side is 5xx.',
     },
     {
       kind: 'json',

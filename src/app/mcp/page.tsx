@@ -2,33 +2,63 @@ import type { Metadata } from 'next'
 import { McpLanding } from '@/components/marketing/mcp-landing'
 import { JsonLdScript } from '@/components/seo/structured-data'
 import { buildPageMetadata } from '@/lib/metadata'
-import { MCP_PAGE_FAQS } from '@/lib/mcp/catalog'
-import { buildFaqPageJsonLd } from '@/lib/faq-data'
+import {
+  MCP_ANNUAL_USD,
+  MCP_CONNECT_STEPS,
+  MCP_FEATURE_TITLES,
+  MCP_LANDING_H1,
+  MCP_MONTHLY_USD,
+  MCP_PAGE_FAQS,
+  mcpLandingLead,
+  mcpLandingMetaDescription,
+} from '@/lib/mcp/catalog'
+import { buildMcpLandingJsonLd } from '@/lib/mcp/landing-jsonld'
 import { buildBreadcrumbJsonLd } from '@/lib/seo-jsonld'
+import { FOOD_DATABASE_SIZE_LABEL, ORGANIZATION_ID, SITE_NAME, SITE_URL, absoluteUrl } from '@/lib/site'
+
+const DESCRIPTION = mcpLandingMetaDescription()
+const LEAD = mcpLandingLead(FOOD_DATABASE_SIZE_LABEL)
 
 export const metadata: Metadata = buildPageMetadata({
-  title: 'Nutrition MCP',
-  description:
-    'Nutrition MCP server for Claude Code and Cursor. The catalog answers food search, portions, recipes, barcodes, and photos. $29/month or $19/month. $120 USD Off on annual. 7-day trial.',
+  title: MCP_LANDING_H1,
+  description: DESCRIPTION,
   keywords: [
     'nutrition mcp server',
+    'track calories with claude ai',
     'claude code mcp',
     'cursor mcp nutrition',
-    'food database mcp',
+    'mcp food database',
   ],
   path: '/mcp',
   hasDedicatedOgImage: true,
 })
 
 export default function McpPage() {
+  const pageUrl = absoluteUrl('/mcp')
   return (
     <>
-      <JsonLdScript id="mcp-faq" data={buildFaqPageJsonLd(MCP_PAGE_FAQS)} />
+      <JsonLdScript
+        id="mcp-landing"
+        data={buildMcpLandingJsonLd({
+          pageUrl,
+          pageName: MCP_LANDING_H1,
+          siteName: SITE_NAME,
+          siteUrl: SITE_URL,
+          organizationId: ORGANIZATION_ID,
+          description: LEAD,
+          monthlyPrice: MCP_MONTHLY_USD,
+          annualPrice: MCP_ANNUAL_USD,
+          priceValidUntil: '2027-12-31',
+          faqs: MCP_PAGE_FAQS,
+          steps: MCP_CONNECT_STEPS,
+          features: MCP_FEATURE_TITLES,
+        })}
+      />
       <JsonLdScript
         id="mcp-breadcrumb"
         data={buildBreadcrumbJsonLd([
           { name: 'Home', path: '/' },
-          { name: 'MCP', path: '/mcp' },
+          { name: 'Nutrition MCP server', path: '/mcp' },
         ])}
       />
       <McpLanding />
