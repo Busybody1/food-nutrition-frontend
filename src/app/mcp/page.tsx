@@ -23,6 +23,8 @@ export const metadata: Metadata = buildPageMetadata({
   title: MCP_LANDING_H1,
   description: DESCRIPTION,
   keywords: [
+    'calorie mcp',
+    'calorie mcp server',
     'nutrition mcp server',
     'track calories with claude ai',
     'claude code mcp',
@@ -58,7 +60,7 @@ export default function McpPage() {
         id="mcp-breadcrumb"
         data={buildBreadcrumbJsonLd([
           { name: 'Home', path: '/' },
-          { name: 'Nutrition MCP server', path: '/mcp' },
+          { name: 'Calorie MCP', path: '/mcp' },
         ])}
       />
       <McpLanding />

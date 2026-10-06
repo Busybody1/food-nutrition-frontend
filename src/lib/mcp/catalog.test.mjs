@@ -1,11 +1,15 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import {
+  MCP_LANDING_H1,
   MCP_PAGE_FAQS,
   MCP_TOOLS,
   annualSavingsUsd,
+  mcpLandingLead,
+  mcpLandingMetaDescription,
   claudeCodeCommand,
   cursorConfig,
+  mcpEndpoint,
   mcpTrialClick,
   safeNextPath,
   isSafeOAuthRedirect,
@@ -21,12 +25,26 @@ test('the landing FAQ explains the service and the plan limits', () => {
   assert.ok(MCP_PAGE_FAQS.length >= 8 && MCP_PAGE_FAQS.length <= 10)
   const questions = MCP_PAGE_FAQS.map((item) => item.q).join(' ')
   const answers = MCP_PAGE_FAQS.map((item) => item.a).join(' ')
+  assert.match(MCP_LANDING_H1, /Calorie MCP/)
+  assert.match(mcpLandingMetaDescription(), /calorie MCP/)
+  assert.match(mcpLandingLead('4M+ foods'), /A calorie MCP is a Model Context Protocol server/)
+  assert.match(questions, /What is a calorie MCP/)
   assert.match(questions, /What is a nutrition MCP server/)
   assert.match(questions, /track calories with Claude AI/)
   assert.match(questions, /MyFitnessPal/)
   assert.match(answers, /403/)
   assert.match(answers, /personal use/i)
   assert.equal(answers.includes('fn_'), false)
+})
+
+test('the documented MCP URL keeps the trailing slash', () => {
+  const previous = process.env.NEXT_PUBLIC_API_URL
+  process.env.NEXT_PUBLIC_API_URL = 'https://calorieapiadmin.com'
+  assert.equal(mcpEndpoint(), 'https://calorieapiadmin.com/mcp/')
+  process.env.NEXT_PUBLIC_API_URL = 'https://calorieapiadmin.com/'
+  assert.equal(mcpEndpoint(), 'https://calorieapiadmin.com/mcp/')
+  if (previous === undefined) delete process.env.NEXT_PUBLIC_API_URL
+  else process.env.NEXT_PUBLIC_API_URL = previous
 })
 
 test('connect snippets use a placeholder key', () => {

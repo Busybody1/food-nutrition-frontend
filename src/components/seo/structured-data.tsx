@@ -48,6 +48,7 @@ function getStructuredData(type: StructuredDataProps['type'], data?: Record<stri
         knowsAbout: [
           'Food calorie API',
           'Nutrition database',
+          'Calorie MCP',
           'Nutrition MCP server',
           'Barcode nutrition lookup',
         ],

@@ -10,10 +10,10 @@ type TopicCluster = {
 export const TOPIC_CLUSTERS: TopicCluster[] = [
   {
     id: 'mcp',
-    triggers: ['mcp', 'claude code', 'cursor', 'model context protocol'],
+    triggers: ['mcp', 'calorie mcp', 'claude code', 'cursor', 'model context protocol'],
     links: [
-      { label: 'Nutrition MCP server for Claude and Cursor', href: '/mcp' },
-      { label: 'Nutrition MCP server pricing', href: '/mcp/pricing' },
+      { label: 'Calorie MCP server for Claude and Cursor', href: '/mcp' },
+      { label: 'Calorie MCP server pricing', href: '/mcp/pricing' },
       { label: 'MCP server documentation', href: '/docs/mcp' },
     ],
   },

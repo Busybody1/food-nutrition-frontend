@@ -39,7 +39,8 @@ test('buildLlmsTxtFromInput includes dynamic blog catalog', () => {
   assert.match(body, /what-is-a-food-api/);
   assert.match(body, /keywords: food api, nutrition api/);
   assert.match(body, /https:\/\/calorieapi.com\/openapi.json/);
-  assert.match(body, /## Nutrition MCP server/);
+  assert.match(body, /## Calorie MCP/);
+  assert.match(body, /A calorie MCP is a Model Context Protocol server/);
   assert.match(body, /https:\/\/modelcontextprotocol.io/);
   assert.match(body, /https:\/\/calorieapi.com\/mcp/);
   assert.match(body, new RegExp(`\\$${MCP_MONTHLY_USD}/month or \\$${MCP_ANNUAL_USD}/year`));

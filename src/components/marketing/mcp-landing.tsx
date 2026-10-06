@@ -68,7 +68,7 @@ export function McpLanding() {
   return (
     <div className="marketing-page pb-24 lg:pb-0">
       <MarketingImageHero centered waveTone="elevated">
-        <p className="marketing-hero-badge mb-4 inline-flex">Nutrition MCP</p>
+        <p className="marketing-hero-badge mb-4 inline-flex">Calorie MCP</p>
         <h1 className="font-display text-4xl text-ink text-balance md:text-6xl">
           {MCP_LANDING_H1}
         </h1>
@@ -88,7 +88,7 @@ export function McpLanding() {
 
       <section className="section-pad bg-white" aria-labelledby="mcp-steps-heading">
         <div className="container-narrow">
-          <MarketingSectionHeader id="mcp-steps-heading" title="How to connect a nutrition MCP server" />
+          <MarketingSectionHeader id="mcp-steps-heading" title="How to connect a calorie MCP server" />
           <RevealGroup className="grid gap-4 md:grid-cols-3" itemClassName="h-full min-w-0">
             {MCP_CONNECT_STEPS.map((step, index) => (
               <div key={step.name} className={index === 0 ? 'marketing-card card-hairline h-full p-6' : 'marketing-card h-full p-6'}>
@@ -108,7 +108,7 @@ export function McpLanding() {
           <MarketingSectionHeader
             id="mcp-connect-heading"
             title="Connect Claude Code and Cursor"
-            description="Paste this nutrition MCP server config into Claude Code or Cursor. Replace YOUR_KEY after checkout."
+            description="Paste this calorie MCP config into Claude Code or Cursor. Replace YOUR_KEY after checkout."
           />
           <Reveal>
             <McpConnectPanel initialTab="claude-code" />
@@ -120,7 +120,7 @@ export function McpLanding() {
         <div className="container-narrow">
           <MarketingSectionHeader
             id="mcp-uses-heading"
-            title="Nutrition MCP server tools"
+            title="Calorie MCP server tools"
             description={
               <>
                 Eight calls. The{' '}
@@ -206,7 +206,7 @@ export function McpLanding() {
 
       <section className="section-pad bg-surface-elevated" aria-labelledby="mcp-limits-heading">
         <div className="container-narrow">
-          <MarketingSectionHeader id="mcp-limits-heading" label="Limits" title="Nutrition MCP server limits" />
+          <MarketingSectionHeader id="mcp-limits-heading" label="Limits" title="Calorie MCP server limits" />
           <div className="mx-auto grid max-w-4xl gap-5 md:grid-cols-2">
             <div className="marketing-card card-hairline flex h-full flex-col p-6 ring-2 ring-brand/25">
               <p className="text-xs font-semibold uppercase tracking-wide text-brand-strong">7-day trial</p>
@@ -244,13 +244,13 @@ export function McpLanding() {
 
       <section className="section-pad bg-white" id="faq" aria-labelledby="mcp-faq-heading">
         <div className="container-narrow">
-          <MarketingSectionHeader id="mcp-faq-heading" title="Nutrition MCP server questions" />
+          <MarketingSectionHeader id="mcp-faq-heading" title="Calorie MCP questions" />
           <FaqList items={faqs} />
         </div>
       </section>
 
       <MarketingCtaBand
-        title="Start a nutrition MCP server trial"
+        title="Start a calorie MCP trial"
         description={
           <>
             ${MCP_MONTHLY_USD}/month or ${annualMonthly}/month.

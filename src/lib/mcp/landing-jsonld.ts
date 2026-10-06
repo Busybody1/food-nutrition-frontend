@@ -1,3 +1,5 @@
+import { MCP_PRODUCT_NAME } from './catalog.ts'
+
 export type McpFaq = { q: string; a: string }
 
 type McpOfferInput = {
@@ -72,7 +74,7 @@ export function buildMcpLandingJsonLd(input: {
       {
         '@type': 'SoftwareApplication',
         '@id': appId,
-        name: 'Nutrition MCP server',
+        name: MCP_PRODUCT_NAME,
         applicationCategory: 'HealthApplication',
         operatingSystem: 'Claude Code, Cursor',
         description: input.description,
@@ -81,7 +83,7 @@ export function buildMcpLandingJsonLd(input: {
         provider: { '@id': input.organizationId },
         offers: [
           mcpOffer({
-            name: 'Nutrition MCP server monthly',
+            name: 'Calorie MCP monthly',
             price: input.monthlyPrice,
             unitCode: 'MON',
             description: `$${input.monthlyPrice} per month for personal use. MCP tools only.`,
@@ -92,7 +94,7 @@ export function buildMcpLandingJsonLd(input: {
             organizationId: input.organizationId,
           }),
           mcpOffer({
-            name: 'Nutrition MCP server annual',
+            name: 'Calorie MCP annual',
             price: input.annualPrice,
             unitCode: 'ANN',
             description: `$${input.annualPrice} billed once per year for personal use. MCP tools only.`,
@@ -107,8 +109,8 @@ export function buildMcpLandingJsonLd(input: {
       {
         '@type': 'HowTo',
         '@id': `${input.pageUrl}#how-to-connect`,
-        name: 'How to connect a nutrition MCP server',
-        description: 'Connect Claude Code or Cursor to the nutrition MCP server with an API key.',
+        name: 'How to connect a calorie MCP server',
+        description: 'Connect Claude Code or Cursor to the calorie MCP server with an API key.',
         step: input.steps.map((step, index) => ({
           '@type': 'HowToStep',
           position: index + 1,
@@ -164,7 +166,7 @@ export function buildMcpPricingJsonLd(input: {
       {
         '@type': 'SoftwareApplication',
         '@id': appId,
-        name: 'Nutrition MCP server',
+        name: MCP_PRODUCT_NAME,
         applicationCategory: 'HealthApplication',
         operatingSystem: 'Claude Code, Cursor',
         description: input.description,
@@ -173,7 +175,7 @@ export function buildMcpPricingJsonLd(input: {
         provider: { '@id': input.organizationId },
         offers: [
           mcpOffer({
-            name: 'Nutrition MCP server monthly',
+            name: 'Calorie MCP monthly',
             price: input.monthlyPrice,
             unitCode: 'MON',
             description: `$${input.monthlyPrice} per month. 7-day trial, card required. MCP tools only.`,
@@ -184,7 +186,7 @@ export function buildMcpPricingJsonLd(input: {
             organizationId: input.organizationId,
           }),
           mcpOffer({
-            name: 'Nutrition MCP server annual',
+            name: 'Calorie MCP annual',
             price: input.annualPrice,
             unitCode: 'ANN',
             description: `$${input.annualPrice} billed once per year. MCP tools only.`,

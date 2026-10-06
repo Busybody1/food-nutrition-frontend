@@ -35,10 +35,10 @@ export const metadata: Metadata = buildPageMetadata({
   title: MCP_PRICING_H1,
   description: DESCRIPTION,
   keywords: [
+    'calorie mcp pricing',
+    'calorie mcp',
     'nutrition mcp server pricing',
     'mcp pricing',
-    'nutrition mcp server price',
-    'claude code nutrition',
   ],
   path: '/mcp/pricing',
   hasDedicatedOgImage: true,
@@ -86,7 +86,7 @@ export default async function McpPricingPage() {
       <section className="bg-surface-elevated pb-20 pt-6 md:pb-28 md:pt-8" aria-labelledby="mcp-choose-plan">
         <div className="container-narrow">
           <h2 id="mcp-choose-plan" className="sr-only">
-            Nutrition MCP server monthly and annual pricing
+            Calorie MCP monthly and annual pricing
           </h2>
           <McpPricingCard plan={plan} />
         </div>
@@ -94,13 +94,13 @@ export default async function McpPricingPage() {
 
       <section className="section-pad bg-white" id="faq" aria-labelledby="mcp-billing-faq">
         <div className="container-narrow">
-          <MarketingSectionHeader id="mcp-billing-faq" title="Nutrition MCP pricing questions" />
+          <MarketingSectionHeader id="mcp-billing-faq" title="Calorie MCP pricing questions" />
           <FaqList items={BILLING_FAQS} />
         </div>
       </section>
 
       <MarketingCtaBand
-        title="Start a nutrition MCP server trial"
+        title="Start a calorie MCP trial"
         description={
           <>
             ${monthly}/month, or ${annualMonthly}/month if you buy annual.

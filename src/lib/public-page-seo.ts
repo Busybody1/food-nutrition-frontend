@@ -123,7 +123,7 @@ export const PUBLIC_PAGE_SEO: Record<PublicPagePath, PageSeoConfig> = {
   '/blog': {
     title: 'Calorie API blog',
     description:
-      `Calorie API blog: guides on food search, barcode lookup, and a nutrition MCP server at $${MCP_MONTHLY_USD} a month for personal use.`,
+      `Calorie API blog: guides on food search, barcode lookup, and a calorie MCP at $${MCP_MONTHLY_USD} a month for personal use.`,
     keywords: [
       'calorie API blog',
       'nutrition & food API guides',

@@ -7,7 +7,7 @@ export type BlogJsonLdSite = {
 
 export function articleSectionForPost(title: string, keywords?: string[] | null): string {
   const blob = `${title} ${(keywords ?? []).join(' ')}`.toLowerCase()
-  if (/\bmcp\b|\bclaude\b|\bcursor\b/.test(blob)) return 'Nutrition MCP'
+  if (/\bmcp\b|\bclaude\b|\bcursor\b/.test(blob)) return 'Calorie MCP'
   return 'Developer guides'
 }
 

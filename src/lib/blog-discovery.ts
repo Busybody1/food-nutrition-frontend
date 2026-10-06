@@ -19,7 +19,13 @@ import { GUIDES, guidePath } from '@/lib/docs/guides-data'
 import { CAPABILITY_PAGES, capabilityPath } from '@/lib/capability-pages-data'
 import { SOLUTION_PAGES, solutionPath } from '@/lib/solutions-data'
 import { COMPARISON_PAGES, comparisonPath } from '@/lib/comparisons-data'
-import { MCP_ANNUAL_USD, MCP_MONTHLY_USD, mcpOauthConnectEnabled } from '@/lib/mcp/catalog'
+import {
+  MCP_ANNUAL_USD,
+  MCP_LANDING_H1,
+  MCP_MONTHLY_USD,
+  MCP_PRICING_H1,
+  mcpOauthConnectEnabled,
+} from '@/lib/mcp/catalog'
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
@@ -75,14 +81,14 @@ function discoveryCatalog(): DiscoveryCatalog {
       })),
       {
         url: absoluteUrl('/mcp'),
-        title: 'Nutrition MCP server for Claude and Cursor',
+        title: MCP_LANDING_H1,
         summary: mcpOauthConnectEnabled()
-          ? `Personal-use nutrition MCP server. Claude apps use browser sign-in. Claude Code and Cursor use an API key. $${MCP_MONTHLY_USD}/month or $${MCP_ANNUAL_USD}/year.`
-          : `Personal-use nutrition MCP server. Claude Code and Cursor use an X-API-Key header. Browser sign-in for Claude apps is off until OAuth is enabled. $${MCP_MONTHLY_USD}/month or $${MCP_ANNUAL_USD}/year.`,
+          ? `Calorie MCP for personal use. Claude apps use browser sign-in. Claude Code and Cursor use an API key. $${MCP_MONTHLY_USD}/month or $${MCP_ANNUAL_USD}/year.`
+          : `Calorie MCP for personal use. Claude Code and Cursor use an X-API-Key header. Browser sign-in for Claude apps is off until OAuth is enabled. $${MCP_MONTHLY_USD}/month or $${MCP_ANNUAL_USD}/year.`,
       },
       {
         url: absoluteUrl('/mcp/pricing'),
-        title: 'Nutrition MCP server pricing',
+        title: MCP_PRICING_H1,
         summary: '$29/month, or $19/month if you buy annual. $120 off. 7-day trial. MCP tools only, no REST access.',
       },
     ],

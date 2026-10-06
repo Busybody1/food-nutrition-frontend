@@ -184,12 +184,12 @@ export function buildLlmsTxtFromInput(
 ## Overview
 ${site.siteName} is a REST API for nutrition and food data. Developers use API keys (X-API-Key header) or JWT from the dashboard to power meal logging, macro tracking, barcode scanning, and autocomplete in health and fitness apps.
 
-## Nutrition MCP server
-A nutrition MCP server is the same food catalog exposed as Model Context Protocol tools for Claude Code and Cursor. The assistant looks up calories and macros instead of guessing. Personal use is $29/month or $228/year. The MCP plan does not include the REST API. REST search, foods, calc, and vision return 403. The protocol specification is [Model Context Protocol](https://modelcontextprotocol.io).
+## Calorie MCP
+A calorie MCP is a Model Context Protocol server that looks up calories and macros for Claude Code and Cursor. It uses the same food catalog as the REST API. The assistant looks up calories and macros instead of guessing. Personal use is $29/month or $228/year. The MCP plan does not include the REST API. REST search, foods, calc, and vision return 403. The protocol specification is [Model Context Protocol](https://modelcontextprotocol.io).
 
-- [Nutrition MCP server](${site.siteUrl}/mcp): connect Claude Code or Cursor and the eight tools
-- [Nutrition MCP server pricing](${site.siteUrl}/mcp/pricing): $29/month or $228/year, 7-day trial
-- [Nutrition MCP server docs](${site.siteUrl}/docs/mcp): API key header, tool arguments, limits, photo input
+- [Calorie MCP server](${site.siteUrl}/mcp): connect Claude Code or Cursor and the eight tools
+- [Calorie MCP server pricing](${site.siteUrl}/mcp/pricing): $29/month or $228/year, 7-day trial
+- [Calorie MCP docs](${site.siteUrl}/docs/mcp): API key header, tool arguments, limits, photo input
 
 Paid limits: 20 calls/minute, 10000 calls/month, 25 foods per search, 150 photos/month.
 Trial: 7 days, card required, 5 calls/minute, 200 calls total, 10 photos.

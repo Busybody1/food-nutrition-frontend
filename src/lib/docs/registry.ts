@@ -12,13 +12,13 @@ import { MCP_ANNUAL_USD, MCP_MONTHLY_USD } from '@/lib/mcp/catalog'
 export const DOCS_SECTIONS: DocsSectionMeta[] = [
   {
     slug: 'mcp',
-    title: 'Connect a nutrition MCP server',
-    metaTitle: 'Connect a nutrition MCP server',
+    title: 'Connect a calorie MCP server',
+    metaTitle: 'Connect a calorie MCP server',
     description:
-      `Connect a nutrition MCP server in Claude Code or Cursor with an X-API-Key header. Personal use is $${MCP_MONTHLY_USD} a month or $${MCP_ANNUAL_USD} a year.`,
-    keywords: ['connect a nutrition mcp server', 'claude code mcp setup', 'mcp api key'],
+      `Connect a calorie MCP in Claude Code or Cursor with an X-API-Key header. Personal use is $${MCP_MONTHLY_USD} a month or $${MCP_ANNUAL_USD} a year.`,
+    keywords: ['calorie mcp', 'connect a calorie mcp server', 'claude code mcp setup', 'mcp api key'],
     summary: 'API key header, eight tools, limits, and photo input.',
-    dateModified: '2026-09-29',
+    dateModified: '2026-10-02',
     group: 'MCP',
   },
   {

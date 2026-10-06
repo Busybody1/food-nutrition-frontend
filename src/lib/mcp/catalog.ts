@@ -3,22 +3,23 @@ import type { FaqItem } from '@/lib/faq-data'
 export const MCP_MONTHLY_USD = 29
 export const MCP_ANNUAL_USD = 228
 
-export const MCP_LANDING_H1 = 'Nutrition MCP server for Claude and Cursor'
-export const MCP_PRICING_H1 = 'Nutrition MCP server pricing'
+export const MCP_PRODUCT_NAME = 'Calorie MCP'
+export const MCP_LANDING_H1 = 'Calorie MCP server for Claude and Cursor'
+export const MCP_PRICING_H1 = 'Calorie MCP server pricing'
 
 export function mcpLandingMetaDescription(): string {
-  return `A nutrition MCP server lets Claude Code and Cursor look up calories and macros instead of guessing. Personal use is $${MCP_MONTHLY_USD} a month or $${MCP_ANNUAL_USD} a year.`
+  return `A calorie MCP lets Claude Code and Cursor look up calories and macros instead of guessing. Personal use is $${MCP_MONTHLY_USD} a month or $${MCP_ANNUAL_USD} a year.`
 }
 
 export function mcpLandingLead(foodCountLabel: string): string {
   const apps = mcpOauthConnectEnabled()
     ? 'Claude.ai, Claude Desktop, and Claude mobile use the sign-in screen.'
     : 'Browser sign-in for Claude apps is off until OAuth is enabled.'
-  return `${mcpLandingMetaDescription()} The catalog covers ${foodCountLabel}. ${apps}`
+  return `A calorie MCP is a Model Context Protocol server that looks up calories and macros for Claude Code and Cursor. The catalog covers ${foodCountLabel}. Personal use is $${MCP_MONTHLY_USD} a month or $${MCP_ANNUAL_USD} a year. The numbers come from the catalog, not from the model guessing. ${apps}`
 }
 
 export function mcpPricingLead(): string {
-  return `Nutrition MCP server pricing is $${MCP_MONTHLY_USD} a month, or $${MCP_ANNUAL_USD} a year. The 7-day trial requires a card. REST search, foods, calc, and vision return 403 on this plan.`
+  return `Calorie MCP pricing is $${MCP_MONTHLY_USD} a month, or $${MCP_ANNUAL_USD} a year. The 7-day trial requires a card. REST search, foods, calc, and vision return 403 on this plan.`
 }
 
 export const MCP_PAID_LIMITS = {
@@ -45,7 +46,7 @@ export type McpTool = {
 
 export const MCP_CONNECT_STEPS = [
   {
-    name: 'Start the nutrition MCP trial',
+    name: 'Start the calorie MCP trial',
     text: 'A card is required. The API key is shown once in the dashboard.',
   },
   {
@@ -123,8 +124,12 @@ export function claudeAppsConnectSentence(): string {
 
 export const MCP_PAGE_FAQS: readonly FaqItem[] = [
   {
+    q: 'What is a calorie MCP?',
+    a: 'A calorie MCP is a Model Context Protocol server that looks up calories and macros. Claude Code and Cursor call Calorie API with an API key. It covers foods, portions, recipes, barcodes, daily calorie targets, and food photos. The numbers come from the catalog, not from the model guessing. It does not store a food diary.',
+  },
+  {
     q: 'What is a nutrition MCP server?',
-    a: 'A nutrition MCP server is a Model Context Protocol endpoint that looks up foods, portions, recipes, barcodes, daily calorie targets, and food photos. Claude Code and Cursor call it with an API key. The numbers come from the catalog, not from the model guessing.',
+    a: 'A nutrition MCP server is a calorie MCP: a Model Context Protocol endpoint that looks up foods, portions, recipes, barcodes, daily calorie targets, and food photos. Claude Code and Cursor call it with an API key. The numbers come from the catalog, not from the model guessing.',
   },
   {
     q: 'How do I connect a nutrition MCP server to Claude Code or Cursor?',
@@ -199,7 +204,7 @@ export const MCP_FAQS: readonly FaqItem[] = [
 
 export function mcpEndpoint(): string {
   const base = (process.env.NEXT_PUBLIC_API_URL || 'https://calorieapiadmin.com').replace(/\/$/, '')
-  return `${base}/mcp`
+  return `${base}/mcp/`
 }
 
 export function annualAsMonthlyUsd(annual: number): number {

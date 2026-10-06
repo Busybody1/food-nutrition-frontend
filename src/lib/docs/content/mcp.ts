@@ -17,8 +17,8 @@ import {
 function connectBlocks(): DocsBlock[] {
   const oauthOn = mcpOauthConnectEnabled()
   const lead = oauthOn
-    ? `Connect a nutrition MCP server in Claude Code or Cursor with an X-API-Key header, or in Claude.ai, Claude Desktop, and Claude mobile with the sign-in screen. Personal use is $${MCP_MONTHLY_USD} a month or $${MCP_ANNUAL_USD} a year.`
-    : `Connect a nutrition MCP server in Claude Code or Cursor with an X-API-Key header. Browser sign-in for Claude.ai, Claude Desktop, and Claude mobile is off until OAuth is enabled. Personal use is $${MCP_MONTHLY_USD} a month or $${MCP_ANNUAL_USD} a year.`
+    ? `A calorie MCP looks up calories and macros in Claude Code or Cursor with an X-API-Key header, or in Claude.ai, Claude Desktop, and Claude mobile with the sign-in screen. Personal use is $${MCP_MONTHLY_USD} a month or $${MCP_ANNUAL_USD} a year.`
+    : `A calorie MCP looks up calories and macros in Claude Code or Cursor with an X-API-Key header. Browser sign-in for Claude.ai, Claude Desktop, and Claude mobile is off until OAuth is enabled. Personal use is $${MCP_MONTHLY_USD} a month or $${MCP_ANNUAL_USD} a year.`
   const claudeApps: DocsBlock[] = oauthOn
     ? [
         { kind: 'h3', text: 'Claude.ai, Claude Desktop, and Claude mobile' },
@@ -50,7 +50,7 @@ function connectBlocks(): DocsBlock[] {
 
   return [
     { kind: 'p', text: lead },
-    { kind: 'h2', text: 'Connect a nutrition MCP server', id: 'install' },
+    { kind: 'h2', text: 'Connect a calorie MCP server', id: 'install' },
     ...claudeApps,
     { kind: 'h3', text: 'Claude Code' },
     { kind: 'code', title: 'Terminal', code: claudeCodeCommand(mcpEndpoint()) },

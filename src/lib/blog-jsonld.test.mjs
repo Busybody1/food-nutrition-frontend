@@ -40,7 +40,7 @@ test('buildBlogPostingJsonLdFromInput uses BlogPosting with keywords', () => {
 test('nutrition MCP posts are a distinct article section', () => {
   assert.equal(
     articleSectionForPost('How to Track Calories with Claude AI', ['track calories with claude ai']),
-    'Nutrition MCP'
+    'Calorie MCP'
   );
   const data = buildBlogPostingJsonLdFromInput(SITE, {
     title: 'Nutrition MCP Server for Claude and Cursor',
@@ -48,7 +48,7 @@ test('nutrition MCP posts are a distinct article section', () => {
     path: '/blog/nutrition-mcp-server',
     keywords: ['nutrition mcp server'],
   });
-  assert.equal(data.articleSection, 'Nutrition MCP');
+  assert.equal(data.articleSection, 'Calorie MCP');
   assert.equal(data.about[0].name, 'nutrition mcp server');
 });
 
