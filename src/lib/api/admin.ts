@@ -195,6 +195,7 @@ export interface AdminApiKeyRow {
   is_active: boolean
   created_at?: string | null
   last_used_at?: string | null
+  product?: 'rest' | 'mcp' | null
 }
 
 export interface AdminStats {

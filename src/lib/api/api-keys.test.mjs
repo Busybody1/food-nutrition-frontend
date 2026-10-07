@@ -22,6 +22,17 @@ test('normalizeApiKeyList drops invalid rows', () => {
   assert.equal(normalizeApiKeyList([{ name: 'no-id' }]).length, 0);
 });
 
+test('normalizeApiKeyList keeps a rest or mcp product flag', () => {
+  const keys = normalizeApiKeyList([
+    { id: 4, name: 'Claude MCP', is_active: true, product: 'MCP' },
+    { id: 5, name: 'app', is_active: true, product: 'rest' },
+    { id: 6, name: 'other', is_active: true, product: 'plus' },
+  ]);
+  assert.equal(keys[0].product, 'mcp');
+  assert.equal(keys[1].product, 'rest');
+  assert.equal(keys[2].product, undefined);
+});
+
 test('normalizeApiKeyList keeps fn_ plaintext from create response', () => {
   const keys = normalizeApiKeyList([
     {

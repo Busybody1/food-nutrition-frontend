@@ -24,6 +24,7 @@ interface ApiKeyListProps {
   isLoading?: boolean
   maxKeys?: number
   currentKeys?: number
+  accountKeyCount?: number
   emailVerified?: boolean
   title?: string
   description?: string
@@ -40,6 +41,7 @@ export function ApiKeyList({
   isLoading = false,
   maxKeys = 1,
   currentKeys = 0,
+  accountKeyCount,
   emailVerified = true,
   title = 'API keys',
   description = 'Authenticate requests with secret keys. Rotate regularly for production apps.',
@@ -53,7 +55,8 @@ export function ApiKeyList({
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
   const [visibleKeys, setVisibleKeys] = useState<Set<number>>(new Set())
 
-  const canCreateMore = currentKeys < maxKeys && emailVerified
+  const usedKeys = accountKeyCount ?? currentKeys
+  const canCreateMore = usedKeys < maxKeys && emailVerified
 
   const filteredAndSortedKeys = apiKeys
     .filter((key) => key.name.toLowerCase().includes(searchTerm.toLowerCase()))
@@ -139,7 +142,7 @@ export function ApiKeyList({
         />
         <DashboardStatCard
           label="Slots left"
-          value={maxKeys - currentKeys}
+          value={maxKeys - usedKeys}
           hint={`${maxKeys} max on your plan`}
         />
       </div>

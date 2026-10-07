@@ -82,7 +82,12 @@ export function ApiKeyCard({
             <Key className="h-5 w-5 text-brand-strong" aria-hidden />
           </div>
           <div className="min-w-0">
-            <h3 className="text-sm font-semibold text-ink truncate">{apiKey.name}</h3>
+            <div className="flex items-center gap-2 min-w-0">
+              <h3 className="text-sm font-semibold text-ink truncate">{apiKey.name}</h3>
+              {apiKey.product === 'mcp' || apiKey.product === 'rest' ? (
+                <Badge variant="outline">{apiKey.product === 'mcp' ? 'MCP' : 'REST'}</Badge>
+              ) : null}
+            </div>
             <p className="text-xs text-ink-muted">
               Created{' '}
               {apiKey.created_at

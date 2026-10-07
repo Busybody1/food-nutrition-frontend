@@ -7,6 +7,7 @@ export interface ApiKeyRecord {
   last_used_at: string | null
   created_at: string | null
   usage_count?: number
+  product?: 'rest' | 'mcp' | null
 }
 
 export interface CreatedApiKeyResult {
@@ -49,6 +50,8 @@ export function normalizeApiKeyList(payload: unknown): ApiKeyRecord[] {
       }
       if (isApiKeyPlaintext(key)) record.key = key
       if (typeof row.usage_count === 'number') record.usage_count = row.usage_count
+      const product = typeof row.product === 'string' ? row.product.trim().toLowerCase() : ''
+      if (product === 'mcp' || product === 'rest') record.product = product
       return record
     })
     .filter((k): k is ApiKeyRecord => k !== null)

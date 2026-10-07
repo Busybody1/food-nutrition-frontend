@@ -23,6 +23,7 @@ import {
 import {
   accountIsMcp,
   apiKeyProductFromSearch,
+  keysForProduct,
   type ApiKeyProduct,
 } from '@/lib/dashboard/api-key-product'
 
@@ -168,31 +169,35 @@ function ApiKeysScreen() {
     router.replace(`/dashboard/api-keys?${params.toString()}`)
   }
 
-  const keyList = (kind: ApiKeyProduct) => (
-    <ApiKeyList
-      apiKeys={apiKeys}
-      onRefresh={loadData}
-      onCreate={handleCreate}
-      onDelete={handleDelete}
-      isLoading={isLoading}
-      maxKeys={userPlan?.max_api_keys ?? 1}
-      currentKeys={apiKeys.length}
-      emailVerified={!!user?.email_verified}
-      title={kind === 'mcp' ? 'MCP keys' : 'REST API keys'}
-      description={
-        kind === 'mcp'
-          ? 'Keys for the MCP server. Send them as X-API-Key. They do not call the REST API.'
-          : 'Keys for the REST API. They do not open the MCP server.'
-      }
-      emptyDescription={
-        kind === 'mcp'
-          ? 'Create a key, then paste it into Claude Code or Cursor.'
-          : 'Create a key to call search, foods, calc, and vision.'
-      }
-      namePlaceholder={kind === 'mcp' ? 'e.g., Claude Code, Cursor' : 'e.g., Production app'}
-      upgradeHref={kind === 'mcp' ? '/mcp/pricing' : '/pricing'}
-    />
-  )
+  const keyList = (kind: ApiKeyProduct) => {
+    const productKeys = keysForProduct(apiKeys, kind, mcpAccount ? 'mcp' : 'rest')
+    return (
+      <ApiKeyList
+        apiKeys={productKeys}
+        onRefresh={loadData}
+        onCreate={handleCreate}
+        onDelete={handleDelete}
+        isLoading={isLoading}
+        maxKeys={userPlan?.max_api_keys ?? 1}
+        currentKeys={productKeys.length}
+        accountKeyCount={apiKeys.length}
+        emailVerified={!!user?.email_verified}
+        title={kind === 'mcp' ? 'MCP keys' : 'REST API keys'}
+        description={
+          kind === 'mcp'
+            ? 'Keys for the MCP server. Send them as X-API-Key. They do not call the REST API.'
+            : 'Keys for the REST API. They do not open the MCP server.'
+        }
+        emptyDescription={
+          kind === 'mcp'
+            ? 'Create a key, then paste it into Claude Code or Cursor.'
+            : 'Create a key to call search, foods, calc, and vision.'
+        }
+        namePlaceholder={kind === 'mcp' ? 'e.g., Claude Code, Cursor' : 'e.g., Production app'}
+        upgradeHref={kind === 'mcp' ? '/mcp/pricing' : '/pricing'}
+      />
+    )
+  }
 
   return (
     <DashboardPage>

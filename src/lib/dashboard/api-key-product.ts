@@ -9,6 +9,23 @@ export function accountIsMcp(
   return tier === 'mcp' || name === 'mcp' || name.includes('mcp')
 }
 
+export function keyProduct(
+  key: { product?: string | null },
+  fallback: ApiKeyProduct
+): ApiKeyProduct {
+  const raw = (key.product || '').trim().toLowerCase()
+  if (raw === 'mcp' || raw === 'rest') return raw
+  return fallback
+}
+
+export function keysForProduct<T extends { product?: string | null }>(
+  keys: T[],
+  product: ApiKeyProduct,
+  fallback: ApiKeyProduct
+): T[] {
+  return keys.filter((key) => keyProduct(key, fallback) === product)
+}
+
 export function apiKeyProductFromSearch(search: string, mcpAccount: boolean): ApiKeyProduct {
   const query = search.startsWith('?') ? search.slice(1) : search
   const params = new URLSearchParams(query)

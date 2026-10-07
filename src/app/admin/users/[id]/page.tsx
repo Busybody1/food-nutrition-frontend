@@ -635,6 +635,7 @@ export default function AdminUserDetailPage() {
                   <thead>
                     <tr>
                       <th>Name</th>
+                      <th>Product</th>
                       <th>Created</th>
                       <th>Last used</th>
                       <th>Status</th>
@@ -644,6 +645,9 @@ export default function AdminUserDetailPage() {
                     {apiKeys.map((key) => (
                       <tr key={key.id}>
                         <td className="max-w-[160px] truncate">{key.name || `Key #${key.id}`}</td>
+                        <td className="text-xs text-ink-muted">
+                          {key.product === 'mcp' ? 'MCP' : key.product === 'rest' ? 'REST' : '—'}
+                        </td>
                         <td className="text-xs text-ink-muted whitespace-nowrap">
                           {key.created_at ? new Date(key.created_at).toLocaleDateString() : '—'}
                         </td>
