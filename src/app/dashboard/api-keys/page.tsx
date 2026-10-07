@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { Suspense, useState, useEffect } from 'react'
 import { ApiKeyList } from '@/components/dashboard/ApiKeyList'
 import { ConnectToClaude } from '@/components/dashboard/ConnectToClaude'
 import {
@@ -33,6 +33,14 @@ interface UserPlan {
 }
 
 export default function ApiKeysPage() {
+  return (
+    <Suspense fallback={null}>
+      <ApiKeysScreen />
+    </Suspense>
+  )
+}
+
+function ApiKeysScreen() {
   const { isAuthenticated, loading, user } = useAuth()
   const router = useRouter()
   const searchParams = useSearchParams()

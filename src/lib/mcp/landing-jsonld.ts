@@ -1,4 +1,4 @@
-import { MCP_PRODUCT_NAME } from './catalog.ts'
+import { MCP_PRODUCT_NAME } from './catalog'
 
 export type McpFaq = { q: string; a: string }
 

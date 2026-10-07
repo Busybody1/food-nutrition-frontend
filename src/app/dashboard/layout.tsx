@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useAuth } from '@/lib/hooks/use-auth'
@@ -200,7 +200,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </Button>
           </div>
           <div className="flex-1 overflow-y-auto py-4">
-            <NavLinks onNavigate={() => setSidebarOpen(false)} />
+            <Suspense fallback={null}>
+              <NavLinks onNavigate={() => setSidebarOpen(false)} />
+            </Suspense>
           </div>
           <UserBlock onLogout={handleLogout} />
         </aside>
@@ -212,7 +214,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <SidebarBrand />
         </div>
         <div className="flex-1 overflow-y-auto py-2">
-          <NavLinks />
+          <Suspense fallback={null}>
+            <NavLinks />
+          </Suspense>
         </div>
         <UserBlock onLogout={handleLogout} />
       </aside>
