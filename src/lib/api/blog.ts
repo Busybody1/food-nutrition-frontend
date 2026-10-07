@@ -3,6 +3,17 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
 const REVALIDATE_SECONDS = 300
+const BLOG_FETCH_ATTEMPTS = 3
+const BLOG_FETCH_RETRY_BASE_MS = 200
+const HTTP_NOT_FOUND = 404
+const HTTP_REQUEST_TIMEOUT = 408
+const HTTP_TOO_MANY_REQUESTS = 429
+const HTTP_SERVER_ERROR_MIN = 500
+
+type BlogFetchResult =
+  | { kind: 'response'; response: Response }
+  | { kind: 'network'; detail: string }
+  | { kind: 'upstream'; status: number }
 
 export interface BlogFaqItem {
   question: string
@@ -49,19 +60,62 @@ export interface BlogSlug {
 
 export const BLOG_PAGE_SIZE = 12
 
-async function blogFetch<T>(path: string): Promise<T | null> {
-  try {
-    const res = await fetch(`${API_BASE_URL}/api/v1/public/blog${path}`, {
-      headers: { Accept: 'application/json' },
-      next: { revalidate: REVALIDATE_SECONDS, tags: ['blog'] },
-    })
-    if (!res.ok) {
-      return null
-    }
-    return (await res.json()) as T
-  } catch {
-    return null
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms)
+  })
+}
+
+function networkErrorDetail(err: unknown): string {
+  if (!(err instanceof Error)) return String(err)
+  const cause = err.cause
+  if (cause && typeof cause === 'object' && 'code' in cause && typeof cause.code === 'string') {
+    return `${err.message} (${cause.code})`
   }
+  if (cause instanceof Error && cause.message) {
+    return `${err.message} (${cause.message})`
+  }
+  return err.message
+}
+
+function retryableStatus(status: number): boolean {
+  return status === HTTP_REQUEST_TIMEOUT || status === HTTP_TOO_MANY_REQUESTS || status >= HTTP_SERVER_ERROR_MIN
+}
+
+// Retry before failing prerender. A signal on later attempts bypasses Next's memoized failure.
+async function fetchBlogWithRetry(path: string): Promise<BlogFetchResult> {
+  const url = `${API_BASE_URL}/api/v1/public/blog${path}`
+  let networkDetail = 'unknown'
+  let upstreamStatus = 0
+
+  for (let attempt = 0; attempt < BLOG_FETCH_ATTEMPTS; attempt += 1) {
+    if (attempt > 0) {
+      await sleep(BLOG_FETCH_RETRY_BASE_MS * 2 ** (attempt - 1))
+    }
+    try {
+      const response = await fetch(url, {
+        headers: { Accept: 'application/json' },
+        next: { revalidate: REVALIDATE_SECONDS, tags: ['blog'] },
+        signal: attempt === 0 ? undefined : new AbortController().signal,
+      })
+      if (response.ok || response.status === HTTP_NOT_FOUND || !retryableStatus(response.status)) {
+        return { kind: 'response', response }
+      }
+      upstreamStatus = response.status
+    } catch (err) {
+      networkDetail = networkErrorDetail(err)
+      upstreamStatus = 0
+    }
+  }
+
+  if (upstreamStatus) return { kind: 'upstream', status: upstreamStatus }
+  return { kind: 'network', detail: networkDetail }
+}
+
+async function blogFetch<T>(path: string): Promise<T | null> {
+  const result = await fetchBlogWithRetry(path)
+  if (result.kind !== 'response' || !result.response.ok) return null
+  return (await result.response.json()) as T
 }
 
 function normalizeListResponse(
@@ -109,23 +163,18 @@ export async function getBlogPosts(limit = 100): Promise<BlogListItem[]> {
 }
 
 export async function getBlogPost(slug: string): Promise<BlogPost | null> {
-
-  let res: Response
-  try {
-    res = await fetch(`${API_BASE_URL}/api/v1/public/blog/${encodeURIComponent(slug)}`, {
-      headers: { Accept: 'application/json' },
-      next: { revalidate: REVALIDATE_SECONDS, tags: ['blog'] },
-    })
-  } catch (err) {
-    throw new Error(
-      `getBlogPost("${slug}") network error: ${err instanceof Error ? err.message : String(err)}`
-    )
+  const result = await fetchBlogWithRetry(`/${encodeURIComponent(slug)}`)
+  if (result.kind === 'network') {
+    throw new Error(`getBlogPost("${slug}") network error: ${result.detail}`)
   }
-  if (res.status === 404) return null
-  if (!res.ok) {
-    throw new Error(`getBlogPost("${slug}") upstream error: HTTP ${res.status}`)
+  if (result.kind === 'upstream') {
+    throw new Error(`getBlogPost("${slug}") upstream error: HTTP ${result.status}`)
   }
-  return (await res.json()) as BlogPost
+  if (result.response.status === HTTP_NOT_FOUND) return null
+  if (!result.response.ok) {
+    throw new Error(`getBlogPost("${slug}") upstream error: HTTP ${result.response.status}`)
+  }
+  return (await result.response.json()) as BlogPost
 }
 
 export async function getBlogSlugs(): Promise<BlogSlug[]> {

@@ -77,6 +77,9 @@ const nextConfig = {
     optimizePackageImports: ['lucide-react'],
 
     inlineCss: true,
+    // Prerender exits on the first page error. Retry, and don't stampede the API.
+    staticGenerationRetryCount: 3,
+    staticGenerationMaxConcurrency: 4,
   },
   images: {
 
