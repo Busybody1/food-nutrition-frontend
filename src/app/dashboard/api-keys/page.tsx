@@ -28,7 +28,7 @@ import {
 
 interface UserPlan {
   max_api_keys: number
-  plan_name: string
+  name: string
   plan_tier: string
 }
 
@@ -100,7 +100,7 @@ function ApiKeysScreen() {
         }
         const userPlan: UserPlan = {
           max_api_keys: userProfile.plan?.max_api_keys ?? 1,
-          plan_name: userProfile.plan?.name || 'Free',
+          name: userProfile.plan?.name || 'Free',
           plan_tier: userProfile.plan?.plan_tier || '',
         }
         setUserPlan(userPlan)

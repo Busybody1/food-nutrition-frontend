@@ -1,9 +1,11 @@
 export type ApiKeyProduct = 'rest' | 'mcp'
 
-export function accountIsMcp(plan: { name?: string | null; plan_tier?: string | null } | null): boolean {
+export function accountIsMcp(
+  plan: { name?: string | null; plan_name?: string | null; plan_tier?: string | null } | null
+): boolean {
   if (!plan) return false
   const tier = (plan.plan_tier || '').trim().toLowerCase()
-  const name = (plan.name || '').trim().toLowerCase()
+  const name = (plan.name || plan.plan_name || '').trim().toLowerCase()
   return tier === 'mcp' || name === 'mcp' || name.includes('mcp')
 }
 

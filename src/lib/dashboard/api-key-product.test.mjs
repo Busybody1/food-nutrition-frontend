@@ -5,6 +5,7 @@ import { accountIsMcp, apiKeyProductFromSearch } from './api-key-product.ts'
 test('mcp plans are recognized by tier or name', () => {
   assert.equal(accountIsMcp({ plan_tier: 'mcp', name: 'BusyBody MCP' }), true)
   assert.equal(accountIsMcp({ name: 'BusyBody MCP' }), true)
+  assert.equal(accountIsMcp({ plan_name: 'BusyBody MCP', plan_tier: '' }), true)
   assert.equal(accountIsMcp({ plan_tier: 'basic', name: 'Plus' }), false)
   assert.equal(accountIsMcp(null), false)
 })
