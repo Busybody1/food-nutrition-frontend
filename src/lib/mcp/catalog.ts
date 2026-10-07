@@ -190,7 +190,7 @@ export const MCP_FAQS: readonly FaqItem[] = [
   },
   {
     q: 'Where do I get the nutrition MCP API key?',
-    a: 'Dashboard, API keys, after checkout. The full key is shown once, when you create it. It is not emailed.',
+    a: 'Dashboard, MCP tab, after checkout. The full key is shown once, when you create it. It is not emailed.',
   },
   {
     q: 'What does personal use mean for a nutrition MCP server?',

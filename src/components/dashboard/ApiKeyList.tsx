@@ -25,6 +25,11 @@ interface ApiKeyListProps {
   maxKeys?: number
   currentKeys?: number
   emailVerified?: boolean
+  title?: string
+  description?: string
+  emptyDescription?: string
+  namePlaceholder?: string
+  upgradeHref?: string
 }
 
 export function ApiKeyList({
@@ -36,6 +41,11 @@ export function ApiKeyList({
   maxKeys = 1,
   currentKeys = 0,
   emailVerified = true,
+  title = 'API keys',
+  description = 'Authenticate requests with secret keys. Rotate regularly for production apps.',
+  emptyDescription = 'Create your first key to start calling the API.',
+  namePlaceholder,
+  upgradeHref,
 }: ApiKeyListProps) {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
@@ -102,8 +112,8 @@ export function ApiKeyList({
   return (
     <div className="space-y-6">
       <DashboardPageHeader
-        title="API keys"
-        description="Authenticate requests with secret keys. Rotate regularly for production apps."
+        title={title}
+        description={description}
       >
         <Button variant="outline" size="sm" onClick={onRefresh} disabled={isLoading} className="gap-2">
           <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
@@ -175,7 +185,7 @@ export function ApiKeyList({
             description={
               searchTerm
                 ? 'Try a different search term.'
-                : 'Create your first key to start calling the API.'
+                : emptyDescription
             }
             action={
               !searchTerm && canCreateMore ? (
@@ -206,6 +216,8 @@ export function ApiKeyList({
         onClose={() => setIsCreateModalOpen(false)}
         onCreate={handleCreateKey}
         isLoading={isLoading}
+        namePlaceholder={namePlaceholder}
+        upgradeHref={upgradeHref}
       />
     </div>
   )

@@ -4,12 +4,13 @@ import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useAuth } from '@/lib/hooks/use-auth'
-import { useRouter, usePathname } from 'next/navigation'
+import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import {
   LayoutDashboard,
   Search,
   Key,
+  Bot,
   BarChart3,
   CreditCard,
   Menu,
@@ -32,10 +33,12 @@ const navigation: {
   href: string
   icon: LucideIcon
   hash?: boolean
+  product?: 'rest' | 'mcp'
 }[] = [
   { name: 'Overview', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Search', href: '/dashboard/search', icon: Search },
-  { name: 'API Keys', href: '/dashboard/api-keys', icon: Key },
+  { name: 'REST API', href: '/dashboard/api-keys?product=rest', icon: Key, product: 'rest' },
+  { name: 'MCP', href: '/dashboard/api-keys?product=mcp', icon: Bot, product: 'mcp' },
   { name: 'Usage', href: '/dashboard/usage', icon: BarChart3 },
   { name: 'Billing', href: '/dashboard/billing', icon: CreditCard },
   { name: 'Account', href: '/dashboard/account', icon: Settings },
@@ -44,16 +47,20 @@ const navigation: {
 
 function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname()
+  const searchParams = useSearchParams()
   const { openSupport, unreadCount, isOpen } = useSupportChat()
 
   return (
     <nav className="flex flex-col gap-0.5 px-3" aria-label="Dashboard">
       {navigation.map((item) => {
         const isHash = Boolean(item.hash)
-        const isActive =
-          !isHash &&
-          (pathname === item.href ||
-            (item.href !== '/dashboard' && pathname?.startsWith(item.href)))
+        const onKeys = Boolean(pathname?.startsWith('/dashboard/api-keys'))
+        const isActive = item.product
+          ? onKeys && searchParams.get('product') === item.product
+          : !isHash &&
+            !onKeys &&
+            (pathname === item.href ||
+              (item.href !== '/dashboard' && pathname?.startsWith(item.href)))
         const className = cn(
           'dashboard-nav-link',
           isActive && 'dashboard-nav-link-active'

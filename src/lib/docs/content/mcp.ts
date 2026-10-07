@@ -63,7 +63,7 @@ function connectBlocks(): DocsBlock[] {
     {
       kind: 'list',
       items: [
-        'Create the key in Dashboard, API keys. The full value is shown once, at creation.',
+        'Create the key in Dashboard, on the MCP tab. The full value is shown once, at creation.',
         'Do not put the key in a public repo, a screenshot, or an email.',
         'This plan cannot call REST search, foods, calc, or vision. Those routes return 403.',
         'Account, billing, and auth routes still work.',

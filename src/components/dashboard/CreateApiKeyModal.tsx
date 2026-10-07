@@ -15,6 +15,8 @@ interface CreateApiKeyModalProps {
   onClose: () => void
   onCreate: (name: string) => Promise<CreatedApiKeyResult | void>
   isLoading?: boolean
+  namePlaceholder?: string
+  upgradeHref?: string
 }
 
 export function CreateApiKeyModal({
@@ -22,6 +24,8 @@ export function CreateApiKeyModal({
   onClose,
   onCreate,
   isLoading = false,
+  namePlaceholder = 'e.g., Mobile App, Web Dashboard, Production',
+  upgradeHref = '/dashboard/billing',
 }: CreateApiKeyModalProps) {
   const [name, setName] = useState('')
   const [error, setError] = useState('')
@@ -167,7 +171,7 @@ export function CreateApiKeyModal({
                     setVerifyNeeded(false)
                     setUpgradeNeeded(false)
                   }}
-                  placeholder="e.g., Mobile App, Web Dashboard, Production"
+                  placeholder={namePlaceholder}
                   className="w-full"
                   maxLength={100}
                   disabled={isLoading}
@@ -192,7 +196,7 @@ export function CreateApiKeyModal({
                     )}
                     {upgradeNeeded && (
                       <Link
-                        href="/dashboard/billing"
+                        href={upgradeHref}
                         className="mt-1 inline-block font-medium text-red-900 underline"
                       >
                         Upgrade your plan
