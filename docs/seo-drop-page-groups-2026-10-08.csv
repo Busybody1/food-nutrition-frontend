@@ -1,0 +1,2096 @@
+date,series,series_label,impressions,clicks,ctr,avg_position_impr_weighted,urls_with_impressions
+2026-05-30,1,1 home,6,2,0.3333,7.67,1
+2026-05-30,2,2 product/marketing,0,0,,,0
+2026-05-30,3,3 docs,19,0,0.0,11.68,1
+2026-05-30,4,4 usda-guide,0,0,,,0
+2026-05-30,5,5 comparison posts,0,0,,,0
+2026-05-30,6,6 june batch,0,0,,,0
+2026-05-30,7,7 jul17 batch,0,0,,,0
+2026-05-30,8,8 other blog (index/pagination/not-in-db),0,0,,,0
+2026-05-30,9,9 mcp24+050-055,0,0,,,0
+2026-05-30,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-05-30,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,25,2,0.08,10.72,2
+2026-05-30,site_all_pages,sum of all page rows,25,2,0.08,10.72,2
+2026-05-30,property_total,property-level total (by property; GSC UI number),25,2,0.08,10.72,
+2026-05-30,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),6,,,,
+2026-05-30,device_desktop,"property-level, desktop",22,2,0.0909,10.64,
+2026-05-30,device_mobile,"property-level, mobile",3,0,0,11.33,
+2026-05-31,1,1 home,27,1,0.037,21.85,1
+2026-05-31,2,2 product/marketing,2,0,0.0,10.0,2
+2026-05-31,3,3 docs,42,0,0.0,22.98,1
+2026-05-31,4,4 usda-guide,0,0,,,0
+2026-05-31,5,5 comparison posts,0,0,,,0
+2026-05-31,6,6 june batch,0,0,,,0
+2026-05-31,7,7 jul17 batch,0,0,,,0
+2026-05-31,8,8 other blog (index/pagination/not-in-db),0,0,,,0
+2026-05-31,9,9 mcp24+050-055,0,0,,,0
+2026-05-31,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-05-31,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,71,1,0.0141,22.18,4
+2026-05-31,site_all_pages,sum of all page rows,71,1,0.0141,22.18,4
+2026-05-31,property_total,property-level total (by property; GSC UI number),63,1,0.0159,21.76,
+2026-05-31,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),29,,,,
+2026-05-31,device_desktop,"property-level, desktop",61,1,0.0164,21.72,
+2026-05-31,device_mobile,"property-level, mobile",2,0,0,23,
+2026-06-01,1,1 home,49,0,0.0,14.39,1
+2026-06-01,2,2 product/marketing,2,0,0.0,10.0,2
+2026-06-01,3,3 docs,20,0,0.0,13.65,1
+2026-06-01,4,4 usda-guide,0,0,,,0
+2026-06-01,5,5 comparison posts,0,0,,,0
+2026-06-01,6,6 june batch,0,0,,,0
+2026-06-01,7,7 jul17 batch,0,0,,,0
+2026-06-01,8,8 other blog (index/pagination/not-in-db),0,0,,,0
+2026-06-01,9,9 mcp24+050-055,0,0,,,0
+2026-06-01,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-06-01,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,71,0,0.0,14.06,4
+2026-06-01,site_all_pages,sum of all page rows,71,0,0.0,14.06,4
+2026-06-01,property_total,property-level total (by property; GSC UI number),67,0,0,14.31,
+2026-06-01,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),17,,,,
+2026-06-01,device_desktop,"property-level, desktop",57,0,0,13.74,
+2026-06-01,device_mobile,"property-level, mobile",10,0,0,17.6,
+2026-06-02,1,1 home,67,1,0.0149,25.04,1
+2026-06-02,2,2 product/marketing,0,0,,,0
+2026-06-02,3,3 docs,79,0,0.0,31.46,1
+2026-06-02,4,4 usda-guide,0,0,,,0
+2026-06-02,5,5 comparison posts,0,0,,,0
+2026-06-02,6,6 june batch,0,0,,,0
+2026-06-02,7,7 jul17 batch,0,0,,,0
+2026-06-02,8,8 other blog (index/pagination/not-in-db),0,0,,,0
+2026-06-02,9,9 mcp24+050-055,0,0,,,0
+2026-06-02,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-06-02,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,146,1,0.0068,28.51,2
+2026-06-02,site_all_pages,sum of all page rows,146,1,0.0068,28.51,2
+2026-06-02,property_total,property-level total (by property; GSC UI number),118,1,0.0085,21.45,
+2026-06-02,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),45,,,,
+2026-06-02,device_desktop,"property-level, desktop",111,0,0,22.45,
+2026-06-02,device_mobile,"property-level, mobile",7,1,0.1429,5.57,
+2026-06-03,1,1 home,28,0,0.0,10.64,1
+2026-06-03,2,2 product/marketing,7,0,0.0,5.71,2
+2026-06-03,3,3 docs,50,0,0.0,14.94,1
+2026-06-03,4,4 usda-guide,0,0,,,0
+2026-06-03,5,5 comparison posts,0,0,,,0
+2026-06-03,6,6 june batch,0,0,,,0
+2026-06-03,7,7 jul17 batch,0,0,,,0
+2026-06-03,8,8 other blog (index/pagination/not-in-db),0,0,,,0
+2026-06-03,9,9 mcp24+050-055,0,0,,,0
+2026-06-03,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-06-03,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,85,0,0.0,12.76,4
+2026-06-03,site_all_pages,sum of all page rows,85,0,0.0,12.76,4
+2026-06-03,property_total,property-level total (by property; GSC UI number),78,0,0,13.56,
+2026-06-03,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),23,,,,
+2026-06-03,device_desktop,"property-level, desktop",69,0,0,13.55,
+2026-06-03,device_mobile,"property-level, mobile",9,0,0,13.67,
+2026-06-04,1,1 home,14,1,0.0714,9.71,1
+2026-06-04,2,2 product/marketing,1,0,0.0,8.0,1
+2026-06-04,3,3 docs,14,0,0.0,9.57,1
+2026-06-04,4,4 usda-guide,0,0,,,0
+2026-06-04,5,5 comparison posts,0,0,,,0
+2026-06-04,6,6 june batch,0,0,,,0
+2026-06-04,7,7 jul17 batch,0,0,,,0
+2026-06-04,8,8 other blog (index/pagination/not-in-db),0,0,,,0
+2026-06-04,9,9 mcp24+050-055,0,0,,,0
+2026-06-04,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-06-04,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,29,1,0.0345,9.59,3
+2026-06-04,site_all_pages,sum of all page rows,29,1,0.0345,9.59,3
+2026-06-04,property_total,property-level total (by property; GSC UI number),28,1,0.0357,9.89,
+2026-06-04,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),5,,,,
+2026-06-04,device_desktop,"property-level, desktop",27,1,0.037,9.96,
+2026-06-04,device_mobile,"property-level, mobile",1,0,0,8,
+2026-06-05,1,1 home,39,4,0.1026,9.41,1
+2026-06-05,2,2 product/marketing,2,0,0.0,11.0,2
+2026-06-05,3,3 docs,28,2,0.0714,6.68,1
+2026-06-05,4,4 usda-guide,0,0,,,0
+2026-06-05,5,5 comparison posts,0,0,,,0
+2026-06-05,6,6 june batch,0,0,,,0
+2026-06-05,7,7 jul17 batch,0,0,,,0
+2026-06-05,8,8 other blog (index/pagination/not-in-db),0,0,,,0
+2026-06-05,9,9 mcp24+050-055,0,0,,,0
+2026-06-05,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-06-05,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,69,6,0.087,8.35,4
+2026-06-05,site_all_pages,sum of all page rows,69,6,0.087,8.35,4
+2026-06-05,property_total,property-level total (by property; GSC UI number),64,6,0.0938,8.3,
+2026-06-05,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),12,,,,
+2026-06-05,device_desktop,"property-level, desktop",57,6,0.1053,8.53,
+2026-06-05,device_mobile,"property-level, mobile",7,0,0,6.43,
+2026-06-06,1,1 home,27,1,0.037,14.37,1
+2026-06-06,2,2 product/marketing,0,0,,,0
+2026-06-06,3,3 docs,20,0,0.0,7.05,1
+2026-06-06,4,4 usda-guide,0,0,,,0
+2026-06-06,5,5 comparison posts,0,0,,,0
+2026-06-06,6,6 june batch,0,0,,,0
+2026-06-06,7,7 jul17 batch,0,0,,,0
+2026-06-06,8,8 other blog (index/pagination/not-in-db),0,0,,,0
+2026-06-06,9,9 mcp24+050-055,0,0,,,0
+2026-06-06,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-06-06,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,47,1,0.0213,11.26,2
+2026-06-06,site_all_pages,sum of all page rows,47,1,0.0213,11.26,2
+2026-06-06,property_total,property-level total (by property; GSC UI number),47,1,0.0213,11.26,
+2026-06-06,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),12,,,,
+2026-06-06,device_desktop,"property-level, desktop",38,0,0,11.47,
+2026-06-06,device_mobile,"property-level, mobile",9,1,0.1111,10.33,
+2026-06-07,1,1 home,26,2,0.0769,12.5,1
+2026-06-07,2,2 product/marketing,4,0,0.0,7.0,1
+2026-06-07,3,3 docs,26,0,0.0,16.12,1
+2026-06-07,4,4 usda-guide,0,0,,,0
+2026-06-07,5,5 comparison posts,0,0,,,0
+2026-06-07,6,6 june batch,0,0,,,0
+2026-06-07,7,7 jul17 batch,0,0,,,0
+2026-06-07,8,8 other blog (index/pagination/not-in-db),0,0,,,0
+2026-06-07,9,9 mcp24+050-055,0,0,,,0
+2026-06-07,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-06-07,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,56,2,0.0357,13.79,3
+2026-06-07,site_all_pages,sum of all page rows,56,2,0.0357,13.79,3
+2026-06-07,property_total,property-level total (by property; GSC UI number),54,2,0.037,14.26,
+2026-06-07,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),10,,,,
+2026-06-07,device_desktop,"property-level, desktop",40,1,0.025,14.68,
+2026-06-07,device_mobile,"property-level, mobile",14,1,0.0714,13.07,
+2026-06-08,1,1 home,33,2,0.0606,15.27,1
+2026-06-08,2,2 product/marketing,0,0,,,0
+2026-06-08,3,3 docs,15,0,0.0,9.93,1
+2026-06-08,4,4 usda-guide,0,0,,,0
+2026-06-08,5,5 comparison posts,0,0,,,0
+2026-06-08,6,6 june batch,0,0,,,0
+2026-06-08,7,7 jul17 batch,0,0,,,0
+2026-06-08,8,8 other blog (index/pagination/not-in-db),0,0,,,0
+2026-06-08,9,9 mcp24+050-055,0,0,,,0
+2026-06-08,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-06-08,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,48,2,0.0417,13.6,2
+2026-06-08,site_all_pages,sum of all page rows,48,2,0.0417,13.6,2
+2026-06-08,property_total,property-level total (by property; GSC UI number),48,2,0.0417,13.6,
+2026-06-08,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),9,,,,
+2026-06-08,device_desktop,"property-level, desktop",42,1,0.0238,11.19,
+2026-06-08,device_mobile,"property-level, mobile",6,1,0.1667,30.5,
+2026-06-09,1,1 home,84,4,0.0476,24.35,1
+2026-06-09,2,2 product/marketing,0,0,,,0
+2026-06-09,3,3 docs,66,0,0.0,46.76,1
+2026-06-09,4,4 usda-guide,0,0,,,0
+2026-06-09,5,5 comparison posts,41,4,0.0976,12.78,4
+2026-06-09,6,6 june batch,52,6,0.1154,21.42,7
+2026-06-09,7,7 jul17 batch,0,0,,,0
+2026-06-09,8,8 other blog (index/pagination/not-in-db),0,0,,,0
+2026-06-09,9,9 mcp24+050-055,0,0,,,0
+2026-06-09,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-06-09,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,243,14,0.0576,27.86,13
+2026-06-09,site_all_pages,sum of all page rows,243,14,0.0576,27.86,13
+2026-06-09,property_total,property-level total (by property; GSC UI number),212,14,0.066,24.5,
+2026-06-09,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),97,,,,
+2026-06-09,device_desktop,"property-level, desktop",202,14,0.0693,24.98,
+2026-06-09,device_mobile,"property-level, mobile",10,0,0,14.8,
+2026-06-10,1,1 home,30,2,0.0667,9.7,1
+2026-06-10,2,2 product/marketing,1,0,0.0,4.0,1
+2026-06-10,3,3 docs,14,0,0.0,20.07,1
+2026-06-10,4,4 usda-guide,0,0,,,0
+2026-06-10,5,5 comparison posts,138,0,0.0,8.27,4
+2026-06-10,6,6 june batch,88,2,0.0227,11.93,8
+2026-06-10,7,7 jul17 batch,0,0,,,0
+2026-06-10,8,8 other blog (index/pagination/not-in-db),0,0,,,0
+2026-06-10,9,9 mcp24+050-055,0,0,,,0
+2026-06-10,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-06-10,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,271,4,0.0148,10.21,15
+2026-06-10,site_all_pages,sum of all page rows,271,4,0.0148,10.21,15
+2026-06-10,property_total,property-level total (by property; GSC UI number),249,4,0.0161,8.92,
+2026-06-10,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),45,,,,
+2026-06-10,device_desktop,"property-level, desktop",232,3,0.0129,8.44,
+2026-06-10,device_mobile,"property-level, mobile",16,1,0.0625,16,
+2026-06-11,1,1 home,18,1,0.0556,11.22,1
+2026-06-11,2,2 product/marketing,3,0,0.0,6.67,1
+2026-06-11,3,3 docs,11,0,0.0,13.45,1
+2026-06-11,4,4 usda-guide,0,0,,,0
+2026-06-11,5,5 comparison posts,106,0,0.0,8.21,4
+2026-06-11,6,6 june batch,102,0,0.0,9.26,8
+2026-06-11,7,7 jul17 batch,0,0,,,0
+2026-06-11,8,8 other blog (index/pagination/not-in-db),0,0,,,0
+2026-06-11,9,9 mcp24+050-055,0,0,,,0
+2026-06-11,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-06-11,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,240,1,0.0042,9.1,15
+2026-06-11,site_all_pages,sum of all page rows,240,1,0.0042,9.1,15
+2026-06-11,property_total,property-level total (by property; GSC UI number),235,1,0.0043,8.55,
+2026-06-11,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),52,,,,
+2026-06-11,device_desktop,"property-level, desktop",227,1,0.0044,8.21,
+2026-06-11,device_mobile,"property-level, mobile",7,0,0,11,
+2026-06-12,1,1 home,34,3,0.0882,11.82,1
+2026-06-12,2,2 product/marketing,4,0,0.0,5.75,4
+2026-06-12,3,3 docs,11,0,0.0,15.27,1
+2026-06-12,4,4 usda-guide,0,0,,,0
+2026-06-12,5,5 comparison posts,148,0,0.0,8.97,4
+2026-06-12,6,6 june batch,110,1,0.0091,10.65,8
+2026-06-12,7,7 jul17 batch,0,0,,,0
+2026-06-12,8,8 other blog (index/pagination/not-in-db),1,0,0.0,8.0,1
+2026-06-12,9,9 mcp24+050-055,0,0,,,0
+2026-06-12,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-06-12,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,308,4,0.013,10.07,19
+2026-06-12,site_all_pages,sum of all page rows,308,4,0.013,10.07,19
+2026-06-12,property_total,property-level total (by property; GSC UI number),284,4,0.0141,10.41,
+2026-06-12,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),64,,,,
+2026-06-12,device_desktop,"property-level, desktop",265,3,0.0113,10.38,
+2026-06-12,device_mobile,"property-level, mobile",17,1,0.0588,7.18,
+2026-06-13,1,1 home,35,3,0.0857,9.06,1
+2026-06-13,2,2 product/marketing,5,0,0.0,8.4,2
+2026-06-13,3,3 docs,10,0,0.0,9.3,1
+2026-06-13,4,4 usda-guide,0,0,,,0
+2026-06-13,5,5 comparison posts,127,1,0.0079,9.12,4
+2026-06-13,6,6 june batch,91,0,0.0,11.75,7
+2026-06-13,7,7 jul17 batch,0,0,,,0
+2026-06-13,8,8 other blog (index/pagination/not-in-db),1,0,0.0,10.0,1
+2026-06-13,9,9 mcp24+050-055,0,0,,,0
+2026-06-13,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-06-13,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,269,4,0.0149,10.0,16
+2026-06-13,site_all_pages,sum of all page rows,269,4,0.0149,10.0,16
+2026-06-13,property_total,property-level total (by property; GSC UI number),257,4,0.0156,9.17,
+2026-06-13,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),69,,,,
+2026-06-13,device_desktop,"property-level, desktop",249,2,0.008,9.08,
+2026-06-13,device_mobile,"property-level, mobile",7,2,0.2857,4,
+2026-06-14,1,1 home,44,3,0.0682,18.34,1
+2026-06-14,2,2 product/marketing,5,0,0.0,9.0,2
+2026-06-14,3,3 docs,13,0,0.0,18.23,1
+2026-06-14,4,4 usda-guide,0,0,,,0
+2026-06-14,5,5 comparison posts,168,0,0.0,9.88,4
+2026-06-14,6,6 june batch,124,0,0.0,10.25,7
+2026-06-14,7,7 jul17 batch,0,0,,,0
+2026-06-14,8,8 other blog (index/pagination/not-in-db),2,0,0.0,10.5,1
+2026-06-14,9,9 mcp24+050-055,0,0,,,0
+2026-06-14,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-06-14,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,356,3,0.0084,11.35,16
+2026-06-14,site_all_pages,sum of all page rows,356,3,0.0084,11.35,16
+2026-06-14,property_total,property-level total (by property; GSC UI number),340,3,0.0088,10.98,
+2026-06-14,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),77,,,,
+2026-06-14,device_desktop,"property-level, desktop",325,3,0.0092,10.49,
+2026-06-14,device_mobile,"property-level, mobile",15,0,0,21.67,
+2026-06-15,1,1 home,43,4,0.093,14.42,1
+2026-06-15,2,2 product/marketing,6,0,0.0,2.33,3
+2026-06-15,3,3 docs,14,0,0.0,29.43,1
+2026-06-15,4,4 usda-guide,0,0,,,0
+2026-06-15,5,5 comparison posts,163,0,0.0,10.02,4
+2026-06-15,6,6 june batch,120,0,0.0,14.05,9
+2026-06-15,7,7 jul17 batch,0,0,,,0
+2026-06-15,8,8 other blog (index/pagination/not-in-db),0,0,,,0
+2026-06-15,9,9 mcp24+050-055,0,0,,,0
+2026-06-15,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-06-15,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,346,4,0.0116,12.62,18
+2026-06-15,site_all_pages,sum of all page rows,346,4,0.0116,12.62,18
+2026-06-15,property_total,property-level total (by property; GSC UI number),318,4,0.0126,11.64,
+2026-06-15,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),66,,,,
+2026-06-15,device_desktop,"property-level, desktop",302,2,0.0066,11.63,
+2026-06-15,device_mobile,"property-level, mobile",16,2,0.125,11.88,
+2026-06-16,1,1 home,79,1,0.0127,22.15,1
+2026-06-16,2,2 product/marketing,7,0,0.0,17.29,2
+2026-06-16,3,3 docs,26,0,0.0,51.85,1
+2026-06-16,4,4 usda-guide,0,0,,,0
+2026-06-16,5,5 comparison posts,182,1,0.0055,15.59,4
+2026-06-16,6,6 june batch,269,3,0.0112,33.31,12
+2026-06-16,7,7 jul17 batch,0,0,,,0
+2026-06-16,8,8 other blog (index/pagination/not-in-db),2,0,0.0,9.0,1
+2026-06-16,9,9 mcp24+050-055,0,0,,,0
+2026-06-16,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-06-16,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,565,5,0.0088,26.61,21
+2026-06-16,site_all_pages,sum of all page rows,565,5,0.0088,26.61,21
+2026-06-16,property_total,property-level total (by property; GSC UI number),415,5,0.012,14.22,
+2026-06-16,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),133,,,,
+2026-06-16,device_desktop,"property-level, desktop",398,4,0.0101,14.33,
+2026-06-16,device_mobile,"property-level, mobile",17,1,0.0588,11.53,
+2026-06-17,1,1 home,31,1,0.0323,18.48,1
+2026-06-17,2,2 product/marketing,0,0,,,0
+2026-06-17,3,3 docs,12,0,0.0,16.83,1
+2026-06-17,4,4 usda-guide,0,0,,,0
+2026-06-17,5,5 comparison posts,106,0,0.0,9.03,4
+2026-06-17,6,6 june batch,118,0,0.0,17.09,12
+2026-06-17,7,7 jul17 batch,0,0,,,0
+2026-06-17,8,8 other blog (index/pagination/not-in-db),0,0,,,0
+2026-06-17,9,9 mcp24+050-055,0,0,,,0
+2026-06-17,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-06-17,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,267,1,0.0037,14.04,18
+2026-06-17,site_all_pages,sum of all page rows,267,1,0.0037,14.04,18
+2026-06-17,property_total,property-level total (by property; GSC UI number),260,1,0.0038,13.54,
+2026-06-17,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),43,,,,
+2026-06-17,device_desktop,"property-level, desktop",255,1,0.0039,13.4,
+2026-06-17,device_mobile,"property-level, mobile",5,0,0,20.6,
+2026-06-18,1,1 home,15,0,0.0,15.47,1
+2026-06-18,2,2 product/marketing,7,0,0.0,5.43,4
+2026-06-18,3,3 docs,11,0,0.0,11.45,1
+2026-06-18,4,4 usda-guide,0,0,,,0
+2026-06-18,5,5 comparison posts,116,1,0.0086,9.72,4
+2026-06-18,6,6 june batch,125,0,0.0,15.37,11
+2026-06-18,7,7 jul17 batch,0,0,,,0
+2026-06-18,8,8 other blog (index/pagination/not-in-db),0,0,,,0
+2026-06-18,9,9 mcp24+050-055,0,0,,,0
+2026-06-18,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-06-18,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,274,1,0.0036,12.57,21
+2026-06-18,site_all_pages,sum of all page rows,274,1,0.0036,12.57,21
+2026-06-18,property_total,property-level total (by property; GSC UI number),215,1,0.0047,11.1,
+2026-06-18,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),22,,,,
+2026-06-18,device_desktop,"property-level, desktop",202,1,0.005,10.69,
+2026-06-18,device_mobile,"property-level, mobile",13,0,0,17.46,
+2026-06-19,1,1 home,27,1,0.037,16.33,1
+2026-06-19,2,2 product/marketing,1,0,0.0,201.0,1
+2026-06-19,3,3 docs,2,0,0.0,51.5,1
+2026-06-19,4,4 usda-guide,0,0,,,0
+2026-06-19,5,5 comparison posts,109,0,0.0,11.67,4
+2026-06-19,6,6 june batch,66,0,0.0,22.23,11
+2026-06-19,7,7 jul17 batch,0,0,,,0
+2026-06-19,8,8 other blog (index/pagination/not-in-db),0,0,,,0
+2026-06-19,9,9 mcp24+050-055,0,0,,,0
+2026-06-19,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-06-19,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,205,1,0.0049,17.0,18
+2026-06-19,site_all_pages,sum of all page rows,205,1,0.0049,17.0,18
+2026-06-19,property_total,property-level total (by property; GSC UI number),190,1,0.0053,14.85,
+2026-06-19,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),42,,,,
+2026-06-19,device_desktop,"property-level, desktop",177,1,0.0056,14.71,
+2026-06-19,device_mobile,"property-level, mobile",13,0,0,16.85,
+2026-06-20,1,1 home,37,1,0.027,7.35,1
+2026-06-20,2,2 product/marketing,7,0,0.0,9.86,2
+2026-06-20,3,3 docs,4,0,0.0,7.5,1
+2026-06-20,4,4 usda-guide,0,0,,,0
+2026-06-20,5,5 comparison posts,149,0,0.0,16.66,4
+2026-06-20,6,6 june batch,127,0,0.0,16.94,11
+2026-06-20,7,7 jul17 batch,0,0,,,0
+2026-06-20,8,8 other blog (index/pagination/not-in-db),2,0,0.0,10.0,1
+2026-06-20,9,9 mcp24+050-055,0,0,,,0
+2026-06-20,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-06-20,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,326,1,0.0031,15.41,20
+2026-06-20,site_all_pages,sum of all page rows,326,1,0.0031,15.41,20
+2026-06-20,property_total,property-level total (by property; GSC UI number),316,1,0.0032,15.58,
+2026-06-20,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),25,,,,
+2026-06-20,device_desktop,"property-level, desktop",303,1,0.0033,15.61,
+2026-06-20,device_mobile,"property-level, mobile",13,0,0,14.85,
+2026-06-21,1,1 home,52,4,0.0769,13.02,1
+2026-06-21,2,2 product/marketing,3,0,0.0,6.33,2
+2026-06-21,3,3 docs,6,0,0.0,61.67,1
+2026-06-21,4,4 usda-guide,0,0,,,0
+2026-06-21,5,5 comparison posts,247,1,0.004,10.68,3
+2026-06-21,6,6 june batch,196,2,0.0102,19.6,11
+2026-06-21,7,7 jul17 batch,0,0,,,0
+2026-06-21,8,8 other blog (index/pagination/not-in-db),0,0,,,0
+2026-06-21,9,9 mcp24+050-055,0,0,,,0
+2026-06-21,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-06-21,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,504,7,0.0139,14.97,18
+2026-06-21,site_all_pages,sum of all page rows,504,7,0.0139,14.97,18
+2026-06-21,property_total,property-level total (by property; GSC UI number),471,7,0.0149,13.98,
+2026-06-21,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),67,,,,
+2026-06-21,device_desktop,"property-level, desktop",449,6,0.0134,13.9,
+2026-06-21,device_mobile,"property-level, mobile",22,1,0.0455,15.64,
+2026-06-22,1,1 home,64,3,0.0469,10.92,1
+2026-06-22,2,2 product/marketing,8,0,0.0,10.0,3
+2026-06-22,3,3 docs,6,0,0.0,10.83,1
+2026-06-22,4,4 usda-guide,0,0,,,0
+2026-06-22,5,5 comparison posts,409,1,0.0024,7.65,4
+2026-06-22,6,6 june batch,261,0,0.0,11.51,13
+2026-06-22,7,7 jul17 batch,0,0,,,0
+2026-06-22,8,8 other blog (index/pagination/not-in-db),3,0,0.0,10.0,1
+2026-06-22,9,9 mcp24+050-055,0,0,,,0
+2026-06-22,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-06-22,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,751,4,0.0053,9.33,23
+2026-06-22,site_all_pages,sum of all page rows,751,4,0.0053,9.33,23
+2026-06-22,property_total,property-level total (by property; GSC UI number),710,4,0.0056,8.37,
+2026-06-22,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),48,,,,
+2026-06-22,device_desktop,"property-level, desktop",680,2,0.0029,8.06,
+2026-06-22,device_mobile,"property-level, mobile",30,2,0.0667,15.4,
+2026-06-23,1,1 home,88,4,0.0455,25.92,1
+2026-06-23,2,2 product/marketing,17,0,0.0,20.35,4
+2026-06-23,3,3 docs,27,0,0.0,48.33,1
+2026-06-23,4,4 usda-guide,0,0,,,0
+2026-06-23,5,5 comparison posts,352,1,0.0028,10.15,3
+2026-06-23,6,6 june batch,289,1,0.0035,30.09,12
+2026-06-23,7,7 jul17 batch,0,0,,,0
+2026-06-23,8,8 other blog (index/pagination/not-in-db),5,0,0.0,8.2,1
+2026-06-23,9,9 mcp24+050-055,0,0,,,0
+2026-06-23,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-06-23,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,778,6,0.0077,20.87,22
+2026-06-23,site_all_pages,sum of all page rows,778,6,0.0077,20.87,22
+2026-06-23,property_total,property-level total (by property; GSC UI number),592,6,0.0101,10.79,
+2026-06-23,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),94,,,,
+2026-06-23,device_desktop,"property-level, desktop",573,6,0.0105,10.85,
+2026-06-23,device_mobile,"property-level, mobile",19,0,0,8.89,
+2026-06-24,1,1 home,43,4,0.093,15.33,1
+2026-06-24,2,2 product/marketing,6,0,0.0,9.17,2
+2026-06-24,3,3 docs,48,0,0.0,34.65,1
+2026-06-24,4,4 usda-guide,0,0,,,0
+2026-06-24,5,5 comparison posts,409,1,0.0024,11.29,4
+2026-06-24,6,6 june batch,226,3,0.0133,17.48,19
+2026-06-24,7,7 jul17 batch,0,0,,,0
+2026-06-24,8,8 other blog (index/pagination/not-in-db),1,0,0.0,10.0,1
+2026-06-24,9,9 mcp24+050-055,0,0,,,0
+2026-06-24,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-06-24,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,733,8,0.0109,14.95,28
+2026-06-24,site_all_pages,sum of all page rows,733,8,0.0109,14.95,28
+2026-06-24,property_total,property-level total (by property; GSC UI number),710,8,0.0113,14.38,
+2026-06-24,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),112,,,,
+2026-06-24,device_desktop,"property-level, desktop",686,7,0.0102,14.57,
+2026-06-24,device_mobile,"property-level, mobile",23,1,0.0435,9,
+2026-06-25,1,1 home,36,5,0.1389,9.83,1
+2026-06-25,2,2 product/marketing,9,0,0.0,6.89,2
+2026-06-25,3,3 docs,19,0,0.0,6.95,1
+2026-06-25,4,4 usda-guide,0,0,,,0
+2026-06-25,5,5 comparison posts,263,1,0.0038,8.32,4
+2026-06-25,6,6 june batch,240,2,0.0083,9.12,20
+2026-06-25,7,7 jul17 batch,0,0,,,0
+2026-06-25,8,8 other blog (index/pagination/not-in-db),2,0,0.0,9.0,1
+2026-06-25,9,9 mcp24+050-055,0,0,,,0
+2026-06-25,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-06-25,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,569,8,0.0141,8.69,29
+2026-06-25,site_all_pages,sum of all page rows,569,8,0.0141,8.69,29
+2026-06-25,property_total,property-level total (by property; GSC UI number),548,8,0.0146,8.43,
+2026-06-25,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),34,,,,
+2026-06-25,device_desktop,"property-level, desktop",515,6,0.0117,8.48,
+2026-06-25,device_mobile,"property-level, mobile",32,2,0.0625,7.5,
+2026-06-26,1,1 home,70,1,0.0143,8.89,1
+2026-06-26,2,2 product/marketing,11,1,0.0909,4.27,1
+2026-06-26,3,3 docs,19,0,0.0,15.79,1
+2026-06-26,4,4 usda-guide,0,0,,,0
+2026-06-26,5,5 comparison posts,296,1,0.0034,8.67,4
+2026-06-26,6,6 june batch,313,1,0.0032,8.97,23
+2026-06-26,7,7 jul17 batch,0,0,,,0
+2026-06-26,8,8 other blog (index/pagination/not-in-db),0,0,,,0
+2026-06-26,9,9 mcp24+050-055,0,0,,,0
+2026-06-26,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-06-26,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,709,4,0.0056,8.95,30
+2026-06-26,site_all_pages,sum of all page rows,709,4,0.0056,8.95,30
+2026-06-26,property_total,property-level total (by property; GSC UI number),672,4,0.006,8.99,
+2026-06-26,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),38,,,,
+2026-06-26,device_desktop,"property-level, desktop",635,3,0.0047,8.87,
+2026-06-26,device_mobile,"property-level, mobile",37,1,0.027,11,
+2026-06-27,1,1 home,82,5,0.061,11.32,1
+2026-06-27,2,2 product/marketing,5,0,0.0,9.6,2
+2026-06-27,3,3 docs,12,0,0.0,19.5,1
+2026-06-27,4,4 usda-guide,0,0,,,0
+2026-06-27,5,5 comparison posts,230,0,0.0,9.29,4
+2026-06-27,6,6 june batch,246,0,0.0,11.91,20
+2026-06-27,7,7 jul17 batch,0,0,,,0
+2026-06-27,8,8 other blog (index/pagination/not-in-db),2,0,0.0,9.5,1
+2026-06-27,9,9 mcp24+050-055,0,0,,,0
+2026-06-27,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-06-27,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,577,5,0.0087,10.91,29
+2026-06-27,site_all_pages,sum of all page rows,577,5,0.0087,10.91,29
+2026-06-27,property_total,property-level total (by property; GSC UI number),553,5,0.009,10.44,
+2026-06-27,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),44,,,,
+2026-06-27,device_desktop,"property-level, desktop",510,3,0.0059,10.63,
+2026-06-27,device_mobile,"property-level, mobile",43,2,0.0465,8.19,
+2026-06-28,1,1 home,78,3,0.0385,9.21,1
+2026-06-28,2,2 product/marketing,14,0,0.0,2.21,2
+2026-06-28,3,3 docs,18,0,0.0,29.17,1
+2026-06-28,4,4 usda-guide,0,0,,,0
+2026-06-28,5,5 comparison posts,361,1,0.0028,7.93,4
+2026-06-28,6,6 june batch,486,0,0.0,8.92,22
+2026-06-28,7,7 jul17 batch,0,0,,,0
+2026-06-28,8,8 other blog (index/pagination/not-in-db),6,0,0.0,1.67,1
+2026-06-28,9,9 mcp24+050-055,0,0,,,0
+2026-06-28,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-06-28,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,963,4,0.0042,8.81,31
+2026-06-28,site_all_pages,sum of all page rows,963,4,0.0042,8.81,31
+2026-06-28,property_total,property-level total (by property; GSC UI number),914,4,0.0044,8.94,
+2026-06-28,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),68,,,,
+2026-06-28,device_desktop,"property-level, desktop",839,1,0.0012,8.97,
+2026-06-28,device_mobile,"property-level, mobile",74,3,0.0405,8.64,
+2026-06-29,1,1 home,107,9,0.0841,15.65,1
+2026-06-29,2,2 product/marketing,8,0,0.0,10.0,4
+2026-06-29,3,3 docs,22,0,0.0,19.0,1
+2026-06-29,4,4 usda-guide,0,0,,,0
+2026-06-29,5,5 comparison posts,358,1,0.0028,11.01,4
+2026-06-29,6,6 june batch,654,1,0.0015,13.67,25
+2026-06-29,7,7 jul17 batch,0,0,,,0
+2026-06-29,8,8 other blog (index/pagination/not-in-db),2,0,0.0,5.5,1
+2026-06-29,9,9 mcp24+050-055,0,0,,,0
+2026-06-29,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-06-29,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,1151,11,0.0096,13.09,36
+2026-06-29,site_all_pages,sum of all page rows,1151,11,0.0096,13.09,36
+2026-06-29,property_total,property-level total (by property; GSC UI number),1108,11,0.0099,12.65,
+2026-06-29,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),72,,,,
+2026-06-29,device_desktop,"property-level, desktop",1049,9,0.0086,12.88,
+2026-06-29,device_mobile,"property-level, mobile",56,0,0,8.8,
+2026-06-30,1,1 home,138,2,0.0145,19.04,1
+2026-06-30,2,2 product/marketing,12,0,0.0,14.08,3
+2026-06-30,3,3 docs,46,0,0.0,43.17,1
+2026-06-30,4,4 usda-guide,0,0,,,0
+2026-06-30,5,5 comparison posts,315,1,0.0032,12.98,3
+2026-06-30,6,6 june batch,628,3,0.0048,12.97,22
+2026-06-30,7,7 jul17 batch,0,0,,,0
+2026-06-30,8,8 other blog (index/pagination/not-in-db),2,0,0.0,5.5,1
+2026-06-30,9,9 mcp24+050-055,0,0,,,0
+2026-06-30,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-06-30,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,1141,6,0.0053,14.92,31
+2026-06-30,site_all_pages,sum of all page rows,1141,6,0.0053,14.92,31
+2026-06-30,property_total,property-level total (by property; GSC UI number),959,6,0.0063,9.3,
+2026-06-30,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),139,,,,
+2026-06-30,device_desktop,"property-level, desktop",870,5,0.0057,9.49,
+2026-06-30,device_mobile,"property-level, mobile",89,1,0.0112,7.42,
+2026-07-01,1,1 home,142,8,0.0563,7.95,1
+2026-07-01,2,2 product/marketing,40,0,0.0,7.58,3
+2026-07-01,3,3 docs,40,0,0.0,11.3,1
+2026-07-01,4,4 usda-guide,0,0,,,0
+2026-07-01,5,5 comparison posts,256,2,0.0078,7.89,4
+2026-07-01,6,6 june batch,586,3,0.0051,8.42,26
+2026-07-01,7,7 jul17 batch,0,0,,,0
+2026-07-01,8,8 other blog (index/pagination/not-in-db),6,0,0.0,9.33,1
+2026-07-01,9,9 mcp24+050-055,0,0,,,0
+2026-07-01,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-07-01,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,1070,13,0.0121,8.31,36
+2026-07-01,site_all_pages,sum of all page rows,1070,13,0.0121,8.31,36
+2026-07-01,property_total,property-level total (by property; GSC UI number),878,13,0.0148,8.36,
+2026-07-01,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),82,,,,
+2026-07-01,device_desktop,"property-level, desktop",808,12,0.0149,8.26,
+2026-07-01,device_mobile,"property-level, mobile",69,1,0.0145,9.46,
+2026-07-02,1,1 home,162,7,0.0432,8.18,1
+2026-07-02,2,2 product/marketing,43,0,0.0,5.79,4
+2026-07-02,3,3 docs,47,0,0.0,8.23,1
+2026-07-02,4,4 usda-guide,0,0,,,0
+2026-07-02,5,5 comparison posts,358,1,0.0028,12.06,4
+2026-07-02,6,6 june batch,535,1,0.0019,11.12,27
+2026-07-02,7,7 jul17 batch,0,0,,,0
+2026-07-02,8,8 other blog (index/pagination/not-in-db),7,0,0.0,8.29,1
+2026-07-02,9,9 mcp24+050-055,0,0,,,0
+2026-07-02,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-07-02,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,1152,9,0.0078,10.67,38
+2026-07-02,site_all_pages,sum of all page rows,1152,9,0.0078,10.67,38
+2026-07-02,property_total,property-level total (by property; GSC UI number),976,9,0.0092,11.36,
+2026-07-02,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),69,,,,
+2026-07-02,device_desktop,"property-level, desktop",910,7,0.0077,11.55,
+2026-07-02,device_mobile,"property-level, mobile",66,2,0.0303,8.74,
+2026-07-03,1,1 home,95,4,0.0421,7.82,1
+2026-07-03,2,2 product/marketing,14,0,0.0,7.57,4
+2026-07-03,3,3 docs,24,0,0.0,15.92,1
+2026-07-03,4,4 usda-guide,0,0,,,0
+2026-07-03,5,5 comparison posts,292,0,0.0,7.73,4
+2026-07-03,6,6 june batch,345,1,0.0029,8.27,22
+2026-07-03,7,7 jul17 batch,0,0,,,0
+2026-07-03,8,8 other blog (index/pagination/not-in-db),3,0,0.0,9.33,1
+2026-07-03,9,9 mcp24+050-055,0,0,,,0
+2026-07-03,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-07-03,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,773,5,0.0065,8.24,33
+2026-07-03,site_all_pages,sum of all page rows,773,5,0.0065,8.24,33
+2026-07-03,property_total,property-level total (by property; GSC UI number),725,5,0.0069,8.09,
+2026-07-03,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),84,,,,
+2026-07-03,device_desktop,"property-level, desktop",656,4,0.0061,7.97,
+2026-07-03,device_mobile,"property-level, mobile",69,1,0.0145,9.26,
+2026-07-04,1,1 home,187,7,0.0374,6.7,1
+2026-07-04,2,2 product/marketing,79,0,0.0,5.29,3
+2026-07-04,3,3 docs,43,0,0.0,6.33,1
+2026-07-04,4,4 usda-guide,0,0,,,0
+2026-07-04,5,5 comparison posts,339,2,0.0059,6.43,3
+2026-07-04,6,6 june batch,311,1,0.0032,7.75,21
+2026-07-04,7,7 jul17 batch,0,0,,,0
+2026-07-04,8,8 other blog (index/pagination/not-in-db),0,0,,,0
+2026-07-04,9,9 mcp24+050-055,0,0,,,0
+2026-07-04,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-07-04,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,959,10,0.0104,6.81,29
+2026-07-04,site_all_pages,sum of all page rows,959,10,0.0104,6.81,29
+2026-07-04,property_total,property-level total (by property; GSC UI number),821,10,0.0122,6.91,
+2026-07-04,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),89,,,,
+2026-07-04,device_desktop,"property-level, desktop",768,8,0.0104,6.89,
+2026-07-04,device_mobile,"property-level, mobile",52,2,0.0385,7.23,
+2026-07-05,1,1 home,192,7,0.0365,8.95,1
+2026-07-05,2,2 product/marketing,20,0,0.0,6.3,4
+2026-07-05,3,3 docs,32,0,0.0,10.72,1
+2026-07-05,4,4 usda-guide,0,0,,,0
+2026-07-05,5,5 comparison posts,315,1,0.0032,7.37,3
+2026-07-05,6,6 june batch,167,0,0.0,9.56,18
+2026-07-05,7,7 jul17 batch,0,0,,,0
+2026-07-05,8,8 other blog (index/pagination/not-in-db),0,0,,,0
+2026-07-05,9,9 mcp24+050-055,0,0,,,0
+2026-07-05,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-07-05,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,726,8,0.011,8.41,27
+2026-07-05,site_all_pages,sum of all page rows,726,8,0.011,8.41,27
+2026-07-05,property_total,property-level total (by property; GSC UI number),682,8,0.0117,8.22,
+2026-07-05,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),91,,,,
+2026-07-05,device_desktop,"property-level, desktop",615,5,0.0081,7.88,
+2026-07-05,device_mobile,"property-level, mobile",66,3,0.0455,11.45,
+2026-07-06,1,1 home,156,10,0.0641,7.49,1
+2026-07-06,2,2 product/marketing,53,0,0.0,7.3,12
+2026-07-06,3,3 docs,25,0,0.0,5.96,1
+2026-07-06,4,4 usda-guide,0,0,,,0
+2026-07-06,5,5 comparison posts,353,2,0.0057,6.63,3
+2026-07-06,6,6 june batch,395,2,0.0051,6.82,20
+2026-07-06,7,7 jul17 batch,0,0,,,0
+2026-07-06,8,8 other blog (index/pagination/not-in-db),0,0,,,0
+2026-07-06,9,9 mcp24+050-055,0,0,,,0
+2026-07-06,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-07-06,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,982,14,0.0143,6.86,37
+2026-07-06,site_all_pages,sum of all page rows,982,14,0.0143,6.86,37
+2026-07-06,property_total,property-level total (by property; GSC UI number),914,14,0.0153,6.85,
+2026-07-06,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),87,,,,
+2026-07-06,device_desktop,"property-level, desktop",833,11,0.0132,6.7,
+2026-07-06,device_mobile,"property-level, mobile",81,3,0.037,8.47,
+2026-07-07,1,1 home,97,5,0.0515,9.67,1
+2026-07-07,2,2 product/marketing,73,2,0.0274,13.92,11
+2026-07-07,3,3 docs,20,0,0.0,16.6,1
+2026-07-07,4,4 usda-guide,0,0,,,0
+2026-07-07,5,5 comparison posts,376,0,0.0,6.7,4
+2026-07-07,6,6 june batch,281,1,0.0036,7.48,18
+2026-07-07,7,7 jul17 batch,0,0,,,0
+2026-07-07,8,8 other blog (index/pagination/not-in-db),0,0,,,0
+2026-07-07,9,9 mcp24+050-055,0,0,,,0
+2026-07-07,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-07-07,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,847,8,0.0094,8.15,35
+2026-07-07,site_all_pages,sum of all page rows,847,8,0.0094,8.15,35
+2026-07-07,property_total,property-level total (by property; GSC UI number),796,8,0.0101,7.7,
+2026-07-07,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),74,,,,
+2026-07-07,device_desktop,"property-level, desktop",724,7,0.0097,7.76,
+2026-07-07,device_mobile,"property-level, mobile",70,1,0.0143,7.27,
+2026-07-08,1,1 home,108,10,0.0926,7.62,1
+2026-07-08,2,2 product/marketing,110,0,0.0,25.73,11
+2026-07-08,3,3 docs,59,0,0.0,19.98,1
+2026-07-08,4,4 usda-guide,0,0,,,0
+2026-07-08,5,5 comparison posts,348,1,0.0029,8.44,4
+2026-07-08,6,6 june batch,268,0,0.0,8.31,17
+2026-07-08,7,7 jul17 batch,0,0,,,0
+2026-07-08,8,8 other blog (index/pagination/not-in-db),0,0,,,0
+2026-07-08,9,9 mcp24+050-055,0,0,,,0
+2026-07-08,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-07-08,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,893,11,0.0123,11.19,34
+2026-07-08,site_all_pages,sum of all page rows,893,11,0.0123,11.19,34
+2026-07-08,property_total,property-level total (by property; GSC UI number),826,11,0.0133,11.37,
+2026-07-08,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),143,,,,
+2026-07-08,device_desktop,"property-level, desktop",763,9,0.0118,11.82,
+2026-07-08,device_mobile,"property-level, mobile",61,2,0.0328,5.97,
+2026-07-09,1,1 home,83,8,0.0964,9.75,1
+2026-07-09,2,2 product/marketing,107,1,0.0093,18.79,10
+2026-07-09,3,3 docs,30,0,0.0,22.23,1
+2026-07-09,4,4 usda-guide,0,0,,,0
+2026-07-09,5,5 comparison posts,359,2,0.0056,7.64,4
+2026-07-09,6,6 june batch,195,1,0.0051,7.45,21
+2026-07-09,7,7 jul17 batch,0,0,,,0
+2026-07-09,8,8 other blog (index/pagination/not-in-db),0,0,,,0
+2026-07-09,9,9 mcp24+050-055,0,0,,,0
+2026-07-09,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-07-09,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,774,12,0.0155,9.92,37
+2026-07-09,site_all_pages,sum of all page rows,774,12,0.0155,9.92,37
+2026-07-09,property_total,property-level total (by property; GSC UI number),698,12,0.0172,8.28,
+2026-07-09,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),82,,,,
+2026-07-09,device_desktop,"property-level, desktop",624,9,0.0144,8.48,
+2026-07-09,device_mobile,"property-level, mobile",68,3,0.0441,6.59,
+2026-07-10,1,1 home,123,4,0.0325,14.45,1
+2026-07-10,2,2 product/marketing,130,2,0.0154,19.4,15
+2026-07-10,3,3 docs,57,0,0.0,21.68,1
+2026-07-10,4,4 usda-guide,0,0,,,0
+2026-07-10,5,5 comparison posts,325,5,0.0154,8.54,10
+2026-07-10,6,6 june batch,174,1,0.0057,13.16,25
+2026-07-10,7,7 jul17 batch,0,0,,,0
+2026-07-10,8,8 other blog (index/pagination/not-in-db),4,0,0.0,4.0,1
+2026-07-10,9,9 mcp24+050-055,0,0,,,0
+2026-07-10,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-07-10,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,813,12,0.0148,13.06,53
+2026-07-10,site_all_pages,sum of all page rows,813,12,0.0148,13.06,53
+2026-07-10,property_total,property-level total (by property; GSC UI number),733,12,0.0164,13.55,
+2026-07-10,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),60,,,,
+2026-07-10,device_desktop,"property-level, desktop",687,12,0.0175,14.0,
+2026-07-10,device_mobile,"property-level, mobile",45,0,0,6.93,
+2026-07-11,1,1 home,75,10,0.1333,7.99,1
+2026-07-11,2,2 product/marketing,182,4,0.022,9.5,19
+2026-07-11,3,3 docs,63,0,0.0,16.25,7
+2026-07-11,4,4 usda-guide,0,0,,,0
+2026-07-11,5,5 comparison posts,526,3,0.0057,8.16,14
+2026-07-11,6,6 june batch,196,2,0.0102,10.71,38
+2026-07-11,7,7 jul17 batch,0,0,,,0
+2026-07-11,8,8 other blog (index/pagination/not-in-db),3,0,0.0,5.33,1
+2026-07-11,9,9 mcp24+050-055,0,0,,,0
+2026-07-11,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-07-11,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,1045,19,0.0182,9.34,80
+2026-07-11,site_all_pages,sum of all page rows,1045,19,0.0182,9.34,80
+2026-07-11,property_total,property-level total (by property; GSC UI number),993,19,0.0191,9.43,
+2026-07-11,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),89,,,,
+2026-07-11,device_desktop,"property-level, desktop",890,19,0.0213,9.71,
+2026-07-11,device_mobile,"property-level, mobile",101,0,0,6.91,
+2026-07-12,1,1 home,101,9,0.0891,11.87,1
+2026-07-12,2,2 product/marketing,221,1,0.0045,10.78,19
+2026-07-12,3,3 docs,83,0,0.0,13.31,12
+2026-07-12,4,4 usda-guide,0,0,,,0
+2026-07-12,5,5 comparison posts,772,2,0.0026,7.55,15
+2026-07-12,6,6 june batch,353,7,0.0198,9.85,41
+2026-07-12,7,7 jul17 batch,0,0,,,0
+2026-07-12,8,8 other blog (index/pagination/not-in-db),6,0,0.0,6.67,1
+2026-07-12,9,9 mcp24+050-055,0,0,,,0
+2026-07-12,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-07-12,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,1536,19,0.0124,9.13,89
+2026-07-12,site_all_pages,sum of all page rows,1536,19,0.0124,9.13,89
+2026-07-12,property_total,property-level total (by property; GSC UI number),1423,19,0.0134,9.22,
+2026-07-12,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),150,,,,
+2026-07-12,device_desktop,"property-level, desktop",1277,11,0.0086,9.4,
+2026-07-12,device_mobile,"property-level, mobile",144,8,0.0556,7.69,
+2026-07-13,1,1 home,190,6,0.0316,17.94,1
+2026-07-13,2,2 product/marketing,289,5,0.0173,34.98,24
+2026-07-13,3,3 docs,118,0,0.0,49.89,7
+2026-07-13,4,4 usda-guide,0,0,,,0
+2026-07-13,5,5 comparison posts,579,2,0.0035,10.97,15
+2026-07-13,6,6 june batch,198,3,0.0152,20.76,34
+2026-07-13,7,7 jul17 batch,0,0,,,0
+2026-07-13,8,8 other blog (index/pagination/not-in-db),11,0,0.0,59.45,1
+2026-07-13,9,9 mcp24+050-055,0,0,,,0
+2026-07-13,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-07-13,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,1385,16,0.0116,22.04,82
+2026-07-13,site_all_pages,sum of all page rows,1385,16,0.0116,22.04,82
+2026-07-13,property_total,property-level total (by property; GSC UI number),986,16,0.0162,11.16,
+2026-07-13,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),260,,,,
+2026-07-13,device_desktop,"property-level, desktop",914,11,0.012,11.45,
+2026-07-13,device_mobile,"property-level, mobile",68,5,0.0735,7.59,
+2026-07-14,1,1 home,116,4,0.0345,10.12,1
+2026-07-14,2,2 product/marketing,170,1,0.0059,13.35,19
+2026-07-14,3,3 docs,42,0,0.0,22.67,8
+2026-07-14,4,4 usda-guide,0,0,,,0
+2026-07-14,5,5 comparison posts,445,2,0.0045,8.38,15
+2026-07-14,6,6 june batch,155,2,0.0129,14.75,33
+2026-07-14,7,7 jul17 batch,0,0,,,0
+2026-07-14,8,8 other blog (index/pagination/not-in-db),6,0,0.0,29.33,1
+2026-07-14,9,9 mcp24+050-055,0,0,,,0
+2026-07-14,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-07-14,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,934,9,0.0096,11.34,77
+2026-07-14,site_all_pages,sum of all page rows,934,9,0.0096,11.34,77
+2026-07-14,property_total,property-level total (by property; GSC UI number),814,9,0.0111,10.96,
+2026-07-14,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),127,,,,
+2026-07-14,device_desktop,"property-level, desktop",742,8,0.0108,11.43,
+2026-07-14,device_mobile,"property-level, mobile",72,1,0.0139,6.11,
+2026-07-15,1,1 home,92,13,0.1413,7.99,1
+2026-07-15,2,2 product/marketing,118,3,0.0254,13.0,19
+2026-07-15,3,3 docs,48,2,0.0417,16.0,6
+2026-07-15,4,4 usda-guide,0,0,,,0
+2026-07-15,5,5 comparison posts,257,2,0.0078,8.11,11
+2026-07-15,6,6 june batch,101,3,0.0297,9.23,27
+2026-07-15,7,7 jul17 batch,0,0,,,0
+2026-07-15,8,8 other blog (index/pagination/not-in-db),4,0,0.0,12.25,1
+2026-07-15,9,9 mcp24+050-055,0,0,,,0
+2026-07-15,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-07-15,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,620,23,0.0371,9.84,65
+2026-07-15,site_all_pages,sum of all page rows,620,23,0.0371,9.84,65
+2026-07-15,property_total,property-level total (by property; GSC UI number),522,22,0.0421,9.54,
+2026-07-15,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),57,,,,
+2026-07-15,device_desktop,"property-level, desktop",477,18,0.0377,9.86,
+2026-07-15,device_mobile,"property-level, mobile",45,4,0.0889,6.13,
+2026-07-16,1,1 home,101,15,0.1485,6.79,1
+2026-07-16,2,2 product/marketing,87,4,0.046,7.2,18
+2026-07-16,3,3 docs,24,0,0.0,7.33,6
+2026-07-16,4,4 usda-guide,0,0,,,0
+2026-07-16,5,5 comparison posts,209,3,0.0144,7.05,9
+2026-07-16,6,6 june batch,74,2,0.027,6.91,18
+2026-07-16,7,7 jul17 batch,0,0,,,0
+2026-07-16,8,8 other blog (index/pagination/not-in-db),4,0,0.0,24.0,1
+2026-07-16,9,9 mcp24+050-055,0,0,,,0
+2026-07-16,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-07-16,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,499,24,0.0481,7.15,53
+2026-07-16,site_all_pages,sum of all page rows,499,24,0.0481,7.15,53
+2026-07-16,property_total,property-level total (by property; GSC UI number),431,23,0.0534,6.87,
+2026-07-16,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),57,,,,
+2026-07-16,device_desktop,"property-level, desktop",374,15,0.0401,7.12,
+2026-07-16,device_mobile,"property-level, mobile",57,8,0.1404,5.25,
+2026-07-17,1,1 home,92,7,0.0761,10.54,1
+2026-07-17,2,2 product/marketing,80,4,0.05,10.2,19
+2026-07-17,3,3 docs,25,0,0.0,11.92,5
+2026-07-17,4,4 usda-guide,223,0,0.0,6.83,1
+2026-07-17,5,5 comparison posts,242,5,0.0207,8.06,10
+2026-07-17,6,6 june batch,83,3,0.0361,7.66,23
+2026-07-17,7,7 jul17 batch,160,1,0.0063,4.45,6
+2026-07-17,8,8 other blog (index/pagination/not-in-db),1,0,0.0,9.0,1
+2026-07-17,9,9 mcp24+050-055,0,0,,,0
+2026-07-17,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-07-17,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,683,20,0.0293,7.89,65
+2026-07-17,site_all_pages,sum of all page rows,906,20,0.0221,7.63,66
+2026-07-17,property_total,property-level total (by property; GSC UI number),827,20,0.0242,7.56,
+2026-07-17,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),163,,,,
+2026-07-17,device_desktop,"property-level, desktop",770,15,0.0195,7.67,
+2026-07-17,device_mobile,"property-level, mobile",57,5,0.0877,6.04,
+2026-07-18,1,1 home,78,7,0.0897,5.74,1
+2026-07-18,2,2 product/marketing,123,2,0.0163,6.0,22
+2026-07-18,3,3 docs,35,0,0.0,11.17,8
+2026-07-18,4,4 usda-guide,1085,0,0.0,6.56,1
+2026-07-18,5,5 comparison posts,162,1,0.0062,6.33,10
+2026-07-18,6,6 june batch,79,0,0.0,6.59,25
+2026-07-18,7,7 jul17 batch,613,3,0.0049,4.27,8
+2026-07-18,8,8 other blog (index/pagination/not-in-db),2,0,0.0,3.5,1
+2026-07-18,9,9 mcp24+050-055,0,0,,,0
+2026-07-18,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-07-18,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,1092,13,0.0119,5.27,75
+2026-07-18,site_all_pages,sum of all page rows,2177,13,0.006,5.91,76
+2026-07-18,property_total,property-level total (by property; GSC UI number),1996,13,0.0065,5.92,
+2026-07-18,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),539,,,,
+2026-07-18,device_desktop,"property-level, desktop",1917,9,0.0047,5.88,
+2026-07-18,device_mobile,"property-level, mobile",77,4,0.0519,6.94,
+2026-07-19,1,1 home,75,5,0.0667,8.71,1
+2026-07-19,2,2 product/marketing,70,0,0.0,8.84,17
+2026-07-19,3,3 docs,16,1,0.0625,12.0,5
+2026-07-19,4,4 usda-guide,1066,1,0.0009,6.8,1
+2026-07-19,5,5 comparison posts,140,1,0.0071,8.11,8
+2026-07-19,6,6 june batch,49,0,0.0,7.84,17
+2026-07-19,7,7 jul17 batch,273,0,0.0,5.64,8
+2026-07-19,8,8 other blog (index/pagination/not-in-db),0,0,,,0
+2026-07-19,9,9 mcp24+050-055,0,0,,,0
+2026-07-19,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-07-19,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,623,7,0.0112,7.26,56
+2026-07-19,site_all_pages,sum of all page rows,1689,8,0.0047,6.97,57
+2026-07-19,property_total,property-level total (by property; GSC UI number),1647,8,0.0049,6.99,
+2026-07-19,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),362,,,,
+2026-07-19,device_desktop,"property-level, desktop",1590,6,0.0038,6.97,
+2026-07-19,device_mobile,"property-level, mobile",56,2,0.0357,7.5,
+2026-07-20,1,1 home,130,6,0.0462,14.61,1
+2026-07-20,2,2 product/marketing,135,1,0.0074,29.8,18
+2026-07-20,3,3 docs,56,0,0.0,37.46,7
+2026-07-20,4,4 usda-guide,1349,5,0.0037,7.1,1
+2026-07-20,5,5 comparison posts,181,0,0.0,11.99,10
+2026-07-20,6,6 june batch,67,1,0.0149,10.82,18
+2026-07-20,7,7 jul17 batch,220,0,0.0,8.28,7
+2026-07-20,8,8 other blog (index/pagination/not-in-db),7,0,0.0,41.57,1
+2026-07-20,9,9 mcp24+050-055,0,0,,,0
+2026-07-20,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-07-20,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,796,8,0.0101,16.37,62
+2026-07-20,site_all_pages,sum of all page rows,2145,13,0.0061,10.54,63
+2026-07-20,property_total,property-level total (by property; GSC UI number),1968,13,0.0066,7.7,
+2026-07-20,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),424,,,,
+2026-07-20,device_desktop,"property-level, desktop",1902,11,0.0058,7.71,
+2026-07-20,device_mobile,"property-level, mobile",65,2,0.0308,7.52,
+2026-07-21,1,1 home,115,8,0.0696,10.03,1
+2026-07-21,2,2 product/marketing,90,1,0.0111,12.21,19
+2026-07-21,3,3 docs,25,0,0.0,11.52,5
+2026-07-21,4,4 usda-guide,725,0,0.0,7.2,1
+2026-07-21,5,5 comparison posts,123,2,0.0163,8.37,9
+2026-07-21,6,6 june batch,41,0,0.0,10.61,18
+2026-07-21,7,7 jul17 batch,79,1,0.0127,7.87,7
+2026-07-21,8,8 other blog (index/pagination/not-in-db),8,0,0.0,17.62,1
+2026-07-21,9,9 mcp24+050-055,0,0,,,0
+2026-07-21,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-07-21,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,481,12,0.0249,9.91,60
+2026-07-21,site_all_pages,sum of all page rows,1206,12,0.01,8.28,61
+2026-07-21,property_total,property-level total (by property; GSC UI number),1142,12,0.0105,8.16,
+2026-07-21,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),267,,,,
+2026-07-21,device_desktop,"property-level, desktop",1079,9,0.0083,8.24,
+2026-07-21,device_mobile,"property-level, mobile",63,3,0.0476,6.75,
+2026-07-22,1,1 home,133,16,0.1203,9.54,1
+2026-07-22,2,2 product/marketing,108,3,0.0278,28.95,20
+2026-07-22,3,3 docs,54,0,0.0,36.37,7
+2026-07-22,4,4 usda-guide,764,1,0.0013,7.2,1
+2026-07-22,5,5 comparison posts,137,2,0.0146,12.36,12
+2026-07-22,6,6 june batch,71,2,0.0282,9.41,21
+2026-07-22,7,7 jul17 batch,47,0,0.0,18.32,5
+2026-07-22,8,8 other blog (index/pagination/not-in-db),13,0,0.0,16.54,1
+2026-07-22,9,9 mcp24+050-055,0,0,,,0
+2026-07-22,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-07-22,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,563,23,0.0409,17.4,67
+2026-07-22,site_all_pages,sum of all page rows,1327,24,0.0181,11.53,68
+2026-07-22,property_total,property-level total (by property; GSC UI number),1233,24,0.0195,10.05,
+2026-07-22,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),307,,,,
+2026-07-22,device_desktop,"property-level, desktop",1173,16,0.0136,10.22,
+2026-07-22,device_mobile,"property-level, mobile",59,8,0.1356,6.64,
+2026-07-23,1,1 home,109,10,0.0917,12.15,1
+2026-07-23,2,2 product/marketing,56,1,0.0179,9.55,18
+2026-07-23,3,3 docs,23,0,0.0,12.13,7
+2026-07-23,4,4 usda-guide,706,1,0.0014,7.17,1
+2026-07-23,5,5 comparison posts,120,2,0.0167,8.04,11
+2026-07-23,6,6 june batch,51,0,0.0,8.82,18
+2026-07-23,7,7 jul17 batch,35,0,0.0,8.06,2
+2026-07-23,8,8 other blog (index/pagination/not-in-db),9,0,0.0,6.11,1
+2026-07-23,9,9 mcp24+050-055,0,0,,,0
+2026-07-23,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-07-23,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,403,13,0.0323,9.65,58
+2026-07-23,site_all_pages,sum of all page rows,1109,14,0.0126,8.07,59
+2026-07-23,property_total,property-level total (by property; GSC UI number),1062,14,0.0132,8.09,
+2026-07-23,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),234,,,,
+2026-07-23,device_desktop,"property-level, desktop",1011,10,0.0099,8.2,
+2026-07-23,device_mobile,"property-level, mobile",49,4,0.0816,5.69,
+2026-07-24,1,1 home,106,11,0.1038,8.89,1
+2026-07-24,2,2 product/marketing,77,1,0.013,15.32,19
+2026-07-24,3,3 docs,28,0,0.0,21.89,8
+2026-07-24,4,4 usda-guide,909,2,0.0022,7.6,1
+2026-07-24,5,5 comparison posts,173,2,0.0116,8.56,13
+2026-07-24,6,6 june batch,46,0,0.0,7.09,16
+2026-07-24,7,7 jul17 batch,19,1,0.0526,4.79,6
+2026-07-24,8,8 other blog (index/pagination/not-in-db),24,0,0.0,9.38,1
+2026-07-24,9,9 mcp24+050-055,0,0,,,0
+2026-07-24,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-07-24,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,473,15,0.0317,10.27,64
+2026-07-24,site_all_pages,sum of all page rows,1382,17,0.0123,8.51,65
+2026-07-24,property_total,property-level total (by property; GSC UI number),1339,17,0.0127,8.34,
+2026-07-24,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),276,,,,
+2026-07-24,device_desktop,"property-level, desktop",1291,14,0.0108,8.44,
+2026-07-24,device_mobile,"property-level, mobile",47,3,0.0638,5.79,
+2026-07-25,1,1 home,70,2,0.0286,12.64,1
+2026-07-25,2,2 product/marketing,116,0,0.0,11.33,20
+2026-07-25,3,3 docs,24,0,0.0,16.17,6
+2026-07-25,4,4 usda-guide,902,0,0.0,7.44,1
+2026-07-25,5,5 comparison posts,196,1,0.0051,8.21,12
+2026-07-25,6,6 june batch,74,0,0.0,9.96,26
+2026-07-25,7,7 jul17 batch,28,0,0.0,7.61,5
+2026-07-25,8,8 other blog (index/pagination/not-in-db),14,0,0.0,9.0,1
+2026-07-25,9,9 mcp24+050-055,0,0,,,0
+2026-07-25,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-07-25,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,522,3,0.0057,10.1,71
+2026-07-25,site_all_pages,sum of all page rows,1424,3,0.0021,8.42,72
+2026-07-25,property_total,property-level total (by property; GSC UI number),1324,3,0.0023,8.29,
+2026-07-25,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),274,,,,
+2026-07-25,device_desktop,"property-level, desktop",1276,2,0.0016,8.39,
+2026-07-25,device_mobile,"property-level, mobile",46,1,0.0217,5.74,
+2026-07-26,1,1 home,93,8,0.086,10.08,1
+2026-07-26,2,2 product/marketing,71,3,0.0423,12.99,19
+2026-07-26,3,3 docs,21,0,0.0,8.86,7
+2026-07-26,4,4 usda-guide,17,0,0.0,7.59,1
+2026-07-26,5,5 comparison posts,141,1,0.0071,7.64,12
+2026-07-26,6,6 june batch,73,0,0.0,9.4,20
+2026-07-26,7,7 jul17 batch,16,0,0.0,4.56,3
+2026-07-26,8,8 other blog (index/pagination/not-in-db),12,0,0.0,10.17,1
+2026-07-26,9,9 mcp24+050-055,0,0,,,0
+2026-07-26,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-07-26,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,427,12,0.0281,9.37,63
+2026-07-26,site_all_pages,sum of all page rows,444,12,0.027,9.31,64
+2026-07-26,property_total,property-level total (by property; GSC UI number),407,12,0.0295,9.43,
+2026-07-26,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),52,,,,
+2026-07-26,device_desktop,"property-level, desktop",362,10,0.0276,9.85,
+2026-07-26,device_mobile,"property-level, mobile",44,2,0.0455,6.05,
+2026-07-27,1,1 home,133,8,0.0602,17.11,1
+2026-07-27,2,2 product/marketing,158,1,0.0063,28.61,22
+2026-07-27,3,3 docs,31,0,0.0,27.42,5
+2026-07-27,4,4 usda-guide,26,0,0.0,7.19,1
+2026-07-27,5,5 comparison posts,290,1,0.0034,11.2,14
+2026-07-27,6,6 june batch,84,2,0.0238,14.21,23
+2026-07-27,7,7 jul17 batch,36,0,0.0,12.17,5
+2026-07-27,8,8 other blog (index/pagination/not-in-db),22,0,0.0,10.59,1
+2026-07-27,9,9 mcp24+050-055,0,0,,,0
+2026-07-27,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-07-27,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,754,12,0.0159,16.92,71
+2026-07-27,site_all_pages,sum of all page rows,780,12,0.0154,16.6,72
+2026-07-27,property_total,property-level total (by property; GSC UI number),647,12,0.0185,10.62,
+2026-07-27,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),115,,,,
+2026-07-27,device_desktop,"property-level, desktop",598,10,0.0167,10.55,
+2026-07-27,device_mobile,"property-level, mobile",47,2,0.0426,11.45,
+2026-07-28,1,1 home,91,1,0.011,13.54,1
+2026-07-28,2,2 product/marketing,73,1,0.0137,14.16,19
+2026-07-28,3,3 docs,16,1,0.0625,20.38,3
+2026-07-28,4,4 usda-guide,313,0,0.0,7.45,1
+2026-07-28,5,5 comparison posts,143,3,0.021,10.64,10
+2026-07-28,6,6 june batch,52,0,0.0,10.92,18
+2026-07-28,7,7 jul17 batch,18,0,0.0,3.89,5
+2026-07-28,8,8 other blog (index/pagination/not-in-db),13,0,0.0,11.46,1
+2026-07-28,9,9 mcp24+050-055,0,0,,,0
+2026-07-28,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-07-28,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,406,6,0.0148,12.07,57
+2026-07-28,site_all_pages,sum of all page rows,719,6,0.0083,10.06,58
+2026-07-28,property_total,property-level total (by property; GSC UI number),680,6,0.0088,10.06,
+2026-07-28,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),133,,,,
+2026-07-28,device_desktop,"property-level, desktop",633,6,0.0095,10.26,
+2026-07-28,device_mobile,"property-level, mobile",47,0,0,7.38,
+2026-07-29,1,1 home,127,6,0.0472,11.82,1
+2026-07-29,2,2 product/marketing,85,0,0.0,12.6,17
+2026-07-29,3,3 docs,13,1,0.0769,17.77,4
+2026-07-29,4,4 usda-guide,259,0,0.0,7.65,1
+2026-07-29,5,5 comparison posts,161,2,0.0124,10.93,12
+2026-07-29,6,6 june batch,58,0,0.0,10.83,20
+2026-07-29,7,7 jul17 batch,33,1,0.0303,6.03,7
+2026-07-29,8,8 other blog (index/pagination/not-in-db),14,0,0.0,10.86,1
+2026-07-29,9,9 mcp24+050-055,0,0,,,0
+2026-07-29,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-07-29,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,491,10,0.0204,11.29,62
+2026-07-29,site_all_pages,sum of all page rows,750,10,0.0133,10.03,63
+2026-07-29,property_total,property-level total (by property; GSC UI number),693,10,0.0144,9.98,
+2026-07-29,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),156,,,,
+2026-07-29,device_desktop,"property-level, desktop",647,8,0.0124,10.29,
+2026-07-29,device_mobile,"property-level, mobile",45,2,0.0444,5.6,
+2026-07-30,1,1 home,83,9,0.1084,12.73,1
+2026-07-30,2,2 product/marketing,79,2,0.0253,12.29,19
+2026-07-30,3,3 docs,29,0,0.0,7.66,10
+2026-07-30,4,4 usda-guide,189,1,0.0053,7.58,1
+2026-07-30,5,5 comparison posts,137,1,0.0073,7.36,6
+2026-07-30,6,6 june batch,77,0,0.0,9.7,21
+2026-07-30,7,7 jul17 batch,41,1,0.0244,3.78,5
+2026-07-30,8,8 other blog (index/pagination/not-in-db),16,0,0.0,18.94,1
+2026-07-30,9,9 mcp24+050-055,0,0,,,0
+2026-07-30,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-07-30,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,462,13,0.0281,9.66,63
+2026-07-30,site_all_pages,sum of all page rows,651,14,0.0215,9.06,64
+2026-07-30,property_total,property-level total (by property; GSC UI number),591,14,0.0237,9.29,
+2026-07-30,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),104,,,,
+2026-07-30,device_desktop,"property-level, desktop",525,8,0.0152,9.8,
+2026-07-30,device_mobile,"property-level, mobile",66,6,0.0909,5.26,
+2026-07-31,1,1 home,70,7,0.1,14.44,1
+2026-07-31,2,2 product/marketing,75,1,0.0133,12.39,19
+2026-07-31,3,3 docs,24,0,0.0,11.04,6
+2026-07-31,4,4 usda-guide,299,0,0.0,7.38,1
+2026-07-31,5,5 comparison posts,159,1,0.0063,8.97,10
+2026-07-31,6,6 june batch,57,0,0.0,9.89,18
+2026-07-31,7,7 jul17 batch,71,0,0.0,4.08,7
+2026-07-31,8,8 other blog (index/pagination/not-in-db),25,0,0.0,8.88,1
+2026-07-31,9,9 mcp24+050-055,0,0,,,0
+2026-07-31,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-07-31,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,481,9,0.0187,9.79,62
+2026-07-31,site_all_pages,sum of all page rows,780,9,0.0115,8.86,63
+2026-07-31,property_total,property-level total (by property; GSC UI number),721,9,0.0125,8.87,
+2026-07-31,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),121,,,,
+2026-07-31,device_desktop,"property-level, desktop",630,7,0.0111,9.15,
+2026-07-31,device_mobile,"property-level, mobile",91,2,0.022,6.96,
+2026-08-01,1,1 home,67,2,0.0299,16.94,1
+2026-08-01,2,2 product/marketing,74,2,0.027,13.74,18
+2026-08-01,3,3 docs,11,0,0.0,13.27,2
+2026-08-01,4,4 usda-guide,388,0,0.0,7.4,1
+2026-08-01,5,5 comparison posts,141,0,0.0,11.1,9
+2026-08-01,6,6 june batch,88,2,0.0227,9.64,21
+2026-08-01,7,7 jul17 batch,51,0,0.0,4.14,5
+2026-08-01,8,8 other blog (index/pagination/not-in-db),21,0,0.0,7.9,1
+2026-08-01,9,9 mcp24+050-055,0,0,,,0
+2026-08-01,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-08-01,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,453,6,0.0132,11.23,57
+2026-08-01,site_all_pages,sum of all page rows,841,6,0.0071,9.47,58
+2026-08-01,property_total,property-level total (by property; GSC UI number),816,6,0.0074,9.25,
+2026-08-01,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),168,,,,
+2026-08-01,device_desktop,"property-level, desktop",785,4,0.0051,9.39,
+2026-08-01,device_mobile,"property-level, mobile",31,2,0.0645,5.61,
+2026-08-02,1,1 home,72,2,0.0278,16.69,1
+2026-08-02,2,2 product/marketing,84,1,0.0119,13.3,21
+2026-08-02,3,3 docs,21,0,0.0,14.71,6
+2026-08-02,4,4 usda-guide,385,1,0.0026,7.16,1
+2026-08-02,5,5 comparison posts,216,2,0.0093,10.54,10
+2026-08-02,6,6 june batch,84,3,0.0357,11.06,22
+2026-08-02,7,7 jul17 batch,67,0,0.0,5.16,4
+2026-08-02,8,8 other blog (index/pagination/not-in-db),23,0,0.0,10.22,1
+2026-08-02,9,9 mcp24+050-055,0,0,,,0
+2026-08-02,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-08-02,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,567,8,0.0141,11.31,65
+2026-08-02,site_all_pages,sum of all page rows,952,9,0.0095,9.64,66
+2026-08-02,property_total,property-level total (by property; GSC UI number),904,9,0.01,9.76,
+2026-08-02,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),156,,,,
+2026-08-02,device_desktop,"property-level, desktop",866,8,0.0092,9.82,
+2026-08-02,device_mobile,"property-level, mobile",38,1,0.0263,8.26,
+2026-08-03,1,1 home,119,9,0.0756,19.18,1
+2026-08-03,2,2 product/marketing,155,3,0.0194,29.77,18
+2026-08-03,3,3 docs,37,0,0.0,34.92,6
+2026-08-03,4,4 usda-guide,295,0,0.0,7.34,1
+2026-08-03,5,5 comparison posts,205,2,0.0098,12.13,12
+2026-08-03,6,6 june batch,100,2,0.02,14.47,24
+2026-08-03,7,7 jul17 batch,38,0,0.0,5.45,4
+2026-08-03,8,8 other blog (index/pagination/not-in-db),16,1,0.0625,19.31,1
+2026-08-03,9,9 mcp24+050-055,0,0,,,0
+2026-08-03,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-08-03,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,670,17,0.0254,18.86,66
+2026-08-03,site_all_pages,sum of all page rows,965,17,0.0176,15.34,67
+2026-08-03,property_total,property-level total (by property; GSC UI number),801,16,0.02,9.87,
+2026-08-03,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),175,,,,
+2026-08-03,device_desktop,"property-level, desktop",750,9,0.012,10.05,
+2026-08-03,device_mobile,"property-level, mobile",51,7,0.1373,7.14,
+2026-08-04,1,1 home,57,8,0.1404,10.09,1
+2026-08-04,2,2 product/marketing,60,0,0.0,13.15,17
+2026-08-04,3,3 docs,21,0,0.0,23.33,4
+2026-08-04,4,4 usda-guide,381,0,0.0,6.97,1
+2026-08-04,5,5 comparison posts,180,3,0.0167,8.26,11
+2026-08-04,6,6 june batch,81,0,0.0,7.86,21
+2026-08-04,7,7 jul17 batch,38,0,0.0,4.24,5
+2026-08-04,8,8 other blog (index/pagination/not-in-db),15,0,0.0,11.4,1
+2026-08-04,9,9 mcp24+050-055,0,0,,,0
+2026-08-04,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-08-04,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,452,11,0.0243,9.53,60
+2026-08-04,site_all_pages,sum of all page rows,833,11,0.0132,8.36,61
+2026-08-04,property_total,property-level total (by property; GSC UI number),793,11,0.0139,8.19,
+2026-08-04,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),135,,,,
+2026-08-04,device_desktop,"property-level, desktop",763,5,0.0066,8.33,
+2026-08-04,device_mobile,"property-level, mobile",30,6,0.2,4.57,
+2026-08-05,1,1 home,77,2,0.026,14.26,1
+2026-08-05,2,2 product/marketing,108,0,0.0,40.06,18
+2026-08-05,3,3 docs,29,0,0.0,36.79,6
+2026-08-05,4,4 usda-guide,501,0,0.0,6.86,1
+2026-08-05,5,5 comparison posts,226,3,0.0133,12.36,13
+2026-08-05,6,6 june batch,108,2,0.0185,13.18,29
+2026-08-05,7,7 jul17 batch,33,0,0.0,5.64,6
+2026-08-05,8,8 other blog (index/pagination/not-in-db),19,0,0.0,16.11,1
+2026-08-05,9,9 mcp24+050-055,0,0,,,0
+2026-08-05,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-08-05,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,600,7,0.0117,18.66,74
+2026-08-05,site_all_pages,sum of all page rows,1101,7,0.0064,13.29,75
+2026-08-05,property_total,property-level total (by property; GSC UI number),1039,7,0.0067,12.18,
+2026-08-05,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),217,,,,
+2026-08-05,device_desktop,"property-level, desktop",991,6,0.0061,12.5,
+2026-08-05,device_mobile,"property-level, mobile",45,1,0.0222,5.78,
+2026-08-06,1,1 home,64,6,0.0938,10.59,1
+2026-08-06,2,2 product/marketing,72,0,0.0,12.62,19
+2026-08-06,3,3 docs,11,1,0.0909,11.64,4
+2026-08-06,4,4 usda-guide,492,0,0.0,6.87,1
+2026-08-06,5,5 comparison posts,154,2,0.013,8.36,11
+2026-08-06,6,6 june batch,86,0,0.0,8.52,30
+2026-08-06,7,7 jul17 batch,36,0,0.0,4.58,6
+2026-08-06,8,8 other blog (index/pagination/not-in-db),5,0,0.0,13.4,1
+2026-08-06,9,9 mcp24+050-055,0,0,,,0
+2026-08-06,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-08-06,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,428,9,0.021,9.27,72
+2026-08-06,site_all_pages,sum of all page rows,920,9,0.0098,7.98,73
+2026-08-06,property_total,property-level total (by property; GSC UI number),884,9,0.0102,8.03,
+2026-08-06,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),154,,,,
+2026-08-06,device_desktop,"property-level, desktop",847,7,0.0083,8.1,
+2026-08-06,device_mobile,"property-level, mobile",35,2,0.0571,6.51,
+2026-08-07,1,1 home,56,4,0.0714,11.25,1
+2026-08-07,2,2 product/marketing,44,0,0.0,14.23,16
+2026-08-07,3,3 docs,10,0,0.0,18.2,5
+2026-08-07,4,4 usda-guide,453,0,0.0,7.03,1
+2026-08-07,5,5 comparison posts,214,2,0.0093,8.36,10
+2026-08-07,6,6 june batch,85,0,0.0,8.21,25
+2026-08-07,7,7 jul17 batch,39,0,0.0,5.26,4
+2026-08-07,8,8 other blog (index/pagination/not-in-db),7,0,0.0,9.29,1
+2026-08-07,9,9 mcp24+050-055,0,0,,,0
+2026-08-07,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-08-07,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,455,6,0.0132,9.22,62
+2026-08-07,site_all_pages,sum of all page rows,908,6,0.0066,8.13,63
+2026-08-07,property_total,property-level total (by property; GSC UI number),859,6,0.007,8.04,
+2026-08-07,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),164,,,,
+2026-08-07,device_desktop,"property-level, desktop",801,5,0.0062,8.16,
+2026-08-07,device_mobile,"property-level, mobile",58,1,0.0172,6.47,
+2026-08-08,1,1 home,43,7,0.1628,6.19,1
+2026-08-08,2,2 product/marketing,75,1,0.0133,6.55,18
+2026-08-08,3,3 docs,21,0,0.0,10.71,7
+2026-08-08,4,4 usda-guide,666,0,0.0,6.7,1
+2026-08-08,5,5 comparison posts,223,0,0.0,7.92,12
+2026-08-08,6,6 june batch,85,2,0.0235,7.13,22
+2026-08-08,7,7 jul17 batch,55,0,0.0,3.55,6
+2026-08-08,8,8 other blog (index/pagination/not-in-db),21,0,0.0,11.24,1
+2026-08-08,9,9 mcp24+050-055,0,0,,,0
+2026-08-08,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-08-08,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,523,10,0.0191,7.24,67
+2026-08-08,site_all_pages,sum of all page rows,1189,10,0.0084,6.94,68
+2026-08-08,property_total,property-level total (by property; GSC UI number),1109,10,0.009,6.8,
+2026-08-08,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),186,,,,
+2026-08-08,device_desktop,"property-level, desktop",1027,7,0.0068,6.85,
+2026-08-08,device_mobile,"property-level, mobile",81,3,0.037,6.14,
+2026-08-09,1,1 home,54,3,0.0556,13.59,1
+2026-08-09,2,2 product/marketing,87,1,0.0115,14.75,17
+2026-08-09,3,3 docs,19,0,0.0,13.74,7
+2026-08-09,4,4 usda-guide,663,0,0.0,6.81,1
+2026-08-09,5,5 comparison posts,226,1,0.0044,8.53,13
+2026-08-09,6,6 june batch,137,3,0.0219,8.69,29
+2026-08-09,7,7 jul17 batch,37,0,0.0,5.38,6
+2026-08-09,8,8 other blog (index/pagination/not-in-db),11,0,0.0,11.18,1
+2026-08-09,9,9 mcp24+050-055,0,0,,,0
+2026-08-09,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-08-09,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,571,8,0.014,10.01,74
+2026-08-09,site_all_pages,sum of all page rows,1234,8,0.0065,8.29,75
+2026-08-09,property_total,property-level total (by property; GSC UI number),1183,7,0.0059,8.33,
+2026-08-09,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),185,,,,
+2026-08-09,device_desktop,"property-level, desktop",1088,5,0.0046,8.59,
+2026-08-09,device_mobile,"property-level, mobile",94,2,0.0213,5.38,
+2026-08-10,1,1 home,171,7,0.0409,16.77,1
+2026-08-10,2,2 product/marketing,185,2,0.0108,35.46,18
+2026-08-10,3,3 docs,41,2,0.0488,38.41,7
+2026-08-10,4,4 usda-guide,531,0,0.0,7.06,1
+2026-08-10,5,5 comparison posts,312,0,0.0,11.13,16
+2026-08-10,6,6 june batch,126,0,0.0,13.02,27
+2026-08-10,7,7 jul17 batch,68,0,0.0,3.81,7
+2026-08-10,8,8 other blog (index/pagination/not-in-db),21,0,0.0,20.14,1
+2026-08-10,9,9 mcp24+050-055,0,0,,,0
+2026-08-10,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-08-10,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,924,11,0.0119,18.18,77
+2026-08-10,site_all_pages,sum of all page rows,1455,11,0.0076,14.12,78
+2026-08-10,property_total,property-level total (by property; GSC UI number),1237,11,0.0089,9.27,
+2026-08-10,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),235,,,,
+2026-08-10,device_desktop,"property-level, desktop",1120,10,0.0089,9.38,
+2026-08-10,device_mobile,"property-level, mobile",117,1,0.0085,8.17,
+2026-08-11,1,1 home,98,6,0.0612,14.23,1
+2026-08-11,2,2 product/marketing,95,1,0.0105,14.86,22
+2026-08-11,3,3 docs,19,0,0.0,18.95,4
+2026-08-11,4,4 usda-guide,671,1,0.0015,7.26,1
+2026-08-11,5,5 comparison posts,181,1,0.0055,9.66,13
+2026-08-11,6,6 june batch,107,2,0.0187,8.29,32
+2026-08-11,7,7 jul17 batch,74,0,0.0,3.78,5
+2026-08-11,8,8 other blog (index/pagination/not-in-db),6,0,0.0,14.83,1
+2026-08-11,9,9 mcp24+050-055,0,0,,,0
+2026-08-11,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-08-11,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,580,10,0.0172,10.64,78
+2026-08-11,site_all_pages,sum of all page rows,1251,11,0.0088,8.82,79
+2026-08-11,property_total,property-level total (by property; GSC UI number),1186,11,0.0093,8.9,
+2026-08-11,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),213,,,,
+2026-08-11,device_desktop,"property-level, desktop",1080,7,0.0065,9.18,
+2026-08-11,device_mobile,"property-level, mobile",105,4,0.0381,6.03,
+2026-08-12,1,1 home,49,3,0.0612,16.8,1
+2026-08-12,2,2 product/marketing,83,3,0.0361,21.28,19
+2026-08-12,3,3 docs,17,0,0.0,41.76,3
+2026-08-12,4,4 usda-guide,646,0,0.0,7.26,1
+2026-08-12,5,5 comparison posts,204,1,0.0049,10.29,11
+2026-08-12,6,6 june batch,103,2,0.0194,7.9,22
+2026-08-12,7,7 jul17 batch,120,0,0.0,3.84,5
+2026-08-12,8,8 other blog (index/pagination/not-in-db),13,0,0.0,14.54,1
+2026-08-12,9,9 mcp24+050-055,0,0,,,0
+2026-08-12,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-08-12,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,589,9,0.0153,11.65,62
+2026-08-12,site_all_pages,sum of all page rows,1235,9,0.0073,9.35,63
+2026-08-12,property_total,property-level total (by property; GSC UI number),1181,9,0.0076,9.27,
+2026-08-12,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),202,,,,
+2026-08-12,device_desktop,"property-level, desktop",1088,8,0.0074,9.49,
+2026-08-12,device_mobile,"property-level, mobile",93,1,0.0108,6.7,
+2026-08-13,1,1 home,58,5,0.0862,15.1,1
+2026-08-13,2,2 product/marketing,95,1,0.0105,17.84,18
+2026-08-13,3,3 docs,31,1,0.0323,17.58,5
+2026-08-13,4,4 usda-guide,600,1,0.0017,7.49,1
+2026-08-13,5,5 comparison posts,169,0,0.0,9.19,13
+2026-08-13,6,6 june batch,126,1,0.0079,7.22,24
+2026-08-13,7,7 jul17 batch,33,0,0.0,5.52,6
+2026-08-13,8,8 other blog (index/pagination/not-in-db),8,0,0.0,5.62,1
+2026-08-13,9,9 mcp24+050-055,0,0,,,0
+2026-08-13,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-08-13,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,520,8,0.0154,11.17,68
+2026-08-13,site_all_pages,sum of all page rows,1120,9,0.008,9.2,69
+2026-08-13,property_total,property-level total (by property; GSC UI number),1034,9,0.0087,9.41,
+2026-08-13,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),160,,,,
+2026-08-13,device_desktop,"property-level, desktop",941,9,0.0096,9.58,
+2026-08-13,device_mobile,"property-level, mobile",92,0,0,7.73,
+2026-08-14,1,1 home,44,1,0.0227,16.36,1
+2026-08-14,2,2 product/marketing,79,0,0.0,18.44,16
+2026-08-14,3,3 docs,30,0,0.0,22.07,6
+2026-08-14,4,4 usda-guide,602,0,0.0,7.78,1
+2026-08-14,5,5 comparison posts,175,2,0.0114,8.57,13
+2026-08-14,6,6 june batch,115,0,0.0,9.37,22
+2026-08-14,7,7 jul17 batch,64,0,0.0,3.7,7
+2026-08-14,8,8 other blog (index/pagination/not-in-db),7,0,0.0,6.71,1
+2026-08-14,9,9 mcp24+050-055,0,0,,,0
+2026-08-14,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-08-14,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,514,3,0.0058,11.09,66
+2026-08-14,site_all_pages,sum of all page rows,1116,3,0.0027,9.31,67
+2026-08-14,property_total,property-level total (by property; GSC UI number),1039,3,0.0029,9.36,
+2026-08-14,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),183,,,,
+2026-08-14,device_desktop,"property-level, desktop",956,3,0.0031,9.53,
+2026-08-14,device_mobile,"property-level, mobile",83,0,0,7.34,
+2026-08-15,1,1 home,45,3,0.0667,21.78,1
+2026-08-15,2,2 product/marketing,58,0,0.0,27.03,17
+2026-08-15,3,3 docs,18,0,0.0,39.0,4
+2026-08-15,4,4 usda-guide,702,0,0.0,7.71,1
+2026-08-15,5,5 comparison posts,159,3,0.0189,10.08,10
+2026-08-15,6,6 june batch,91,1,0.011,12.68,23
+2026-08-15,7,7 jul17 batch,78,0,0.0,4.24,6
+2026-08-15,8,8 other blog (index/pagination/not-in-db),7,0,0.0,18.57,1
+2026-08-15,9,9 mcp24+050-055,0,0,,,0
+2026-08-15,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-08-15,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,456,7,0.0154,14.18,62
+2026-08-15,site_all_pages,sum of all page rows,1158,7,0.006,10.26,63
+2026-08-15,property_total,property-level total (by property; GSC UI number),1119,7,0.0063,10.18,
+2026-08-15,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),204,,,,
+2026-08-15,device_desktop,"property-level, desktop",1010,5,0.005,10.58,
+2026-08-15,device_mobile,"property-level, mobile",109,2,0.0183,6.51,
+2026-08-16,1,1 home,46,1,0.0217,15.22,1
+2026-08-16,2,2 product/marketing,62,0,0.0,23.44,19
+2026-08-16,3,3 docs,14,0,0.0,44.07,5
+2026-08-16,4,4 usda-guide,669,0,0.0,7.71,1
+2026-08-16,5,5 comparison posts,174,4,0.023,9.76,10
+2026-08-16,6,6 june batch,99,1,0.0101,10.88,34
+2026-08-16,7,7 jul17 batch,69,0,0.0,4.78,5
+2026-08-16,8,8 other blog (index/pagination/not-in-db),11,0,0.0,17.82,1
+2026-08-16,9,9 mcp24+050-055,0,0,,,0
+2026-08-16,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-08-16,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,475,6,0.0126,12.78,75
+2026-08-16,site_all_pages,sum of all page rows,1144,6,0.0052,9.81,76
+2026-08-16,property_total,property-level total (by property; GSC UI number),1121,5,0.0045,9.74,
+2026-08-16,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),181,,,,
+2026-08-16,device_desktop,"property-level, desktop",987,1,0.001,10.18,
+2026-08-16,device_mobile,"property-level, mobile",134,4,0.0299,6.46,
+2026-08-17,1,1 home,105,9,0.0857,24.83,1
+2026-08-17,2,2 product/marketing,134,2,0.0149,44.01,20
+2026-08-17,3,3 docs,43,0,0.0,58.95,6
+2026-08-17,4,4 usda-guide,668,0,0.0,7.51,1
+2026-08-17,5,5 comparison posts,233,1,0.0043,12.73,13
+2026-08-17,6,6 june batch,142,0,0.0,12.7,27
+2026-08-17,7,7 jul17 batch,51,0,0.0,5.2,6
+2026-08-17,8,8 other blog (index/pagination/not-in-db),14,0,0.0,26.29,1
+2026-08-17,9,9 mcp24+050-055,0,0,,,0
+2026-08-17,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-08-17,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,722,12,0.0166,22.77,74
+2026-08-17,site_all_pages,sum of all page rows,1390,12,0.0086,15.44,75
+2026-08-17,property_total,property-level total (by property; GSC UI number),1252,12,0.0096,10.27,
+2026-08-17,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),196,,,,
+2026-08-17,device_desktop,"property-level, desktop",1117,8,0.0072,10.62,
+2026-08-17,device_mobile,"property-level, mobile",135,4,0.0296,7.38,
+2026-08-18,1,1 home,69,10,0.1449,10.97,1
+2026-08-18,2,2 product/marketing,90,0,0.0,21.32,20
+2026-08-18,3,3 docs,11,1,0.0909,16.91,3
+2026-08-18,4,4 usda-guide,639,0,0.0,7.18,1
+2026-08-18,5,5 comparison posts,160,4,0.025,8.09,9
+2026-08-18,6,6 june batch,105,0,0.0,10.55,24
+2026-08-18,7,7 jul17 batch,40,0,0.0,7.12,5
+2026-08-18,8,8 other blog (index/pagination/not-in-db),2,0,0.0,17.0,1
+2026-08-18,9,9 mcp24+050-055,0,0,,,0
+2026-08-18,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-08-18,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,477,15,0.0314,11.7,63
+2026-08-18,site_all_pages,sum of all page rows,1116,15,0.0134,9.11,64
+2026-08-18,property_total,property-level total (by property; GSC UI number),1066,15,0.0141,9.26,
+2026-08-18,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),135,,,,
+2026-08-18,device_desktop,"property-level, desktop",967,13,0.0134,9.45,
+2026-08-18,device_mobile,"property-level, mobile",99,2,0.0202,7.48,
+2026-08-19,1,1 home,68,7,0.1029,12.68,1
+2026-08-19,2,2 product/marketing,145,0,0.0,33.24,20
+2026-08-19,3,3 docs,41,0,0.0,47.59,4
+2026-08-19,4,4 usda-guide,516,0,0.0,7.72,1
+2026-08-19,5,5 comparison posts,170,1,0.0059,10.12,14
+2026-08-19,6,6 june batch,85,0,0.0,9.35,28
+2026-08-19,7,7 jul17 batch,52,0,0.0,5.25,4
+2026-08-19,8,8 other blog (index/pagination/not-in-db),11,0,0.0,16.18,1
+2026-08-19,9,9 mcp24+050-055,0,0,,,0
+2026-08-19,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-08-19,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,572,8,0.014,18.53,72
+2026-08-19,site_all_pages,sum of all page rows,1088,8,0.0074,13.4,73
+2026-08-19,property_total,property-level total (by property; GSC UI number),984,8,0.0081,12.77,
+2026-08-19,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),166,,,,
+2026-08-19,device_desktop,"property-level, desktop",901,7,0.0078,13.24,
+2026-08-19,device_mobile,"property-level, mobile",82,1,0.0122,7.68,
+2026-08-20,1,1 home,80,6,0.075,12.84,1
+2026-08-20,2,2 product/marketing,74,0,0.0,22.31,14
+2026-08-20,3,3 docs,28,0,0.0,23.43,5
+2026-08-20,4,4 usda-guide,322,0,0.0,6.97,1
+2026-08-20,5,5 comparison posts,169,1,0.0059,8.49,10
+2026-08-20,6,6 june batch,108,0,0.0,10.04,17
+2026-08-20,7,7 jul17 batch,31,0,0.0,5.74,4
+2026-08-20,8,8 other blog (index/pagination/not-in-db),2,0,0.0,14.5,1
+2026-08-20,9,9 mcp24+050-055,0,0,,,0
+2026-08-20,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-08-20,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,492,7,0.0142,12.32,52
+2026-08-20,site_all_pages,sum of all page rows,814,7,0.0086,10.2,53
+2026-08-20,property_total,property-level total (by property; GSC UI number),748,7,0.0094,10.5,
+2026-08-20,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),91,,,,
+2026-08-20,device_desktop,"property-level, desktop",651,6,0.0092,10.9,
+2026-08-20,device_mobile,"property-level, mobile",96,1,0.0104,7.82,
+2026-08-21,1,1 home,61,5,0.082,16.74,1
+2026-08-21,2,2 product/marketing,66,0,0.0,29.27,15
+2026-08-21,3,3 docs,24,0,0.0,39.08,4
+2026-08-21,4,4 usda-guide,325,0,0.0,7.7,1
+2026-08-21,5,5 comparison posts,104,0,0.0,9.92,8
+2026-08-21,6,6 june batch,71,0,0.0,9.97,27
+2026-08-21,7,7 jul17 batch,46,0,0.0,4.07,4
+2026-08-21,8,8 other blog (index/pagination/not-in-db),1,0,0.0,5.0,1
+2026-08-21,9,9 mcp24+050-055,0,0,,,0
+2026-08-21,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-08-21,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,373,5,0.0134,15.61,60
+2026-08-21,site_all_pages,sum of all page rows,698,5,0.0072,11.93,61
+2026-08-21,property_total,property-level total (by property; GSC UI number),656,5,0.0076,11.62,
+2026-08-21,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),98,,,,
+2026-08-21,device_desktop,"property-level, desktop",562,5,0.0089,12.46,
+2026-08-21,device_mobile,"property-level, mobile",94,0,0,6.65,
+2026-08-22,1,1 home,43,1,0.0233,16.47,1
+2026-08-22,2,2 product/marketing,49,0,0.0,26.61,14
+2026-08-22,3,3 docs,14,0,0.0,34.21,3
+2026-08-22,4,4 usda-guide,394,0,0.0,7.59,1
+2026-08-22,5,5 comparison posts,134,1,0.0075,8.53,9
+2026-08-22,6,6 june batch,58,2,0.0345,12.43,20
+2026-08-22,7,7 jul17 batch,61,0,0.0,3.07,4
+2026-08-22,8,8 other blog (index/pagination/not-in-db),4,0,0.0,50.75,1
+2026-08-22,9,9 mcp24+050-055,0,0,,,0
+2026-08-22,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-08-22,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,363,4,0.011,13.07,52
+2026-08-22,site_all_pages,sum of all page rows,757,4,0.0053,10.22,53
+2026-08-22,property_total,property-level total (by property; GSC UI number),722,4,0.0055,10.22,
+2026-08-22,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),90,,,,
+2026-08-22,device_desktop,"property-level, desktop",584,3,0.0051,10.93,
+2026-08-22,device_mobile,"property-level, mobile",138,1,0.0072,7.23,
+2026-08-23,1,1 home,94,6,0.0638,11.54,1
+2026-08-23,2,2 product/marketing,95,1,0.0105,14.29,18
+2026-08-23,3,3 docs,26,0,0.0,25.65,3
+2026-08-23,4,4 usda-guide,536,1,0.0019,8.42,1
+2026-08-23,5,5 comparison posts,144,0,0.0,10.33,9
+2026-08-23,6,6 june batch,55,0,0.0,9.56,19
+2026-08-23,7,7 jul17 batch,37,0,0.0,3.51,4
+2026-08-23,8,8 other blog (index/pagination/not-in-db),5,0,0.0,24.0,1
+2026-08-23,9,9 mcp24+050-055,0,0,,,0
+2026-08-23,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-08-23,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,456,7,0.0154,11.79,55
+2026-08-23,site_all_pages,sum of all page rows,992,8,0.0081,9.97,56
+2026-08-23,property_total,property-level total (by property; GSC UI number),904,8,0.0088,10.1,
+2026-08-23,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),114,,,,
+2026-08-23,device_desktop,"property-level, desktop",748,5,0.0067,10.9,
+2026-08-23,device_mobile,"property-level, mobile",156,3,0.0192,6.26,
+2026-08-24,1,1 home,148,7,0.0473,22.2,1
+2026-08-24,2,2 product/marketing,220,0,0.0,51.15,18
+2026-08-24,3,3 docs,58,0,0.0,63.26,6
+2026-08-24,4,4 usda-guide,453,1,0.0022,8.57,1
+2026-08-24,5,5 comparison posts,200,1,0.005,19.7,11
+2026-08-24,6,6 june batch,87,0,0.0,23.71,23
+2026-08-24,7,7 jul17 batch,26,0,0.0,6.81,5
+2026-08-24,8,8 other blog (index/pagination/not-in-db),18,0,0.0,28.11,1
+2026-08-24,9,9 mcp24+050-055,0,0,,,0
+2026-08-24,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-08-24,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,757,8,0.0106,32.88,65
+2026-08-24,site_all_pages,sum of all page rows,1210,9,0.0074,23.78,66
+2026-08-24,property_total,property-level total (by property; GSC UI number),919,9,0.0098,13.22,
+2026-08-24,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),220,,,,
+2026-08-24,device_desktop,"property-level, desktop",804,8,0.01,14.19,
+2026-08-24,device_mobile,"property-level, mobile",114,1,0.0088,6.41,
+2026-08-25,1,1 home,49,7,0.1429,11.43,1
+2026-08-25,2,2 product/marketing,81,0,0.0,29.56,15
+2026-08-25,3,3 docs,26,2,0.0769,22.88,5
+2026-08-25,4,4 usda-guide,480,0,0.0,7.96,1
+2026-08-25,5,5 comparison posts,107,2,0.0187,11.99,11
+2026-08-25,6,6 june batch,66,0,0.0,11.74,19
+2026-08-25,7,7 jul17 batch,34,0,0.0,6.71,4
+2026-08-25,8,8 other blog (index/pagination/not-in-db),3,0,0.0,12.33,1
+2026-08-25,9,9 mcp24+050-055,0,0,,,0
+2026-08-25,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-08-25,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,366,11,0.0301,16.04,56
+2026-08-25,site_all_pages,sum of all page rows,846,11,0.013,11.46,57
+2026-08-25,property_total,property-level total (by property; GSC UI number),792,11,0.0139,11.48,
+2026-08-25,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),110,,,,
+2026-08-25,device_desktop,"property-level, desktop",666,10,0.015,12.37,
+2026-08-25,device_mobile,"property-level, mobile",126,1,0.0079,6.75,
+2026-08-26,1,1 home,69,9,0.1304,9.84,1
+2026-08-26,2,2 product/marketing,71,0,0.0,27.66,14
+2026-08-26,3,3 docs,28,2,0.0714,30.32,6
+2026-08-26,4,4 usda-guide,459,1,0.0022,7.82,1
+2026-08-26,5,5 comparison posts,92,4,0.0435,12.09,11
+2026-08-26,6,6 june batch,75,1,0.0133,12.04,17
+2026-08-26,7,7 jul17 batch,49,0,0.0,3.96,6
+2026-08-26,8,8 other blog (index/pagination/not-in-db),2,0,0.0,31.0,1
+2026-08-26,9,9 mcp24+050-055,0,0,,,0
+2026-08-26,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-08-26,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,386,16,0.0415,14.93,56
+2026-08-26,site_all_pages,sum of all page rows,845,17,0.0201,11.07,57
+2026-08-26,property_total,property-level total (by property; GSC UI number),791,17,0.0215,11.25,
+2026-08-26,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),114,,,,
+2026-08-26,device_desktop,"property-level, desktop",693,9,0.013,11.98,
+2026-08-26,device_mobile,"property-level, mobile",98,8,0.0816,6.12,
+2026-08-27,1,1 home,81,6,0.0741,14.46,1
+2026-08-27,2,2 product/marketing,102,2,0.0196,24.19,17
+2026-08-27,3,3 docs,34,1,0.0294,41.62,3
+2026-08-27,4,4 usda-guide,454,0,0.0,8.11,1
+2026-08-27,5,5 comparison posts,159,0,0.0,10.3,12
+2026-08-27,6,6 june batch,58,0,0.0,14.47,20
+2026-08-27,7,7 jul17 batch,44,0,0.0,7.25,5
+2026-08-27,8,8 other blog (index/pagination/not-in-db),4,0,0.0,31.25,1
+2026-08-27,9,9 mcp24+050-055,0,0,,,0
+2026-08-27,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-08-27,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,482,9,0.0187,16.54,59
+2026-08-27,site_all_pages,sum of all page rows,936,9,0.0096,12.45,60
+2026-08-27,property_total,property-level total (by property; GSC UI number),847,9,0.0106,11.76,
+2026-08-27,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),133,,,,
+2026-08-27,device_desktop,"property-level, desktop",729,9,0.0123,12.48,
+2026-08-27,device_mobile,"property-level, mobile",117,0,0,7.32,
+2026-08-28,1,1 home,70,3,0.0429,18.5,1
+2026-08-28,2,2 product/marketing,118,0,0.0,43.74,17
+2026-08-28,3,3 docs,30,0,0.0,55.73,3
+2026-08-28,4,4 usda-guide,384,0,0.0,8.97,1
+2026-08-28,5,5 comparison posts,113,1,0.0088,19.65,7
+2026-08-28,6,6 june batch,59,1,0.0169,16.97,19
+2026-08-28,7,7 jul17 batch,32,0,0.0,6.75,7
+2026-08-28,8,8 other blog (index/pagination/not-in-db),8,0,0.0,41.62,1
+2026-08-28,9,9 mcp24+050-055,0,0,,,0
+2026-08-28,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-08-28,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,430,5,0.0116,27.67,55
+2026-08-28,site_all_pages,sum of all page rows,814,5,0.0061,18.85,56
+2026-08-28,property_total,property-level total (by property; GSC UI number),658,5,0.0076,12.17,
+2026-08-28,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),113,,,,
+2026-08-28,device_desktop,"property-level, desktop",533,4,0.0075,13.07,
+2026-08-28,device_mobile,"property-level, mobile",123,1,0.0081,8.37,
+2026-08-29,1,1 home,56,5,0.0893,15.8,1
+2026-08-29,2,2 product/marketing,75,0,0.0,40.77,19
+2026-08-29,3,3 docs,27,0,0.0,42.85,5
+2026-08-29,4,4 usda-guide,276,0,0.0,8.01,1
+2026-08-29,5,5 comparison posts,111,2,0.018,10.04,10
+2026-08-29,6,6 june batch,52,0,0.0,26.13,18
+2026-08-29,7,7 jul17 batch,35,0,0.0,5.37,4
+2026-08-29,8,8 other blog (index/pagination/not-in-db),5,0,0.0,24.8,1
+2026-08-29,9,9 mcp24+050-055,0,0,,,0
+2026-08-29,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-08-29,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,361,7,0.0194,21.84,58
+2026-08-29,site_all_pages,sum of all page rows,637,7,0.011,15.85,59
+2026-08-29,property_total,property-level total (by property; GSC UI number),585,7,0.012,15.28,
+2026-08-29,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),91,,,,
+2026-08-29,device_desktop,"property-level, desktop",513,5,0.0097,16.58,
+2026-08-29,device_mobile,"property-level, mobile",72,2,0.0278,6.01,
+2026-08-30,1,1 home,54,2,0.037,14.72,1
+2026-08-30,2,2 product/marketing,60,0,0.0,30.77,18
+2026-08-30,3,3 docs,24,0,0.0,51.79,4
+2026-08-30,4,4 usda-guide,348,0,0.0,8.2,1
+2026-08-30,5,5 comparison posts,103,0,0.0,14.61,11
+2026-08-30,6,6 june batch,71,0,0.0,13.94,19
+2026-08-30,7,7 jul17 batch,14,0,0.0,4.21,4
+2026-08-30,8,8 other blog (index/pagination/not-in-db),7,0,0.0,32.86,1
+2026-08-30,9,9 mcp24+050-055,0,0,,,0
+2026-08-30,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-08-30,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,333,2,0.006,20.02,58
+2026-08-30,site_all_pages,sum of all page rows,681,2,0.0029,13.98,59
+2026-08-30,property_total,property-level total (by property; GSC UI number),634,2,0.0032,14.01,
+2026-08-30,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),89,,,,
+2026-08-30,device_desktop,"property-level, desktop",502,1,0.002,15.77,
+2026-08-30,device_mobile,"property-level, mobile",132,1,0.0076,7.34,
+2026-08-31,1,1 home,146,10,0.0685,18.23,1
+2026-08-31,2,2 product/marketing,143,0,0.0,45.69,19
+2026-08-31,3,3 docs,40,0,0.0,55.33,5
+2026-08-31,4,4 usda-guide,337,1,0.003,8.61,1
+2026-08-31,5,5 comparison posts,144,5,0.0347,16.56,13
+2026-08-31,6,6 june batch,73,0,0.0,24.67,20
+2026-08-31,7,7 jul17 batch,26,0,0.0,9.35,6
+2026-08-31,8,8 other blog (index/pagination/not-in-db),11,0,0.0,22.73,1
+2026-08-31,9,9 mcp24+050-055,0,0,,,0
+2026-08-31,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-08-31,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,583,15,0.0257,27.59,65
+2026-08-31,site_all_pages,sum of all page rows,920,16,0.0174,20.64,66
+2026-08-31,property_total,property-level total (by property; GSC UI number),700,16,0.0229,12.57,
+2026-08-31,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),149,,,,
+2026-08-31,device_desktop,"property-level, desktop",605,10,0.0165,13.37,
+2026-08-31,device_mobile,"property-level, mobile",95,6,0.0632,7.49,
+2026-09-01,1,1 home,83,5,0.0602,9.12,1
+2026-09-01,2,2 product/marketing,64,1,0.0156,16.31,15
+2026-09-01,3,3 docs,18,1,0.0556,10.83,7
+2026-09-01,4,4 usda-guide,378,2,0.0053,8.08,1
+2026-09-01,5,5 comparison posts,202,3,0.0149,8.45,12
+2026-09-01,6,6 june batch,102,1,0.0098,9.03,21
+2026-09-01,7,7 jul17 batch,102,0,0.0,5.67,5
+2026-09-01,8,8 other blog (index/pagination/not-in-db),4,0,0.0,10.5,1
+2026-09-01,9,9 mcp24+050-055,0,0,,,0
+2026-09-01,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-09-01,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,575,11,0.0191,9.12,62
+2026-09-01,site_all_pages,sum of all page rows,953,13,0.0136,8.71,63
+2026-09-01,property_total,property-level total (by property; GSC UI number),894,12,0.0134,8.67,
+2026-09-01,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),87,,,,
+2026-09-01,device_desktop,"property-level, desktop",832,10,0.012,8.78,
+2026-09-01,device_mobile,"property-level, mobile",61,2,0.0328,7.16,
+2026-09-02,1,1 home,64,10,0.1562,10.66,1
+2026-09-02,2,2 product/marketing,93,1,0.0108,37.34,17
+2026-09-02,3,3 docs,24,0,0.0,43.17,4
+2026-09-02,4,4 usda-guide,517,1,0.0019,7.99,1
+2026-09-02,5,5 comparison posts,144,0,0.0,14.14,12
+2026-09-02,6,6 june batch,83,0,0.0,8.82,21
+2026-09-02,7,7 jul17 batch,26,0,0.0,5.62,4
+2026-09-02,8,8 other blog (index/pagination/not-in-db),16,0,0.0,23.81,1
+2026-09-02,9,9 mcp24+050-055,0,0,,,0
+2026-09-02,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-09-02,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,450,11,0.0244,18.86,60
+2026-09-02,site_all_pages,sum of all page rows,967,12,0.0124,13.05,61
+2026-09-02,property_total,property-level total (by property; GSC UI number),896,12,0.0134,11.88,
+2026-09-02,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),153,,,,
+2026-09-02,device_desktop,"property-level, desktop",837,9,0.0108,12.2,
+2026-09-02,device_mobile,"property-level, mobile",58,3,0.0517,7.34,
+2026-09-03,1,1 home,58,8,0.1379,6.72,1
+2026-09-03,2,2 product/marketing,61,0,0.0,8.39,14
+2026-09-03,3,3 docs,14,0,0.0,7.21,4
+2026-09-03,4,4 usda-guide,508,0,0.0,7.36,1
+2026-09-03,5,5 comparison posts,108,0,0.0,9.73,11
+2026-09-03,6,6 june batch,67,0,0.0,8.04,19
+2026-09-03,7,7 jul17 batch,25,0,0.0,5.92,4
+2026-09-03,8,8 other blog (index/pagination/not-in-db),2,0,0.0,9.5,1
+2026-09-03,9,9 mcp24+050-055,0,0,,,0
+2026-09-03,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-09-03,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,335,8,0.0239,8.24,54
+2026-09-03,site_all_pages,sum of all page rows,843,8,0.0095,7.71,55
+2026-09-03,property_total,property-level total (by property; GSC UI number),786,8,0.0102,7.69,
+2026-09-03,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),74,,,,
+2026-09-03,device_desktop,"property-level, desktop",728,6,0.0082,7.75,
+2026-09-03,device_mobile,"property-level, mobile",58,2,0.0345,7.05,
+2026-09-04,1,1 home,63,6,0.0952,12.14,1
+2026-09-04,2,2 product/marketing,86,0,0.0,39.31,16
+2026-09-04,3,3 docs,26,0,0.0,47.31,5
+2026-09-04,4,4 usda-guide,515,0,0.0,8.13,1
+2026-09-04,5,5 comparison posts,170,0,0.0,16.44,12
+2026-09-04,6,6 june batch,75,0,0.0,11.67,20
+2026-09-04,7,7 jul17 batch,38,0,0.0,7.92,6
+2026-09-04,8,8 other blog (index/pagination/not-in-db),6,0,0.0,40.83,1
+2026-09-04,9,9 mcp24+050-055,0,0,,,0
+2026-09-04,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-09-04,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,464,6,0.0129,20.67,61
+2026-09-04,site_all_pages,sum of all page rows,979,6,0.0061,14.07,62
+2026-09-04,property_total,property-level total (by property; GSC UI number),853,6,0.007,8.34,
+2026-09-04,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),113,,,,
+2026-09-04,device_desktop,"property-level, desktop",788,2,0.0025,8.25,
+2026-09-04,device_mobile,"property-level, mobile",64,4,0.0625,9.45,
+2026-09-05,1,1 home,41,6,0.1463,5.39,1
+2026-09-05,2,2 product/marketing,31,0,0.0,6.32,14
+2026-09-05,3,3 docs,11,0,0.0,8.18,5
+2026-09-05,4,4 usda-guide,486,0,0.0,7.58,1
+2026-09-05,5,5 comparison posts,120,0,0.0,9.02,9
+2026-09-05,6,6 june batch,96,0,0.0,7.24,22
+2026-09-05,7,7 jul17 batch,46,0,0.0,5.85,4
+2026-09-05,8,8 other blog (index/pagination/not-in-db),3,0,0.0,5.0,1
+2026-09-05,9,9 mcp24+050-055,0,0,,,0
+2026-09-05,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-09-05,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,348,6,0.0172,7.38,56
+2026-09-05,site_all_pages,sum of all page rows,834,6,0.0072,7.5,57
+2026-09-05,property_total,property-level total (by property; GSC UI number),817,6,0.0073,7.52,
+2026-09-05,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),76,,,,
+2026-09-05,device_desktop,"property-level, desktop",744,5,0.0067,7.65,
+2026-09-05,device_mobile,"property-level, mobile",71,1,0.0141,6.07,
+2026-09-06,1,1 home,62,6,0.0968,8.85,1
+2026-09-06,2,2 product/marketing,52,0,0.0,17.77,17
+2026-09-06,3,3 docs,15,0,0.0,16.13,4
+2026-09-06,4,4 usda-guide,398,0,0.0,8.01,1
+2026-09-06,5,5 comparison posts,121,0,0.0,10.93,8
+2026-09-06,6,6 june batch,61,0,0.0,9.38,19
+2026-09-06,7,7 jul17 batch,39,0,0.0,5.59,5
+2026-09-06,8,8 other blog (index/pagination/not-in-db),9,0,0.0,8.78,1
+2026-09-06,9,9 mcp24+050-055,0,0,,,0
+2026-09-06,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-09-06,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,359,6,0.0167,10.88,55
+2026-09-06,site_all_pages,sum of all page rows,757,6,0.0079,9.37,56
+2026-09-06,property_total,property-level total (by property; GSC UI number),714,6,0.0084,8.69,
+2026-09-06,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),107,,,,
+2026-09-06,device_desktop,"property-level, desktop",657,4,0.0061,8.84,
+2026-09-06,device_mobile,"property-level, mobile",57,2,0.0351,6.95,
+2026-09-07,1,1 home,134,10,0.0746,16.69,1
+2026-09-07,2,2 product/marketing,120,0,0.0,45.71,19
+2026-09-07,3,3 docs,28,0,0.0,51.96,4
+2026-09-07,4,4 usda-guide,339,1,0.0029,8.18,1
+2026-09-07,5,5 comparison posts,226,0,0.0,14.28,15
+2026-09-07,6,6 june batch,111,1,0.009,16.25,26
+2026-09-07,7,7 jul17 batch,31,0,0.0,8.19,4
+2026-09-07,8,8 other blog (index/pagination/not-in-db),11,0,0.0,21.45,1
+2026-09-07,9,9 mcp24+050-055,0,0,,,0
+2026-09-07,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-09-07,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,661,11,0.0166,22.24,70
+2026-09-07,site_all_pages,sum of all page rows,1000,12,0.012,17.47,71
+2026-09-07,property_total,property-level total (by property; GSC UI number),809,12,0.0148,8.89,
+2026-09-07,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),139,,,,
+2026-09-07,device_desktop,"property-level, desktop",745,10,0.0134,9.07,
+2026-09-07,device_mobile,"property-level, mobile",63,2,0.0317,6.89,
+2026-09-08,1,1 home,73,7,0.0959,7.32,1
+2026-09-08,2,2 product/marketing,71,1,0.0141,11.11,17
+2026-09-08,3,3 docs,15,0,0.0,7.13,3
+2026-09-08,4,4 usda-guide,302,1,0.0033,8.41,1
+2026-09-08,5,5 comparison posts,129,0,0.0,9.26,14
+2026-09-08,6,6 june batch,99,2,0.0202,7.63,25
+2026-09-08,7,7 jul17 batch,31,0,0.0,5.84,5
+2026-09-08,8,8 other blog (index/pagination/not-in-db),7,0,0.0,11.57,1
+2026-09-08,9,9 mcp24+050-055,0,0,,,0
+2026-09-08,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-09-08,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,425,10,0.0235,8.57,66
+2026-09-08,site_all_pages,sum of all page rows,727,11,0.0151,8.5,67
+2026-09-08,property_total,property-level total (by property; GSC UI number),653,11,0.0168,8.3,
+2026-09-08,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),83,,,,
+2026-09-08,device_desktop,"property-level, desktop",588,7,0.0119,8.46,
+2026-09-08,device_mobile,"property-level, mobile",62,4,0.0645,7.05,
+2026-09-09,1,1 home,58,8,0.1379,6.22,1
+2026-09-09,2,2 product/marketing,66,0,0.0,23.11,17
+2026-09-09,3,3 docs,23,0,0.0,20.48,3
+2026-09-09,4,4 usda-guide,425,0,0.0,7.96,1
+2026-09-09,5,5 comparison posts,136,0,0.0,8.13,12
+2026-09-09,6,6 june batch,105,0,0.0,10.64,22
+2026-09-09,7,7 jul17 batch,58,0,0.0,5.86,5
+2026-09-09,8,8 other blog (index/pagination/not-in-db),9,0,0.0,17.89,1
+2026-09-09,9,9 mcp24+050-055,0,0,,,0
+2026-09-09,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-09-09,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,455,8,0.0176,11.17,61
+2026-09-09,site_all_pages,sum of all page rows,880,8,0.0091,9.62,62
+2026-09-09,property_total,property-level total (by property; GSC UI number),797,8,0.01,7.77,
+2026-09-09,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),87,,,,
+2026-09-09,device_desktop,"property-level, desktop",720,7,0.0097,7.86,
+2026-09-09,device_mobile,"property-level, mobile",77,1,0.013,6.9,
+2026-09-10,1,1 home,63,4,0.0635,7.08,1
+2026-09-10,2,2 product/marketing,43,0,0.0,7.6,10
+2026-09-10,3,3 docs,14,0,0.0,4.86,3
+2026-09-10,4,4 usda-guide,497,0,0.0,7.99,1
+2026-09-10,5,5 comparison posts,184,0,0.0,7.07,11
+2026-09-10,6,6 june batch,99,0,0.0,6.93,13
+2026-09-10,7,7 jul17 batch,96,0,0.0,5.26,4
+2026-09-10,8,8 other blog (index/pagination/not-in-db),4,0,0.0,9.25,1
+2026-09-10,9,9 mcp24+050-055,0,0,,,0
+2026-09-10,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-09-10,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,503,4,0.008,6.7,43
+2026-09-10,site_all_pages,sum of all page rows,1000,4,0.004,7.34,44
+2026-09-10,property_total,property-level total (by property; GSC UI number),952,4,0.0042,7.38,
+2026-09-10,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),78,,,,
+2026-09-10,device_desktop,"property-level, desktop",913,4,0.0044,7.42,
+2026-09-10,device_mobile,"property-level, mobile",39,0,0,6.59,
+2026-09-11,1,1 home,68,9,0.1324,12.62,1
+2026-09-11,2,2 product/marketing,84,0,0.0,35.94,15
+2026-09-11,3,3 docs,24,0,0.0,47.79,4
+2026-09-11,4,4 usda-guide,454,0,0.0,8.72,1
+2026-09-11,5,5 comparison posts,187,1,0.0053,14.68,11
+2026-09-11,6,6 june batch,115,2,0.0174,14.31,21
+2026-09-11,7,7 jul17 batch,36,0,0.0,9.94,6
+2026-09-11,8,8 other blog (index/pagination/not-in-db),11,0,0.0,28.55,1
+2026-09-11,9,9 mcp24+050-055,0,0,,,0
+2026-09-11,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-09-11,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,525,12,0.0229,19.21,59
+2026-09-11,site_all_pages,sum of all page rows,979,12,0.0123,14.35,60
+2026-09-11,property_total,property-level total (by property; GSC UI number),834,12,0.0144,8.44,
+2026-09-11,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),84,,,,
+2026-09-11,device_desktop,"property-level, desktop",790,9,0.0114,8.28,
+2026-09-11,device_mobile,"property-level, mobile",43,3,0.0698,11.37,
+2026-09-12,1,1 home,37,7,0.1892,4.78,1
+2026-09-12,2,2 product/marketing,48,1,0.0208,7.65,14
+2026-09-12,3,3 docs,9,0,0.0,7.22,3
+2026-09-12,4,4 usda-guide,415,0,0.0,7.78,1
+2026-09-12,5,5 comparison posts,115,2,0.0174,6.97,11
+2026-09-12,6,6 june batch,90,1,0.0111,7.83,21
+2026-09-12,7,7 jul17 batch,58,1,0.0172,4.78,5
+2026-09-12,8,8 other blog (index/pagination/not-in-db),4,0,0.0,16.25,1
+2026-09-12,9,9 mcp24+050-055,0,0,,,0
+2026-09-12,10,"10 other later posts (oct-01, sep-10, oct-07)",0,0,,,0
+2026-09-12,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,361,12,0.0332,6.81,56
+2026-09-12,site_all_pages,sum of all page rows,776,12,0.0155,7.33,57
+2026-09-12,property_total,property-level total (by property; GSC UI number),756,12,0.0159,7.36,
+2026-09-12,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),49,,,,
+2026-09-12,device_desktop,"property-level, desktop",721,4,0.0055,7.45,
+2026-09-12,device_mobile,"property-level, mobile",35,8,0.2286,5.51,
+2026-09-13,1,1 home,57,5,0.0877,6.49,1
+2026-09-13,2,2 product/marketing,62,1,0.0161,11.39,16
+2026-09-13,3,3 docs,26,0,0.0,11.54,6
+2026-09-13,4,4 usda-guide,486,0,0.0,8.16,1
+2026-09-13,5,5 comparison posts,93,0,0.0,7.95,10
+2026-09-13,6,6 june batch,82,2,0.0244,9.13,17
+2026-09-13,7,7 jul17 batch,37,0,0.0,6.24,5
+2026-09-13,8,8 other blog (index/pagination/not-in-db),6,0,0.0,5.33,1
+2026-09-13,9,9 mcp24+050-055,0,0,,,0
+2026-09-13,10,"10 other later posts (oct-01, sep-10, oct-07)",9,0,0.0,12.56,1
+2026-09-13,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,372,8,0.0215,8.71,57
+2026-09-13,site_all_pages,sum of all page rows,858,8,0.0093,8.4,58
+2026-09-13,property_total,property-level total (by property; GSC UI number),789,8,0.0101,8.23,
+2026-09-13,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),50,,,,
+2026-09-13,device_desktop,"property-level, desktop",758,5,0.0066,8.32,
+2026-09-13,device_mobile,"property-level, mobile",29,3,0.1034,5.93,
+2026-09-14,1,1 home,56,11,0.1964,4.32,1
+2026-09-14,2,2 product/marketing,45,0,0.0,13.2,17
+2026-09-14,3,3 docs,7,0,0.0,16.57,2
+2026-09-14,4,4 usda-guide,275,1,0.0036,7.48,1
+2026-09-14,5,5 comparison posts,95,3,0.0316,7.6,11
+2026-09-14,6,6 june batch,84,2,0.0238,7.42,20
+2026-09-14,7,7 jul17 batch,40,0,0.0,5.7,5
+2026-09-14,8,8 other blog (index/pagination/not-in-db),2,0,0.0,13.0,1
+2026-09-14,9,9 mcp24+050-055,0,0,,,0
+2026-09-14,10,"10 other later posts (oct-01, sep-10, oct-07)",3,0,0.0,23.67,1
+2026-09-14,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,332,16,0.0482,7.9,58
+2026-09-14,site_all_pages,sum of all page rows,607,17,0.028,7.71,59
+2026-09-14,property_total,property-level total (by property; GSC UI number),577,17,0.0295,7.46,
+2026-09-14,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),40,,,,
+2026-09-14,device_desktop,"property-level, desktop",551,12,0.0218,7.47,
+2026-09-14,device_mobile,"property-level, mobile",26,5,0.1923,7.15,
+2026-09-15,1,1 home,57,7,0.1228,7.37,1
+2026-09-15,2,2 product/marketing,50,1,0.02,12.12,16
+2026-09-15,3,3 docs,17,0,0.0,11.94,2
+2026-09-15,4,4 usda-guide,284,0,0.0,7.99,1
+2026-09-15,5,5 comparison posts,103,1,0.0097,6.62,9
+2026-09-15,6,6 june batch,108,1,0.0093,7.94,22
+2026-09-15,7,7 jul17 batch,37,1,0.027,5.86,5
+2026-09-15,8,8 other blog (index/pagination/not-in-db),2,0,0.0,9.5,1
+2026-09-15,9,9 mcp24+050-055,0,0,,,0
+2026-09-15,10,"10 other later posts (oct-01, sep-10, oct-07)",8,0,0.0,14.5,1
+2026-09-15,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,382,11,0.0288,8.17,57
+2026-09-15,site_all_pages,sum of all page rows,666,11,0.0165,8.09,58
+2026-09-15,property_total,property-level total (by property; GSC UI number),624,11,0.0176,8.04,
+2026-09-15,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),52,,,,
+2026-09-15,device_desktop,"property-level, desktop",568,9,0.0158,8.18,
+2026-09-15,device_mobile,"property-level, mobile",56,2,0.0357,6.59,
+2026-09-16,1,1 home,54,6,0.1111,7.87,1
+2026-09-16,2,2 product/marketing,132,0,0.0,39.89,22
+2026-09-16,3,3 docs,34,0,0.0,38.94,3
+2026-09-16,4,4 usda-guide,226,0,0.0,7.71,1
+2026-09-16,5,5 comparison posts,115,0,0.0,14.45,12
+2026-09-16,6,6 june batch,179,0,0.0,17.21,22
+2026-09-16,7,7 jul17 batch,20,0,0.0,5.4,4
+2026-09-16,8,8 other blog (index/pagination/not-in-db),15,0,0.0,19.0,1
+2026-09-16,9,9 mcp24+050-055,0,0,,,0
+2026-09-16,10,"10 other later posts (oct-01, sep-10, oct-07)",17,0,0.0,47.53,1
+2026-09-16,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,566,6,0.0106,22.89,66
+2026-09-16,site_all_pages,sum of all page rows,792,6,0.0076,18.56,67
+2026-09-16,property_total,property-level total (by property; GSC UI number),654,6,0.0092,13.84,
+2026-09-16,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),127,,,,
+2026-09-16,device_desktop,"property-level, desktop",634,5,0.0079,14.05,
+2026-09-16,device_mobile,"property-level, mobile",19,1,0.0526,7.42,
+2026-09-17,1,1 home,62,7,0.1129,7.15,1
+2026-09-17,2,2 product/marketing,58,0,0.0,10.31,16
+2026-09-17,3,3 docs,16,0,0.0,10.12,3
+2026-09-17,4,4 usda-guide,233,1,0.0043,8.27,1
+2026-09-17,5,5 comparison posts,100,0,0.0,7.19,11
+2026-09-17,6,6 june batch,83,2,0.0241,9.94,18
+2026-09-17,7,7 jul17 batch,45,0,0.0,6.76,5
+2026-09-17,8,8 other blog (index/pagination/not-in-db),1,0,0.0,4.0,1
+2026-09-17,9,9 mcp24+050-055,0,0,,,0
+2026-09-17,10,"10 other later posts (oct-01, sep-10, oct-07)",6,0,0.0,33.67,1
+2026-09-17,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,371,9,0.0243,8.78,56
+2026-09-17,site_all_pages,sum of all page rows,604,10,0.0166,8.58,57
+2026-09-17,property_total,property-level total (by property; GSC UI number),552,10,0.0181,7.9,
+2026-09-17,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),52,,,,
+2026-09-17,device_desktop,"property-level, desktop",528,10,0.0189,7.95,
+2026-09-17,device_mobile,"property-level, mobile",24,0,0,6.71,
+2026-09-18,1,1 home,58,3,0.0517,11.26,1
+2026-09-18,2,2 product/marketing,65,0,0.0,30.06,16
+2026-09-18,3,3 docs,19,0,0.0,37.21,4
+2026-09-18,4,4 usda-guide,107,0,0.0,10.4,1
+2026-09-18,5,5 comparison posts,106,0,0.0,13.87,13
+2026-09-18,6,6 june batch,56,1,0.0179,18.39,22
+2026-09-18,7,7 jul17 batch,14,0,0.0,10.14,5
+2026-09-18,8,8 other blog (index/pagination/not-in-db),5,0,0.0,23.6,1
+2026-09-18,9,9 mcp24+050-055,0,0,,,0
+2026-09-18,10,"10 other later posts (oct-01, sep-10, oct-07)",2,0,0.0,86.0,1
+2026-09-18,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,325,4,0.0123,19.22,63
+2026-09-18,site_all_pages,sum of all page rows,432,4,0.0093,17.03,64
+2026-09-18,property_total,property-level total (by property; GSC UI number),343,4,0.0117,10.24,
+2026-09-18,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),58,,,,
+2026-09-18,device_desktop,"property-level, desktop",303,4,0.0132,10.23,
+2026-09-18,device_mobile,"property-level, mobile",39,0,0,10.28,
+2026-09-19,1,1 home,51,4,0.0784,7.37,1
+2026-09-19,2,2 product/marketing,28,0,0.0,6.25,12
+2026-09-19,3,3 docs,11,2,0.1818,15.18,3
+2026-09-19,4,4 usda-guide,110,0,0.0,8.25,1
+2026-09-19,5,5 comparison posts,50,0,0.0,7.3,6
+2026-09-19,6,6 june batch,49,1,0.0204,8.76,21
+2026-09-19,7,7 jul17 batch,6,0,0.0,5.17,3
+2026-09-19,8,8 other blog (index/pagination/not-in-db),2,0,0.0,5.5,1
+2026-09-19,9,9 mcp24+050-055,0,0,,,0
+2026-09-19,10,"10 other later posts (oct-01, sep-10, oct-07)",4,0,0.0,3.0,1
+2026-09-19,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,201,7,0.0348,7.79,48
+2026-09-19,site_all_pages,sum of all page rows,311,7,0.0225,7.95,49
+2026-09-19,property_total,property-level total (by property; GSC UI number),278,6,0.0216,8.32,
+2026-09-19,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),42,,,,
+2026-09-19,device_desktop,"property-level, desktop",239,4,0.0167,8.81,
+2026-09-19,device_mobile,"property-level, mobile",39,2,0.0513,5.33,
+2026-09-20,1,1 home,39,7,0.1795,9.21,1
+2026-09-20,2,2 product/marketing,30,1,0.0333,17.2,13
+2026-09-20,3,3 docs,4,0,0.0,29.25,1
+2026-09-20,4,4 usda-guide,106,0,0.0,8.51,1
+2026-09-20,5,5 comparison posts,50,1,0.02,9.86,7
+2026-09-20,6,6 june batch,39,0,0.0,10.9,16
+2026-09-20,7,7 jul17 batch,8,0,0.0,8.0,4
+2026-09-20,8,8 other blog (index/pagination/not-in-db),1,0,0.0,8.0,1
+2026-09-20,9,9 mcp24+050-055,0,0,,,0
+2026-09-20,10,"10 other later posts (oct-01, sep-10, oct-07)",2,0,0.0,77.5,1
+2026-09-20,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,173,9,0.052,12.35,44
+2026-09-20,site_all_pages,sum of all page rows,279,9,0.0323,10.89,45
+2026-09-20,property_total,property-level total (by property; GSC UI number),263,9,0.0342,10.46,
+2026-09-20,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),45,,,,
+2026-09-20,device_desktop,"property-level, desktop",239,5,0.0209,10.75,
+2026-09-20,device_mobile,"property-level, mobile",24,4,0.1667,7.58,
+2026-09-21,1,1 home,52,7,0.1346,4.98,1
+2026-09-21,2,2 product/marketing,40,0,0.0,6.3,12
+2026-09-21,3,3 docs,9,0,0.0,3.89,3
+2026-09-21,4,4 usda-guide,92,0,0.0,7.4,1
+2026-09-21,5,5 comparison posts,55,2,0.0364,7.04,10
+2026-09-21,6,6 june batch,36,1,0.0278,8.58,13
+2026-09-21,7,7 jul17 batch,5,0,0.0,5.6,2
+2026-09-21,8,8 other blog (index/pagination/not-in-db),0,0,,,0
+2026-09-21,9,9 mcp24+050-055,0,0,,,0
+2026-09-21,10,"10 other later posts (oct-01, sep-10, oct-07)",2,1,0.5,4.5,1
+2026-09-21,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,199,11,0.0553,6.43,42
+2026-09-21,site_all_pages,sum of all page rows,291,11,0.0378,6.74,43
+2026-09-21,property_total,property-level total (by property; GSC UI number),260,11,0.0423,6.89,
+2026-09-21,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),33,,,,
+2026-09-21,device_desktop,"property-level, desktop",225,8,0.0356,6.73,
+2026-09-21,device_mobile,"property-level, mobile",35,3,0.0857,7.89,
+2026-09-22,1,1 home,55,5,0.0909,5.2,1
+2026-09-22,2,2 product/marketing,56,1,0.0179,10.0,16
+2026-09-22,3,3 docs,15,0,0.0,6.53,4
+2026-09-22,4,4 usda-guide,71,0,0.0,7.73,1
+2026-09-22,5,5 comparison posts,51,1,0.0196,8.41,7
+2026-09-22,6,6 june batch,37,0,0.0,8.59,15
+2026-09-22,7,7 jul17 batch,8,0,0.0,7.62,3
+2026-09-22,8,8 other blog (index/pagination/not-in-db),1,0,0.0,18.0,1
+2026-09-22,9,9 mcp24+050-055,0,0,,,0
+2026-09-22,10,"10 other later posts (oct-01, sep-10, oct-07)",7,0,0.0,6.29,1
+2026-09-22,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,230,7,0.0304,7.89,48
+2026-09-22,site_all_pages,sum of all page rows,301,7,0.0233,7.85,49
+2026-09-22,property_total,property-level total (by property; GSC UI number),248,7,0.0282,8.26,
+2026-09-22,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),33,,,,
+2026-09-22,device_desktop,"property-level, desktop",217,6,0.0276,8.3,
+2026-09-22,device_mobile,"property-level, mobile",31,1,0.0323,7.94,
+2026-09-23,1,1 home,61,4,0.0656,7.46,1
+2026-09-23,2,2 product/marketing,47,0,0.0,7.72,15
+2026-09-23,3,3 docs,16,0,0.0,16.06,4
+2026-09-23,4,4 usda-guide,95,0,0.0,8.97,1
+2026-09-23,5,5 comparison posts,43,2,0.0465,8.37,8
+2026-09-23,6,6 june batch,46,0,0.0,9.0,18
+2026-09-23,7,7 jul17 batch,35,0,0.0,6.97,5
+2026-09-23,8,8 other blog (index/pagination/not-in-db),1,0,0.0,9.0,1
+2026-09-23,9,9 mcp24+050-055,0,0,,,0
+2026-09-23,10,"10 other later posts (oct-01, sep-10, oct-07)",2,0,0.0,50.5,1
+2026-09-23,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,251,6,0.0239,8.78,53
+2026-09-23,site_all_pages,sum of all page rows,346,6,0.0173,8.83,54
+2026-09-23,property_total,property-level total (by property; GSC UI number),309,5,0.0162,8.65,
+2026-09-23,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),51,,,,
+2026-09-23,device_desktop,"property-level, desktop",282,3,0.0106,8.96,
+2026-09-23,device_mobile,"property-level, mobile",27,2,0.0741,5.33,
+2026-09-24,1,1 home,57,3,0.0526,5.84,1
+2026-09-24,2,2 product/marketing,55,1,0.0182,12.6,17
+2026-09-24,3,3 docs,13,0,0.0,6.15,3
+2026-09-24,4,4 usda-guide,82,0,0.0,8.09,1
+2026-09-24,5,5 comparison posts,44,0,0.0,8.39,9
+2026-09-24,6,6 june batch,49,0,0.0,7.37,14
+2026-09-24,7,7 jul17 batch,13,0,0.0,6.0,5
+2026-09-24,8,8 other blog (index/pagination/not-in-db),4,0,0.0,10.5,1
+2026-09-24,9,9 mcp24+050-055,0,0,,,0
+2026-09-24,10,"10 other later posts (oct-01, sep-10, oct-07)",3,0,0.0,31.33,1
+2026-09-24,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,238,4,0.0168,8.61,51
+2026-09-24,site_all_pages,sum of all page rows,320,4,0.0125,8.48,52
+2026-09-24,property_total,property-level total (by property; GSC UI number),274,4,0.0146,8.19,
+2026-09-24,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),34,,,,
+2026-09-24,device_desktop,"property-level, desktop",233,1,0.0043,8.7,
+2026-09-24,device_mobile,"property-level, mobile",41,3,0.0732,5.27,
+2026-09-25,1,1 home,97,4,0.0412,16.73,1
+2026-09-25,2,2 product/marketing,128,0,0.0,53.3,21
+2026-09-25,3,3 docs,26,0,0.0,40.38,6
+2026-09-25,4,4 usda-guide,90,0,0.0,9.1,1
+2026-09-25,5,5 comparison posts,110,0,0.0,26.15,11
+2026-09-25,6,6 june batch,104,0,0.0,32.42,27
+2026-09-25,7,7 jul17 batch,5,1,0.2,24.6,3
+2026-09-25,8,8 other blog (index/pagination/not-in-db),14,0,0.0,26.5,1
+2026-09-25,9,9 mcp24+050-055,0,0,,,0
+2026-09-25,10,"10 other later posts (oct-01, sep-10, oct-07)",15,0,0.0,43.6,1
+2026-09-25,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,499,5,0.01,33.85,71
+2026-09-25,site_all_pages,sum of all page rows,589,5,0.0085,30.07,72
+2026-09-25,property_total,property-level total (by property; GSC UI number),341,5,0.0147,10.6,
+2026-09-25,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),93,,,,
+2026-09-25,device_desktop,"property-level, desktop",296,4,0.0135,10.73,
+2026-09-25,device_mobile,"property-level, mobile",45,1,0.0222,9.76,
+2026-09-26,1,1 home,38,0,0.0,7.11,1
+2026-09-26,2,2 product/marketing,37,1,0.027,12.95,13
+2026-09-26,3,3 docs,19,0,0.0,14.11,4
+2026-09-26,4,4 usda-guide,96,0,0.0,7.27,1
+2026-09-26,5,5 comparison posts,36,0,0.0,8.08,11
+2026-09-26,6,6 june batch,60,0,0.0,9.73,19
+2026-09-26,7,7 jul17 batch,2,0,0.0,3.5,2
+2026-09-26,8,8 other blog (index/pagination/not-in-db),2,0,0.0,6.0,1
+2026-09-26,9,9 mcp24+050-055,0,0,,,0
+2026-09-26,10,"10 other later posts (oct-01, sep-10, oct-07)",7,0,0.0,11.43,1
+2026-09-26,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,201,1,0.005,9.91,52
+2026-09-26,site_all_pages,sum of all page rows,297,1,0.0034,9.05,53
+2026-09-26,property_total,property-level total (by property; GSC UI number),261,1,0.0038,7.92,
+2026-09-26,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),50,,,,
+2026-09-26,device_desktop,"property-level, desktop",220,1,0.0045,8.22,
+2026-09-26,device_mobile,"property-level, mobile",38,0,0,6.47,
+2026-09-27,1,1 home,55,6,0.1091,9.04,1
+2026-09-27,2,2 product/marketing,46,0,0.0,9.17,15
+2026-09-27,3,3 docs,19,0,0.0,6.95,6
+2026-09-27,4,4 usda-guide,73,0,0.0,7.52,1
+2026-09-27,5,5 comparison posts,40,0,0.0,10.3,8
+2026-09-27,6,6 june batch,52,0,0.0,8.79,22
+2026-09-27,7,7 jul17 batch,8,0,0.0,5.62,2
+2026-09-27,8,8 other blog (index/pagination/not-in-db),0,0,,,0
+2026-09-27,9,9 mcp24+050-055,0,0,,,0
+2026-09-27,10,"10 other later posts (oct-01, sep-10, oct-07)",5,0,0.0,38.2,1
+2026-09-27,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,225,6,0.0267,9.58,55
+2026-09-27,site_all_pages,sum of all page rows,298,6,0.0201,9.08,56
+2026-09-27,property_total,property-level total (by property; GSC UI number),257,6,0.0233,9.55,
+2026-09-27,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),45,,,,
+2026-09-27,device_desktop,"property-level, desktop",226,3,0.0133,10.03,
+2026-09-27,device_mobile,"property-level, mobile",31,3,0.0968,6.03,
+2026-09-28,1,1 home,50,5,0.1,5.36,1
+2026-09-28,2,2 product/marketing,52,4,0.0769,8.92,19
+2026-09-28,3,3 docs,25,0,0.0,7.32,6
+2026-09-28,4,4 usda-guide,78,0,0.0,7.05,1
+2026-09-28,5,5 comparison posts,66,0,0.0,6.62,8
+2026-09-28,6,6 june batch,46,1,0.0217,7.39,20
+2026-09-28,7,7 jul17 batch,7,0,0.0,4.14,2
+2026-09-28,8,8 other blog (index/pagination/not-in-db),2,0,0.0,2.0,1
+2026-09-28,9,9 mcp24+050-055,3,0,0.0,20.33,2
+2026-09-28,10,"10 other later posts (oct-01, sep-10, oct-07)",7,0,0.0,4.14,1
+2026-09-28,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,258,10,0.0388,7.03,60
+2026-09-28,site_all_pages,sum of all page rows,336,10,0.0298,7.04,61
+2026-09-28,property_total,property-level total (by property; GSC UI number),280,10,0.0357,6.86,
+2026-09-28,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),36,,,,
+2026-09-28,device_desktop,"property-level, desktop",242,10,0.0413,6.9,
+2026-09-28,device_mobile,"property-level, mobile",38,0,0,6.63,
+2026-09-29,1,1 home,55,4,0.0727,6.58,1
+2026-09-29,2,2 product/marketing,42,0,0.0,7.74,15
+2026-09-29,3,3 docs,16,0,0.0,17.38,5
+2026-09-29,4,4 usda-guide,71,0,0.0,7.42,1
+2026-09-29,5,5 comparison posts,42,0,0.0,8.6,9
+2026-09-29,6,6 june batch,49,1,0.0204,7.98,19
+2026-09-29,7,7 jul17 batch,2,0,0.0,3.5,1
+2026-09-29,8,8 other blog (index/pagination/not-in-db),3,0,0.0,7.0,1
+2026-09-29,9,9 mcp24+050-055,40,2,0.05,7.08,16
+2026-09-29,10,"10 other later posts (oct-01, sep-10, oct-07)",1,0,0.0,4.0,1
+2026-09-29,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,250,7,0.028,8.13,68
+2026-09-29,site_all_pages,sum of all page rows,321,7,0.0218,7.97,69
+2026-09-29,property_total,property-level total (by property; GSC UI number),290,7,0.0241,8.17,
+2026-09-29,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),58,,,,
+2026-09-29,device_desktop,"property-level, desktop",245,4,0.0163,8.31,
+2026-09-29,device_mobile,"property-level, mobile",45,3,0.0667,7.4,
+2026-09-30,1,1 home,52,4,0.0769,10.19,1
+2026-09-30,2,2 product/marketing,106,1,0.0094,35.17,19
+2026-09-30,3,3 docs,29,0,0.0,35.9,4
+2026-09-30,4,4 usda-guide,72,0,0.0,7.97,1
+2026-09-30,5,5 comparison posts,45,0,0.0,17.82,9
+2026-09-30,6,6 june batch,66,0,0.0,29.73,20
+2026-09-30,7,7 jul17 batch,5,0,0.0,6.2,4
+2026-09-30,8,8 other blog (index/pagination/not-in-db),4,0,0.0,20.75,1
+2026-09-30,9,9 mcp24+050-055,147,2,0.0136,22.96,39
+2026-09-30,10,"10 other later posts (oct-01, sep-10, oct-07)",10,0,0.0,46.3,1
+2026-09-30,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,464,7,0.0151,25.89,98
+2026-09-30,site_all_pages,sum of all page rows,536,7,0.0131,23.49,99
+2026-09-30,property_total,property-level total (by property; GSC UI number),412,7,0.017,13.69,
+2026-09-30,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),109,,,,
+2026-09-30,device_desktop,"property-level, desktop",324,6,0.0185,15.22,
+2026-09-30,device_mobile,"property-level, mobile",88,1,0.0114,8.06,
+2026-10-01,1,1 home,61,5,0.082,5.07,1
+2026-10-01,2,2 product/marketing,61,2,0.0328,5.98,15
+2026-10-01,3,3 docs,26,2,0.0769,8.85,5
+2026-10-01,4,4 usda-guide,81,0,0.0,7.27,1
+2026-10-01,5,5 comparison posts,22,1,0.0455,4.91,4
+2026-10-01,6,6 june batch,36,0,0.0,10.56,14
+2026-10-01,7,7 jul17 batch,4,0,0.0,5.0,2
+2026-10-01,8,8 other blog (index/pagination/not-in-db),0,0,,,0
+2026-10-01,9,9 mcp24+050-055,188,1,0.0053,8.21,27
+2026-10-01,10,"10 other later posts (oct-01, sep-10, oct-07)",13,0,0.0,6.31,4
+2026-10-01,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,411,11,0.0268,7.39,72
+2026-10-01,site_all_pages,sum of all page rows,492,11,0.0224,7.37,73
+2026-10-01,property_total,property-level total (by property; GSC UI number),427,11,0.0258,7.52,
+2026-10-01,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),78,,,,
+2026-10-01,device_desktop,"property-level, desktop",271,9,0.0332,7.69,
+2026-10-01,device_mobile,"property-level, mobile",153,2,0.0131,7.22,
+2026-10-02,1,1 home,140,1,0.0071,14.45,1
+2026-10-02,2,2 product/marketing,237,0,0.0,47.64,27
+2026-10-02,3,3 docs,57,0,0.0,47.26,7
+2026-10-02,4,4 usda-guide,101,0,0.0,12.62,1
+2026-10-02,5,5 comparison posts,133,1,0.0075,40.23,12
+2026-10-02,6,6 june batch,133,2,0.015,54.08,22
+2026-10-02,7,7 jul17 batch,9,0,0.0,16.78,4
+2026-10-02,8,8 other blog (index/pagination/not-in-db),16,0,0.0,22.19,1
+2026-10-02,9,9 mcp24+050-055,225,6,0.0267,25.2,39
+2026-10-02,10,"10 other later posts (oct-01, sep-10, oct-07)",68,1,0.0147,34.4,10
+2026-10-02,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,1018,11,0.0108,36.41,123
+2026-10-02,site_all_pages,sum of all page rows,1119,11,0.0098,34.26,124
+2026-10-02,property_total,property-level total (by property; GSC UI number),605,11,0.0182,11.69,
+2026-10-02,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),188,,,,
+2026-10-02,device_desktop,"property-level, desktop",452,7,0.0155,12.84,
+2026-10-02,device_mobile,"property-level, mobile",148,4,0.027,8.29,
+2026-10-03,1,1 home,42,3,0.0714,4.6,1
+2026-10-03,2,2 product/marketing,41,0,0.0,6.02,16
+2026-10-03,3,3 docs,9,1,0.1111,4.11,2
+2026-10-03,4,4 usda-guide,43,0,0.0,7.53,1
+2026-10-03,5,5 comparison posts,34,0,0.0,4.82,8
+2026-10-03,6,6 june batch,34,1,0.0294,7.29,18
+2026-10-03,7,7 jul17 batch,4,0,0.0,5.0,1
+2026-10-03,8,8 other blog (index/pagination/not-in-db),1,0,0.0,8.0,1
+2026-10-03,9,9 mcp24+050-055,136,2,0.0147,7.93,28
+2026-10-03,10,"10 other later posts (oct-01, sep-10, oct-07)",35,1,0.0286,6.8,8
+2026-10-03,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,336,8,0.0238,6.65,83
+2026-10-03,site_all_pages,sum of all page rows,379,8,0.0211,6.75,84
+2026-10-03,property_total,property-level total (by property; GSC UI number),341,8,0.0235,6.87,
+2026-10-03,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),63,,,,
+2026-10-03,device_desktop,"property-level, desktop",217,3,0.0138,6.98,
+2026-10-03,device_mobile,"property-level, mobile",123,4,0.0325,6.67,
+2026-10-04,1,1 home,83,6,0.0723,5.61,1
+2026-10-04,2,2 product/marketing,47,1,0.0213,11.91,18
+2026-10-04,3,3 docs,14,1,0.0714,10.79,4
+2026-10-04,4,4 usda-guide,77,0,0.0,7.55,1
+2026-10-04,5,5 comparison posts,30,0,0.0,9.43,5
+2026-10-04,6,6 june batch,41,1,0.0244,10.95,14
+2026-10-04,7,7 jul17 batch,6,1,0.1667,4.67,4
+2026-10-04,8,8 other blog (index/pagination/not-in-db),0,0,,,0
+2026-10-04,9,9 mcp24+050-055,128,4,0.0312,8.25,25
+2026-10-04,10,"10 other later posts (oct-01, sep-10, oct-07)",44,4,0.0909,10.91,8
+2026-10-04,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,393,18,0.0458,8.84,79
+2026-10-04,site_all_pages,sum of all page rows,470,18,0.0383,8.63,80
+2026-10-04,property_total,property-level total (by property; GSC UI number),437,18,0.0412,8.32,
+2026-10-04,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),95,,,,
+2026-10-04,device_desktop,"property-level, desktop",300,13,0.0433,9.22,
+2026-10-04,device_mobile,"property-level, mobile",136,5,0.0368,6.3,
+2026-10-05,1,1 home,72,4,0.0556,4.94,1
+2026-10-05,2,2 product/marketing,55,3,0.0545,6.22,17
+2026-10-05,3,3 docs,23,1,0.0435,6.35,5
+2026-10-05,4,4 usda-guide,91,0,0.0,7.93,1
+2026-10-05,5,5 comparison posts,39,0,0.0,6.82,8
+2026-10-05,6,6 june batch,44,1,0.0227,6.39,18
+2026-10-05,7,7 jul17 batch,6,0,0.0,8.0,3
+2026-10-05,8,8 other blog (index/pagination/not-in-db),0,0,,,0
+2026-10-05,9,9 mcp24+050-055,154,3,0.0195,7.64,23
+2026-10-05,10,"10 other later posts (oct-01, sep-10, oct-07)",53,2,0.0377,5.36,8
+2026-10-05,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,446,14,0.0314,6.5,83
+2026-10-05,site_all_pages,sum of all page rows,537,14,0.0261,6.74,84
+2026-10-05,property_total,property-level total (by property; GSC UI number),473,14,0.0296,6.49,
+2026-10-05,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),66,,,,
+2026-10-05,device_desktop,"property-level, desktop",340,11,0.0324,6.58,
+2026-10-05,device_mobile,"property-level, mobile",131,3,0.0229,6.28,
+2026-10-06,1,1 home,53,7,0.1321,4.06,1
+2026-10-06,2,2 product/marketing,42,1,0.0238,6.6,22
+2026-10-06,3,3 docs,20,1,0.05,4.7,4
+2026-10-06,4,4 usda-guide,68,0,0.0,8.59,1
+2026-10-06,5,5 comparison posts,34,1,0.0294,5.32,7
+2026-10-06,6,6 june batch,62,2,0.0323,7.19,19
+2026-10-06,7,7 jul17 batch,4,0,0.0,5.75,3
+2026-10-06,8,8 other blog (index/pagination/not-in-db),4,0,0.0,9.5,1
+2026-10-06,9,9 mcp24+050-055,106,1,0.0094,7.28,22
+2026-10-06,10,"10 other later posts (oct-01, sep-10, oct-07)",43,1,0.0233,6.23,7
+2026-10-06,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,368,14,0.038,6.29,86
+2026-10-06,site_all_pages,sum of all page rows,436,14,0.0321,6.65,87
+2026-10-06,property_total,property-level total (by property; GSC UI number),392,14,0.0357,6.76,
+2026-10-06,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),59,,,,
+2026-10-06,device_desktop,"property-level, desktop",296,12,0.0405,6.76,
+2026-10-06,device_mobile,"property-level, mobile",95,2,0.0211,6.77,
+2026-10-07,1,1 home,3,0,0.0,5.67,1
+2026-10-07,2,2 product/marketing,10,0,0.0,5.8,4
+2026-10-07,3,3 docs,3,0,0.0,5.67,1
+2026-10-07,4,4 usda-guide,1,0,0.0,10.0,1
+2026-10-07,5,5 comparison posts,2,0,0.0,3.5,1
+2026-10-07,6,6 june batch,1,0,0.0,11.0,1
+2026-10-07,7,7 jul17 batch,0,0,,,0
+2026-10-07,8,8 other blog (index/pagination/not-in-db),0,0,,,0
+2026-10-07,9,9 mcp24+050-055,3,0,0.0,4.0,3
+2026-10-07,10,"10 other later posts (oct-01, sep-10, oct-07)",3,0,0.0,4.0,2
+2026-10-07,site_ex_usda,all pages except /blog/usda-fooddata-central-api-guide,25,0,0.0,5.36,13
+2026-10-07,site_all_pages,sum of all page rows,26,0,0.0,5.54,14
+2026-10-07,property_total,property-level total (by property; GSC UI number),14,0,0,5.43,
+2026-10-07,property_named_query_impr,impressions attributable to a disclosed query (date x query sum),6,,,,
+2026-10-07,device_desktop,"property-level, desktop",14,0,0,5.43,

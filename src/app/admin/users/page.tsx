@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import {
   Search, Eye, Ban, CheckCircle, Mail, Calendar,
-  Users, RotateCcw, Trash2, KeyRound,
+  Users, RotateCcw, Trash2, KeyRound, AtSign,
 } from 'lucide-react'
 import {
   adminAPI,
@@ -20,6 +20,11 @@ import {
 } from '@/lib/api/admin'
 import { DeleteUserDialog } from '@/components/admin/delete-user-dialog'
 import { ResetUserPasswordDialog } from '@/components/admin/reset-user-password-dialog'
+import {
+  BanEmailDomainDialog,
+  BannedEmailDomainsPanel,
+  emailDomainLabel,
+} from '@/components/admin/banned-email-domains'
 import { useAdmin } from '@/lib/hooks/use-admin'
 import {
   Dialog,
@@ -111,6 +116,8 @@ export default function UserManagement() {
   const [resetting, setResetting] = useState(false)
   const [sendingFeedback, setSendingFeedback] = useState(false)
   const [feedbackSuccess, setFeedbackSuccess] = useState('')
+  const [banTarget, setBanTarget] = useState<AdminUser | null>(null)
+  const [banListVersion, setBanListVersion] = useState(0)
   const [status, setStatus] = useState<StatusFilter>('all')
   const [planId, setPlanId] = useState<'all' | number>('all')
   const [sort, setSort] = useState<AdminSortState<UserSortKey>>({
@@ -308,7 +315,7 @@ export default function UserManagement() {
     <AdminPage>
       <AdminPageHeader
         title="Users"
-        description="Search accounts, review usage, revoke API keys, deactivate, or permanently delete."
+        description="Search accounts, review usage, revoke API keys, deactivate, delete, or ban an email domain."
         actions={<AdminRefreshButton onClick={refreshAll} loading={isLoading || statsLoading} />}
       />
 
@@ -358,6 +365,11 @@ export default function UserManagement() {
           />
         </AdminStatGrid>
       )}
+
+      <BannedEmailDomainsPanel
+        refreshKey={banListVersion}
+        onAccountsChanged={refreshAll}
+      />
 
       <AdminPanel>
         <AdminPanelHeader
@@ -630,6 +642,18 @@ export default function UserManagement() {
                           >
                             <Mail className="w-4 h-4" />
                           </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            title={`Ban @${emailDomainLabel(user.email)}`}
+                            aria-label={`Ban the email domain for ${user.email}`}
+                            onClick={() => {
+                              setFeedbackSuccess('')
+                              setBanTarget(user)
+                            }}
+                          >
+                            <AtSign className="w-4 h-4" />
+                          </Button>
                           {canResetUserPassword(user) && (
                             <Button
                               variant="ghost"
@@ -742,6 +766,18 @@ export default function UserManagement() {
         busy={resetting}
         onOpenChange={(open) => !open && setResetTarget(null)}
         onConfirm={handleResetUserPassword}
+      />
+      <BanEmailDomainDialog
+        key={banTarget ? String(banTarget.id) : 'none'}
+        open={!!banTarget}
+        email={banTarget?.email || ''}
+        onOpenChange={(open) => !open && setBanTarget(null)}
+        onBanned={(message) => {
+          setFeedbackSuccess(message)
+          setBanTarget(null)
+          setBanListVersion((version) => version + 1)
+          refreshAll()
+        }}
       />
     </AdminPage>
   )

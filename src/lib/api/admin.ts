@@ -95,6 +95,29 @@ export interface AdminUserDetail extends AdminUser {
   last_request_at?: string | null
 }
 
+export interface EmailDomainBan {
+  id: number
+  domain: string
+  reason: string | null
+  created_by_user_id: number | null
+  created_at: string
+  account_count: number
+  active_account_count: number
+}
+
+export interface EmailDomainBanPreview {
+  domain: string
+  account_count: number
+  active_account_count: number
+  locks_out_actor: boolean
+  requires_large_confirm: boolean
+}
+
+export interface EmailDomainBanCreated {
+  ban: EmailDomainBan
+  deactivated_count: number
+}
+
 export interface AdminUserStats {
   total_users: number
   active_users: number
@@ -676,6 +699,34 @@ class AdminAPI {
 
   async deleteUser(userId: number): Promise<{ message: string; user_id: number }> {
     return adminDelete(`/users/${userId}`)
+  }
+
+  async listEmailDomainBans(): Promise<{ bans: EmailDomainBan[] }> {
+    return adminGet('/email-domain-bans')
+  }
+
+  async previewEmailDomainBan(domain: string): Promise<EmailDomainBanPreview> {
+    return adminGet('/email-domain-bans/preview', { domain })
+  }
+
+  async createEmailDomainBan(body: {
+    domain: string
+    reason?: string
+    deactivateExisting: boolean
+    allowSelfLockout: boolean
+    confirmLarge: boolean
+  }): Promise<EmailDomainBanCreated> {
+    return adminPost('/email-domain-bans', {
+      domain: body.domain,
+      reason: body.reason,
+      deactivate_existing: body.deactivateExisting,
+      allow_self_lockout: body.allowSelfLockout,
+      confirm_large: body.confirmLarge,
+    })
+  }
+
+  async deleteEmailDomainBan(banId: number): Promise<{ message: string }> {
+    return adminDelete(`/email-domain-bans/${banId}`)
   }
 
   async getUserUsage(
