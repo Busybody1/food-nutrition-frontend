@@ -58,6 +58,8 @@ const ADMIN_PERMISSIONS = {
 
   VIEW_FOODS: 'admin:foods:view',
   UPDATE_FOODS: 'admin:foods:update',
+
+  VIEW_MCP: 'admin:mcp',
 } as const
 
 const DEFAULT_ADMIN_PERMISSIONS = Object.values(ADMIN_PERMISSIONS)

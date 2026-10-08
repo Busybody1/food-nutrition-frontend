@@ -628,6 +628,20 @@ export interface AdminFoodNutrientPatchResponse {
   } | null
 }
 
+export interface AdminMcpToken {
+  id: number
+  name: string
+  token_prefix: string
+  created_at: string
+  expires_at: string
+  last_used_at: string | null
+  revoked_at: string | null
+}
+
+export interface AdminMcpTokenCreated extends AdminMcpToken {
+  token: string
+}
+
 class AdminAPI {
   async getUsers(params?: AdminUserListParams): Promise<AdminUserListResponse> {
     return adminGet('/users', params as Record<string, unknown> | undefined)
@@ -1130,6 +1144,24 @@ class AdminAPI {
     body: { issue_class: string; action: 'resolved' | 'dismissed'; note: string }
   ): Promise<AdminFoodQueueItem> {
     return adminPost(`/foods/${foodId}/review`, body)
+  }
+
+  async listAdminMcpTokens(): Promise<{ tokens: AdminMcpToken[] }> {
+    return adminGet('/mcp-tokens')
+  }
+
+  async createAdminMcpToken(body: {
+    name: string
+    expiresInDays: number
+  }): Promise<AdminMcpTokenCreated> {
+    return adminPost('/mcp-tokens', {
+      name: body.name,
+      expires_in_days: body.expiresInDays,
+    })
+  }
+
+  async revokeAdminMcpToken(id: number): Promise<{ message: string; token: AdminMcpToken }> {
+    return adminDelete(`/mcp-tokens/${id}`)
   }
 
   async uploadSupportAttachment(file: File): Promise<{ url: string; content_type: string }> {

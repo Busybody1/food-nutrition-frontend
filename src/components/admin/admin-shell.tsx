@@ -27,6 +27,7 @@ import {
   ShieldAlert,
   LifeBuoy,
   Apple,
+  Bot,
 } from 'lucide-react'
 import { useAuth } from '@/lib/hooks/use-auth'
 import { useAdmin } from '@/lib/hooks/use-admin'
@@ -35,6 +36,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { SITE_NAME } from '@/lib/site'
 import { cn } from '@/lib/utils/cn'
+import { adminMcpUiEnabled } from '@/lib/admin-mcp/connect'
 
 const NAV_SECTIONS = [
   {
@@ -69,6 +71,7 @@ const NAV_SECTIONS = [
       { name: 'Testimonials', href: '/admin/testimonials', icon: MessageSquareQuote, permission: 'admin:settings:update' },
       { name: 'Security', href: '/admin/security', icon: ShieldAlert, permission: 'admin:monitoring:view' },
       { name: 'Audit log', href: '/admin/audit', icon: FileSearch, permission: 'admin:monitoring:view' },
+      { name: 'Claude (MCP)', href: '/admin/mcp', icon: Bot, permission: 'admin:mcp' },
       { name: 'Settings', href: '/admin/settings', icon: Settings, permission: 'admin:settings:view' },
       { name: 'Monitoring', href: '/admin/monitoring', icon: Activity, permission: 'admin:monitoring:view' },
     ],
@@ -90,6 +93,7 @@ const PAGE_TITLES: Record<string, string> = {
   '/admin/testimonials': 'Testimonials',
   '/admin/security': 'Security',
   '/admin/audit': 'Audit log',
+  '/admin/mcp': 'Claude (MCP)',
   '/admin/settings': 'Settings',
   '/admin/monitoring': 'Monitoring',
 }
@@ -108,7 +112,10 @@ function NavLinks({
   return (
     <nav className="flex flex-col gap-5 px-3" aria-label="Admin">
       {NAV_SECTIONS.map((section) => {
-        const visible = section.items.filter((item) => hasPermission(item.permission))
+        const visible = section.items.filter((item) => {
+          if (item.href === '/admin/mcp' && !adminMcpUiEnabled()) return false
+          return hasPermission(item.permission)
+        })
         if (visible.length === 0) return null
         return (
           <div key={section.label}>
