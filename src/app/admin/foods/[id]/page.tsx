@@ -3,24 +3,27 @@
 import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
+import { ArrowLeft, ClipboardCheck, FileText, FlaskConical, History, Inbox, Save } from 'lucide-react'
 import {
   adminAPI,
   type AdminFoodDetail,
   type AdminFoodQueueItem,
 } from '@/lib/api/admin'
 import { useAdmin } from '@/lib/hooks/use-admin'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
 import {
   AdminPage,
   AdminPageHeader,
   AdminPanel,
   AdminPanelBody,
+  AdminPanelHeader,
   DashboardAlert,
   DashboardLoading,
+  DashboardPill,
+  DashboardStatList,
+  DASHBOARD_ICON_STROKE,
 } from '@/components/admin/admin-ui'
 import {
   FoodMacroEditor,
@@ -72,6 +75,7 @@ export default function AdminFoodDetailPage() {
   }, [foodId])
 
   useEffect(() => {
+    /* eslint-disable-next-line react-hooks/set-state-in-effect */
     if (canView && Number.isFinite(foodId)) load()
   }, [canView, foodId, load])
 
@@ -164,8 +168,11 @@ export default function AdminFoodDetailPage() {
         title={food?.name || 'Verified food'}
         description={food?.external_id || ''}
         actions={
-          <Button variant="outline" asChild>
-            <Link href="/admin/foods">Back to catalog</Link>
+          <Button variant="outline" size="sm" className="h-9 gap-1.5" asChild>
+            <Link href="/admin/foods">
+              <ArrowLeft className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
+              Back to catalog
+            </Link>
           </Button>
         }
       />
@@ -175,130 +182,199 @@ export default function AdminFoodDetailPage() {
       {loading || !food ? (
         <DashboardLoading />
       ) : (
-        <div className="flex flex-col gap-6">
+        <>
           {servingIsOneGram && (
             <DashboardAlert variant="warning">
               serving_size is 1 g for this food (true of the verified CSV ingest). Display and
               meal scaling can look wrong if clients treat that as a default portion.
             </DashboardAlert>
           )}
-          <AdminPanel>
-            <AdminPanelBody>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                <div>
-                  <Label htmlFor="food-name">Name</Label>
-                  <Input id="food-name" value={name} disabled={!canUpdate} onChange={(e) => setName(e.target.value)} />
-                </div>
-                <div>
-                  <Label htmlFor="food-desc">Description / aliases</Label>
-                  <Input
-                    id="food-desc"
-                    value={description}
-                    disabled={!canUpdate}
-                    onChange={(e) => setDescription(e.target.value)}
-                  />
-                </div>
-              </div>
-              <div className="flex items-center gap-3 mb-6">
-                <Switch id="lock" checked={locked} disabled={!canUpdate} onCheckedChange={setLocked} />
-                <Label htmlFor="lock">
-                  Lock nutrition (ingest scripts will not overwrite this row)
-                </Label>
-              </div>
-              <p className="text-sm text-ink-dim mb-4">
-                Source: {food.nutrition_source || '—'} · Reviewed: {food.nutrition_reviewed_at || 'never'}
-                {food.nutrition_reviewed_by ? ` by user ${food.nutrition_reviewed_by}` : ''}
-              </p>
-              {canUpdate && (
-                <Button type="button" onClick={saveMetadata} disabled={saving}>
-                  Save metadata
-                </Button>
-              )}
-            </AdminPanelBody>
-          </AdminPanel>
-
-          <AdminPanel>
-            <AdminPanelBody>
-              <FoodMacroEditor
-                values={values}
-                original={original}
-                disabled={!canUpdate || saving}
-                onChange={(id, value) => setValues((prev) => ({ ...prev, [id]: value }))}
-              />
-              {canUpdate && (
-                <div className="mt-6">
-                  <Button type="button" onClick={saveNutrients} disabled={saving || Boolean(impossible)}>
-                    Save nutrients
-                  </Button>
-                </div>
-              )}
-            </AdminPanelBody>
-          </AdminPanel>
-
-          <AdminPanel>
-            <AdminPanelBody>
-              <h2 className="font-medium mb-3">Review queue</h2>
-              {(food.queue || []).length === 0 ? (
-                <p className="text-sm text-ink-dim">No queue items.</p>
-              ) : (
-                <ul className="flex flex-col gap-2 mb-4">
-                  {(food.queue || []).map((item: AdminFoodQueueItem) => (
-                    <li key={item.id} className="text-sm">
-                      <Badge variant={item.status === 'open' ? 'warning' : 'secondary'}>
-                        {item.status}
-                      </Badge>{' '}
-                      {item.issue_class.replaceAll('_', ' ')} (severity {item.severity})
-                    </li>
-                  ))}
-                </ul>
-              )}
-              {canUpdate && (
-                <div className="flex flex-col gap-3 max-w-lg">
-                  <Input
-                    placeholder="Issue class"
-                    value={reviewClass}
-                    onChange={(e) => setReviewClass(e.target.value)}
-                  />
-                  <Input
-                    placeholder="Resolution note (required)"
-                    value={reviewNote}
-                    onChange={(e) => setReviewNote(e.target.value)}
-                  />
-                  <div className="flex gap-2">
-                    <Button type="button" onClick={() => resolveQueue('resolved')} disabled={saving}>
-                      Resolve
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => resolveQueue('dismissed')}
-                      disabled={saving}
-                    >
-                      Dismiss
+          <div className="dashboard-grid-wide items-start">
+            <div className="flex min-w-0 flex-col gap-5">
+              <AdminPanel>
+                <AdminPanelHeader title="Details" icon={FileText} />
+                <AdminPanelBody className="space-y-4">
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <div className="min-w-0">
+                      <label htmlFor="food-name" className="dashboard-field-label">
+                        Name
+                      </label>
+                      <Input id="food-name" value={name} disabled={!canUpdate} onChange={(e) => setName(e.target.value)} />
+                    </div>
+                    <div className="min-w-0">
+                      <label htmlFor="food-desc" className="dashboard-field-label">
+                        Description / aliases
+                      </label>
+                      <Input
+                        id="food-desc"
+                        value={description}
+                        disabled={!canUpdate}
+                        onChange={(e) => setDescription(e.target.value)}
+                      />
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between gap-4 rounded-xl border border-dash-border bg-dash-hover px-4 py-3">
+                    <label htmlFor="lock" className="text-[13px] font-medium leading-5 text-dash-body">
+                      Lock nutrition (ingest scripts will not overwrite this row)
+                    </label>
+                    <Switch id="lock" checked={locked} disabled={!canUpdate} onCheckedChange={setLocked} />
+                  </div>
+                </AdminPanelBody>
+                {canUpdate && (
+                  <div className="flex justify-end gap-2 border-t border-dash-border px-5 py-4">
+                    <Button type="button" size="sm" className="h-9 gap-1.5" onClick={saveMetadata} disabled={saving}>
+                      <Save className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
+                      Save metadata
                     </Button>
                   </div>
-                </div>
-              )}
-            </AdminPanelBody>
-          </AdminPanel>
+                )}
+              </AdminPanel>
 
-          <AdminPanel>
-            <AdminPanelBody>
-              <h2 className="font-medium mb-3">Audit history</h2>
-              {(food.audit || []).length === 0 ? (
-                <p className="text-sm text-ink-dim">No audit rows.</p>
-              ) : (
-                <ul className="text-sm flex flex-col gap-2">
-                  {(food.audit || []).map((row) => (
-                    <li key={row.id}>
-                      {row.created_at || ''} · {row.action}
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </AdminPanelBody>
-          </AdminPanel>
-        </div>
+              <AdminPanel>
+                <AdminPanelHeader title="Nutrients" icon={FlaskConical} />
+                <FoodMacroEditor
+                  values={values}
+                  original={original}
+                  disabled={!canUpdate || saving}
+                  onChange={(id, value) => setValues((prev) => ({ ...prev, [id]: value }))}
+                />
+                {canUpdate && (
+                  <div className="flex justify-end gap-2 border-t border-dash-border px-5 py-4">
+                    <Button
+                      type="button"
+                      size="sm"
+                      className="h-9 gap-1.5"
+                      onClick={saveNutrients}
+                      disabled={saving || Boolean(impossible)}
+                    >
+                      <Save className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
+                      Save nutrients
+                    </Button>
+                  </div>
+                )}
+              </AdminPanel>
+            </div>
+
+            <div className="flex min-w-0 flex-col gap-5">
+              <AdminPanel>
+                <AdminPanelHeader title="Source and review" icon={ClipboardCheck} />
+                <AdminPanelBody>
+                  <DashboardStatList
+                    items={[
+                      { label: 'Source', value: food.nutrition_source || '—' },
+                      { label: 'Reviewed', value: food.nutrition_reviewed_at || 'never' },
+                      {
+                        label: 'Reviewed by',
+                        value: food.nutrition_reviewed_by ? `user ${food.nutrition_reviewed_by}` : null,
+                      },
+                      { label: 'Category', value: food.category_name || null },
+                      {
+                        label: 'Serving size',
+                        value: food.serving_size
+                          ? `${food.serving_size}${food.serving_unit ? ` ${food.serving_unit}` : ''}`
+                          : null,
+                      },
+                    ]}
+                  />
+                </AdminPanelBody>
+              </AdminPanel>
+
+              <AdminPanel>
+                <AdminPanelHeader title="Review queue" icon={Inbox} />
+                <AdminPanelBody>
+                  {(food.queue || []).length === 0 ? (
+                    <p className="rounded-xl bg-dash-hover px-4 py-3 text-[13px] text-dash-muted">
+                      No queue items.
+                    </p>
+                  ) : (
+                    <ul className="divide-y divide-dash-border/70">
+                      {(food.queue || []).map((item: AdminFoodQueueItem) => (
+                        <li key={item.id} className="flex items-center justify-between gap-3 py-2.5 text-[13px]">
+                          <span className="min-w-0">
+                            <span className="text-dash-ink">{item.issue_class.replaceAll('_', ' ')}</span>{' '}
+                            <span className="text-xs text-dash-muted">(severity {item.severity})</span>
+                          </span>
+                          <DashboardPill tone={item.status === 'open' ? 'orange' : 'neutral'}>
+                            {item.status}
+                          </DashboardPill>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </AdminPanelBody>
+                {canUpdate && (
+                  <>
+                    <div className="space-y-4 border-t border-dash-border px-5 py-4">
+                      <div>
+                        <label htmlFor="food-review-class" className="dashboard-field-label">
+                          Issue class
+                        </label>
+                        <Input
+                          id="food-review-class"
+                          placeholder="Issue class"
+                          value={reviewClass}
+                          onChange={(e) => setReviewClass(e.target.value)}
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="food-review-note" className="dashboard-field-label">
+                          Resolution note
+                        </label>
+                        <Input
+                          id="food-review-note"
+                          placeholder="Resolution note (required)"
+                          value={reviewNote}
+                          onChange={(e) => setReviewNote(e.target.value)}
+                        />
+                      </div>
+                    </div>
+                    <div className="flex justify-end gap-2 border-t border-dash-border px-5 py-4">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="h-9"
+                        onClick={() => resolveQueue('dismissed')}
+                        disabled={saving}
+                      >
+                        Dismiss
+                      </Button>
+                      <Button
+                        type="button"
+                        size="sm"
+                        className="h-9"
+                        onClick={() => resolveQueue('resolved')}
+                        disabled={saving}
+                      >
+                        Resolve
+                      </Button>
+                    </div>
+                  </>
+                )}
+              </AdminPanel>
+
+              <AdminPanel>
+                <AdminPanelHeader title="Audit history" icon={History} />
+                <AdminPanelBody>
+                  {(food.audit || []).length === 0 ? (
+                    <p className="rounded-xl bg-dash-hover px-4 py-3 text-[13px] text-dash-muted">
+                      No audit rows.
+                    </p>
+                  ) : (
+                    <ul className="divide-y divide-dash-border/70">
+                      {(food.audit || []).map((row) => (
+                        <li key={row.id} className="py-2.5">
+                          <p className="text-[13px] font-medium text-dash-ink">{row.action}</p>
+                          <p className="mt-0.5 text-xs tabular-nums text-dash-muted">{row.created_at || ''}</p>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </AdminPanelBody>
+              </AdminPanel>
+            </div>
+          </div>
+        </>
       )}
     </AdminPage>
   )

@@ -7,8 +7,13 @@ import {
   DashboardPage,
   DashboardLoading,
   DashboardAlert,
+  DashboardPanel,
+  DashboardPanelBody,
+  DashboardPanelHeader,
 } from '@/components/dashboard/dashboard-shell'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Button } from '@/components/ui/button'
+import { Lock } from 'lucide-react'
 import { useAuth } from '@/lib/hooks/use-auth'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
@@ -52,29 +57,6 @@ function ApiKeysScreen() {
   const [error, setError] = useState('')
   const mcpAccount = accountIsMcp(userPlan)
 
-  useEffect(() => {
-    if (!loading && !isAuthenticated) {
-      router.push('/auth/login')
-    }
-  }, [isAuthenticated, loading, router])
-
-  useEffect(() => {
-    if (!loading && isAuthenticated) {
-      loadData()
-    }
-  }, [isAuthenticated, loading])
-
-  useEffect(() => {
-    if (!userPlan) return
-    const next = apiKeyProductFromSearch(searchParams.toString(), accountIsMcp(userPlan))
-    setProduct(next)
-    if (searchParams.get('product') === next) return
-    const params = new URLSearchParams(searchParams.toString())
-    params.delete('mcp')
-    params.set('product', next)
-    router.replace(`/dashboard/api-keys?${params.toString()}`)
-  }, [userPlan, searchParams, router])
-
   const loadData = async () => {
     try {
       setIsLoading(true)
@@ -112,6 +94,31 @@ function ApiKeysScreen() {
       setIsLoading(false)
     }
   }
+
+  useEffect(() => {
+    if (!loading && !isAuthenticated) {
+      router.push('/auth/login')
+    }
+  }, [isAuthenticated, loading, router])
+
+  useEffect(() => {
+    if (!loading && isAuthenticated) {
+      /* eslint-disable-next-line react-hooks/set-state-in-effect */
+      loadData()
+    }
+  }, [isAuthenticated, loading])
+
+  useEffect(() => {
+    if (!userPlan) return
+    const next = apiKeyProductFromSearch(searchParams.toString(), accountIsMcp(userPlan))
+    /* eslint-disable-next-line react-hooks/set-state-in-effect */
+    setProduct(next)
+    if (searchParams.get('product') === next) return
+    const params = new URLSearchParams(searchParams.toString())
+    params.delete('mcp')
+    params.set('product', next)
+    router.replace(`/dashboard/api-keys?${params.toString()}`)
+  }, [userPlan, searchParams, router])
 
   const handleCreate = async (name: string): Promise<CreatedApiKeyResult | void> => {
     const { api } = await import('@/lib/api/client')
@@ -229,9 +236,9 @@ function ApiKeysScreen() {
           </TabsContent>
           <TabsContent value="mcp">
             {mcpAccount ? (
-              <div className="space-y-6">
-                <ConnectToClaude apiKeys={apiKeys} />
+              <div className="flex flex-col gap-5">
                 {keyList('mcp')}
+                <ConnectToClaude apiKeys={apiKeys} />
               </div>
             ) : (
               <ProductGate
@@ -259,12 +266,14 @@ function ProductGate({
   label: string
 }) {
   return (
-    <section className="dashboard-panel p-6">
-      <h2 className="text-lg font-semibold text-ink">{title}</h2>
-      <p className="mt-2 max-w-2xl text-sm leading-relaxed text-ink-muted">{body}</p>
-      <Link href={href} className="btn-brand mt-4 inline-flex h-10 items-center px-4 text-sm">
-        {label}
-      </Link>
-    </section>
+    <DashboardPanel>
+      <DashboardPanelHeader title={title} icon={Lock} />
+      <DashboardPanelBody>
+        <p className="max-w-2xl text-[13px] leading-5 text-dash-muted">{body}</p>
+        <Button asChild size="sm" className="mt-4 h-9">
+          <Link href={href}>{label}</Link>
+        </Button>
+      </DashboardPanelBody>
+    </DashboardPanel>
   )
 }

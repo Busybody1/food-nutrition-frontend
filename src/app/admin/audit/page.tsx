@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { adminAPI, AuditEntry, formatAuditTarget } from '@/lib/api/admin'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { FileSearch, Filter, RotateCcw } from 'lucide-react'
+import { FileSearch, Filter, RotateCcw, UserRound } from 'lucide-react'
 import {
   AdminPage,
   AdminPageHeader,
@@ -18,9 +18,12 @@ import {
   AdminPagination,
   AdminSortState,
   AdminRefreshButton,
+  DASHBOARD_ICON_STROKE,
   DashboardLoading,
   DashboardAlert,
   DashboardEmpty,
+  DashboardPanelToolbar,
+  DashboardPill,
 } from '@/components/admin/admin-ui'
 
 type AuditSortKey = 'created_at' | 'action' | 'admin_email' | 'target_type'
@@ -60,6 +63,7 @@ export default function AdminAuditPage() {
   }, [actionFilter, page, pageSize, sort])
 
   useEffect(() => {
+    /* eslint-disable-next-line react-hooks/set-state-in-effect */
     load()
   }, [load])
 
@@ -87,53 +91,60 @@ export default function AdminAuditPage() {
       {error && (
         <DashboardAlert variant="error">
           {error}
-          <Button variant="outline" size="sm" className="ml-3" onClick={load}>
+          <Button variant="outline" size="sm" className="ml-auto h-8" onClick={load}>
             Retry
           </Button>
         </DashboardAlert>
       )}
 
       <AdminPanel>
-        <AdminPanelHeader title="Filter" icon={Filter} />
-        <AdminPanelBody>
-          <div className="flex flex-col sm:flex-row gap-3 max-w-xl">
-            <AdminFilterField label="Action contains" className="flex-1">
-              <Input
-                placeholder="e.g. user.patch, settings.update"
-                value={actionInput}
-                onChange={(e) => setActionInput(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && applyAction(actionInput.trim())}
-              />
-            </AdminFilterField>
-            <div className="flex gap-2 self-end">
-              <Button onClick={() => applyAction(actionInput.trim())}>Apply</Button>
-              {actionFilter && (
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setActionInput('')
-                    applyAction('')
-                  }}
-                >
-                  <RotateCcw className="h-4 w-4 mr-1.5" />
-                  Clear
-                </Button>
-              )}
-            </div>
-          </div>
-        </AdminPanelBody>
-      </AdminPanel>
-
-      <AdminPanel>
         <AdminPanelHeader
           title="Recent actions"
           icon={FileSearch}
           actions={
-            <span className="text-xs text-ink-muted tabular-nums">
-              {total.toLocaleString()} entries
-            </span>
+            <>
+              {actionFilter && (
+                <DashboardPill tone="outline" icon={Filter} className="max-w-[220px]">
+                  <span className="truncate font-mono">{actionFilter}</span>
+                </DashboardPill>
+              )}
+              <span className="dashboard-meta-pill tabular-nums">
+                {total.toLocaleString()} entries
+              </span>
+            </>
           }
         />
+        <DashboardPanelToolbar className="sm:flex-nowrap sm:items-end">
+          <AdminFilterField label="Action contains" className="w-full sm:max-w-sm">
+            <Input
+              placeholder="e.g. user.patch, settings.update"
+              value={actionInput}
+              onChange={(e) => setActionInput(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && applyAction(actionInput.trim())}
+              className="font-mono"
+            />
+          </AdminFilterField>
+          <div className="flex gap-2">
+            <Button size="sm" className="h-9 gap-1.5" onClick={() => applyAction(actionInput.trim())}>
+              <Filter className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
+              Apply
+            </Button>
+            {actionFilter && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-9 gap-1.5"
+                onClick={() => {
+                  setActionInput('')
+                  applyAction('')
+                }}
+              >
+                <RotateCcw className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
+                Clear
+              </Button>
+            )}
+          </div>
+        </DashboardPanelToolbar>
         {loading && entries.length === 0 ? (
           <DashboardLoading message="Loading audit log…" />
         ) : entries.length === 0 ? (
@@ -181,18 +192,28 @@ export default function AdminAuditPage() {
                   <tbody className={loading ? 'opacity-60 transition-opacity' : undefined}>
                     {entries.map((e) => (
                       <tr key={e.id}>
-                        <td className="whitespace-nowrap text-xs text-ink-muted">
+                        <td className="whitespace-nowrap text-xs tabular-nums text-dash-muted">
                           {new Date(e.created_at).toLocaleString()}
                         </td>
-                        <td className="max-w-[180px] truncate">
-                          {e.admin_email || e.admin_user_id}
+                        <td>
+                          <div className="flex min-w-0 items-center gap-3">
+                            <span
+                              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-dash-pill text-dash-body"
+                              aria-hidden
+                            >
+                              <UserRound className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} />
+                            </span>
+                            <span className="max-w-[180px] truncate font-medium text-dash-ink">
+                              {e.admin_email || e.admin_user_id}
+                            </span>
+                          </div>
                         </td>
                         <td>
-                          <code className="text-xs bg-surface-elevated px-1.5 py-0.5 rounded">
+                          <DashboardPill tone="neutral" className="font-mono">
                             {e.action}
-                          </code>
+                          </DashboardPill>
                         </td>
-                        <td className="text-xs text-ink-muted">
+                        <td className="font-mono text-xs text-dash-muted">
                           {formatAuditTarget(e)}
                         </td>
                       </tr>

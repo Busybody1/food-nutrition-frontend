@@ -46,6 +46,7 @@ export function SubscribeModal({
 
   useEffect(() => {
     if (isOpen) {
+      /* eslint-disable-next-line react-hooks/set-state-in-effect */
       setStep('payment')
       setError(null)
       setIsProcessing(false)

@@ -104,6 +104,7 @@ export function PricingContent({ initialPlans, initialError }: PricingContentPro
     if (planId && plans.length > 0 && isAuthenticated) {
       const plan = plans.find((p) => p.id === parseInt(planId, 10))
       if (plan) {
+        /* eslint-disable-next-line react-hooks/set-state-in-effect */
         setSelectedPlan(plan)
         setIsModalOpen(true)
       }

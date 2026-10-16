@@ -1,33 +1,35 @@
 'use client'
 
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Activity, TrendingUp, TrendingDown, Minus } from 'lucide-react'
+import { BarChart3, AlertTriangle, Route } from 'lucide-react'
+import {
+  DashboardEmpty,
+  DashboardPanel,
+  DashboardPanelBody,
+  DashboardPanelHeader,
+  DashboardPill,
+  DashboardTable,
+  DashboardTableWrap,
+  RateBar,
+} from '@/components/dashboard/dashboard-shell'
+import {
+  AreaTrendChart,
+  BarTrendChart,
+  formatShortDate,
+} from '@/components/dashboard/dashboard-charts'
 
-interface UsageData {
+export interface UsageData {
   date: string
   requests: number
   errors: number
   avgResponseTime: number
 }
 
-interface EndpointUsage {
+export interface EndpointUsage {
   endpoint: string
   request_count: number
   avg_response_time: number
   error_count: number
 }
-
-interface UsageChartProps {
-  data: UsageData[]
-  endpointData: EndpointUsage[]
-  currentUsage: number
-  quota: number
-  planName: string
-}
-
-const COLORS = ['#0AC5D7', '#0891A3', '#22C55E', '#8FE8F0', '#52525B']
 
 function usageEndpointLabel(endpoint: string): string {
   const match = endpoint.match(/\/api\/v1\/mcp\/([a-z0-9_]+)/i)
@@ -35,296 +37,177 @@ function usageEndpointLabel(endpoint: string): string {
   return endpoint.replace(/_/g, ' ')
 }
 
-export function UsageChart({ data, endpointData, currentUsage, quota, planName }: UsageChartProps) {
-  const usagePercentage = quota > 0 ? (currentUsage / quota) * 100 : 0
-  const remainingUsage = Math.max(0, quota - currentUsage)
+function longDate(value: unknown): string {
+  const d = new Date(String(value))
+  if (Number.isNaN(d.getTime())) return String(value ?? '')
+  return d.toLocaleDateString('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  })
+}
 
-  const getTrendIcon = () => {
-    if (data.length < 2) return <Minus className="h-4 w-4 text-ink-dim" />
-
-    const latest = data[data.length - 1].requests
-    const previous = data[data.length - 2].requests
-
-    if (latest > previous) return <TrendingUp className="h-4 w-4 text-green-600" />
-    if (latest < previous) return <TrendingDown className="h-4 w-4 text-red-600" />
-    return <Minus className="h-4 w-4 text-ink-dim" />
-  }
-
-  const getTrendText = () => {
-    if (data.length < 2) return 'No trend data'
-
-    const latest = data[data.length - 1].requests
-    const previous = data[data.length - 2].requests
-    const change = latest - previous
-
-    if (change > 0) return `+${change} from yesterday`
-    if (change < 0) return `${change} from yesterday`
-    return 'Same as yesterday'
-  }
+export function UsageTrendCards({
+  data,
+  rangeLabel,
+}: {
+  data: UsageData[]
+  rangeLabel: string
+}) {
+  const totalRequests = data.reduce((sum, d) => sum + d.requests, 0)
+  const totalErrors = data.reduce((sum, d) => sum + d.errors, 0)
+  const errorRate = totalRequests > 0 ? (totalErrors / totalRequests) * 100 : null
+  const avgResponse =
+    data.length > 0 ? Math.round(data.reduce((sum, d) => sum + d.avgResponseTime, 0) / data.length) : null
+  const latest = data.length > 0 ? data[data.length - 1] : null
+  const previous = data.length > 1 ? data[data.length - 2] : null
+  const dayChange = latest && previous ? latest.requests - previous.requests : null
 
   return (
-    <div className="space-y-6">
-      {}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs font-medium uppercase tracking-wide text-ink-dim">Total Requests</p>
-                <p className="text-2xl font-semibold text-ink tabular-nums">
-                  {currentUsage.toLocaleString()}
-                </p>
-                <div className="flex items-center mt-1">
-                  {getTrendIcon()}
-                  <span className="text-xs text-ink-muted ml-1">
-                    {getTrendText()}
-                  </span>
-                </div>
-              </div>
-              <Activity className="h-8 w-8 text-brand" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Remaining</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {remainingUsage.toLocaleString()}
-                </p>
-                <p className="text-xs text-gray-500">
-                  {quota.toLocaleString()} total quota
-                </p>
-              </div>
-              <div className="h-8 w-8 bg-gray-100 rounded-full flex items-center justify-center">
-                <span className="text-sm font-medium text-gray-600">
-                  {Math.round(usagePercentage)}%
-                </span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Plan</p>
-                <p className="text-lg font-semibold text-gray-900">{planName}</p>
-                <Badge variant="secondary" className="mt-1">
-                  Active
-                </Badge>
-              </div>
-              <div className="h-8 w-8 bg-green-100 rounded-full flex items-center justify-center">
-                <div className="h-3 w-3 bg-green-600 rounded-full" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Avg Response</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {data.length > 0 ? Math.round(data[data.length - 1].avgResponseTime) : 0}ms
-                </p>
-                <p className="text-xs text-gray-500">
-                  Last 24 hours
-                </p>
-              </div>
-              <div className="h-8 w-8 bg-yellow-100 rounded-full flex items-center justify-center">
-                <span className="text-sm font-medium text-yellow-600">ms</span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {}
-      <Card>
-        <CardHeader>
-          <CardTitle>Usage Trend (Last 7 Days)</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="h-80 overflow-visible">
-            <ResponsiveContainer width="100%" height="100%" style={{ overflow: 'visible' }}>
-              <LineChart data={data}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis
-                  dataKey="date"
-                  tickFormatter={(value) => new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                />
-                <YAxis />
-                <Tooltip
-                  allowEscapeViewBox={{ x: true, y: true }}
-                  wrapperStyle={{ zIndex: 30, outline: 'none' }}
-                  labelFormatter={(value) => new Date(value).toLocaleDateString('en-US', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                  })}
-                  formatter={(value, name) => [
-                    value.toLocaleString(),
-                    name === 'requests' ? 'Requests' : name === 'errors' ? 'Errors' : 'Avg Response Time (ms)'
-                  ]}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="requests"
-                  stroke="#3b82f6"
-                  strokeWidth={2}
-                  dot={{ fill: '#3b82f6', strokeWidth: 2, r: 4 }}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="errors"
-                  stroke="#ef4444"
-                  strokeWidth={2}
-                  dot={{ fill: '#ef4444', strokeWidth: 2, r: 4 }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
+    <div className="dashboard-grid-wide">
+      <DashboardPanel>
+        <DashboardPanelHeader title="Requests" icon={BarChart3} description={rangeLabel} />
+        <DashboardPanelBody>
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+            <p className="dashboard-summary-value">{totalRequests.toLocaleString()}</p>
+            {dayChange != null && (
+              <span className="text-xs text-dash-muted tabular-nums">
+                {dayChange > 0
+                  ? `+${dayChange.toLocaleString()} vs previous day`
+                  : dayChange < 0
+                    ? `${dayChange.toLocaleString()} vs previous day`
+                    : 'Same as previous day'}
+              </span>
+            )}
           </div>
-        </CardContent>
-      </Card>
+          {data.length > 0 ? (
+            <AreaTrendChart
+              className="mt-4"
+              data={data as unknown as Array<Record<string, unknown>>}
+              xKey="date"
+              height={260}
+              xTickFormatter={formatShortDate}
+              labelFormatter={longDate}
+              series={[{ key: 'requests', name: 'Requests' }]}
+            />
+          ) : (
+            <DashboardEmpty
+              icon={BarChart3}
+              title="No requests in this range"
+              description="Calls made with your API keys will chart here."
+            />
+          )}
+        </DashboardPanelBody>
+      </DashboardPanel>
 
-      {}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Requests by Endpoint</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="h-64 overflow-visible">
-              <ResponsiveContainer width="100%" height="100%" style={{ overflow: 'visible' }}>
-                <BarChart data={endpointData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis
-                    dataKey="endpoint"
-                    tickFormatter={(value) => usageEndpointLabel(String(value))}
-                  />
-                  <YAxis />
-                  <Tooltip
-                    allowEscapeViewBox={{ x: true, y: true }}
-                    wrapperStyle={{ zIndex: 30, outline: 'none' }}
-                    formatter={(value, name) => [
-                      value.toLocaleString(),
-                      name === 'request_count' ? 'Requests' : 'Errors'
-                    ]}
-                  />
-                  <Bar dataKey="request_count" fill="#3b82f6" />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </CardContent>
-        </Card>
+      <DashboardPanel>
+        <DashboardPanelHeader title="Errors" icon={AlertTriangle} description={rangeLabel} />
+        <DashboardPanelBody>
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+            <p className="dashboard-summary-value">{totalErrors.toLocaleString()}</p>
+            <DashboardPill tone={errorRate != null && errorRate > 5 ? 'rose' : 'neutral'}>
+              <span className="tabular-nums">
+                {errorRate != null ? `${errorRate.toFixed(2)}%` : '—'}
+              </span>
+              error rate
+            </DashboardPill>
+          </div>
+          <p className="mt-1 text-xs text-dash-muted tabular-nums">
+            Avg response {avgResponse != null ? `${avgResponse}ms` : '—'}
+            <span className="text-dash-dim"> · </span>
+            Latest day {latest ? `${Math.round(latest.avgResponseTime)}ms` : '—'}
+          </p>
+          {data.length > 0 ? (
+            <BarTrendChart
+              className="mt-3"
+              data={data as unknown as Array<Record<string, unknown>>}
+              xKey="date"
+              yKey="errors"
+              name="Errors"
+              height={232}
+              xTickFormatter={formatShortDate}
+              labelFormatter={longDate}
+            />
+          ) : (
+            <DashboardEmpty icon={AlertTriangle} title="No errors to chart" />
+          )}
+        </DashboardPanelBody>
+      </DashboardPanel>
+    </div>
+  )
+}
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Endpoint Distribution</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="h-64 overflow-visible">
-              <ResponsiveContainer width="100%" height="100%" style={{ overflow: 'visible' }}>
-                <PieChart>
-                  <Pie
-                    data={endpointData}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    outerRadius={80}
-                    fill="#8884d8"
-                    dataKey="request_count"
-                  >
-                    {endpointData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip
-                    allowEscapeViewBox={{ x: true, y: true }}
-                    wrapperStyle={{ zIndex: 30, outline: 'none' }}
-                    formatter={(value) => [value.toLocaleString(), 'Requests']}
-                  />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+export function EndpointUsageTable({ endpointData }: { endpointData: EndpointUsage[] }) {
+  const total = endpointData.reduce((sum, e) => sum + e.request_count, 0)
 
-      {}
-      <Card>
-        <CardHeader>
-          <CardTitle>Endpoint Performance</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+  return (
+    <DashboardPanel>
+      <DashboardPanelHeader
+        title="Endpoint usage"
+        icon={Route}
+        description={`${endpointData.length.toLocaleString()} endpoints`}
+      />
+      {endpointData.length === 0 ? (
+        <DashboardPanelBody>
+          <DashboardEmpty
+            icon={Route}
+            title="No endpoint data yet"
+            description="Endpoints appear after your first API request in this range."
+          />
+        </DashboardPanelBody>
+      ) : (
+        <DashboardPanelBody flush>
+          <DashboardTableWrap>
+            <DashboardTable>
+              <thead>
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Endpoint
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Requests
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Avg Response Time
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Error Rate
-                  </th>
+                  <th>Endpoint</th>
+                  <th className="dashboard-num">Requests</th>
+                  <th>Share</th>
+                  <th className="dashboard-num">Avg response</th>
+                  <th className="dashboard-num">Errors</th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {endpointData.map((endpoint, index) => {
-                  const errorRate = endpoint.request_count > 0
-                    ? ((endpoint.error_count / endpoint.request_count) * 100).toFixed(1)
-                    : '0.0'
-
+              <tbody>
+                {endpointData.map((endpoint) => {
+                  const share = total > 0 ? (endpoint.request_count / total) * 100 : 0
+                  const errorRate =
+                    endpoint.request_count > 0
+                      ? (endpoint.error_count / endpoint.request_count) * 100
+                      : 0
                   return (
                     <tr key={endpoint.endpoint}>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          <div
-                            className="h-3 w-3 rounded-full mr-3"
-                            style={{ backgroundColor: COLORS[index % COLORS.length] }}
-                          />
-                          <span className="text-sm font-medium text-gray-900">
-                            {usageEndpointLabel(endpoint.endpoint)}
-                          </span>
-                        </div>
+                      <td className="max-w-[320px]">
+                        <p className="truncate font-medium text-dash-ink" title={endpoint.endpoint}>
+                          {usageEndpointLabel(endpoint.endpoint)}
+                        </p>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="dashboard-num font-medium text-dash-ink">
                         {endpoint.request_count.toLocaleString()}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {Math.round(endpoint.avg_response_time)}ms
+                      <td>
+                        <RateBar value={share} />
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                          parseFloat(errorRate) > 5
-                            ? 'bg-red-100 text-red-800'
-                            : parseFloat(errorRate) > 1
-                            ? 'bg-yellow-100 text-yellow-800'
-                            : 'bg-green-100 text-green-800'
-                        }`}>
-                          {errorRate}%
+                      <td className="dashboard-num">{Math.round(endpoint.avg_response_time)}ms</td>
+                      <td className="dashboard-num">
+                        <span className="inline-flex items-center justify-end gap-2">
+                          {endpoint.error_count.toLocaleString()}
+                          <DashboardPill
+                            tone={errorRate > 5 ? 'rose' : errorRate > 1 ? 'orange' : 'green'}
+                          >
+                            {errorRate.toFixed(1)}%
+                          </DashboardPill>
                         </span>
                       </td>
                     </tr>
                   )
                 })}
               </tbody>
-            </table>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+            </DashboardTable>
+          </DashboardTableWrap>
+        </DashboardPanelBody>
+      )}
+    </DashboardPanel>
   )
 }

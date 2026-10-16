@@ -3,8 +3,21 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Plus, Trash2, Save, Eye, Pencil, ArrowLeft, ExternalLink } from 'lucide-react'
+import {
+  Plus,
+  Trash2,
+  Save,
+  Eye,
+  Pencil,
+  ArrowLeft,
+  ExternalLink,
+  FileText,
+  MessageCircleQuestion,
+  Send,
+  Search,
+} from 'lucide-react'
 import { adminAPI, type AdminBlogPost, type BlogPostInput } from '@/lib/api/admin'
+import { cn } from '@/lib/utils/cn'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -13,7 +26,9 @@ import {
   AdminPanel,
   AdminPanelHeader,
   AdminPanelBody,
+  DASHBOARD_ICON_STROKE,
   DashboardAlert,
+  DashboardPill,
 } from '@/components/admin/admin-ui'
 import { MarkdownContent } from '@/components/blog/markdown-content'
 
@@ -33,6 +48,14 @@ type FaqDraft = { question: string; answer: string }
 type Props = {
   mode: 'create' | 'edit'
   initialPost?: AdminBlogPost
+}
+
+function FieldCounter({ value, max }: { value: number; max: number }) {
+  return (
+    <span className={cn('tabular-nums', value > max ? 'text-dash-warning' : 'text-dash-dim')}>
+      ({value}/{max})
+    </span>
+  )
 }
 
 export function BlogEditor({ mode, initialPost }: Props) {
@@ -134,10 +157,8 @@ export function BlogEditor({ mode, initialPost }: Props) {
     setFaq((prev) => prev.map((item, i) => (i === index ? { ...item, [key]: value } : item)))
   }
 
-  const fieldLabel = 'text-xs font-medium text-ink-dim block mb-1.5'
-  const textareaClass =
-    'w-full rounded-brand border border-surface-border/80 p-3 text-sm focus:outline-none ' +
-    'focus:ring-2 focus:ring-brand/30 focus:border-brand/50'
+  const fieldLabel = 'dashboard-field-label'
+  const textareaClass = 'dashboard-textarea'
 
   return (
     <AdminPage>
@@ -145,23 +166,20 @@ export function BlogEditor({ mode, initialPost }: Props) {
         title={mode === 'create' ? 'New blog post' : 'Edit blog post'}
         description="Author SEO content stored in the database and served at /blog."
         actions={
-          <div className="flex items-center gap-2">
-            <Link
-              href="/admin/blog"
-              className="inline-flex h-9 items-center gap-1.5 rounded-brand border border-surface-border bg-white px-3 text-sm font-medium text-ink-muted hover:text-ink"
-            >
-              <ArrowLeft className="h-4 w-4" /> Back
-            </Link>
-            {mode === 'edit' && status === 'published' && (
-              <Link
-                href={`/blog/${slug}`}
-                target="_blank"
-                className="inline-flex h-9 items-center gap-1.5 rounded-brand border border-surface-border bg-white px-3 text-sm font-medium text-ink-muted hover:text-ink"
-              >
-                View <ExternalLink className="h-3.5 w-3.5" />
+          <>
+            <Button asChild variant="outline" size="sm" className="h-9 gap-1.5">
+              <Link href="/admin/blog">
+                <ArrowLeft className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden /> Back
               </Link>
+            </Button>
+            {mode === 'edit' && status === 'published' && (
+              <Button asChild variant="outline" size="sm" className="h-9 gap-1.5">
+                <Link href={`/blog/${slug}`} target="_blank">
+                  View <ExternalLink className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
+                </Link>
+              </Button>
             )}
-          </div>
+          </>
         }
       />
 
@@ -171,8 +189,8 @@ export function BlogEditor({ mode, initialPost }: Props) {
         </DashboardAlert>
       )}
 
-      <div className="grid gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2 space-y-6">
+      <div className="grid grid-cols-1 items-start gap-5 xl:grid-cols-[minmax(0,1fr)_340px]">
+        <div className="flex min-w-0 flex-col gap-5">
           <AdminPanel>
             <AdminPanelHeader title="Content" icon={Pencil} />
             <AdminPanelBody className="space-y-4">
@@ -193,8 +211,11 @@ export function BlogEditor({ mode, initialPost }: Props) {
                     setSlug(e.target.value)
                   }}
                   placeholder="what-is-a-calorie-api"
+                  className="font-mono"
                 />
-                <p className="text-xs text-ink-muted mt-1.5">URL: /blog/{slug || 'your-slug'}</p>
+                <p className="dashboard-field-hint">
+                  URL: <span className="font-mono text-dash-body">/blog/{slug || 'your-slug'}</span>
+                </p>
               </div>
               <div>
                 <label className={fieldLabel}>Excerpt</label>
@@ -205,77 +226,93 @@ export function BlogEditor({ mode, initialPost }: Props) {
                   placeholder="Short summary shown on the blog index and as a fallback meta description."
                 />
               </div>
-              <div>
-                <div className="flex items-center justify-between mb-1.5">
-                  <label className={`${fieldLabel} mb-0`}>Body (Markdown)</label>
-                  <div className="dashboard-segmented" role="group" aria-label="Editor mode">
-                    <button
-                      type="button"
-                      className={`dashboard-segmented-btn ${tab === 'write' ? 'dashboard-segmented-btn-active' : ''}`}
-                      onClick={() => setTab('write')}
-                    >
-                      <Pencil className="h-3.5 w-3.5 mr-1 inline" /> Write
-                    </button>
-                    <button
-                      type="button"
-                      className={`dashboard-segmented-btn ${tab === 'preview' ? 'dashboard-segmented-btn-active' : ''}`}
-                      onClick={() => setTab('preview')}
-                    >
-                      <Eye className="h-3.5 w-3.5 mr-1 inline" /> Preview
-                    </button>
-                  </div>
+            </AdminPanelBody>
+          </AdminPanel>
+
+          <AdminPanel>
+            <AdminPanelHeader
+              title="Body (Markdown)"
+              icon={FileText}
+              actions={
+                <div className="dashboard-segmented" role="group" aria-label="Editor mode">
+                  <button
+                    type="button"
+                    className={cn('dashboard-segmented-btn gap-1', tab === 'write' && 'dashboard-segmented-btn-active')}
+                    onClick={() => setTab('write')}
+                    aria-pressed={tab === 'write'}
+                  >
+                    <Pencil className="h-3.5 w-3.5" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden /> Write
+                  </button>
+                  <button
+                    type="button"
+                    className={cn('dashboard-segmented-btn gap-1', tab === 'preview' && 'dashboard-segmented-btn-active')}
+                    onClick={() => setTab('preview')}
+                    aria-pressed={tab === 'preview'}
+                  >
+                    <Eye className="h-3.5 w-3.5" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden /> Preview
+                  </button>
                 </div>
-                {tab === 'write' ? (
-                  <textarea
-                    className={`${textareaClass} min-h-[480px] font-mono text-[13px]`}
-                    value={content}
-                    onChange={(e) => setContent(e.target.value)}
-                    placeholder="Write your article in Markdown. Supports headings, lists, tables, and code blocks."
-                  />
-                ) : (
-                  <div className="rounded-brand border border-surface-border/80 p-4 min-h-[480px] overflow-x-auto">
-                    {content.trim() ? (
-                      <MarkdownContent content={content} />
-                    ) : (
-                      <p className="text-sm text-ink-muted">Nothing to preview yet.</p>
-                    )}
-                  </div>
-                )}
-              </div>
+              }
+            />
+            <AdminPanelBody>
+              {tab === 'write' ? (
+                <textarea
+                  className={`${textareaClass} min-h-[480px] font-mono text-[13px]`}
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
+                  aria-label="Body (Markdown)"
+                  placeholder="Write your article in Markdown. Supports headings, lists, tables, and code blocks."
+                />
+              ) : (
+                <div className="min-h-[480px] overflow-x-auto rounded-[10px] border border-dash-border bg-white p-4">
+                  {content.trim() ? (
+                    <MarkdownContent content={content} />
+                  ) : (
+                    <p className="text-[13px] text-dash-muted">Nothing to preview yet.</p>
+                  )}
+                </div>
+              )}
             </AdminPanelBody>
           </AdminPanel>
 
           <AdminPanel>
             <AdminPanelHeader
               title="FAQ (powers FAQ rich results)"
+              icon={MessageCircleQuestion}
               actions={
                 <Button
                   variant="outline"
                   size="sm"
+                  className="h-9 gap-1.5"
                   onClick={() => setFaq((prev) => [...prev, { question: '', answer: '' }])}
                 >
-                  <Plus className="h-4 w-4 mr-1" /> Add
+                  <Plus className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden /> Add
                 </Button>
               }
             />
-            <AdminPanelBody className="space-y-4">
+            <AdminPanelBody className="space-y-3">
               {faq.length === 0 ? (
-                <p className="text-sm text-ink-muted">
+                <p className="rounded-xl border border-dashed border-dash-border bg-dash-hover px-4 py-3 text-[13px] text-dash-muted">
                   Add 5-8 questions using long-tail keyword variations to win featured snippets.
                 </p>
               ) : (
                 faq.map((item, index) => (
-                  <div key={index} className="rounded-brand border border-surface-border/60 p-3 space-y-2">
+                  <div
+                    key={index}
+                    className="space-y-2 rounded-xl border border-dash-border bg-dash-hover p-3"
+                  >
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-medium text-ink-dim">Question {index + 1}</span>
-                      <button
+                      <span className="text-xs font-medium text-dash-body">Question {index + 1}</span>
+                      <Button
                         type="button"
+                        variant="ghost"
+                        size="sm"
                         onClick={() => setFaq((prev) => prev.filter((_, i) => i !== index))}
-                        className="text-ink-dim hover:text-error-600"
+                        className="h-8 w-8 p-0 text-dash-negative hover:bg-dash-negative-soft hover:text-dash-negative"
                         aria-label="Remove FAQ item"
                       >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
+                        <Trash2 className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
+                      </Button>
                     </div>
                     <Input
                       value={item.question}
@@ -295,42 +332,59 @@ export function BlogEditor({ mode, initialPost }: Props) {
           </AdminPanel>
         </div>
 
-        <div className="space-y-6">
+        <div className="flex min-w-0 flex-col gap-5">
           <AdminPanel>
-            <AdminPanelHeader title="Publish" />
-            <AdminPanelBody className="space-y-4">
-              <div>
-                <label className={fieldLabel}>Status</label>
-                <select
-                  className="w-full rounded-brand border border-surface-border/80 p-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand/30"
-                  value={status}
-                  onChange={(e) => setStatus(e.target.value as 'draft' | 'published')}
-                >
-                  <option value="draft">Draft (hidden)</option>
-                  <option value="published">Published (live)</option>
-                </select>
-              </div>
-              <div className="flex flex-col gap-2">
-                <Button onClick={save} disabled={saving || deleting}>
-                  <Save className="h-4 w-4 mr-1.5" />
-                  {saving ? 'Saving…' : mode === 'create' ? 'Create post' : 'Save changes'}
-                </Button>
-                {mode === 'edit' && (
-                  <Button variant="ghost" onClick={remove} disabled={saving || deleting} className="text-error-600 hover:text-error-600">
-                    <Trash2 className="h-4 w-4 mr-1.5" />
-                    {deleting ? 'Deleting…' : 'Delete post'}
-                  </Button>
-                )}
-              </div>
+            <AdminPanelHeader
+              title="Publish"
+              icon={Send}
+              actions={
+                <DashboardPill tone={status === 'published' ? 'green' : 'neutral'} className="capitalize">
+                  {status}
+                </DashboardPill>
+              }
+            />
+            <AdminPanelBody>
+              <label className={fieldLabel}>Status</label>
+              <select
+                className="dashboard-select w-full"
+                value={status}
+                onChange={(e) => setStatus(e.target.value as 'draft' | 'published')}
+              >
+                <option value="draft">Draft (hidden)</option>
+                <option value="published">Published (live)</option>
+              </select>
             </AdminPanelBody>
+            <div
+              className={cn(
+                'flex items-center gap-2 border-t border-dash-border px-5 py-4',
+                mode === 'edit' ? 'justify-between' : 'justify-end'
+              )}
+            >
+              {mode === 'edit' && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={remove}
+                  disabled={saving || deleting}
+                  className="h-9 gap-1.5 text-dash-negative hover:bg-dash-negative-soft hover:text-dash-negative"
+                >
+                  <Trash2 className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
+                  {deleting ? 'Deleting…' : 'Delete post'}
+                </Button>
+              )}
+              <Button size="sm" onClick={save} disabled={saving || deleting} className="h-9 gap-1.5">
+                <Save className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
+                {saving ? 'Saving…' : mode === 'create' ? 'Create post' : 'Save changes'}
+              </Button>
+            </div>
           </AdminPanel>
 
           <AdminPanel>
-            <AdminPanelHeader title="SEO metadata" />
+            <AdminPanelHeader title="SEO metadata" icon={Search} />
             <AdminPanelBody className="space-y-4">
               <div>
-                <label className={fieldLabel}>
-                  Meta title <span className="text-ink-dim">({metaTitle.length}/60)</span>
+                <label className={cn(fieldLabel, 'flex items-center justify-between gap-2')}>
+                  Meta title <FieldCounter value={metaTitle.length} max={60} />
                 </label>
                 <Input
                   value={metaTitle}
@@ -340,8 +394,8 @@ export function BlogEditor({ mode, initialPost }: Props) {
                 />
               </div>
               <div>
-                <label className={fieldLabel}>
-                  Meta description <span className="text-ink-dim">({metaDescription.length}/155)</span>
+                <label className={cn(fieldLabel, 'flex items-center justify-between gap-2')}>
+                  Meta description <FieldCounter value={metaDescription.length} max={155} />
                 </label>
                 <textarea
                   className={`${textareaClass} min-h-[80px]`}

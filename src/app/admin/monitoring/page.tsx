@@ -1,15 +1,32 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import type { ReactNode } from 'react'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import {
   Activity, AlertTriangle, CheckCircle, Clock,
-  Server, Database, Zap, TrendingUp,
-  TrendingDown, RefreshCw, Eye
+  Server, Database, Zap, Gauge, RefreshCw, Eye
 } from 'lucide-react'
-import { AdminPage, AdminPageHeader } from '@/components/admin/admin-ui'
+import { cn } from '@/lib/utils/cn'
+import {
+  AdminPage,
+  AdminPageHeader,
+  AdminPanel,
+  AdminPanelBody,
+  AdminPanelHeader,
+  AdminStatGrid,
+  AdminTable,
+  AdminTableWrap,
+  DashboardEmpty,
+  DashboardIconTile,
+  DashboardPageSkeleton,
+  DashboardPill,
+  DashboardStatCard,
+  DashboardStatList,
+  RateBar,
+  DASHBOARD_ICON_STROKE,
+  type DashboardTone,
+} from '@/components/admin/admin-ui'
 
 interface SystemStatus {
   overall: 'healthy' | 'warning' | 'critical'
@@ -47,6 +64,15 @@ interface LogEntry {
   details?: Record<string, unknown>
 }
 
+function StatusPill({ tone, children }: { tone: DashboardTone; children: ReactNode }) {
+  return (
+    <DashboardPill tone={tone} className="capitalize">
+      <span className="h-1.5 w-1.5 rounded-full bg-current" aria-hidden />
+      {children}
+    </DashboardPill>
+  )
+}
+
 export default function APIMonitoring() {
   const [systemStatus, setSystemStatus] = useState<SystemStatus | null>(null)
   const [services, setServices] = useState<ServiceStatus[]>([])
@@ -54,15 +80,6 @@ export default function APIMonitoring() {
   const [logs, setLogs] = useState<LogEntry[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [autoRefresh, setAutoRefresh] = useState(true)
-
-  useEffect(() => {
-    loadMonitoringData()
-
-    if (autoRefresh) {
-      const interval = setInterval(loadMonitoringData, 30000)
-      return () => clearInterval(interval)
-    }
-  }, [autoRefresh])
 
   const loadMonitoringData = async () => {
     try {
@@ -117,16 +134,26 @@ export default function APIMonitoring() {
     }
   }
 
-  const getStatusColor = (status: string) => {
+  useEffect(() => {
+    /* eslint-disable-next-line react-hooks/set-state-in-effect */
+    loadMonitoringData()
+
+    if (autoRefresh) {
+      const interval = setInterval(loadMonitoringData, 30000)
+      return () => clearInterval(interval)
+    }
+  }, [autoRefresh])
+
+  const getStatusTone = (status: string): DashboardTone => {
     switch (status) {
       case 'healthy':
-        return 'bg-green-100 text-green-800'
+        return 'green'
       case 'warning':
-        return 'bg-yellow-100 text-yellow-800'
+        return 'orange'
       case 'critical':
-        return 'bg-red-100 text-red-800'
+        return 'rose'
       default:
-        return 'bg-gray-100 text-gray-800'
+        return 'neutral'
     }
   }
 
@@ -143,50 +170,45 @@ export default function APIMonitoring() {
     }
   }
 
-  const getLogLevelColor = (level: string) => {
+  const getLogLevelTone = (level: string): DashboardTone => {
     switch (level) {
       case 'info':
-        return 'text-blue-600 bg-blue-100'
+        return 'indigo'
       case 'warning':
-        return 'text-yellow-600 bg-yellow-100'
+        return 'orange'
       case 'error':
-        return 'text-red-600 bg-red-100'
+        return 'rose'
       case 'debug':
-        return 'text-gray-600 bg-gray-100'
+        return 'neutral'
       default:
-        return 'text-gray-600 bg-gray-100'
+        return 'neutral'
     }
   }
 
-  const getSeverityColor = (severity: string) => {
+  const getSeverityTone = (severity: string): DashboardTone => {
     switch (severity) {
       case 'low':
-        return 'bg-blue-100 text-blue-800'
+        return 'indigo'
       case 'medium':
-        return 'bg-yellow-100 text-yellow-800'
+        return 'orange'
       case 'high':
-        return 'bg-orange-100 text-orange-800'
+        return 'orange'
       case 'critical':
-        return 'bg-red-100 text-red-800'
+        return 'rose'
       default:
-        return 'bg-gray-100 text-gray-800'
+        return 'neutral'
     }
   }
 
   if (isLoading) {
-    return (
-      <AdminPage>
-        <div className="animate-pulse">
-          <div className="h-8 bg-gray-200 rounded w-1/4 mb-6"></div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className="h-32 bg-gray-200 rounded-lg"></div>
-            ))}
-          </div>
-        </div>
-      </AdminPage>
-    )
+    return <DashboardPageSkeleton kpis={4} label="Loading monitoring" />
   }
+
+  const overall = systemStatus?.overall ?? ''
+  const activeAlertCount = alerts.filter(a => !a.resolved).length
+  const healthyCount = services.filter((s) => s.status === 'healthy').length
+  const warningCount = services.filter((s) => s.status === 'warning').length
+  const criticalCount = services.filter((s) => s.status === 'critical').length
 
   return (
     <AdminPage>
@@ -194,238 +216,252 @@ export default function APIMonitoring() {
         title="API Monitoring"
         description="Real-time system health, performance metrics, and alerts"
         actions={
-          <div className="flex items-center gap-2">
+          <>
             <Button
-              variant={autoRefresh ? 'default' : 'outline'}
+              variant="outline"
               size="sm"
               onClick={() => setAutoRefresh(!autoRefresh)}
-              className="flex items-center"
+              aria-pressed={autoRefresh}
+              className={cn('h-9 gap-1.5', autoRefresh && 'bg-dash-pill hover:bg-dash-pill')}
             >
-              <RefreshCw className={`w-4 h-4 mr-2 ${autoRefresh ? 'animate-spin' : ''}`} />
+              <RefreshCw
+                className={cn('h-4 w-4', autoRefresh && 'animate-spin text-dash-teal-strong')}
+                strokeWidth={DASHBOARD_ICON_STROKE}
+                aria-hidden
+              />
               Auto Refresh
             </Button>
             <Button
               variant="outline"
               size="sm"
               onClick={loadMonitoringData}
-              className="flex items-center"
+              className="h-9 gap-1.5"
             >
-              <RefreshCw className="w-4 h-4 mr-2" />
+              <RefreshCw className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
               Refresh Now
             </Button>
-          </div>
+          </>
         }
       />
 
-      {}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center">
-              <div className="p-2 bg-green-100 rounded-lg">
-                <CheckCircle className="w-6 h-6 text-green-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">System Status</p>
-                <p className="text-2xl font-bold text-gray-900 capitalize">
-                  {systemStatus?.overall}
-                </p>
-                <p className="text-sm text-green-600">
-                  <TrendingUp className="w-4 h-4 inline mr-1" />
-                  All systems operational
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+      <AdminStatGrid columns={4}>
+        <DashboardStatCard
+          label="System Status"
+          value={systemStatus ? <span className="capitalize">{systemStatus.overall}</span> : null}
+          icon={getStatusIcon(overall)}
+          accent={getStatusTone(overall)}
+          hint={
+            !systemStatus
+              ? undefined
+              : systemStatus.overall === 'healthy'
+                ? 'All systems operational'
+                : `${warningCount + criticalCount} of ${services.length} services need attention`
+          }
+        />
+        <DashboardStatCard
+          label="Uptime"
+          value={systemStatus ? `${systemStatus.uptime}%` : null}
+          icon={Clock}
+          accent="brand"
+          hint="Last 30 days"
+        />
+        <DashboardStatCard
+          label="Response Time"
+          value={systemStatus ? `${systemStatus.responseTime}ms` : null}
+          icon={Zap}
+          accent="indigo"
+          hint="Average"
+        />
+        <DashboardStatCard
+          label="Throughput"
+          value={systemStatus ? `${systemStatus.throughput}/min` : null}
+          icon={Activity}
+          accent="orange"
+          hint="Requests per minute"
+        />
+      </AdminStatGrid>
 
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <Clock className="w-6 h-6 text-blue-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Uptime</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {systemStatus?.uptime}%
-                </p>
-                <p className="text-sm text-gray-600">
-                  Last 30 days
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+      <div className="dashboard-grid-wide">
+        <AdminPanel>
+          <AdminPanelHeader
+            title="Service Status"
+            icon={Server}
+            description={`${services.length} ${services.length === 1 ? 'service' : 'services'}`}
+          />
+          {services.length === 0 ? (
+            <AdminPanelBody>
+              <DashboardEmpty icon={Server} title="No services reported" />
+            </AdminPanelBody>
+          ) : (
+            <AdminPanelBody noPadding>
+              <AdminTableWrap>
+                <AdminTable>
+                  <thead>
+                    <tr>
+                      <th>Service</th>
+                      <th>Status</th>
+                      <th className="dashboard-num">Uptime</th>
+                      <th className="dashboard-num">Response</th>
+                      <th className="dashboard-num">Last check</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {services.map((service, index) => (
+                      <tr key={index}>
+                        <td>
+                          <div className="flex min-w-0 items-center gap-3">
+                            <DashboardIconTile icon={Server} tone="neutral" className="h-8 w-8" />
+                            <div className="min-w-0">
+                              <p className="font-medium text-dash-ink">{service.name}</p>
+                              {service.description && (
+                                <p className="text-xs text-dash-muted">{service.description}</p>
+                              )}
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <StatusPill tone={getStatusTone(service.status)}>{service.status}</StatusPill>
+                        </td>
+                        <td className="dashboard-num">
+                          <RateBar value={service.uptime} label={`${service.uptime}%`} />
+                        </td>
+                        <td className="dashboard-num whitespace-nowrap">{service.responseTime}ms</td>
+                        <td className="dashboard-num whitespace-nowrap text-dash-muted">
+                          {new Date(service.lastCheck).toLocaleTimeString()}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </AdminTable>
+              </AdminTableWrap>
+            </AdminPanelBody>
+          )}
+        </AdminPanel>
 
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center">
-              <div className="p-2 bg-purple-100 rounded-lg">
-                <Zap className="w-6 h-6 text-purple-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Response Time</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {systemStatus?.responseTime}ms
-                </p>
-                <p className="text-sm text-green-600">
-                  <TrendingDown className="w-4 h-4 inline mr-1" />
-                  -5% from last hour
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center">
-              <div className="p-2 bg-orange-100 rounded-lg">
-                <Activity className="w-6 h-6 text-orange-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Throughput</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {systemStatus?.throughput}/min
-                </p>
-                <p className="text-sm text-gray-600">
-                  Requests per minute
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <AdminPanel>
+          <AdminPanelHeader title="Health summary" icon={Gauge} />
+          <AdminPanelBody>
+            <DashboardStatList
+              className="-my-2.5"
+              items={[
+                {
+                  label: 'Error rate',
+                  value: systemStatus
+                    ? `${systemStatus.errorRate.toLocaleString(undefined, { maximumFractionDigits: 2 })}%`
+                    : null,
+                },
+                {
+                  label: 'Healthy services',
+                  value: services.length > 0 ? `${healthyCount} of ${services.length}` : null,
+                },
+                { label: 'Warnings', value: warningCount },
+                { label: 'Critical', value: criticalCount },
+                { label: 'Active alerts', value: activeAlertCount },
+                { label: 'Auto refresh', value: autoRefresh ? 'Every 30s' : 'Off' },
+              ]}
+            />
+          </AdminPanelBody>
+        </AdminPanel>
       </div>
 
-      {}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center">
-            <Server className="w-5 h-5 mr-2" />
-            Service Status
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {services.map((service, index) => {
-              const StatusIcon = getStatusIcon(service.status)
-              return (
-                <div key={index} className="border border-gray-200 rounded-lg p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="text-sm font-medium text-gray-900">{service.name}</h3>
-                    <Badge className={getStatusColor(service.status)}>
-                      <StatusIcon className="w-3 h-3 mr-1" />
-                      {service.status}
-                    </Badge>
-                  </div>
-                  <p className="text-xs text-gray-600 mb-3">{service.description}</p>
-                  <div className="space-y-1">
-                    <div className="flex justify-between text-xs">
-                      <span className="text-gray-500">Uptime:</span>
-                      <span className="font-medium">{service.uptime}%</span>
-                    </div>
-                    <div className="flex justify-between text-xs">
-                      <span className="text-gray-500">Response:</span>
-                      <span className="font-medium">{service.responseTime}ms</span>
-                    </div>
-                    <div className="flex justify-between text-xs">
-                      <span className="text-gray-500">Last Check:</span>
-                      <span className="font-medium">
-                        {new Date(service.lastCheck).toLocaleTimeString()}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        </CardContent>
-      </Card>
-
-      {}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center justify-between">
-              <div className="flex items-center">
-                <AlertTriangle className="w-5 h-5 mr-2" />
-                Active Alerts
-              </div>
-              <Badge variant="secondary">
-                {alerts.filter(a => !a.resolved).length} active
-              </Badge>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {alerts.map((alert) => (
-                <div key={alert.id} className={`p-3 rounded-lg border-l-4 ${
-                  alert.resolved ? 'bg-gray-50 border-gray-300' : 'bg-red-50 border-red-400'
-                }`}>
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-2 mb-1">
-                        <h4 className="text-sm font-medium text-gray-900">{alert.title}</h4>
-                        <Badge className={getSeverityColor(alert.severity)}>
-                          {alert.severity}
-                        </Badge>
+      <div className="dashboard-grid-narrow-wide">
+        <AdminPanel>
+          <AdminPanelHeader
+            title="Active Alerts"
+            icon={AlertTriangle}
+            actions={
+              <DashboardPill tone={activeAlertCount > 0 ? 'rose' : 'neutral'} className="tabular-nums">
+                {activeAlertCount} active
+              </DashboardPill>
+            }
+          />
+          <AdminPanelBody>
+            {alerts.length === 0 ? (
+              <DashboardEmpty icon={CheckCircle} title="No alerts" />
+            ) : (
+              <ul className="-my-3">
+                {alerts.map((alert) => (
+                  <li key={alert.id} className="dashboard-activity-item">
+                    <DashboardIconTile
+                      icon={alert.resolved ? CheckCircle : AlertTriangle}
+                      tone={alert.resolved ? 'neutral' : 'rose'}
+                      className="h-8 w-8"
+                    />
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <h4 className="text-[13px] font-medium leading-5 text-dash-ink">{alert.title}</h4>
+                        <StatusPill tone={getSeverityTone(alert.severity)}>{alert.severity}</StatusPill>
                       </div>
-                      <p className="text-xs text-gray-600 mb-2">{alert.description}</p>
-                      <p className="text-xs text-gray-500">
+                      <p className="mt-0.5 text-xs leading-5 text-dash-muted">{alert.description}</p>
+                      <p className="mt-0.5 text-xs text-dash-dim">
                         {new Date(alert.timestamp).toLocaleString()}
                       </p>
                     </div>
-                    <Button variant="ghost" size="sm">
-                      <Eye className="w-4 h-4" />
+                    <Button variant="ghost" size="sm" className="h-8 w-8 shrink-0 p-0" aria-label="View alert">
+                      <Eye className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
                     </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </AdminPanelBody>
+        </AdminPanel>
 
-        {}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <Database className="w-5 h-5 mr-2" />
-              Recent Logs
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3 max-h-96 overflow-y-auto">
-              {logs.map((log) => (
-                <div key={log.id} className="flex items-start space-x-3 p-2 rounded hover:bg-gray-50">
-                  <Badge className={`text-xs ${getLogLevelColor(log.level)}`}>
-                    {log.level}
-                  </Badge>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center space-x-2 mb-1">
-                      <span className="text-xs font-medium text-gray-900">{log.service}</span>
-                      <span className="text-xs text-gray-500">
-                        {new Date(log.timestamp).toLocaleTimeString()}
-                      </span>
-                    </div>
-                    <p className="text-xs text-gray-700">{log.message}</p>
-                    {log.details && (
-                      <details className="mt-1">
-                        <summary className="text-xs text-gray-500 cursor-pointer">
-                          View details
-                        </summary>
-                        <pre className="text-xs text-gray-600 mt-1 bg-gray-100 p-2 rounded">
-                          {JSON.stringify(log.details, null, 2)}
-                        </pre>
-                      </details>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+        <AdminPanel>
+          <AdminPanelHeader
+            title="Recent Logs"
+            icon={Database}
+            description={`${logs.length} ${logs.length === 1 ? 'entry' : 'entries'}`}
+          />
+          {logs.length === 0 ? (
+            <AdminPanelBody>
+              <DashboardEmpty icon={Database} title="No recent logs" />
+            </AdminPanelBody>
+          ) : (
+            <AdminPanelBody noPadding>
+              <div className="max-h-96 overflow-y-auto rounded-b-2xl">
+                <AdminTableWrap>
+                  <AdminTable>
+                    <thead>
+                      <tr>
+                        <th>Time</th>
+                        <th>Level</th>
+                        <th>Service</th>
+                        <th>Message</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {logs.map((log) => (
+                        <tr key={log.id}>
+                          <td className="whitespace-nowrap tabular-nums text-dash-muted">
+                            {new Date(log.timestamp).toLocaleTimeString()}
+                          </td>
+                          <td>
+                            <StatusPill tone={getLogLevelTone(log.level)}>{log.level}</StatusPill>
+                          </td>
+                          <td className="whitespace-nowrap font-medium text-dash-ink">{log.service}</td>
+                          <td className="min-w-[16rem]">
+                            <p className="text-dash-body">{log.message}</p>
+                            {log.details && (
+                              <details className="mt-1">
+                                <summary className="cursor-pointer text-xs text-dash-teal-strong">
+                                  View details
+                                </summary>
+                                <pre className="dashboard-code-block mt-1.5 block overflow-x-auto whitespace-pre">
+                                  {JSON.stringify(log.details, null, 2)}
+                                </pre>
+                              </details>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </AdminTable>
+                </AdminTableWrap>
+              </div>
+            </AdminPanelBody>
+          )}
+        </AdminPanel>
       </div>
     </AdminPage>
   )

@@ -1,14 +1,18 @@
 'use client'
 
-import { useState } from 'react'
+import { useId, useState } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Key, X, AlertCircle, Copy, CheckCircle } from 'lucide-react'
+import { Key, AlertCircle, Copy, CheckCircle, Loader2, ShieldCheck } from 'lucide-react'
 import { ApiError } from '@/types/api'
 import type { CreatedApiKeyResult } from '@/lib/api/api-keys'
-import { DashboardModal } from '@/components/dashboard/dashboard-shell'
+import {
+  DASHBOARD_ICON_STROKE,
+  DashboardAlert,
+  DashboardModal,
+  DashboardModalCard,
+} from '@/components/dashboard/dashboard-shell'
 
 interface CreateApiKeyModalProps {
   isOpen: boolean
@@ -33,6 +37,8 @@ export function CreateApiKeyModal({
   const [upgradeNeeded, setUpgradeNeeded] = useState(false)
   const [created, setCreated] = useState<CreatedApiKeyResult | null>(null)
   const [copied, setCopied] = useState(false)
+  const formId = useId()
+  const titleId = useId()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -106,152 +112,151 @@ export function CreateApiKeyModal({
 
   return (
     <DashboardModal onClose={handleClose} closeOnBackdrop={false} closeOnEscape={!created}>
-      <Card className="w-full shadow-glass-lg border-surface-border/80 animate-slide-up">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-          <CardTitle className="text-lg font-semibold flex items-center">
-            <Key className="h-5 w-5 mr-2 text-blue-600" />
-            {created ? 'Save your API key' : 'Create New API Key'}
-          </CardTitle>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleClose}
-            className="h-8 w-8 p-0"
-          >
-            <X className="h-4 w-4" />
-          </Button>
-        </CardHeader>
-
-        <CardContent>
-          {created ? (
-            <div className="space-y-4">
-              <div className="p-3 bg-amber-50 border border-amber-200 rounded-md text-sm text-amber-900">
-                <p className="font-medium">Copy this key now</p>
-                <p className="mt-1 text-xs">
-                  You won&apos;t be able to see the full key again after closing this dialog.
-                </p>
-              </div>
-
-              <div>
-                <p className="text-sm text-gray-600 mb-1">{created.name}</p>
-                <div className="flex items-start gap-2">
-                  <code className="flex-1 px-3 py-2 bg-gray-100 rounded-md font-mono text-xs break-all">
-                    {created.key}
-                  </code>
-                  <Button variant="outline" size="sm" onClick={handleCopy} className="shrink-0">
-                    {copied ? (
-                      <CheckCircle className="h-4 w-4 text-green-600" />
-                    ) : (
-                      <Copy className="h-4 w-4" />
-                    )}
-                  </Button>
-                </div>
-                {copied && (
-                  <p className="text-xs text-green-600 mt-1">Copied to clipboard</p>
-                )}
-              </div>
-
-              <Button type="button" className="w-full" onClick={handleClose}>
-                I&apos;ve saved my key
-              </Button>
-            </div>
+      <DashboardModalCard
+        icon={Key}
+        title={created ? 'Save your API key' : 'Create New API Key'}
+        labelledBy={titleId}
+        onClose={handleClose}
+        footer={
+          created ? (
+            <Button type="button" size="sm" className="h-9" onClick={handleClose}>
+              I&apos;ve saved my key
+            </Button>
           ) : (
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label htmlFor="key-name" className="text-sm font-medium text-gray-700 mb-2 block">
-                  API Key Name
-                </label>
-                <Input
-                  id="key-name"
-                  type="text"
-                  value={name}
-                  onChange={(e) => {
-                    setName(e.target.value)
-                    setError('')
-                    setVerifyNeeded(false)
-                    setUpgradeNeeded(false)
-                  }}
-                  placeholder={namePlaceholder}
-                  className="w-full"
-                  maxLength={100}
-                  disabled={isLoading}
-                />
-                <p className="text-xs text-gray-500 mt-1">
-                  Choose a descriptive name to help you identify this key later
-                </p>
-              </div>
+            <>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleClose}
+                className="h-9"
+                disabled={isLoading}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                form={formId}
+                size="sm"
+                className="h-9 gap-1.5"
+                disabled={isLoading || !name.trim()}
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" strokeWidth={DASHBOARD_ICON_STROKE} />
+                    Creating...
+                  </>
+                ) : (
+                  <>
+                    <Key className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} />
+                    Create API Key
+                  </>
+                )}
+              </Button>
+            </>
+          )
+        }
+      >
+        {created ? (
+          <div className="space-y-4">
+            <DashboardAlert variant="warning" className="block">
+              <p className="font-medium">Copy this key now</p>
+              <p className="mt-0.5 text-xs">
+                You won&apos;t be able to see the full key again after closing this dialog.
+              </p>
+            </DashboardAlert>
 
-              {error && (
-                <div className="flex items-start space-x-2 p-3 bg-red-50 border border-red-200 rounded-md">
-                  <AlertCircle className="h-4 w-4 text-red-600 mt-0.5 flex-shrink-0" />
-                  <div className="text-sm text-red-800">
-                    <p>{error}</p>
-                    {verifyNeeded && (
-                      <Link
-                        href="/auth/verify-email"
-                        className="mt-1 inline-block font-medium text-red-900 underline"
-                      >
-                        Verify your email
-                      </Link>
-                    )}
-                    {upgradeNeeded && (
-                      <Link
-                        href={upgradeHref}
-                        className="mt-1 inline-block font-medium text-red-900 underline"
-                      >
-                        Upgrade your plan
-                      </Link>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              <div className="bg-blue-50 border border-blue-200 rounded-md p-3">
-                <div className="flex items-start space-x-2">
-                  <AlertCircle className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
-                  <div className="text-sm text-blue-800">
-                    <p className="font-medium mb-1">Important Security Notes:</p>
-                    <ul className="list-disc list-inside space-y-1 text-xs">
-                      <li>Store your API key securely</li>
-                      <li>Don&apos;t share it publicly or commit to version control</li>
-                      <li>The full key is shown only once after creation</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex space-x-3 pt-2">
+            <div>
+              <p className="dashboard-field-label">{created.name}</p>
+              <div className="flex items-start gap-2">
+                <code className="dashboard-code-block">
+                  {created.key}
+                </code>
                 <Button
-                  type="button"
                   variant="outline"
-                  onClick={handleClose}
-                  className="flex-1"
-                  disabled={isLoading}
+                  size="sm"
+                  onClick={handleCopy}
+                  className="h-9 w-9 shrink-0 p-0"
+                  title="Copy API key"
+                  aria-label="Copy API key"
                 >
-                  Cancel
-                </Button>
-                <Button
-                  type="submit"
-                  className="flex-1"
-                  disabled={isLoading || !name.trim()}
-                >
-                  {isLoading ? (
-                    <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
-                      Creating...
-                    </>
+                  {copied ? (
+                    <CheckCircle className="h-4 w-4 text-dash-positive" strokeWidth={DASHBOARD_ICON_STROKE} />
                   ) : (
-                    <>
-                      <Key className="h-4 w-4 mr-2" />
-                      Create API Key
-                    </>
+                    <Copy className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} />
                   )}
                 </Button>
               </div>
-            </form>
-          )}
-        </CardContent>
-      </Card>
+              {copied && (
+                <p className="mt-1.5 text-xs text-dash-positive" role="status">Copied to clipboard</p>
+              )}
+            </div>
+          </div>
+        ) : (
+          <form id={formId} onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label htmlFor="key-name" className="dashboard-field-label">
+                API Key Name
+              </label>
+              <Input
+                id="key-name"
+                type="text"
+                value={name}
+                onChange={(e) => {
+                  setName(e.target.value)
+                  setError('')
+                  setVerifyNeeded(false)
+                  setUpgradeNeeded(false)
+                }}
+                placeholder={namePlaceholder}
+                className="w-full"
+                maxLength={100}
+                disabled={isLoading}
+              />
+              <p className="dashboard-field-hint">
+                Choose a descriptive name to help you identify this key later
+              </p>
+            </div>
+
+            {error && (
+              <DashboardAlert variant="error" className="flex-nowrap items-start gap-x-2">
+                <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
+                <div>
+                  <p>{error}</p>
+                  {verifyNeeded && (
+                    <Link
+                      href="/auth/verify-email"
+                      className="mt-1 inline-block font-medium underline"
+                    >
+                      Verify your email
+                    </Link>
+                  )}
+                  {upgradeNeeded && (
+                    <Link
+                      href={upgradeHref}
+                      className="mt-1 inline-block font-medium underline"
+                    >
+                      Upgrade your plan
+                    </Link>
+                  )}
+                </div>
+              </DashboardAlert>
+            )}
+
+            <div className="flex items-start gap-2.5 rounded-xl border border-dash-border bg-dash-hover px-4 py-3">
+              <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-dash-teal-strong" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
+              <div className="text-[13px] text-dash-body">
+                <p className="mb-1 font-medium text-dash-ink">Important Security Notes:</p>
+                <ul className="list-inside list-disc space-y-1 text-xs text-dash-muted">
+                  <li>Store your API key securely</li>
+                  <li>Don&apos;t share it publicly or commit to version control</li>
+                  <li>The full key is shown only once after creation</li>
+                </ul>
+              </div>
+            </div>
+          </form>
+        )}
+      </DashboardModalCard>
     </DashboardModal>
   )
 }

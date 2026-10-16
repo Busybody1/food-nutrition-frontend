@@ -2,11 +2,17 @@
 
 import { useState, type FormEvent } from 'react'
 import { usePathname } from 'next/navigation'
-import { CheckCircle, Send } from 'lucide-react'
+import { CheckCircle, MessageSquareText, Send } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/lib/hooks/use-auth'
 import { ApiError } from '@/types/api'
 import { cn } from '@/lib/utils/cn'
+import {
+  DASHBOARD_ICON_STROKE,
+  DashboardAlert,
+  DashboardPanelBody,
+  DashboardPanelHeader,
+} from '@/components/dashboard/dashboard-shell'
 
 const MIN_MESSAGE_LENGTH = 10
 const MAX_MESSAGE_LENGTH = 4000
@@ -53,24 +59,28 @@ export function DashboardFeedbackForm() {
 
   return (
     <section id="dashboard-feedback" className="dashboard-panel" aria-labelledby="dashboard-feedback-title">
-      <div className="dashboard-panel-header">
-        <h2 id="dashboard-feedback-title" className="dashboard-panel-title">
-          Feedback & errors
-        </h2>
-      </div>
-      <div className="dashboard-panel-body">
+      <DashboardPanelHeader
+        title={<span id="dashboard-feedback-title">Feedback & errors</span>}
+        icon={MessageSquareText}
+        description={
+          isSubmitted ? undefined : 'Drop product feedback or errors here. We read every message.'
+        }
+      />
+      <DashboardPanelBody>
         {isSubmitted ? (
-          <div className="flex flex-col items-center text-center py-4">
-            <CheckCircle className="h-8 w-8 text-brand-strong mb-3" aria-hidden />
-            <p className="text-sm font-medium text-ink">Thanks — we got it</p>
-            <p className="text-xs text-ink-muted mt-1 max-w-sm">
+          <div className="flex flex-col items-center rounded-xl bg-dash-hover px-6 py-8 text-center">
+            <span className="mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-dash-positive-soft text-dash-positive">
+              <CheckCircle className="h-5 w-5" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
+            </span>
+            <p className="text-sm font-semibold text-dash-ink">Thanks — we got it</p>
+            <p className="mt-1 max-w-sm text-[13px] text-dash-muted">
               Your note was sent to the team. We typically reply within one business day.
             </p>
             <Button
               type="button"
               variant="outline"
               size="sm"
-              className="mt-4"
+              className="mt-4 h-9"
               onClick={() => {
                 setIsSubmitted(false)
                 setSubmitError(null)
@@ -80,10 +90,7 @@ export function DashboardFeedbackForm() {
             </Button>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <p className="text-sm text-ink-muted">
-              Drop product feedback or errors here. We read every message.
-            </p>
+          <form onSubmit={handleSubmit} className="space-y-3">
             <div className="dashboard-segmented" role="group" aria-label="Message type">
               {CATEGORIES.map((option) => (
                 <button
@@ -100,14 +107,7 @@ export function DashboardFeedbackForm() {
                 </button>
               ))}
             </div>
-            {submitError && (
-              <p
-                className="rounded-brand border border-red-200/80 bg-red-50 px-4 py-3 text-sm text-red-800"
-                role="alert"
-              >
-                {submitError}
-              </p>
-            )}
+            {submitError && <DashboardAlert variant="error">{submitError}</DashboardAlert>}
             <div>
               <label htmlFor="dashboard-feedback-message" className="sr-only">
                 {category === 'error' ? 'Describe the error' : 'Your feedback'}
@@ -126,19 +126,21 @@ export function DashboardFeedbackForm() {
                     ? 'What went wrong, which endpoint or page, and what you expected…'
                     : 'What should we improve, add, or fix?'
                 }
-                className="w-full min-h-[112px] rounded-brand border border-surface-border bg-white px-3 py-2.5 text-sm text-ink placeholder:text-ink-dim resize-y focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand/40"
+                className="dashboard-textarea min-h-[112px] resize-y"
               />
-              <p className="mt-1.5 text-xs text-ink-dim tabular-nums">
+            </div>
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-xs tabular-nums text-dash-dim">
                 {message.trim().length}/{MAX_MESSAGE_LENGTH}
               </p>
+              <Button type="submit" size="sm" disabled={isSubmitting} className="h-9 gap-1.5">
+                <Send className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
+                {isSubmitting ? 'Sending…' : 'Send'}
+              </Button>
             </div>
-            <Button type="submit" size="sm" disabled={isSubmitting} className="gap-2">
-              <Send className="h-3.5 w-3.5" aria-hidden />
-              {isSubmitting ? 'Sending…' : 'Send'}
-            </Button>
           </form>
         )}
-      </div>
+      </DashboardPanelBody>
     </section>
   )
 }

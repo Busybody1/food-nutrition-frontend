@@ -8,11 +8,20 @@ import { ApiError } from '@/types/api'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
+  DASHBOARD_ICON_STROKE,
+  DashboardAlert,
+  DashboardEmpty,
+  DashboardIconTile,
+  DashboardLoading,
   DashboardPage,
   DashboardPageHeader,
-  DashboardAlert,
+  DashboardPanel,
+  DashboardPanelBody,
+  DashboardPanelHeader,
+  DashboardTable,
+  DashboardTableWrap,
 } from '@/components/dashboard/dashboard-shell'
-import { Search, Sparkles, Loader2 } from 'lucide-react'
+import { ListFilter, Loader2, Search, Sparkles, UtensilsCrossed } from 'lucide-react'
 
 interface FoodSuggestItem {
   id: number
@@ -151,6 +160,97 @@ export default function SearchPlaygroundPage() {
     }
   }
 
+  const resultsPanel = (
+    <DashboardPanel>
+      <DashboardPanelHeader
+        title="Results"
+        icon={ListFilter}
+        description="Calories and protein per 100 g"
+        actions={
+          hasSearched && !loading ? (
+            <span className="dashboard-meta-pill">
+              <span className="font-semibold tabular-nums text-dash-ink">{total.toLocaleString()}</span> results
+            </span>
+          ) : undefined
+        }
+      />
+      {error && (
+        <div className="px-5 pb-3">
+          <DashboardAlert variant="error">
+            <span>
+              {error}
+              {mcpOnly ? (
+                <>
+                  {' '}
+                  <Link href="/docs/mcp" className="font-medium underline">
+                    How to connect
+                  </Link>
+                </>
+              ) : null}
+            </span>
+          </DashboardAlert>
+        </div>
+      )}
+      <DashboardPanelBody flush>
+        {loading ? (
+          <DashboardLoading message="Searching…" className="min-h-[200px] border-t border-dash-border" />
+        ) : results.length > 0 ? (
+          <DashboardTableWrap>
+            <DashboardTable className="min-w-[640px]">
+              <thead>
+                <tr>
+                  <th>Food</th>
+                  <th>Brand</th>
+                  <th>Category</th>
+                  <th className="dashboard-num">Calories</th>
+                  <th className="dashboard-num">Protein</th>
+                </tr>
+              </thead>
+              <tbody>
+                {results.map((item, index) => {
+                  const calories = formatMacro(item.calories_100g, ' kcal')
+                  const protein = formatMacro(item.protein_100g, ' g')
+                  return (
+                    <tr key={item.id ?? index}>
+                      <td>
+                        <div className="flex min-w-0 items-center gap-3">
+                          <DashboardIconTile icon={UtensilsCrossed} tone="brand" className="h-8 w-8" />
+                          <span className="font-medium text-dash-ink">
+                            {item.name ?? `Food ${item.id ?? index + 1}`}
+                          </span>
+                        </div>
+                      </td>
+                      <td className={item.brand_name ? undefined : 'text-dash-dim'}>
+                        {item.brand_name || '—'}
+                      </td>
+                      <td className={item.category_name ? undefined : 'text-dash-dim'}>
+                        {item.category_name || '—'}
+                      </td>
+                      <td className="dashboard-num whitespace-nowrap font-medium text-dash-ink">
+                        {calories ?? '—'}
+                      </td>
+                      <td className="dashboard-num whitespace-nowrap">{protein ?? '—'}</td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </DashboardTable>
+          </DashboardTableWrap>
+        ) : (
+          <DashboardEmpty
+            icon={Search}
+            className="border-t border-dash-border"
+            title={
+              hasSearched && !error
+                ? 'No matching foods for this query.'
+                : 'No results yet. Run a search to see data.'
+            }
+          />
+        )}
+      </DashboardPanelBody>
+    </DashboardPanel>
+  )
+
   return (
     <DashboardPage>
       <DashboardPageHeader
@@ -165,177 +265,149 @@ export default function SearchPlaygroundPage() {
           void runSearch()
         }}
       >
-        <div className="dashboard-panel-body space-y-4">
-          <div className="flex flex-col sm:flex-row gap-3 sm:items-end">
-            <div className="flex-1 min-w-[200px]">
-              <label className="text-xs font-medium text-ink-muted uppercase tracking-wide mb-2 block">
-                Query
-              </label>
-              <Input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="e.g. chicken breast" />
-            </div>
-            <div className="flex flex-wrap items-center gap-3">
-              <label className="flex items-center gap-2 text-sm text-ink-muted cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={verifiedOnly}
-                  onChange={(e) => setVerifiedOnly(e.target.checked)}
-                  className="rounded border-surface-border text-brand focus:ring-brand/30"
-                />
-                Verified only
-              </label>
-              <select
-                className="h-10 rounded-brand border border-surface-border bg-white px-3 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-brand/30"
-                value={matchMode}
-                onChange={(e) => setMatchMode(e.target.value as 'any' | 'all')}
-              >
-                <option value="any">Match: any</option>
-                <option value="all">Match: all</option>
-              </select>
-              <Button type="submit" disabled={loading} className="gap-2">
-                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
-                Search
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => void runSuggest()}
-                disabled={suggestLoading}
-                className="gap-2"
-              >
-                {suggestLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-                Suggest
-              </Button>
+        <div className="flex flex-col gap-3 p-5 lg:flex-row lg:items-end">
+          <div className="min-w-0 flex-1 sm:min-w-[200px]">
+            <label htmlFor="search-query" className="dashboard-field-label">
+              Query
+            </label>
+            <div className="relative">
+              <Search
+                className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-dash-dim"
+                strokeWidth={DASHBOARD_ICON_STROKE}
+                aria-hidden
+              />
+              <Input
+                id="search-query"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="e.g. chicken breast"
+                className="pl-9"
+              />
             </div>
           </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <label className="inline-flex h-9 cursor-pointer items-center gap-2 rounded-[10px] border border-dash-border bg-white px-3 text-[13px] font-medium text-dash-body shadow-dash">
+              <input
+                type="checkbox"
+                checked={verifiedOnly}
+                onChange={(e) => setVerifiedOnly(e.target.checked)}
+                className="h-4 w-4 cursor-pointer rounded accent-dash-teal-strong"
+              />
+              Verified only
+            </label>
+            <select
+              className="dashboard-select"
+              aria-label="Match mode"
+              value={matchMode}
+              onChange={(e) => setMatchMode(e.target.value as 'any' | 'all')}
+            >
+              <option value="any">Match: any</option>
+              <option value="all">Match: all</option>
+            </select>
+            <Button type="submit" size="sm" disabled={loading} className="h-9 gap-1.5">
+              {loading ? (
+                <Loader2 className="h-4 w-4 animate-spin" strokeWidth={DASHBOARD_ICON_STROKE} />
+              ) : (
+                <Search className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} />
+              )}
+              Search
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => void runSuggest()}
+              disabled={suggestLoading}
+              className="h-9 gap-1.5"
+            >
+              {suggestLoading ? (
+                <Loader2 className="h-4 w-4 animate-spin" strokeWidth={DASHBOARD_ICON_STROKE} />
+              ) : (
+                <Sparkles className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} />
+              )}
+              Suggest
+            </Button>
+          </div>
+        </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-            <div>
-              <label className="text-xs font-medium text-ink-muted uppercase tracking-wide mb-2 block">Brand</label>
-              <Input value={brand} onChange={(e) => setBrand(e.target.value)} placeholder="Brand name" />
+        <div className="grid grid-cols-1 gap-4 border-t border-dash-border px-5 pb-5 pt-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div>
+            <label htmlFor="search-brand" className="dashboard-field-label">Brand</label>
+            <Input id="search-brand" value={brand} onChange={(e) => setBrand(e.target.value)} placeholder="Brand name" />
+          </div>
+          <div>
+            <label htmlFor="search-category" className="dashboard-field-label">Category</label>
+            <Input id="search-category" value={category} onChange={(e) => setCategory(e.target.value)} placeholder="Category name" />
+          </div>
+          <div>
+            <label htmlFor="search-brand-id" className="dashboard-field-label">Brand ID</label>
+            <Input id="search-brand-id" value={brandId} onChange={(e) => setBrandId(e.target.value)} placeholder="e.g. 12" inputMode="numeric" />
+          </div>
+          <div>
+            <label htmlFor="search-category-id" className="dashboard-field-label">Category ID</label>
+            <Input id="search-category-id" value={categoryId} onChange={(e) => setCategoryId(e.target.value)} placeholder="e.g. 5" inputMode="numeric" />
+          </div>
+          <div>
+            <label htmlFor="search-nutrient-id" className="dashboard-field-label">Nutrient ID</label>
+            <Input id="search-nutrient-id" value={nutrientId} onChange={(e) => setNutrientId(e.target.value)} placeholder="e.g. 106899" inputMode="numeric" />
+          </div>
+          <div>
+            <label htmlFor="search-min-amount" className="dashboard-field-label">Min amount</label>
+            <Input id="search-min-amount" value={minAmount} onChange={(e) => setMinAmount(e.target.value)} placeholder="With nutrient ID" inputMode="decimal" />
+          </div>
+          <div>
+            <label htmlFor="search-max-amount" className="dashboard-field-label">Max amount</label>
+            <Input id="search-max-amount" value={maxAmount} onChange={(e) => setMaxAmount(e.target.value)} placeholder="With nutrient ID" inputMode="decimal" />
+          </div>
+          <div>
+            <p className="dashboard-field-label">Calories (min–max)</p>
+            <div className="flex gap-2">
+              <Input value={minCalories} onChange={(e) => setMinCalories(e.target.value)} placeholder="Min" inputMode="decimal" aria-label="Min calories" />
+              <Input value={maxCalories} onChange={(e) => setMaxCalories(e.target.value)} placeholder="Max" inputMode="decimal" aria-label="Max calories" />
             </div>
-            <div>
-              <label className="text-xs font-medium text-ink-muted uppercase tracking-wide mb-2 block">Category</label>
-              <Input value={category} onChange={(e) => setCategory(e.target.value)} placeholder="Category name" />
-            </div>
-            <div>
-              <label className="text-xs font-medium text-ink-muted uppercase tracking-wide mb-2 block">Brand ID</label>
-              <Input value={brandId} onChange={(e) => setBrandId(e.target.value)} placeholder="e.g. 12" inputMode="numeric" />
-            </div>
-            <div>
-              <label className="text-xs font-medium text-ink-muted uppercase tracking-wide mb-2 block">Category ID</label>
-              <Input value={categoryId} onChange={(e) => setCategoryId(e.target.value)} placeholder="e.g. 5" inputMode="numeric" />
-            </div>
-            <div>
-              <label className="text-xs font-medium text-ink-muted uppercase tracking-wide mb-2 block">Nutrient ID</label>
-              <Input value={nutrientId} onChange={(e) => setNutrientId(e.target.value)} placeholder="e.g. 106899" inputMode="numeric" />
-            </div>
-            <div>
-              <label className="text-xs font-medium text-ink-muted uppercase tracking-wide mb-2 block">Min amount</label>
-              <Input value={minAmount} onChange={(e) => setMinAmount(e.target.value)} placeholder="With nutrient ID" inputMode="decimal" />
-            </div>
-            <div>
-              <label className="text-xs font-medium text-ink-muted uppercase tracking-wide mb-2 block">Max amount</label>
-              <Input value={maxAmount} onChange={(e) => setMaxAmount(e.target.value)} placeholder="With nutrient ID" inputMode="decimal" />
-            </div>
-            <div>
-              <label className="text-xs font-medium text-ink-muted uppercase tracking-wide mb-2 block">Calories (min–max)</label>
-              <div className="flex gap-2">
-                <Input value={minCalories} onChange={(e) => setMinCalories(e.target.value)} placeholder="Min" inputMode="decimal" />
-                <Input value={maxCalories} onChange={(e) => setMaxCalories(e.target.value)} placeholder="Max" inputMode="decimal" />
-              </div>
-            </div>
-            <div>
-              <label className="text-xs font-medium text-ink-muted uppercase tracking-wide mb-2 block">Protein (min–max)</label>
-              <div className="flex gap-2">
-                <Input value={minProtein} onChange={(e) => setMinProtein(e.target.value)} placeholder="Min" inputMode="decimal" />
-                <Input value={maxProtein} onChange={(e) => setMaxProtein(e.target.value)} placeholder="Max" inputMode="decimal" />
-              </div>
+          </div>
+          <div>
+            <p className="dashboard-field-label">Protein (min–max)</p>
+            <div className="flex gap-2">
+              <Input value={minProtein} onChange={(e) => setMinProtein(e.target.value)} placeholder="Min" inputMode="decimal" aria-label="Min protein" />
+              <Input value={maxProtein} onChange={(e) => setMaxProtein(e.target.value)} placeholder="Max" inputMode="decimal" aria-label="Max protein" />
             </div>
           </div>
         </div>
       </form>
 
-      {error && (
-        <DashboardAlert variant="error">
-          {error}
-          {mcpOnly ? (
-            <>
-              {' '}
-              <Link href="/docs/mcp" className="underline">
-                How to connect
-              </Link>
-            </>
-          ) : null}
-        </DashboardAlert>
-      )}
-
-      {hasSearched && !loading && (
-        <p className="text-sm text-ink-muted">
-          <span className="font-medium text-ink">{total.toLocaleString()}</span> results
-        </p>
-      )}
-
-      {hasSuggested && suggestions.length > 0 && (
-        <div className="dashboard-panel">
-          <div className="dashboard-panel-header">
-            <h2 className="dashboard-panel-title">Suggestions</h2>
-          </div>
-          <ul className="divide-y divide-surface-border/60">
-            {suggestions.map((item, index) => (
-              <li key={item.id ?? index} className="px-5 py-3 text-sm text-ink">
-                {item.name}
-                {item.brand_name ? <span className="text-ink-muted"> · {item.brand_name}</span> : null}
-              </li>
-            ))}
-          </ul>
+      {hasSuggested && suggestions.length > 0 ? (
+        <div className="dashboard-grid-narrow-wide">
+          <DashboardPanel>
+            <DashboardPanelHeader title="Suggestions" icon={Sparkles} />
+            <DashboardPanelBody flush>
+              <DashboardTableWrap>
+                <DashboardTable>
+                  <thead>
+                    <tr>
+                      <th>Food</th>
+                      <th>Brand</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {suggestions.map((item, index) => (
+                      <tr key={item.id ?? index}>
+                        <td className="font-medium text-dash-ink">{item.name}</td>
+                        <td className={item.brand_name ? undefined : 'text-dash-dim'}>
+                          {item.brand_name || '—'}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </DashboardTable>
+              </DashboardTableWrap>
+            </DashboardPanelBody>
+          </DashboardPanel>
+          {resultsPanel}
         </div>
+      ) : (
+        resultsPanel
       )}
-
-      <div className="dashboard-panel">
-        <div className="dashboard-panel-header">
-          <h2 className="dashboard-panel-title">Results</h2>
-        </div>
-        {loading ? (
-          <p className="px-5 py-10 text-sm text-ink-muted text-center inline-flex items-center justify-center gap-2 w-full">
-            <Loader2 className="h-4 w-4 animate-spin" />
-            Searching…
-          </p>
-        ) : results.length > 0 ? (
-          <ul className="divide-y divide-surface-border/60">
-            {results.map((item, index) => {
-              const calories = formatMacro(item.calories_100g, ' kcal')
-              const protein = formatMacro(item.protein_100g, ' g protein')
-              return (
-                <li key={item.id ?? index} className="px-5 py-3.5 hover:bg-surface-elevated/50 transition-colors">
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="min-w-0">
-                      <span className="text-sm font-medium text-ink">{item.name ?? `Food ${item.id ?? index + 1}`}</span>
-                      {item.brand_name && (
-                        <span className="text-sm text-ink-muted"> · {item.brand_name}</span>
-                      )}
-                      {item.category_name && (
-                        <span className="text-sm text-ink-muted"> · {item.category_name}</span>
-                      )}
-                    </div>
-                    {(calories || protein) && (
-                      <span className="text-xs text-ink-muted shrink-0 tabular-nums">
-                        {[calories, protein].filter(Boolean).join(' · ')}
-                        <span className="text-ink-dim"> / 100 g</span>
-                      </span>
-                    )}
-                  </div>
-                </li>
-              )
-            })}
-          </ul>
-        ) : (
-          <p className="px-5 py-10 text-sm text-ink-muted text-center">
-            {hasSearched && !error
-              ? 'No matching foods for this query.'
-              : 'No results yet. Run a search to see data.'}
-          </p>
-        )}
-      </div>
     </DashboardPage>
   )
 }

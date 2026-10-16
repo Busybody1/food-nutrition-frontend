@@ -1,50 +1,30 @@
 'use client'
 
 import {
-  BarChart,
-  Bar,
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-  Legend,
-} from 'recharts'
+  AreaTrendChart,
+  BarTrendChart,
+  DonutChart,
+  CHART_SERIES,
+  formatFull,
+} from '@/components/dashboard/dashboard-charts'
 
-const COLORS = ['#7c3aed', '#0AC5D7', '#22C55E', '#F59E0B', '#EF4444', '#8B5CF6', '#0891A3']
+export {
+  AreaTrendChart,
+  BarTrendChart,
+  DonutChart,
+  ChartLegend,
+  ChartTooltipCard,
+  CHART_SERIES,
+  formatCompact,
+  formatFull,
+  formatShortDate,
+  foldDonutData,
+} from '@/components/dashboard/dashboard-charts'
 
-function ChartTooltip({
-  active,
-  payload,
-  label,
-}: {
-  active?: boolean
-  payload?: Array<{ value: number; name: string; color?: string }>
-  label?: string
-}) {
-  if (!active || !payload?.length) return null
-  return (
-    <div className="rounded-brand border border-surface-border/80 bg-white px-3 py-2 shadow-glass text-xs">
-      {label && <p className="font-medium text-ink mb-1">{label}</p>}
-      {payload.map((entry) => (
-        <p key={entry.name} className="text-ink-muted tabular-nums">
-          <span className="inline-block w-2 h-2 rounded-full mr-1.5 align-middle" style={{ background: entry.color }} />
-          {entry.name}: <span className="font-semibold text-ink">{entry.value.toLocaleString()}</span>
-        </p>
-      ))}
-    </div>
-  )
-}
-
-const CHART_TOOLTIP = {
-  content: <ChartTooltip />,
-  allowEscapeViewBox: { x: true, y: true } as const,
-  wrapperStyle: { zIndex: 30, outline: 'none' },
+function paletteColor(color: string | undefined, index = 0): string {
+  const allowed = CHART_SERIES as readonly string[]
+  if (color && allowed.includes(color.toUpperCase())) return color.toUpperCase()
+  return CHART_SERIES[index % CHART_SERIES.length]
 }
 
 export function AdminLineChart({
@@ -52,32 +32,26 @@ export function AdminLineChart({
   xKey,
   yKey,
   height = 240,
-  color = '#7c3aed',
+  color,
+  name,
+  valueFormatter = formatFull,
 }: {
   data: Array<Record<string, unknown>>
   xKey: string
   yKey: string
   height?: number
   color?: string
+  name?: string
+  valueFormatter?: (value: unknown, name: string) => string
 }) {
-  if (!data.length) return null
   return (
-    <ResponsiveContainer width="100%" height={height} style={{ overflow: 'visible' }}>
-      <LineChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
-        <CartesianGrid strokeDasharray="3 3" stroke="#e4e4e7" vertical={false} />
-        <XAxis dataKey={xKey} tick={{ fontSize: 11, fill: '#71717a' }} tickLine={false} axisLine={false} />
-        <YAxis tick={{ fontSize: 11, fill: '#71717a' }} tickLine={false} axisLine={false} width={40} />
-        <Tooltip {...CHART_TOOLTIP} />
-        <Line
-          type="monotone"
-          dataKey={yKey}
-          stroke={color}
-          strokeWidth={2}
-          dot={false}
-          activeDot={{ r: 4, fill: color }}
-        />
-      </LineChart>
-    </ResponsiveContainer>
+    <AreaTrendChart
+      data={data}
+      xKey={xKey}
+      height={height}
+      valueFormatter={valueFormatter}
+      series={[{ key: yKey, name: name ?? yKey.replace(/_/g, ' '), color: paletteColor(color) }]}
+    />
   )
 }
 
@@ -86,23 +60,22 @@ export function AdminBarChart({
   xKey,
   yKey,
   height = 240,
+  name,
 }: {
   data: Array<Record<string, unknown>>
   xKey: string
   yKey: string
   height?: number
+  name?: string
 }) {
-  if (!data.length) return null
   return (
-    <ResponsiveContainer width="100%" height={height} style={{ overflow: 'visible' }}>
-      <BarChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
-        <CartesianGrid strokeDasharray="3 3" stroke="#e4e4e7" vertical={false} />
-        <XAxis dataKey={xKey} tick={{ fontSize: 10, fill: '#71717a' }} tickLine={false} axisLine={false} />
-        <YAxis tick={{ fontSize: 11, fill: '#71717a' }} tickLine={false} axisLine={false} width={40} />
-        <Tooltip {...CHART_TOOLTIP} />
-        <Bar dataKey={yKey} fill="#7c3aed" radius={[4, 4, 0, 0]} maxBarSize={48} />
-      </BarChart>
-    </ResponsiveContainer>
+    <BarTrendChart
+      data={data}
+      xKey={xKey}
+      yKey={yKey}
+      height={height}
+      name={name ?? yKey.replace(/_/g, ' ')}
+    />
   )
 }
 
@@ -110,39 +83,20 @@ export function AdminPieChart({
   data,
   nameKey,
   valueKey,
-  height = 220,
+  height = 150,
+  centerLabel,
 }: {
   data: Array<Record<string, unknown>>
   nameKey: string
   valueKey: string
   height?: number
+  centerLabel?: string
 }) {
-  if (!data.length) return null
-  return (
-    <ResponsiveContainer width="100%" height={height} style={{ overflow: 'visible' }}>
-      <PieChart>
-        <Pie
-          data={data}
-          dataKey={valueKey}
-          nameKey={nameKey}
-          cx="50%"
-          cy="50%"
-          innerRadius={48}
-          outerRadius={72}
-          paddingAngle={2}
-        >
-          {data.map((_, i) => (
-            <Cell key={i} fill={COLORS[i % COLORS.length]} stroke="transparent" />
-          ))}
-        </Pie>
-        <Tooltip {...CHART_TOOLTIP} />
-        <Legend
-          wrapperStyle={{ fontSize: 11 }}
-          formatter={(value) => <span className="text-ink-muted">{value}</span>}
-        />
-      </PieChart>
-    </ResponsiveContainer>
-  )
+  const slices = data.map((d) => ({
+    name: String(d[nameKey] ?? ''),
+    value: Number(d[valueKey]) || 0,
+  }))
+  return <DonutChart data={slices} height={height} centerLabel={centerLabel} />
 }
 
 export function AdminDualLineChart({
@@ -153,30 +107,19 @@ export function AdminDualLineChart({
 }: {
   data: Array<Record<string, unknown>>
   xKey: string
-  lines: { key: string; color: string; name: string }[]
+  lines: { key: string; color?: string; name: string }[]
   height?: number
 }) {
-  if (!data.length) return null
   return (
-    <ResponsiveContainer width="100%" height={height} style={{ overflow: 'visible' }}>
-      <LineChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
-        <CartesianGrid strokeDasharray="3 3" stroke="#e4e4e7" vertical={false} />
-        <XAxis dataKey={xKey} tick={{ fontSize: 11, fill: '#71717a' }} tickLine={false} axisLine={false} />
-        <YAxis tick={{ fontSize: 11, fill: '#71717a' }} tickLine={false} axisLine={false} width={40} />
-        <Tooltip {...CHART_TOOLTIP} />
-        <Legend wrapperStyle={{ fontSize: 11 }} />
-        {lines.map((line) => (
-          <Line
-            key={line.key}
-            type="monotone"
-            dataKey={line.key}
-            name={line.name}
-            stroke={line.color}
-            strokeWidth={2}
-            dot={false}
-          />
-        ))}
-      </LineChart>
-    </ResponsiveContainer>
+    <AreaTrendChart
+      data={data}
+      xKey={xKey}
+      height={height}
+      series={lines.map((line, index) => ({
+        key: line.key,
+        name: line.name,
+        color: paletteColor(line.color, index),
+      }))}
+    />
   )
 }

@@ -4,11 +4,10 @@ import { useState, useEffect, useCallback, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Input } from '@/components/ui/input'
 import {
-  Search, Eye, Ban, CheckCircle, Mail, Calendar,
-  Users, RotateCcw, Trash2, KeyRound, AtSign,
+  Eye, Ban, CheckCircle, Mail, Calendar,
+  Users, RotateCcw, Trash2, KeyRound, AtSign, Layers, Activity,
+  ArrowDown, ArrowUp, ChevronsUpDown,
 } from 'lucide-react'
 import {
   adminAPI,
@@ -34,6 +33,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { formatCount } from '@/lib/utils/format'
+import { cn } from '@/lib/utils/cn'
 import {
   AdminPage,
   AdminPageHeader,
@@ -52,6 +52,13 @@ import {
   DashboardLoading,
   DashboardAlert,
   DashboardEmpty,
+  DashboardPanelToolbar,
+  DashboardPill,
+  DashboardSearchInput,
+  DashboardStatList,
+  DeltaPill,
+  DASHBOARD_ICON_STROKE,
+  type DashboardTone,
 } from '@/components/admin/admin-ui'
 
 type StatusFilter = 'all' | 'active' | 'inactive' | 'admin' | 'unverified'
@@ -70,25 +77,108 @@ const SORT_PRESETS: Array<{ value: string; label: string }> = [
   { value: 'email-desc', label: 'Email Z–A' },
 ]
 
-function planBadgeClass(planName: string) {
+function planTone(planName: string): DashboardTone {
   switch (planName.toLowerCase()) {
     case 'free':
-      return 'bg-gray-100 text-gray-800'
+      return 'neutral'
     case 'basic':
     case 'enterprise basic':
-      return 'bg-blue-100 text-blue-800'
+      return 'brand'
     case 'core':
     case 'enterprise core':
-      return 'bg-green-100 text-green-800'
+      return 'green'
     case 'plus':
     case 'enterprise plus':
-      return 'bg-purple-100 text-purple-800'
+      return 'indigo'
     case 'custom':
     case 'enterprise':
-      return 'bg-orange-100 text-orange-800'
+      return 'orange'
     default:
-      return 'bg-gray-100 text-gray-800'
+      return 'neutral'
   }
+}
+
+function SortToggle({
+  label,
+  title,
+  sortKey,
+  sort,
+  onSort,
+}: {
+  label: string
+  title?: string
+  sortKey: UserSortKey
+  sort: AdminSortState<UserSortKey>
+  onSort: (next: AdminSortState<UserSortKey>) => void
+}) {
+  const isActive = sort.key === sortKey
+  const Icon = !isActive ? ChevronsUpDown : sort.order === 'asc' ? ArrowUp : ArrowDown
+  return (
+    <button
+      type="button"
+      title={title ?? `Sort by ${label.toLowerCase()}`}
+      onClick={() =>
+        onSort({
+          key: sortKey,
+          order: isActive ? (sort.order === 'asc' ? 'desc' : 'asc') : 'desc',
+        })
+      }
+      className={cn(
+        'group -mx-1 inline-flex items-center gap-1 rounded-md px-1 py-0.5 uppercase tracking-[0.06em] transition-colors',
+        'hover:text-dash-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40',
+        isActive && 'text-dash-ink'
+      )}
+    >
+      {label}
+      <Icon
+        className={cn(
+          'h-3 w-3 shrink-0 transition-opacity',
+          isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-60'
+        )}
+        aria-hidden
+      />
+    </button>
+  )
+}
+
+const rowIconButton = 'h-7 w-7 p-0 text-dash-muted hover:text-dash-ink'
+
+function PlanMix({ byPlan, total }: { byPlan: AdminUserStats['by_plan']; total: number }) {
+  const rows = [...byPlan].sort((a, b) => b.users - a.users)
+  const sum = total > 0 ? total : rows.reduce((acc, r) => acc + r.users, 0)
+  const max = Math.max(1, ...rows.map((r) => r.users))
+  if (rows.length === 0) {
+    return <DashboardEmpty icon={Layers} title="No plan data yet" />
+  }
+  return (
+    <ul className="flex h-full flex-col justify-between gap-3.5">
+      {rows.map((row) => {
+        const share = sum > 0 ? (row.users / sum) * 100 : 0
+        return (
+          <li
+            key={row.plan_name}
+            className="grid grid-cols-[minmax(0,8.5rem)_minmax(0,1fr)_4.5rem_3.5rem] items-center gap-3"
+          >
+            <span className="truncate text-[13px] font-medium text-dash-ink" title={row.plan_name}>
+              {row.plan_name || 'No plan'}
+            </span>
+            <span className="h-2.5 overflow-hidden rounded-full bg-dash-grid" aria-hidden>
+              <span
+                className="block h-full rounded-full bg-dash-teal"
+                style={{ width: `${(row.users / max) * 100}%` }}
+              />
+            </span>
+            <span className="text-right text-[13px] font-semibold tabular-nums text-dash-ink">
+              {formatCount(row.users)}
+            </span>
+            <span className="text-right text-xs tabular-nums text-dash-muted">
+              {share.toFixed(1)}%
+            </span>
+          </li>
+        )
+      })}
+    </ul>
+  )
 }
 
 export default function UserManagement() {
@@ -168,10 +258,12 @@ export default function UserManagement() {
   }, [page, pageSize, debouncedSearch, status, planId, sort.key, sort.order])
 
   useEffect(() => {
+    /* eslint-disable-next-line react-hooks/set-state-in-effect */
     loadUsers()
   }, [loadUsers])
 
   useEffect(() => {
+    /* eslint-disable-next-line react-hooks/set-state-in-effect */
     loadStats()
     adminAPI
       .getPlans()
@@ -303,6 +395,10 @@ export default function UserManagement() {
     return `${delta >= 0 ? '+' : ''}${delta} vs last month`
   }, [stats, monthLabel])
 
+
+  const newThisMonthDelta =
+    stats && stats.new_last_month > 0 ? stats.new_this_month - stats.new_last_month : null
+
   if (!hasLoadedOnce && isLoading) {
     return (
       <AdminPage>
@@ -329,7 +425,7 @@ export default function UserManagement() {
         <AdminStatGrid>
           <DashboardStatCard
             label="Total users"
-            value={formatCount(stats?.total_users ?? 0)}
+            value={stats ? formatCount(stats.total_users) : null}
             hint={
               stats
                 ? `${formatCount(stats.verified_users)} verified · ${formatCount(stats.admin_users)} admin`
@@ -340,21 +436,26 @@ export default function UserManagement() {
           />
           <DashboardStatCard
             label="Active"
-            value={formatCount(stats?.active_users ?? 0)}
+            value={stats ? formatCount(stats.active_users) : null}
             hint={stats ? `${formatCount(stats.inactive_users)} deactivated` : undefined}
             icon={CheckCircle}
             accent="green"
           />
           <DashboardStatCard
             label={`New in ${monthLabel}`}
-            value={formatCount(stats?.new_this_month ?? 0)}
-            hint={newThisMonthHint}
+            value={stats ? formatCount(stats.new_this_month) : null}
+            delta={
+              newThisMonthDelta != null ? (
+                <DeltaPill value={newThisMonthDelta} unit="" label="vs last month" />
+              ) : undefined
+            }
+            hint={newThisMonthDelta != null ? 'vs last month' : newThisMonthHint}
             icon={Mail}
-            accent="purple"
+            accent="indigo"
           />
           <DashboardStatCard
             label="Logged in (7d)"
-            value={formatCount(stats?.logged_in_7d ?? 0)}
+            value={stats ? formatCount(stats.logged_in_7d) : null}
             hint={
               stats
                 ? `${formatCount(stats.logged_in_30d)} in 30d · ${formatCount(stats.never_logged_in)} never`
@@ -366,6 +467,36 @@ export default function UserManagement() {
         </AdminStatGrid>
       )}
 
+      {stats && (
+        <div className="dashboard-grid-wide">
+          <AdminPanel className="flex flex-col">
+            <AdminPanelHeader
+              title="Users by plan"
+              icon={Layers}
+              description={`${formatCount(stats.total_users)} accounts`}
+            />
+            <AdminPanelBody className="flex-1">
+              <PlanMix byPlan={stats.by_plan ?? []} total={stats.total_users} />
+            </AdminPanelBody>
+          </AdminPanel>
+          <AdminPanel>
+            <AdminPanelHeader title="Engagement" icon={Activity} description="Sign-ups and logins" />
+            <AdminPanelBody>
+              <DashboardStatList
+                items={[
+                  { label: 'New in last 7 days', value: formatCount(stats.new_last_7d) },
+                  { label: 'New in last 30 days', value: formatCount(stats.new_last_30d) },
+                  { label: 'Logged in (30d)', value: formatCount(stats.logged_in_30d) },
+                  { label: 'Never logged in', value: formatCount(stats.never_logged_in) },
+                  { label: 'Verified email', value: formatCount(stats.verified_users) },
+                  { label: 'Admins', value: formatCount(stats.admin_users) },
+                ]}
+              />
+            </AdminPanelBody>
+          </AdminPanel>
+        </div>
+      )}
+
       <BannedEmailDomainsPanel
         refreshKey={banListVersion}
         onAccountsChanged={refreshAll}
@@ -373,121 +504,109 @@ export default function UserManagement() {
 
       <AdminPanel>
         <AdminPanelHeader
-          title="Search & filter"
-          icon={Search}
-          actions={
-            filtersActive ? (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  setSearchInput('')
-                  applyStatus('all')
-                  applyPlan('all')
-                }}
-              >
-                <RotateCcw className="h-3.5 w-3.5 mr-1.5" />
-                Clear
-              </Button>
-            ) : undefined
-          }
-        />
-        <AdminPanelBody>
-          <div className="flex flex-col lg:flex-row gap-4">
-            <div className="flex-1">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <Input
-                  placeholder="Search users by name, email, or company..."
-                  value={searchInput}
-                  onChange={(e) => setSearchInput(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              <select
-                value={status}
-                onChange={(e) => applyStatus(e.target.value as StatusFilter)}
-                className="px-3 py-2 border border-gray-300 rounded-md text-sm"
-                aria-label="Filter by status"
-              >
-                <option value="all">All status</option>
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-                <option value="admin">Admins</option>
-                <option value="unverified">Unverified email</option>
-              </select>
-              {}
-              <select
-                value={planId === 'all' ? 'all' : String(planId)}
-                onChange={(e) =>
-                  applyPlan(e.target.value === 'all' ? 'all' : Number(e.target.value))
-                }
-                className="px-3 py-2 border border-gray-300 rounded-md text-sm"
-                aria-label="Filter by plan"
-              >
-                <option value="all">All plans</option>
-                {plans.map((plan) => (
-                  <option key={plan.id} value={plan.id}>
-                    {plan.name}
-                  </option>
-                ))}
-              </select>
-              <select
-                value={`${sort.key}-${sort.order}`}
-                onChange={(e) => {
-                  const idx = e.target.value.lastIndexOf('-')
-                  applySort({
-                    key: e.target.value.slice(0, idx) as UserSortKey,
-                    order: e.target.value.slice(idx + 1) as SortOrder,
-                  })
-                }}
-                className="px-3 py-2 border border-gray-300 rounded-md text-sm"
-                aria-label="Sort users"
-              >
-                {SORT_PRESETS.map((preset) => (
-                  <option key={preset.value} value={preset.value}>
-                    {preset.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-        </AdminPanelBody>
-      </AdminPanel>
-
-      <AdminPanel>
-        <AdminPanelHeader
-          title={`Users (${total.toLocaleString()})`}
+          title="All users"
           icon={Users}
+          description={`${total.toLocaleString()} ${filtersActive ? 'matching' : 'total'}`}
           actions={
             selectedUsers.length > 0 ? (
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-ink-muted">{selectedUsers.length} selected</span>
-                <Button variant="outline" size="sm" onClick={() => handleBulkAction('activate')}>
+              <>
+                <span className="text-xs text-dash-muted tabular-nums">
+                  {selectedUsers.length} selected
+                </span>
+                <Button variant="outline" size="sm" className="h-9" onClick={() => handleBulkAction('activate')}>
                   Activate
                 </Button>
-                <Button variant="outline" size="sm" onClick={() => handleBulkAction('deactivate')}>
+                <Button variant="outline" size="sm" className="h-9" onClick={() => handleBulkAction('deactivate')}>
                   Deactivate
                 </Button>
-                <Button variant="ghost" size="sm" onClick={() => setSelectedUsers([])}>
+                <Button variant="ghost" size="sm" className="h-9" onClick={() => setSelectedUsers([])}>
                   Clear
                 </Button>
-              </div>
+              </>
             ) : undefined
           }
         />
-        {users.length === 0 && !isLoading ? (
-          <DashboardEmpty
-            icon={Users}
-            title="No users match your filters"
-            description={filtersActive ? 'Try clearing the search or filters.' : undefined}
+        <DashboardPanelToolbar>
+          <DashboardSearchInput
+            value={searchInput}
+            onChange={setSearchInput}
+            placeholder="Search users by name, email, or company..."
+            ariaLabel="Search users"
+            className="sm:min-w-[280px] sm:flex-1"
           />
+          <select
+            value={status}
+            onChange={(e) => applyStatus(e.target.value as StatusFilter)}
+            className="dashboard-select"
+            aria-label="Filter by status"
+          >
+            <option value="all">All status</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+            <option value="admin">Admins</option>
+            <option value="unverified">Unverified email</option>
+          </select>
+          <select
+            value={planId === 'all' ? 'all' : String(planId)}
+            onChange={(e) =>
+              applyPlan(e.target.value === 'all' ? 'all' : Number(e.target.value))
+            }
+            className="dashboard-select"
+            aria-label="Filter by plan"
+          >
+            <option value="all">All plans</option>
+            {plans.map((plan) => (
+              <option key={plan.id} value={plan.id}>
+                {plan.name}
+              </option>
+            ))}
+          </select>
+          <select
+            value={`${sort.key}-${sort.order}`}
+            onChange={(e) => {
+              const idx = e.target.value.lastIndexOf('-')
+              applySort({
+                key: e.target.value.slice(0, idx) as UserSortKey,
+                order: e.target.value.slice(idx + 1) as SortOrder,
+              })
+            }}
+            className="dashboard-select"
+            aria-label="Sort users"
+          >
+            {SORT_PRESETS.map((preset) => (
+              <option key={preset.value} value={preset.value}>
+                {preset.label}
+              </option>
+            ))}
+          </select>
+          {filtersActive && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-9 gap-1.5"
+              onClick={() => {
+                setSearchInput('')
+                applyStatus('all')
+                applyPlan('all')
+              }}
+            >
+              <RotateCcw className="h-3.5 w-3.5" strokeWidth={DASHBOARD_ICON_STROKE} />
+              Clear
+            </Button>
+          )}
+        </DashboardPanelToolbar>
+        {users.length === 0 && !isLoading ? (
+          <AdminPanelBody>
+            <DashboardEmpty
+              icon={Users}
+              title="No users match your filters"
+              description={filtersActive ? 'Try clearing the search or filters.' : undefined}
+            />
+          </AdminPanelBody>
         ) : (
-          <AdminPanelBody noPadding>
+          <AdminPanelBody noPadding className="!mt-0">
             <AdminTableWrap>
-              <AdminTable>
+              <AdminTable className="[&_td]:px-2.5 [&_th]:px-2.5 min-[1400px]:[&_td]:px-3 min-[1400px]:[&_th]:px-3">
                 <thead>
                   <tr>
                     <th className="w-10">
@@ -506,7 +625,7 @@ export default function UserManagement() {
                             )
                           }
                         }}
-                        className="rounded border-gray-300"
+                        className="h-4 w-4 rounded border-dash-border-strong accent-dash-teal-strong"
                       />
                     </th>
                     <AdminSortableTh
@@ -523,6 +642,7 @@ export default function UserManagement() {
                       sort={sort}
                       onSort={applySort}
                       title="Sort by total requests"
+                      align="right"
                     />
                     <AdminSortableTh
                       label="Status"
@@ -530,19 +650,24 @@ export default function UserManagement() {
                       sort={sort}
                       onSort={applySort}
                     />
-                    <AdminSortableTh
-                      label="Last login"
-                      sortKey="last_login"
-                      sort={sort}
-                      onSort={applySort}
-                    />
-                    <AdminSortableTh
-                      label="Joined"
-                      sortKey="created_at"
-                      sort={sort}
-                      onSort={applySort}
-                    />
-                    <th>Actions</th>
+                    <th
+                      aria-sort={
+                        sort.key === 'last_login' || sort.key === 'created_at'
+                          ? sort.order === 'asc'
+                            ? 'ascending'
+                            : 'descending'
+                          : 'none'
+                      }
+                    >
+                      <span className="inline-flex items-center gap-1.5">
+                        <SortToggle label="Login" title="Sort by last login" sortKey="last_login" sort={sort} onSort={applySort} />
+                        <span className="text-dash-border-strong" aria-hidden>
+                          /
+                        </span>
+                        <SortToggle label="Joined" sortKey="created_at" sort={sort} onSort={applySort} />
+                      </span>
+                    </th>
+                    <th className="text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody className={isLoading ? 'opacity-60 transition-opacity' : undefined}>
@@ -561,90 +686,95 @@ export default function UserManagement() {
                             if (e.target.checked) setSelectedUsers((prev) => [...prev, user.id])
                             else setSelectedUsers((prev) => prev.filter((id) => id !== user.id))
                           }}
-                          className="rounded border-gray-300"
+                          className="h-4 w-4 rounded border-dash-border-strong accent-dash-teal-strong"
                         />
                       </td>
                       <td>
-                        <div className="flex items-center">
-                          <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center shrink-0">
-                            <span className="text-sm font-medium text-gray-700">
-                              {(user.first_name?.[0] || user.email[0] || '').toUpperCase()}
-                              {(user.last_name?.[0] || '').toUpperCase()}
-                            </span>
+                        <div className="flex min-w-0 max-w-[210px] items-center gap-3 min-[1400px]:max-w-[250px]">
+                          <div className="hidden h-8 w-8 shrink-0 items-center justify-center rounded-full bg-dash-pill text-xs font-semibold text-dash-body min-[1400px]:flex">
+                            {(user.first_name?.[0] || user.email[0] || '').toUpperCase()}
+                            {(user.last_name?.[0] || '').toUpperCase()}
                           </div>
-                          <div className="ml-3 min-w-0">
-                            <div className="text-sm font-medium text-gray-900 truncate">
-                              {user.first_name || user.last_name
-                                ? `${user.first_name || ''} ${user.last_name || ''}`.trim()
-                                : '—'}
+                          <div className="min-w-0">
+                            <div className="flex min-w-0 items-center gap-1.5">
+                              <span className="truncate font-medium text-dash-ink">
+                                {user.first_name || user.last_name
+                                  ? `${user.first_name || ''} ${user.last_name || ''}`.trim()
+                                  : '—'}
+                              </span>
                             </div>
-                            <div className="text-sm text-gray-500 truncate">{user.email}</div>
-                            <div className="text-xs text-gray-400 truncate">
-                              {user.company_name || 'no company'}
+                            <div className="truncate text-xs text-dash-muted" title={user.email}>
+                              {user.email}
+                              <span className="text-dash-dim"> · {user.company_name || 'no company'}</span>
                             </div>
                           </div>
                         </div>
                       </td>
                       <td>
-                        <Badge className={planBadgeClass(user.plan_name || '')}>
+                        <DashboardPill tone={planTone(user.plan_name || '')}>
                           {user.plan_name || 'No plan'}
-                        </Badge>
-                        <div className="text-xs text-gray-500 mt-1">
+                        </DashboardPill>
+                        <div className="mt-1 whitespace-nowrap text-xs tabular-nums text-dash-muted">
                           ${Number(user.plan_price || 0)}/month
                         </div>
                       </td>
-                      <td className="tabular-nums">
-                        <div className="font-medium">{formatCount(user.total_requests)}</div>
-                        <div className="text-xs text-gray-500">
+                      <td className="dashboard-num">
+                        <div className="font-medium text-dash-ink">{formatCount(user.total_requests)}</div>
+                        <div className="text-xs text-dash-muted min-[1400px]:whitespace-nowrap">
                           {formatCount(user.requests_this_month)} this month
-                        </div>
-                        <div className="text-xs text-gray-400">
-                          {user.api_keys_count || 0} API keys
+                          <span className="hidden text-dash-dim min-[1400px]:inline"> · </span>
+                          <span className="block text-dash-dim min-[1400px]:inline">
+                            {user.api_keys_count || 0} API keys
+                          </span>
                         </div>
                       </td>
                       <td>
                         <div className="flex flex-wrap items-center gap-1.5">
-                          <Badge
-                            className={
-                              user.is_active
-                                ? 'bg-green-100 text-green-800'
-                                : 'bg-red-100 text-red-800'
-                            }
-                          >
+                          <DashboardPill tone={user.is_active ? 'green' : 'rose'}>
+                            <span
+                              className={cn(
+                                'h-1.5 w-1.5 rounded-full',
+                                user.is_active ? 'bg-dash-positive' : 'bg-dash-negative'
+                              )}
+                              aria-hidden
+                            />
                             {user.is_active ? 'Active' : 'Inactive'}
-                          </Badge>
-                          {user.is_admin && (
-                            <Badge className="bg-purple-100 text-purple-800">Admin</Badge>
-                          )}
+                          </DashboardPill>
+                          {user.is_admin && <DashboardPill tone="indigo">Admin</DashboardPill>}
                         </div>
                       </td>
-                      <td className="text-sm text-gray-500 whitespace-nowrap">
-                        {user.last_login ? new Date(user.last_login).toLocaleDateString() : 'Never'}
-                      </td>
-                      <td className="text-sm text-gray-500 whitespace-nowrap">
-                        {new Date(user.created_at).toLocaleDateString()}
+                      <td className="whitespace-nowrap">
+                        <div className="text-dash-ink">
+                          {user.last_login ? new Date(user.last_login).toLocaleDateString() : 'Never'}
+                        </div>
+                        <div className="text-xs text-dash-muted">
+                          Joined {new Date(user.created_at).toLocaleDateString()}
+                        </div>
                       </td>
                       <td onClick={(e) => e.stopPropagation()}>
-                        <div className="flex items-center gap-1">
-                          <Link href={`/admin/users/${user.id}`}>
-                            <Button variant="ghost" size="sm" title="View user details">
-                              <Eye className="w-4 h-4" />
-                            </Button>
-                          </Link>
+                        <div className="flex items-center justify-end">
+                          <Button asChild variant="ghost" size="sm" className={rowIconButton} title="View user details">
+                            <Link href={`/admin/users/${user.id}`} aria-label="View user details">
+                              <Eye className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} />
+                            </Link>
+                          </Button>
                           <Button
                             variant="ghost"
                             size="sm"
+                            className={rowIconButton}
                             title="Send feedback request email"
+                            aria-label="Send feedback request email"
                             onClick={() => {
                               setFeedbackSuccess('')
                               setFeedbackTarget(user)
                             }}
                           >
-                            <Mail className="w-4 h-4" />
+                            <Mail className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} />
                           </Button>
                           <Button
                             variant="ghost"
                             size="sm"
+                            className={rowIconButton}
                             title={`Ban @${emailDomainLabel(user.email)}`}
                             aria-label={`Ban the email domain for ${user.email}`}
                             onClick={() => {
@@ -652,38 +782,42 @@ export default function UserManagement() {
                               setBanTarget(user)
                             }}
                           >
-                            <AtSign className="w-4 h-4" />
+                            <AtSign className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} />
                           </Button>
                           {canResetUserPassword(user) && (
                             <Button
                               variant="ghost"
                               size="sm"
+                              className={rowIconButton}
                               title="Reset password and email a temporary password"
+                              aria-label="Reset password"
                               onClick={() => {
                                 setFeedbackSuccess('')
                                 setResetTarget(user)
                               }}
                             >
-                              <KeyRound className="w-4 h-4" />
+                              <KeyRound className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} />
                             </Button>
                           )}
                           <Button
                             variant="ghost"
                             size="sm"
                             title={user.is_active ? 'Deactivate account' : 'Activate account'}
+                            aria-label={user.is_active ? 'Deactivate account' : 'Activate account'}
                             onClick={() =>
                               handleUserAction(user.id, user.is_active ? 'deactivate' : 'activate')
                             }
-                            className={
+                            className={cn(
+                              'h-7 w-7 p-0',
                               user.is_active
-                                ? 'text-red-600 hover:text-red-700'
-                                : 'text-green-600 hover:text-green-700'
-                            }
+                                ? 'text-dash-negative hover:bg-dash-negative-soft hover:text-dash-negative'
+                                : 'text-dash-positive hover:bg-dash-positive-soft hover:text-dash-positive'
+                            )}
                           >
                             {user.is_active ? (
-                              <Ban className="w-4 h-4" />
+                              <Ban className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} />
                             ) : (
-                              <CheckCircle className="w-4 h-4" />
+                              <CheckCircle className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} />
                             )}
                           </Button>
                           {canDeleteUser(user) && (
@@ -691,13 +825,14 @@ export default function UserManagement() {
                               variant="ghost"
                               size="sm"
                               title="Delete account"
+                              aria-label="Delete account"
                               onClick={() => {
                                 setFeedbackSuccess('')
                                 setDeleteTarget(user)
                               }}
-                              className="text-red-600 hover:text-red-700"
+                              className="h-7 w-7 p-0 text-dash-negative hover:bg-dash-negative-soft hover:text-dash-negative"
                             >
-                              <Trash2 className="w-4 h-4" />
+                              <Trash2 className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} />
                             </Button>
                           )}
                         </div>
@@ -726,20 +861,20 @@ export default function UserManagement() {
             <DialogTitle>Send feedback request</DialogTitle>
           </DialogHeader>
           {feedbackTarget && (
-            <div className="space-y-3 text-sm text-ink-muted">
+            <div className="space-y-3 text-[13px] leading-5 text-dash-muted">
               <p>
                 Send a plain-text email to{' '}
-                <span className="font-medium text-ink">{feedbackTarget.email}</span> asking for
+                <span className="font-medium text-dash-ink">{feedbackTarget.email}</span> asking for
                 feedback on the Food Nutrition API.
               </p>
               <p>
                 The user replies directly to that email (no web form). Replies go to your Resend
-                receiving address (<code className="text-xs">*.resend.app</code>) and are forwarded
+                receiving address (<code className="rounded bg-dash-pill px-1 text-xs">*.resend.app</code>) and are forwarded
                 to Discord when inbound webhooks are configured.
               </p>
             </div>
           )}
-          <DialogFooter>
+          <DialogFooter className="gap-2">
             <Button
               variant="outline"
               onClick={() => setFeedbackTarget(null)}

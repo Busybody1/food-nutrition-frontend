@@ -5,17 +5,23 @@ import Image from 'next/image'
 import { adminAPI, type AdminTestimonial, type TestimonialInput } from '@/lib/api/admin'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Badge } from '@/components/ui/badge'
 import { useAdmin } from '@/lib/hooks/use-admin'
-import { MessageSquareQuote, Pencil, Plus, Trash2, Upload, X } from 'lucide-react'
+import { CircleCheck, FileText, MessageSquareQuote, Pencil, Plus, Trash2, Upload, X } from 'lucide-react'
 import {
   AdminPage,
   AdminPageHeader,
   AdminPanel,
   AdminPanelHeader,
   AdminPanelBody,
+  AdminStatGrid,
+  AdminTableWrap,
+  AdminTable,
   DashboardAlert,
   DashboardEmpty,
+  DashboardLoading,
+  DashboardPill,
+  DashboardStatCard,
+  DASHBOARD_ICON_STROKE,
 } from '@/components/admin/admin-ui'
 
 const EMPTY_FORM: TestimonialInput = {
@@ -145,6 +151,9 @@ export default function AdminTestimonialsPage() {
     }
   }
 
+  const publishedCount = items.filter((item) => item.status === 'published').length
+  const draftCount = items.length - publishedCount
+
   return (
     <AdminPage>
       <AdminPageHeader
@@ -158,8 +167,31 @@ export default function AdminTestimonialsPage() {
         </DashboardAlert>
       )}
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <AdminPanel>
+      <AdminStatGrid columns={3}>
+        <DashboardStatCard
+          label="Testimonials"
+          icon={MessageSquareQuote}
+          accent="brand"
+          value={isLoading ? null : items.length.toLocaleString()}
+        />
+        <DashboardStatCard
+          label="Published"
+          icon={CircleCheck}
+          accent="green"
+          value={isLoading ? null : publishedCount.toLocaleString()}
+          hint="Visible on the marketing site"
+        />
+        <DashboardStatCard
+          label="Drafts"
+          icon={FileText}
+          accent="neutral"
+          value={isLoading ? null : draftCount.toLocaleString()}
+          hint="Hidden from the site"
+        />
+      </AdminStatGrid>
+
+      <div className="dashboard-grid-narrow-wide">
+        <AdminPanel className="self-start">
           <AdminPanelHeader
             title={editingId !== null ? `Edit testimonial #${editingId}` : 'New testimonial'}
             icon={editingId !== null ? Pencil : Plus}
@@ -172,24 +204,30 @@ export default function AdminTestimonialsPage() {
             )}
 
             <div>
-              <label className="text-xs font-medium text-ink-dim block mb-1.5">Quote *</label>
+              <label htmlFor="testimonial-quote" className="dashboard-field-label">
+                Quote *
+              </label>
               <textarea
-                className="w-full min-h-[110px] rounded-brand border border-surface-border/80 p-3 text-sm
-                  focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand/50
-                  disabled:opacity-60 disabled:bg-surface-elevated"
+                id="testimonial-quote"
+                className="dashboard-textarea min-h-[110px]"
                 placeholder="The API cut our food-logging build from months to weeks…"
                 value={form.quote}
                 onChange={(e) => setForm((f) => ({ ...f, quote: e.target.value }))}
                 disabled={!canEdit}
                 maxLength={1000}
               />
-              <p className="text-xs text-ink-muted mt-1">{form.quote.length}/1000 · minimum 10 characters</p>
+              <p className="dashboard-field-hint tabular-nums">
+                {form.quote.length}/1000 · minimum 10 characters
+              </p>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <label className="text-xs font-medium text-ink-dim block mb-1.5">Author name *</label>
+                <label htmlFor="testimonial-author" className="dashboard-field-label">
+                  Author name *
+                </label>
                 <Input
+                  id="testimonial-author"
                   placeholder="Jane Doe"
                   value={form.author_name}
                   onChange={(e) => setForm((f) => ({ ...f, author_name: e.target.value }))}
@@ -198,8 +236,11 @@ export default function AdminTestimonialsPage() {
                 />
               </div>
               <div>
-                <label className="text-xs font-medium text-ink-dim block mb-1.5">Role</label>
+                <label htmlFor="testimonial-role" className="dashboard-field-label">
+                  Role
+                </label>
                 <Input
+                  id="testimonial-role"
                   placeholder="CTO"
                   value={form.author_role ?? ''}
                   onChange={(e) => setForm((f) => ({ ...f, author_role: e.target.value }))}
@@ -208,8 +249,11 @@ export default function AdminTestimonialsPage() {
                 />
               </div>
               <div>
-                <label className="text-xs font-medium text-ink-dim block mb-1.5">Company</label>
+                <label htmlFor="testimonial-company" className="dashboard-field-label">
+                  Company
+                </label>
                 <Input
+                  id="testimonial-company"
                   placeholder="Acme Fitness"
                   value={form.company ?? ''}
                   onChange={(e) => setForm((f) => ({ ...f, company: e.target.value }))}
@@ -218,8 +262,11 @@ export default function AdminTestimonialsPage() {
                 />
               </div>
               <div>
-                <label className="text-xs font-medium text-ink-dim block mb-1.5">Display order</label>
+                <label htmlFor="testimonial-order" className="dashboard-field-label">
+                  Display order
+                </label>
                 <Input
+                  id="testimonial-order"
                   type="number"
                   min={0}
                   max={10000}
@@ -233,15 +280,15 @@ export default function AdminTestimonialsPage() {
             </div>
 
             <div>
-              <label className="text-xs font-medium text-ink-dim block mb-1.5">Avatar</label>
-              <div className="flex items-center gap-3">
+              <span className="dashboard-field-label">Avatar</span>
+              <div className="flex flex-wrap items-center gap-3 rounded-xl border border-dash-border bg-dash-hover px-3 py-3">
                 {form.avatar_url ? (
-                  <span className="relative block h-12 w-12 shrink-0 overflow-hidden rounded-full ring-1 ring-surface-border/60">
+                  <span className="relative block h-12 w-12 shrink-0 overflow-hidden rounded-full bg-white ring-1 ring-dash-border">
                     <Image src={form.avatar_url} alt="Avatar preview" fill sizes="48px" className="object-cover" unoptimized />
                   </span>
                 ) : (
-                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-surface-elevated text-ink-dim">
-                    <MessageSquareQuote className="h-5 w-5" aria-hidden />
+                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-dash-border bg-white text-dash-dim">
+                    <MessageSquareQuote className="h-5 w-5" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
                   </span>
                 )}
                 <input
@@ -258,10 +305,11 @@ export default function AdminTestimonialsPage() {
                   type="button"
                   variant="outline"
                   size="sm"
+                  className="h-9 gap-1.5"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={!canEdit || isUploading}
                 >
-                  <Upload className="h-4 w-4 mr-1.5" />
+                  <Upload className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
                   {isUploading ? 'Uploading…' : 'Upload image'}
                 </Button>
                 {form.avatar_url && (
@@ -269,22 +317,27 @@ export default function AdminTestimonialsPage() {
                     type="button"
                     variant="ghost"
                     size="sm"
+                    className="h-9 gap-1.5"
                     onClick={() => setForm((f) => ({ ...f, avatar_url: '' }))}
                     disabled={!canEdit}
                   >
-                    <X className="h-4 w-4 mr-1" />
+                    <X className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
                     Remove
                   </Button>
                 )}
               </div>
-              <p className="text-xs text-ink-muted mt-1.5">JPEG, PNG, WEBP, or GIF up to 5 MB. Uploaded to the shared S3 bucket.</p>
+              <p className="dashboard-field-hint">
+                JPEG, PNG, WEBP, or GIF up to 5 MB. Uploaded to the shared S3 bucket.
+              </p>
             </div>
 
             <div>
-              <label className="text-xs font-medium text-ink-dim block mb-1.5">Status</label>
+              <label htmlFor="testimonial-status" className="dashboard-field-label">
+                Status
+              </label>
               <select
-                className="w-full rounded-brand border border-surface-border/80 p-2.5 text-sm bg-white
-                  focus:outline-none focus:ring-2 focus:ring-brand/30"
+                id="testimonial-status"
+                className="dashboard-select w-full"
                 value={form.status}
                 onChange={(e) => setForm((f) => ({ ...f, status: e.target.value as 'draft' | 'published' }))}
                 disabled={!canEdit}
@@ -293,94 +346,146 @@ export default function AdminTestimonialsPage() {
                 <option value="published">Published (visible on site)</option>
               </select>
             </div>
-
-            {canEdit && (
-              <div className="flex flex-wrap gap-2">
-                <Button
-                  onClick={save}
-                  disabled={isSaving || form.quote.trim().length < 10 || !form.author_name.trim()}
-                >
-                  {isSaving ? 'Saving…' : editingId !== null ? 'Save changes' : 'Create testimonial'}
-                </Button>
-                {editingId !== null && (
-                  <Button variant="outline" onClick={resetForm} disabled={isSaving}>
-                    Cancel edit
-                  </Button>
-                )}
-              </div>
-            )}
           </AdminPanelBody>
+          {canEdit && (
+            <div className="flex flex-wrap justify-end gap-2 border-t border-dash-border px-5 py-4">
+              {editingId !== null && (
+                <Button variant="outline" size="sm" className="h-9" onClick={resetForm} disabled={isSaving}>
+                  Cancel edit
+                </Button>
+              )}
+              <Button
+                size="sm"
+                className="h-9"
+                onClick={save}
+                disabled={isSaving || form.quote.trim().length < 10 || !form.author_name.trim()}
+              >
+                {isSaving ? 'Saving…' : editingId !== null ? 'Save changes' : 'Create testimonial'}
+              </Button>
+            </div>
+          )}
         </AdminPanel>
 
-        <AdminPanel>
-          <AdminPanelHeader title={`All testimonials (${items.length})`} icon={MessageSquareQuote} />
-          <AdminPanelBody className="space-y-3 max-h-[640px] overflow-y-auto">
-            {isLoading ? (
-              <p className="text-sm text-ink-muted">Loading…</p>
-            ) : items.length === 0 ? (
+        <AdminPanel className="self-start">
+          <AdminPanelHeader
+            title="All testimonials"
+            icon={MessageSquareQuote}
+            actions={<span className="dashboard-meta-pill tabular-nums">{items.length}</span>}
+          />
+          {isLoading ? (
+            <DashboardLoading message="Loading…" />
+          ) : items.length === 0 ? (
+            <AdminPanelBody>
               <DashboardEmpty
                 icon={MessageSquareQuote}
                 title="No testimonials yet"
                 description="Create the first one with the form. Only published testimonials appear on the site."
               />
-            ) : (
-              items.map((item) => (
-                <div
-                  key={item.id}
-                  className="rounded-brand border border-surface-border/60 p-4 hover:bg-surface-elevated/40 transition-colors"
-                >
-                  <div className="flex items-start gap-3">
-                    {item.avatar_url ? (
-                      <span className="relative block h-10 w-10 shrink-0 overflow-hidden rounded-full ring-1 ring-surface-border/60">
-                        <Image src={item.avatar_url} alt="" fill sizes="40px" className="object-cover" unoptimized />
-                      </span>
-                    ) : (
-                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-surface-elevated text-ink-dim">
-                        <MessageSquareQuote className="h-4 w-4" aria-hidden />
-                      </span>
-                    )}
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm text-ink leading-relaxed line-clamp-2">“{item.quote}”</p>
-                      <p className="text-xs text-ink-muted mt-1">
-                        {item.author_name}
-                        {item.author_role ? `, ${item.author_role}` : ''}
-                        {item.company ? `, ${item.company}` : ''} · order {item.display_order}
-                      </p>
-                    </div>
-                    <Badge variant={item.status === 'published' ? 'default' : 'secondary'}>
-                      {item.status}
-                    </Badge>
-                  </div>
-                  {canEdit && (
-                    <div className="mt-3 flex flex-wrap items-center gap-2">
-                      <Button size="sm" variant="outline" onClick={() => startEdit(item)}>
-                        <Pencil className="h-3.5 w-3.5 mr-1" />
-                        Edit
-                      </Button>
-                      <Button size="sm" variant="outline" onClick={() => togglePublish(item)}>
-                        {item.status === 'published' ? 'Unpublish' : 'Publish'}
-                      </Button>
-                      {confirmDeleteId === item.id ? (
-                        <>
-                          <Button size="sm" variant="destructive" onClick={() => remove(item.id)}>
-                            Confirm delete
-                          </Button>
-                          <Button size="sm" variant="ghost" onClick={() => setConfirmDeleteId(null)}>
-                            Cancel
-                          </Button>
-                        </>
-                      ) : (
-                        <Button size="sm" variant="ghost" onClick={() => setConfirmDeleteId(item.id)}>
-                          <Trash2 className="h-3.5 w-3.5 mr-1" />
-                          Delete
-                        </Button>
-                      )}
-                    </div>
-                  )}
-                </div>
-              ))
-            )}
-          </AdminPanelBody>
+            </AdminPanelBody>
+          ) : (
+            <AdminPanelBody noPadding className="max-h-[640px] overflow-y-auto">
+              <AdminTableWrap>
+                <AdminTable>
+                  <thead>
+                    <tr>
+                      <th>Testimonial</th>
+                      <th className="dashboard-num">Order</th>
+                      <th>Status</th>
+                      {canEdit && <th className="text-right">Actions</th>}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {items.map((item) => (
+                      <tr key={item.id} className={editingId === item.id ? 'bg-dash-hover' : undefined}>
+                        <td className="min-w-[260px] max-w-[420px]">
+                          <div className="flex items-start gap-3">
+                            {item.avatar_url ? (
+                              <span className="relative mt-0.5 block h-8 w-8 shrink-0 overflow-hidden rounded-full bg-dash-pill ring-1 ring-dash-border">
+                                <Image src={item.avatar_url} alt="" fill sizes="32px" className="object-cover" unoptimized />
+                              </span>
+                            ) : (
+                              <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-dash-pill text-dash-dim">
+                                <MessageSquareQuote className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
+                              </span>
+                            )}
+                            <div className="min-w-0">
+                              <p className="line-clamp-2 text-[13px] leading-5 text-dash-ink">“{item.quote}”</p>
+                              <p className="mt-0.5 truncate text-xs text-dash-muted">
+                                <span className="font-medium text-dash-body">{item.author_name}</span>
+                                {item.author_role ? `, ${item.author_role}` : ''}
+                                {item.company ? `, ${item.company}` : ''}
+                              </p>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="dashboard-num text-dash-ink">{item.display_order}</td>
+                        <td>
+                          <DashboardPill tone={item.status === 'published' ? 'green' : 'neutral'}>
+                            {item.status}
+                          </DashboardPill>
+                        </td>
+                        {canEdit && (
+                          <td>
+                            <div className="flex items-center justify-end gap-1.5">
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                className="h-8 w-8 p-0"
+                                onClick={() => startEdit(item)}
+                                aria-label="Edit"
+                                title="Edit"
+                              >
+                                <Pencil className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="h-8 px-2.5 text-xs"
+                                onClick={() => togglePublish(item)}
+                              >
+                                {item.status === 'published' ? 'Unpublish' : 'Publish'}
+                              </Button>
+                              {confirmDeleteId === item.id ? (
+                                <>
+                                  <Button
+                                    size="sm"
+                                    variant="destructive"
+                                    className="h-8 px-2.5 text-xs"
+                                    onClick={() => remove(item.id)}
+                                  >
+                                    Confirm delete
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    className="h-8 px-2.5 text-xs"
+                                    onClick={() => setConfirmDeleteId(null)}
+                                  >
+                                    Cancel
+                                  </Button>
+                                </>
+                              ) : (
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  className="h-8 w-8 p-0 text-dash-negative hover:bg-dash-negative-soft hover:text-dash-negative"
+                                  onClick={() => setConfirmDeleteId(item.id)}
+                                  aria-label="Delete"
+                                  title="Delete"
+                                >
+                                  <Trash2 className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
+                                </Button>
+                              )}
+                            </div>
+                          </td>
+                        )}
+                      </tr>
+                    ))}
+                  </tbody>
+                </AdminTable>
+              </AdminTableWrap>
+            </AdminPanelBody>
+          )}
         </AdminPanel>
       </div>
     </AdminPage>

@@ -1,24 +1,42 @@
 'use client'
 
-import { useState, useEffect, useCallback, Suspense } from 'react'
+import { useState, useEffect, useCallback, Suspense, type ReactNode } from 'react'
 import { useAuth } from '@/lib/hooks/use-auth'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import { ErrorBoundary } from '@/components/ui/error-boundary'
 import { PaymentErrorMessage } from '@/components/ui/error-message'
 import {
+  DASHBOARD_ICON_STROKE,
   DashboardPage,
   DashboardPageHeader,
+  DashboardPanel,
+  DashboardPanelHeader,
+  DashboardPanelBody,
+  DashboardTableWrap,
+  DashboardTable,
+  DashboardPill,
+  DashboardIconTile,
+  DashboardStatList,
+  DashboardEmpty,
   DashboardLoading,
   DashboardAlert,
   DashboardProgress,
 } from '@/components/dashboard/dashboard-shell'
 import {
-  CreditCard, DollarSign,
-  CheckCircle, ExternalLink, RefreshCw, Download
+  Check,
+  CheckCircle,
+  CreditCard,
+  DollarSign,
+  Download,
+  ExternalLink,
+  Gauge,
+  Layers,
+  ListChecks,
+  Receipt,
+  RefreshCw,
 } from 'lucide-react'
+import { cn } from '@/lib/utils/cn'
 import { fetchPublicPlans } from '@/lib/pricing/fetch-plans'
 import {
   formatPlanPrice,
@@ -81,38 +99,154 @@ interface UsageStats {
   plan_name?: string
 }
 
+type FeatureGroup = { heading: string; items: string[] }
+
+const HEADER_BUTTON = 'h-9 gap-1.5'
+
+function UsageFigure({
+  label,
+  value,
+  hint,
+  children,
+}: {
+  label: string
+  value: string
+  hint?: string
+  children?: ReactNode
+}) {
+  return (
+    <div className="min-w-0 sm:px-5 sm:first:pl-0 sm:last:pr-0">
+      <p className="text-xs font-medium text-dash-muted">{label}</p>
+      <p className="dashboard-summary-value mt-1.5">{value}</p>
+      {hint && <p className="mt-1 text-xs text-dash-muted">{hint}</p>}
+      {children}
+    </div>
+  )
+}
+
 function UsageThisMonthCard({ used, limit }: { used: number; limit: number }) {
   const safeLimit = limit > 0 ? limit : 1
   const pct = Math.min(100, (used / safeLimit) * 100)
   const remaining = Math.max(0, limit - used)
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Usage This Month</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div>
-            <p className="text-sm text-gray-600 mb-1">Requests Used</p>
-            <p className="text-2xl font-bold text-gray-900">{used.toLocaleString()}</p>
-            <p className="text-sm text-gray-600">of {limit.toLocaleString()} total</p>
+    <DashboardPanel>
+      <DashboardPanelHeader title="Usage this month" icon={Gauge} />
+      <DashboardPanelBody>
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-3 sm:gap-0 sm:divide-x sm:divide-dash-border/70">
+          <UsageFigure
+            label="Requests used"
+            value={used.toLocaleString()}
+            hint={`of ${limit.toLocaleString()} total`}
+          />
+          <UsageFigure label="Usage percentage" value={`${pct.toFixed(1)}%`}>
+            <DashboardProgress value={used} max={limit} className="mt-3" />
+          </UsageFigure>
+          <UsageFigure
+            label="Remaining"
+            value={remaining.toLocaleString()}
+            hint="requests this month"
+          />
+        </div>
+      </DashboardPanelBody>
+    </DashboardPanel>
+  )
+}
+
+function CurrentPlanPanel({
+  planName,
+  price,
+  statusLabel,
+  statusTone,
+  nextBilling,
+  noBillingRequired,
+  actions,
+}: {
+  planName: string
+  price: string
+  statusLabel: string
+  statusTone: 'green' | 'orange'
+  nextBilling?: string | null
+  noBillingRequired: boolean
+  actions: ReactNode
+}) {
+  const rows: { label: string; value: ReactNode }[] = [
+    { label: 'Status', value: <DashboardPill tone={statusTone}>{statusLabel}</DashboardPill> },
+  ]
+  if (nextBilling) rows.push({ label: 'Next billing', value: nextBilling })
+  if (noBillingRequired) rows.push({ label: 'Billing', value: 'No billing required' })
+
+  return (
+    <DashboardPanel>
+      <DashboardPanelHeader title="Current plan" icon={DollarSign} actions={actions} />
+      <DashboardPanelBody>
+        <div className="grid gap-5 sm:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] sm:items-center">
+          <div className="rounded-xl bg-dash-hover px-4 py-4">
+            <h3 className="truncate text-[15px] font-semibold text-dash-ink">{planName}</h3>
+            <p className="dashboard-summary-value mt-2">{price}</p>
+            <p className="mt-0.5 text-xs text-dash-muted">per month</p>
           </div>
-          <div>
-            <p className="text-sm text-gray-600 mb-1">Usage Percentage</p>
-            <p className="text-2xl font-bold text-gray-900">{pct.toFixed(1)}%</p>
-            <div className="mt-2">
-              <DashboardProgress value={used} max={limit} />
-            </div>
-          </div>
-          <div>
-            <p className="text-sm text-gray-600 mb-1">Remaining</p>
-            <p className="text-2xl font-bold text-gray-900">{remaining.toLocaleString()}</p>
-            <p className="text-sm text-gray-600">requests this month</p>
+          <DashboardStatList items={rows} />
+        </div>
+      </DashboardPanelBody>
+    </DashboardPanel>
+  )
+}
+
+function PaymentMethodPanel({ onUpdate }: { onUpdate: () => void }) {
+  return (
+    <DashboardPanel>
+      <DashboardPanelHeader
+        title="Payment method"
+        icon={CreditCard}
+        actions={
+          <Button variant="outline" size="sm" onClick={onUpdate} className={HEADER_BUTTON}>
+            <ExternalLink className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} />
+            Update
+          </Button>
+        }
+      />
+      <DashboardPanelBody>
+        <div className="flex items-center gap-3 rounded-xl border border-dash-border bg-dash-hover px-4 py-3">
+          <span className="flex h-9 w-14 shrink-0 items-center justify-center rounded-lg border border-dash-border bg-white">
+            <CreditCard className="h-5 w-5 text-dash-dim" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
+          </span>
+          <div className="min-w-0">
+            <p className="truncate text-[13px] font-medium tabular-nums text-dash-ink">•••• •••• •••• 4242</p>
+            <p className="text-xs text-dash-muted">Expires 12/25</p>
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </DashboardPanelBody>
+    </DashboardPanel>
+  )
+}
+
+function PlanFeaturesPanel({ title, groups }: { title: string; groups: FeatureGroup[] }) {
+  return (
+    <DashboardPanel>
+      <DashboardPanelHeader title={title} icon={ListChecks} />
+      <DashboardPanelBody>
+        <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-1">
+          {groups.map((group) => (
+            <div key={group.heading} className="min-w-0">
+              <h3 className="mb-2.5 text-[13px] font-semibold text-dash-ink">{group.heading}</h3>
+              <ul className="space-y-2">
+                {group.items.map((item) => (
+                  <li key={item} className="flex items-center gap-2 text-[13px] text-dash-body">
+                    <CheckCircle
+                      className="h-4 w-4 shrink-0 text-dash-positive"
+                      strokeWidth={DASHBOARD_ICON_STROKE}
+                      aria-hidden
+                    />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </DashboardPanelBody>
+    </DashboardPanel>
   )
 }
 
@@ -137,27 +271,40 @@ function BillingPlanCard({
   const contactSales = isContactSalesPlan(plan.name)
 
   return (
-    <div className="border border-gray-200 rounded-lg p-4">
-      <div className="flex justify-between items-start mb-3">
-        <div>
-          <h4 className="font-semibold text-gray-900">{plan.name}</h4>
-          <p className="text-2xl font-bold text-gray-900">
+    <div
+      className={cn(
+        'flex min-w-0 flex-col rounded-xl border p-4 transition-colors',
+        isCurrent
+          ? 'border-dash-teal/50 bg-dash-teal-soft/40'
+          : 'border-dash-border bg-white hover:border-dash-border-strong'
+      )}
+    >
+      <div className="mb-3 flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <h4 className="truncate text-[15px] font-semibold text-dash-ink">{plan.name}</h4>
+          <p className="mt-1 text-2xl font-semibold tracking-[-0.02em] tabular-nums text-dash-ink">
             {amount}
-            {suffix && <span className="text-sm font-normal text-gray-600"> {suffix.replace('/mo', 'per month')}</span>}
+            {suffix && (
+              <span className="text-xs font-normal tracking-normal text-dash-muted"> {suffix.replace('/mo', 'per month')}</span>
+            )}
           </p>
         </div>
-        {isCurrent && <Badge className="bg-green-100 text-green-800">Current</Badge>}
+        {isCurrent && <DashboardPill tone="brand">Current</DashboardPill>}
       </div>
-      <ul className="text-sm text-gray-600 space-y-1 mb-4">
+      <ul className="mb-4 space-y-1.5 text-[13px] text-dash-body">
         {highlights.slice(0, 4).map((item) => (
-          <li key={item}>• {item}</li>
+          <li key={item} className="flex items-start gap-2">
+            <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-dash-teal-strong" strokeWidth={2} aria-hidden />
+            <span className="min-w-0">{item}</span>
+          </li>
         ))}
       </ul>
       <Button
         onClick={() => onSelect(plan.id)}
         variant={isCurrent ? 'outline' : 'default'}
         disabled={isCurrent}
-        className="w-full"
+        size="sm"
+        className="mt-auto h-9 w-full"
       >
         {isCurrent ? 'Current Plan' : contactSales ? 'Schedule a call' : `Switch to ${plan.name}`}
       </Button>
@@ -300,6 +447,7 @@ function BillingPageContent() {
 
   useEffect(() => {
     if (!loading && isAuthenticated) {
+      /* eslint-disable-next-line react-hooks/set-state-in-effect */
       loadBillingData()
     }
   }, [isAuthenticated, loading, loadBillingData])
@@ -309,6 +457,7 @@ function BillingPageContent() {
     const canceled = searchParams.get('canceled')
 
     if (success === 'true') {
+      /* eslint-disable-next-line react-hooks/set-state-in-effect */
       setSuccessMessage('Payment successful! Your subscription has been activated.')
 
       router.replace('/dashboard/billing')
@@ -386,13 +535,13 @@ function BillingPageContent() {
     }).format(amount)
   }
 
-  const getStatusColor = () => {
+  const getStatusTone = (): 'green' | 'orange' => {
 
     if (billingInfo && (billingInfo.plan_name !== 'Free' && billingInfo.plan_price > 0)) {
-      return 'bg-green-100 text-green-800'
+      return 'green'
     }
 
-    return 'bg-yellow-100 text-yellow-800'
+    return 'orange'
   }
 
   if (loading || isLoading) {
@@ -403,6 +552,41 @@ function BillingPageContent() {
     return null
   }
 
+  const isPaidPlan =
+    billingInfo !== null && billingInfo.plan_name !== 'Free' && billingInfo.plan_price > 0
+
+  const currentFeatureGroups: FeatureGroup[] = billingInfo
+    ? [
+        {
+          heading: 'API Access',
+          items: ['Food & Nutrition Search', 'UPC Lookup', 'Autocomplete API', 'Advanced Analytics'],
+        },
+        {
+          heading: 'Support & Limits',
+          items: [
+            'Priority Support',
+            `${billingInfo.rate_limit_per_minute || 100} requests/minute`,
+            foodsPerQueryText(billingInfo.plan_name, availablePlans),
+            `${billingInfo.usage_limit?.toLocaleString() || '750,000'} requests/month`,
+            apiKeyLimitText(billingInfo.plan_name, billingInfo.max_api_keys),
+          ],
+        },
+      ]
+    : []
+
+  const freeFeatureGroups: FeatureGroup[] = [
+    {
+      heading: 'API Access',
+      items: ['Food & Nutrition Search', 'UPC Lookup', 'Autocomplete API', 'Basic Analytics'],
+    },
+    {
+      heading: 'Limits',
+      items: ['Community Support', '10 requests/minute', '1,000 requests/month', apiKeyLimitText('Free')],
+    },
+  ]
+
+  const invoiceCount = `${invoices.length} ${invoices.length === 1 ? 'entry' : 'entries'}`
+
   return (
     <DashboardPage>
         <DashboardPageHeader
@@ -412,14 +596,24 @@ function BillingPageContent() {
               ? 'View your plan and upgrade when you need more capacity.'
               : 'Manage subscription, invoices, and payment methods.'
           }
+          meta={
+            billingInfo ? (
+              <span className="dashboard-meta-pill tabular-nums">
+                {billingInfo.plan_name} · {formatCurrency(billingInfo.plan_price)}/mo
+              </span>
+            ) : undefined
+          }
         >
-          <Button variant="outline" size="sm" onClick={loadBillingData} disabled={isLoading} className="gap-2">
-            <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+          <Button variant="outline" size="sm" onClick={loadBillingData} disabled={isLoading} className={HEADER_BUTTON}>
+            <RefreshCw
+              className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`}
+              strokeWidth={DASHBOARD_ICON_STROKE}
+            />
             Refresh
           </Button>
           {billingInfo?.plan_name !== 'Free' && (billingInfo?.plan_price || 0) > 0 && (
-            <Button size="sm" onClick={handleManageBilling} className="gap-2">
-              <CreditCard className="h-4 w-4" />
+            <Button size="sm" onClick={handleManageBilling} className={HEADER_BUTTON}>
+              <CreditCard className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} />
               Manage billing
             </Button>
           )}
@@ -428,7 +622,7 @@ function BillingPageContent() {
         {successMessage && (
           <DashboardAlert variant="success">
             <span className="flex items-center gap-2">
-              <CheckCircle className="h-4 w-4 shrink-0" />
+              <CheckCircle className="h-4 w-4 shrink-0" strokeWidth={DASHBOARD_ICON_STROKE} />
               {successMessage}
             </span>
           </DashboardAlert>
@@ -437,162 +631,123 @@ function BillingPageContent() {
         {error && !billingInfo && <DashboardAlert variant="error">{error}</DashboardAlert>}
 
         {billingInfo ? (
-          <div className="space-y-6">
-            {}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <DollarSign className="h-5 w-5 mr-2" />
-                  Current Plan
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                      {billingInfo.plan_name}
-                    </h3>
-                    <p className="text-3xl font-bold text-gray-900 mb-1">
-                      {formatCurrency(billingInfo.plan_price)}
-                    </p>
-                    <p className="text-sm text-gray-600">per month</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-600 mb-1">Status</p>
-                    <Badge className={getStatusColor()}>
-                      {billingInfo.plan_name === 'Free' || billingInfo.plan_price === 0
-                        ? 'Free Plan'
-                        : 'Active'
-                      }
-                    </Badge>
-                    {billingInfo.next_billing_date && billingInfo.plan_price > 0 && (
-                      <p className="text-sm text-gray-600 mt-2">
-                        Next billing: {formatDate(billingInfo.next_billing_date)}
-                      </p>
-                    )}
-                    {billingInfo.plan_name === 'Free' || billingInfo.plan_price === 0 ? (
-                      <p className="text-sm text-gray-600 mt-2">
-                        No billing required
-                      </p>
-                    ) : null}
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <Button
-                      variant="outline"
-                      onClick={handleUpgrade}
-                      className="flex-1"
-                    >
+          <>
+            <div className="dashboard-grid-wide">
+              <CurrentPlanPanel
+                planName={billingInfo.plan_name}
+                price={formatCurrency(billingInfo.plan_price)}
+                statusLabel={
+                  billingInfo.plan_name === 'Free' || billingInfo.plan_price === 0
+                    ? 'Free Plan'
+                    : 'Active'
+                }
+                statusTone={getStatusTone()}
+                nextBilling={
+                  billingInfo.next_billing_date && billingInfo.plan_price > 0
+                    ? formatDate(billingInfo.next_billing_date)
+                    : null
+                }
+                noBillingRequired={billingInfo.plan_name === 'Free' || billingInfo.plan_price === 0}
+                actions={
+                  <>
+                    <Button variant="outline" size="sm" onClick={handleUpgrade} className={HEADER_BUTTON}>
                       Upgrade Plan
                     </Button>
-                    {(billingInfo.plan_name !== 'Free' && billingInfo.plan_price > 0) && (
-                      <Button
-                        variant="outline"
-                        onClick={handleManageBilling}
-                        className="flex-1"
-                      >
+                    {isPaidPlan && (
+                      <Button variant="outline" size="sm" onClick={handleManageBilling} className={HEADER_BUTTON}>
                         Manage
                       </Button>
                     )}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                  </>
+                }
+              />
+              {isPaidPlan ? (
+                <PaymentMethodPanel onUpdate={handleManageBilling} />
+              ) : (
+                <PlanFeaturesPanel title="Current plan features" groups={currentFeatureGroups} />
+              )}
+            </div>
 
-            <UsageThisMonthCard
-              used={billingInfo.current_usage}
-              limit={billingInfo.usage_limit}
-            />
-
-            {}
-            {(billingInfo.plan_name !== 'Free' && billingInfo.plan_price > 0) && (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <CreditCard className="h-5 w-5 mr-2" />
-                    Payment Method
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <div className="h-10 w-16 bg-gray-100 rounded border flex items-center justify-center">
-                        <CreditCard className="h-6 w-6 text-gray-400" />
-                      </div>
-                      <div>
-                        <p className="font-medium text-gray-900">•••• •••• •••• 4242</p>
-                        <p className="text-sm text-gray-600">Expires 12/25</p>
-                      </div>
-                    </div>
-                    <Button
-                      variant="outline"
-                      onClick={handleManageBilling}
-                      className="flex items-center"
-                    >
-                      <ExternalLink className="h-4 w-4 mr-2" />
-                      Update
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
+            {isPaidPlan ? (
+              <div className="dashboard-grid-wide">
+                <UsageThisMonthCard
+                  used={billingInfo.current_usage}
+                  limit={billingInfo.usage_limit}
+                />
+                <PlanFeaturesPanel title="Current plan features" groups={currentFeatureGroups} />
+              </div>
+            ) : (
+              <UsageThisMonthCard
+                used={billingInfo.current_usage}
+                limit={billingInfo.usage_limit}
+              />
             )}
 
-            {}
-            {(billingInfo.plan_name !== 'Free' && billingInfo.plan_price > 0) && (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center justify-between">
-                    <span>Billing History</span>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex items-center"
-                    >
-                      <Download className="h-4 w-4 mr-2" />
+            {isPaidPlan && (
+              <DashboardPanel>
+                <DashboardPanelHeader
+                  title="Billing history"
+                  icon={Receipt}
+                  description={invoices.length > 0 ? invoiceCount : undefined}
+                  actions={
+                    <Button variant="outline" size="sm" className={HEADER_BUTTON}>
+                      <Download className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} />
                       Export
                     </Button>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {invoices.length === 0 ? (
-                      <p className="text-gray-500 text-center py-8">No billing history available</p>
-                    ) : (
-                      invoices.map((invoice, index) => (
-                        <div key={index} className="flex items-center justify-between py-3 border-b border-gray-200 last:border-b-0">
-                          <div className="flex items-center space-x-4">
-                            <div className="h-10 w-10 bg-green-100 rounded-full flex items-center justify-center">
-                              <CheckCircle className="h-5 w-5 text-green-600" />
-                            </div>
-                            <div>
-                              <p className="font-medium text-gray-900">{invoice.description || 'No description'}</p>
-                              <p className="text-sm text-gray-600">
+                  }
+                />
+                {invoices.length === 0 ? (
+                  <DashboardPanelBody>
+                    <DashboardEmpty icon={Receipt} title="No billing history available" />
+                  </DashboardPanelBody>
+                ) : (
+                  <DashboardPanelBody flush>
+                    <DashboardTableWrap>
+                      <DashboardTable>
+                        <thead>
+                          <tr>
+                            <th>Description</th>
+                            <th>Date</th>
+                            <th>Event</th>
+                            <th className="dashboard-num">Amount</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {invoices.map((invoice, index) => (
+                            <tr key={index}>
+                              <td>
+                                <div className="flex min-w-0 items-center gap-3">
+                                  <DashboardIconTile icon={CheckCircle} tone="green" />
+                                  <span className="truncate font-medium text-dash-ink">
+                                    {invoice.description || 'No description'}
+                                  </span>
+                                </div>
+                              </td>
+                              <td className="whitespace-nowrap text-dash-muted">
                                 {formatDate(invoice.created_at)}
-                              </p>
-                            </div>
-                          </div>
-                          <div className="text-right">
-                            <p className="font-medium text-gray-900">
-                              {formatCurrency(invoice.amount, invoice.currency || 'usd')}
-                            </p>
-                            <Badge variant="secondary" className="text-xs">
-                              {invoice.event_type?.replace('.', ' ').toUpperCase() || 'UNKNOWN'}
-                            </Badge>
-                          </div>
-                        </div>
-                      ))
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
+                              </td>
+                              <td>
+                                <DashboardPill tone="neutral">
+                                  {invoice.event_type?.replace('.', ' ').toUpperCase() || 'UNKNOWN'}
+                                </DashboardPill>
+                              </td>
+                              <td className="dashboard-num whitespace-nowrap font-medium text-dash-ink">
+                                {formatCurrency(invoice.amount, invoice.currency || 'usd')}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </DashboardTable>
+                    </DashboardTableWrap>
+                  </DashboardPanelBody>
+                )}
+              </DashboardPanel>
             )}
 
-            {}
-            <Card>
-              <CardHeader>
-                <CardTitle>Plan Management</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <DashboardPanel>
+              <DashboardPanelHeader title="Plan management" icon={Layers} />
+              <DashboardPanelBody>
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
                   {availablePlans
                     .filter((p) => p.name.toLowerCase() !== 'free')
                     .map((plan) => (
@@ -604,170 +759,41 @@ function BillingPageContent() {
                       />
                     ))}
                 </div>
-              </CardContent>
-            </Card>
-
-            {}
-            <Card>
-              <CardHeader>
-                <CardTitle>Current Plan Features</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <h4 className="font-medium text-gray-900 mb-3">API Access</h4>
-                    <ul className="space-y-2 text-sm text-gray-600">
-                      <li className="flex items-center">
-                        <CheckCircle className="h-4 w-4 text-green-600 mr-2" />
-                        Food & Nutrition Search
-                      </li>
-                      <li className="flex items-center">
-                        <CheckCircle className="h-4 w-4 text-green-600 mr-2" />
-                        UPC Lookup
-                      </li>
-                      <li className="flex items-center">
-                        <CheckCircle className="h-4 w-4 text-green-600 mr-2" />
-                        Autocomplete API
-                      </li>
-                      <li className="flex items-center">
-                        <CheckCircle className="h-4 w-4 text-green-600 mr-2" />
-                        Advanced Analytics
-                      </li>
-                    </ul>
-                  </div>
-                  <div>
-                    <h4 className="font-medium text-gray-900 mb-3">Support & Limits</h4>
-                    <ul className="space-y-2 text-sm text-gray-600">
-                      <li className="flex items-center">
-                        <CheckCircle className="h-4 w-4 text-green-600 mr-2" />
-                        Priority Support
-                      </li>
-                      <li className="flex items-center">
-                        <CheckCircle className="h-4 w-4 text-green-600 mr-2" />
-                        {billingInfo.rate_limit_per_minute || 100} requests/minute
-                      </li>
-                      <li className="flex items-center">
-                        <CheckCircle className="h-4 w-4 text-green-600 mr-2" />
-                        {foodsPerQueryText(billingInfo.plan_name, availablePlans)}
-                      </li>
-                      <li className="flex items-center">
-                        <CheckCircle className="h-4 w-4 text-green-600 mr-2" />
-                        {billingInfo.usage_limit?.toLocaleString() || '750,000'} requests/month
-                      </li>
-                      <li className="flex items-center">
-                        <CheckCircle className="h-4 w-4 text-green-600 mr-2" />
-                        {apiKeyLimitText(billingInfo.plan_name, billingInfo.max_api_keys)}
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+              </DashboardPanelBody>
+            </DashboardPanel>
+          </>
         ) : (
-
-          <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <DollarSign className="h-5 w-5 mr-2" />
-                  Current Plan
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                      Free Plan
-                    </h3>
-                    <p className="text-3xl font-bold text-gray-900 mb-1">
-                      $0.00
-                    </p>
-                    <p className="text-sm text-gray-600">per month</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-600 mb-1">Status</p>
-                    <Badge className="bg-green-100 text-green-800">
-                      Free Plan
-                    </Badge>
-                    <p className="text-sm text-gray-600 mt-2">
-                      No billing required
-                    </p>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <Button
-                      onClick={handleUpgrade}
-                      className="flex-1"
-                    >
-                      Upgrade Plan
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+          <>
+            <div className="dashboard-grid-wide">
+              <CurrentPlanPanel
+                planName="Free Plan"
+                price="$0.00"
+                statusLabel="Free Plan"
+                statusTone="green"
+                noBillingRequired
+                actions={
+                  <Button size="sm" onClick={handleUpgrade} className={HEADER_BUTTON}>
+                    Upgrade Plan
+                  </Button>
+                }
+              />
+              <PlanFeaturesPanel title="Free plan features" groups={freeFeatureGroups} />
+            </div>
 
             <UsageThisMonthCard used={0} limit={1000} />
 
-            {}
-            <Card>
-              <CardHeader>
-                <CardTitle>Free Plan Features</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <h4 className="font-medium text-gray-900 mb-3">API Access</h4>
-                    <ul className="space-y-2 text-sm text-gray-600">
-                      <li className="flex items-center">
-                        <CheckCircle className="h-4 w-4 text-green-600 mr-2" />
-                        Food & Nutrition Search
-                      </li>
-                      <li className="flex items-center">
-                        <CheckCircle className="h-4 w-4 text-green-600 mr-2" />
-                        UPC Lookup
-                      </li>
-                      <li className="flex items-center">
-                        <CheckCircle className="h-4 w-4 text-green-600 mr-2" />
-                        Autocomplete API
-                      </li>
-                      <li className="flex items-center">
-                        <CheckCircle className="h-4 w-4 text-green-600 mr-2" />
-                        Basic Analytics
-                      </li>
-                    </ul>
-                  </div>
-                  <div>
-                    <h4 className="font-medium text-gray-900 mb-3">Limits</h4>
-                    <ul className="space-y-2 text-sm text-gray-600">
-                      <li className="flex items-center">
-                        <CheckCircle className="h-4 w-4 text-green-600 mr-2" />
-                        Community Support
-                      </li>
-                      <li className="flex items-center">
-                        <CheckCircle className="h-4 w-4 text-green-600 mr-2" />
-                        10 requests/minute
-                      </li>
-                      <li className="flex items-center">
-                        <CheckCircle className="h-4 w-4 text-green-600 mr-2" />
-                        1,000 requests/month
-                      </li>
-                      <li className="flex items-center">
-                        <CheckCircle className="h-4 w-4 text-green-600 mr-2" />
-                        {apiKeyLimitText('Free')}
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {}
-            <Card>
-              <CardHeader>
-                <CardTitle>Upgrade Options</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <DashboardPanel>
+              <DashboardPanelHeader
+                title="Upgrade options"
+                icon={Layers}
+                actions={
+                  <Button variant="outline" size="sm" onClick={handleUpgrade} className={HEADER_BUTTON}>
+                    View All Plans
+                  </Button>
+                }
+              />
+              <DashboardPanelBody>
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   {availablePlans
                     .filter((p) => p.name.toLowerCase() !== 'free')
                     .slice(0, 2)
@@ -780,19 +806,9 @@ function BillingPageContent() {
                       />
                     ))}
                 </div>
-
-                <div className="mt-4 text-center">
-                  <Button
-                    variant="outline"
-                    onClick={handleUpgrade}
-                    className="text-blue-600 border-blue-600 hover:bg-blue-50"
-                  >
-                    View All Plans
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+              </DashboardPanelBody>
+            </DashboardPanel>
+          </>
         )}
       <ScheduleCallDialog isOpen={isScheduleOpen} onClose={() => setIsScheduleOpen(false)} />
     </DashboardPage>

@@ -98,6 +98,7 @@ export function PricingComparison({ plans }: { plans: PricingPlan[] }) {
                 <tbody>
                   {COMPARE_ROWS.map((row, rowIndex) => {
                     const showSection = row.section && row.section !== lastSection
+                    /* eslint-disable-next-line react-hooks/immutability */
                     if (row.section) lastSection = row.section
                     const zebra = rowIndex % 2 === 1
                     const isLastRow = rowIndex === COMPARE_ROWS.length - 1

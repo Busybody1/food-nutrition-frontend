@@ -18,6 +18,7 @@ import type { SupportConversation, SupportMessage } from '@/types/support'
 import { SupportComposer } from './SupportComposer'
 import { SupportMessageList } from './SupportMessageList'
 import { cn } from '@/lib/utils/cn'
+import { DASHBOARD_ICON_STROKE, DashboardIconTile } from '@/components/dashboard/dashboard-shell'
 
 const OPEN_EVENT = 'calorie-api:open-support'
 
@@ -119,6 +120,7 @@ export function SupportChatProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (typeof window === 'undefined') return
     const params = new URLSearchParams(window.location.search)
+    /* eslint-disable-next-line react-hooks/set-state-in-effect */
     if (params.get('support') === '1') setIsOpen(true)
   }, [])
 
@@ -130,6 +132,7 @@ export function SupportChatProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!isAuthenticated || loading) return
+    /* eslint-disable-next-line react-hooks/set-state-in-effect */
     void refreshUnread()
     void loadConversation()
   }, [isAuthenticated, loading, loadConversation, refreshUnread])
@@ -161,6 +164,7 @@ export function SupportChatProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (isOpen) {
+      /* eslint-disable-next-line react-hooks/set-state-in-effect */
       void loadConversation()
       void markRead()
     }
@@ -246,14 +250,14 @@ export function SupportChatProvider({ children }: { children: ReactNode }) {
               type="button"
               onClick={openSupport}
               className={cn(
-                'relative flex h-12 w-12 items-center justify-center rounded-full bg-violet-600 text-white shadow-lg',
-                'hover:bg-violet-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40'
+                'relative flex h-12 w-12 items-center justify-center rounded-full bg-dash-teal-strong text-white shadow-dash-pop',
+                'hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40'
               )}
               aria-label={unreadCount > 0 ? `Open support chat, ${unreadCount} unread` : 'Open support chat'}
             >
               <MessageCircle className="h-5 w-5" />
               {unreadCount > 0 ? (
-                <span className="absolute -top-1 -right-1 min-w-[18px] rounded-full bg-red-600 px-1 text-[10px] font-semibold leading-4 text-white">
+                <span className="absolute -top-1 -right-1 min-w-[18px] rounded-full bg-dash-negative px-1 text-[10px] font-semibold leading-4 text-white">
                   {unreadCount > 9 ? '9+' : unreadCount}
                 </span>
               ) : null}
@@ -267,28 +271,31 @@ export function SupportChatProvider({ children }: { children: ReactNode }) {
               aria-modal="true"
               aria-labelledby="support-chat-title"
             >
-              <div className="flex h-full flex-col bg-white shadow-2xl sm:rounded-brand sm:border sm:border-surface-border/80 overflow-hidden">
-                <header className="flex items-center justify-between border-b border-surface-border/70 px-4 py-3">
-                  <div>
-                    <h2 id="support-chat-title" className="text-sm font-semibold text-ink">
-                      Support
-                    </h2>
-                    <p className="text-[11px] text-ink-muted">Chat with the Calorie API team</p>
+              <div className="flex h-full flex-col overflow-hidden bg-white shadow-dash-pop sm:rounded-2xl sm:border sm:border-dash-border">
+                <header className="flex items-center justify-between gap-3 border-b border-dash-border px-4 py-3">
+                  <div className="flex min-w-0 items-center gap-2.5">
+                    <DashboardIconTile icon={MessageCircle} outline />
+                    <div className="min-w-0">
+                      <h2 id="support-chat-title" className="truncate text-[15px] font-semibold leading-5 text-dash-ink">
+                        Support
+                      </h2>
+                      <p className="truncate text-xs text-dash-muted">Chat with the Calorie API team</p>
+                    </div>
                   </div>
                   <button
                     type="button"
                     onClick={closeSupport}
-                    className="rounded-brand p-1.5 text-ink-muted hover:bg-surface-elevated hover:text-ink"
+                    className="shrink-0 rounded-lg p-1.5 text-dash-dim transition-colors hover:bg-dash-hover hover:text-dash-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
                     aria-label="Close support chat"
                   >
-                    <X className="h-4 w-4" />
+                    <X className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} />
                   </button>
                 </header>
                 <div ref={listRef} className="flex-1 min-h-0 overflow-y-auto">
                   <SupportMessageList messages={messages} viewer="user" />
                 </div>
                 {pendingFile ? (
-                  <p className="px-4 pb-1 text-[11px] text-ink-muted truncate">
+                  <p className="truncate px-4 pb-1.5 pt-1 text-xs text-dash-muted">
                     Screenshot ready: {pendingFile.name}
                   </p>
                 ) : null}

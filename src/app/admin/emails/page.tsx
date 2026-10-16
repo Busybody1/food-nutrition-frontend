@@ -5,13 +5,15 @@ import { createPortal } from 'react-dom'
 import { adminAPI, type AdminUser, type EmailLogEntry } from '@/lib/api/admin'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useAdmin } from '@/lib/hooks/use-admin'
+import { cn } from '@/lib/utils/cn'
 import {
   AlertCircle,
+  AtSign,
   Eye,
   Mail,
+  MessageSquareText,
   ScrollText,
   Search,
   Send,
@@ -30,6 +32,8 @@ import {
   DashboardAlert,
   DashboardEmpty,
   DashboardLoading,
+  DashboardPill,
+  DASHBOARD_ICON_STROKE,
 } from '@/components/admin/admin-ui'
 
 type Feedback = { type: 'success' | 'error'; text: string }
@@ -85,6 +89,58 @@ function recipientSendPayload(recipient: EmailRecipient): { user_id?: number; em
 function formatLogKind(kind: string): string {
   const match = EMAIL_LOG_KINDS.find((item) => item.value === kind)
   return match?.label || kind
+}
+
+function initialsFrom(first?: string | null, last?: string | null, fallback?: string | null): string {
+  const letters = `${(first || '').trim().charAt(0)}${(last || '').trim().charAt(0)}`
+  if (letters) return letters.toUpperCase()
+  const backup = (fallback || '').trim()
+  return backup ? backup.charAt(0).toUpperCase() : '#'
+}
+
+function InitialsCircle({ text }: { text: string }) {
+  return (
+    <span
+      aria-hidden
+      className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-dash-pill text-[11px] font-semibold text-dash-body"
+    >
+      {text}
+    </span>
+  )
+}
+
+function BodyModeToggle({
+  value,
+  onChange,
+  disabled,
+}: {
+  value: 'html' | 'plain'
+  onChange: (next: 'html' | 'plain') => void
+  disabled?: boolean
+}) {
+  const options: { value: 'html' | 'plain'; label: string }[] = [
+    { value: 'html', label: 'HTML' },
+    { value: 'plain', label: 'Plain text' },
+  ]
+  return (
+    <div className="dashboard-segmented" role="group" aria-label="Body format">
+      {options.map((option) => (
+        <button
+          key={option.value}
+          type="button"
+          onClick={() => onChange(option.value)}
+          disabled={disabled}
+          aria-pressed={value === option.value}
+          className={cn(
+            'dashboard-segmented-btn disabled:cursor-not-allowed disabled:opacity-50',
+            value === option.value && 'dashboard-segmented-btn-active'
+          )}
+        >
+          {option.label}
+        </button>
+      ))}
+    </div>
+  )
 }
 
 type EmailTemplate = {
@@ -193,29 +249,42 @@ function UserPicker({
   return (
     <div>
       {selected ? (
-        <div className="flex items-center justify-between gap-3 rounded-brand border border-surface-border/80 px-3 py-2.5">
-          <div className="min-w-0">
+        <div className="flex items-center justify-between gap-3 rounded-xl border border-dash-border bg-dash-hover px-3 py-2.5">
+          <div className="flex min-w-0 items-center gap-3">
             {selected.fromDirectory ? (
-              <>
-                <p className="text-sm font-medium text-ink truncate">
-                  {[selected.firstName, selected.lastName].filter(Boolean).join(' ') || 'User'}{' '}
-                  {selected.userId != null ? (
-                    <span className="font-normal text-ink-muted">#{selected.userId}</span>
-                  ) : null}
-                </p>
-                <p className="text-xs text-ink-muted truncate">{selected.email}</p>
-              </>
+              <InitialsCircle text={initialsFrom(selected.firstName, selected.lastName, selected.email)} />
             ) : (
-              <>
-                <p className="text-sm font-medium text-ink truncate">{selected.email}</p>
-                <p className="text-xs text-ink-muted">Not in user list</p>
-              </>
+              <span
+                aria-hidden
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-dash-border bg-white text-dash-muted"
+              >
+                <AtSign className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} />
+              </span>
             )}
+            <div className="min-w-0">
+              {selected.fromDirectory ? (
+                <>
+                  <p className="truncate text-[13px] font-medium text-dash-ink">
+                    {[selected.firstName, selected.lastName].filter(Boolean).join(' ') || 'User'}{' '}
+                    {selected.userId != null ? (
+                      <span className="font-normal text-dash-muted">#{selected.userId}</span>
+                    ) : null}
+                  </p>
+                  <p className="truncate text-xs text-dash-muted">{selected.email}</p>
+                </>
+              ) : (
+                <>
+                  <p className="truncate text-[13px] font-medium text-dash-ink">{selected.email}</p>
+                  <p className="text-xs text-dash-muted">Not in user list</p>
+                </>
+              )}
+            </div>
           </div>
           <Button
             type="button"
             variant="outline"
             size="sm"
+            className="h-8 shrink-0"
             disabled={disabled}
             onClick={() => {
               onSelect(null)
@@ -229,7 +298,11 @@ function UserPicker({
         </div>
       ) : (
         <div className="relative">
-          <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-ink-muted" />
+          <Search
+            className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-dash-dim"
+            strokeWidth={DASHBOARD_ICON_STROKE}
+            aria-hidden
+          />
           <Input
             ref={inputRef}
             className="pl-9"
@@ -277,16 +350,24 @@ function UserPicker({
                     type="button"
                     role="option"
                     aria-selected={false}
-                    className="w-full cursor-pointer text-left px-3 py-2.5 hover:bg-surface-elevated/80 border-b border-surface-border/40"
+                    className="flex w-full cursor-pointer items-center gap-3 border-b border-dash-border/70 px-3 py-2.5 text-left transition-colors hover:bg-dash-hover"
                     onClick={() => applyRecipient(recipientFromEmail(trimmed))}
                   >
-                    <p className="text-sm text-ink truncate">Send to {trimmed.toLowerCase()}</p>
-                    <p className="text-xs text-ink-muted">Not in user list</p>
+                    <span
+                      aria-hidden
+                      className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-dash-border bg-white text-dash-muted"
+                    >
+                      <AtSign className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} />
+                    </span>
+                    <span className="min-w-0">
+                      <span className="block truncate text-[13px] text-dash-ink">Send to {trimmed.toLowerCase()}</span>
+                      <span className="block text-xs text-dash-muted">Not in user list</span>
+                    </span>
                   </button>
                 )}
-                {searching && <p className="px-3 py-2.5 text-xs text-ink-muted">Searching…</p>}
+                {searching && <p className="px-3 py-2.5 text-xs text-dash-muted">Searching…</p>}
                 {!searching && results.length === 0 && !showExternalOption && (
-                  <p className="px-3 py-2.5 text-xs text-ink-muted">No users found</p>
+                  <p className="px-3 py-2.5 text-xs text-dash-muted">No users found</p>
                 )}
                 {results.map((user) => (
                   <button
@@ -294,13 +375,16 @@ function UserPicker({
                     type="button"
                     role="option"
                     aria-selected={false}
-                    className="w-full cursor-pointer text-left px-3 py-2.5 hover:bg-surface-elevated/80 border-b border-surface-border/40 last:border-0"
+                    className="flex w-full cursor-pointer items-center gap-3 border-b border-dash-border/70 px-3 py-2.5 text-left transition-colors last:border-0 hover:bg-dash-hover"
                     onClick={() => applyRecipient(recipientFromUser(user))}
                   >
-                    <p className="text-sm text-ink truncate">
-                      {[user.first_name, user.last_name].filter(Boolean).join(' ') || 'User'}
-                    </p>
-                    <p className="text-xs text-ink-muted truncate">{user.email}</p>
+                    <InitialsCircle text={initialsFrom(user.first_name, user.last_name, user.email)} />
+                    <span className="min-w-0">
+                      <span className="block truncate text-[13px] text-dash-ink">
+                        {[user.first_name, user.last_name].filter(Boolean).join(' ') || 'User'}
+                      </span>
+                      <span className="block truncate text-xs text-dash-muted">{user.email}</span>
+                    </span>
                   </button>
                 ))}
               </div>,
@@ -401,6 +485,7 @@ export default function AdminEmailsPage() {
   }, [recipient, logEmailFilter, logKind, logPage, logPageSize])
 
   useEffect(() => {
+    /* eslint-disable-next-line react-hooks/set-state-in-effect */
     loadEmailLog()
   }, [loadEmailLog])
 
@@ -514,20 +599,22 @@ export default function AdminEmailsPage() {
       <AdminPageHeader
         title="Emails"
         description="Send mail to a user or any email address, or inspect the outbound log of who received what."
-        actions={
+        meta={
           emailStatus ? (
-            <Badge variant={emailStatus.resend_configured ? 'default' : 'secondary'}>
+            <DashboardPill tone={emailStatus.resend_configured ? 'green' : 'neutral'}>
               Resend {emailStatus.resend_configured ? 'configured' : 'not configured'}
-            </Badge>
+            </DashboardPill>
           ) : undefined
         }
       />
 
       {emailStatus && !emailStatus.resend_configured && !emailStatus.smtp_configured && (
         <DashboardAlert variant="warning">
-          <AlertCircle className="h-4 w-4 shrink-0 inline mr-1.5 align-text-bottom" />
-          Email is not configured on the API. Set <code className="text-xs">RESEND_API_KEY</code> before
-          sending.
+          <AlertCircle className="h-4 w-4 shrink-0" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
+          <span className="min-w-0 flex-1">
+            Email is not configured on the API. Set <code className="font-mono text-xs">RESEND_API_KEY</code>{' '}
+            before sending.
+          </span>
         </DashboardAlert>
       )}
 
@@ -545,14 +632,14 @@ export default function AdminEmailsPage() {
 
       <AdminPanel className="relative z-10 overflow-visible">
         <AdminPanelHeader title="Recipient" icon={UserRound} />
-        <AdminPanelBody className="space-y-2">
+        <AdminPanelBody>
           <UserPicker
             selected={recipient}
             onSelect={setRecipient}
             onDraftChange={setDraftQuery}
             disabled={!canSend}
           />
-          <p className="text-xs text-ink-muted">
+          <p className="dashboard-field-hint">
             Custom and conversion emails can go to an address that is not in the user list. Feedback
             emails still require an existing user.
           </p>
@@ -567,65 +654,58 @@ export default function AdminEmailsPage() {
           <TabsTrigger value="log">Sent log</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="custom" className="flex flex-col gap-4">
+        <TabsContent value="custom" className="flex flex-col gap-5">
           <AdminPanel>
-            <AdminPanelHeader title="Compose" icon={Mail} />
+            <AdminPanelHeader
+              title="Compose"
+              icon={Mail}
+              actions={<BodyModeToggle value={mode} onChange={setMode} disabled={!canSend} />}
+            />
             <AdminPanelBody className="space-y-4">
-              <div className="flex flex-wrap gap-2">
-                <Button
-                  type="button"
-                  size="sm"
-                  variant={mode === 'html' ? 'default' : 'outline'}
-                  onClick={() => setMode('html')}
-                  disabled={!canSend}
-                >
-                  HTML
-                </Button>
-                <Button
-                  type="button"
-                  size="sm"
-                  variant={mode === 'plain' ? 'default' : 'outline'}
-                  onClick={() => setMode('plain')}
-                  disabled={!canSend}
-                >
-                  Plain text
-                </Button>
-              </div>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label htmlFor="custom-email-from" className="dashboard-field-label">
+                    From name
+                  </label>
+                  <Input
+                    id="custom-email-from"
+                    value={fromName}
+                    onChange={(event) => setFromName(event.target.value)}
+                    disabled={!canSend}
+                    placeholder="Calorie API"
+                  />
+                </div>
 
-              <div>
-                <label className="text-xs font-medium text-ink-dim block mb-1.5">From name</label>
-                <Input
-                  value={fromName}
-                  onChange={(event) => setFromName(event.target.value)}
-                  disabled={!canSend}
-                  placeholder="Calorie API"
-                />
-              </div>
-
-              <div>
-                <label className="text-xs font-medium text-ink-dim block mb-1.5">Subject</label>
-                <Input
-                  value={subject}
-                  onChange={(event) => setSubject(event.target.value)}
-                  disabled={!canSend}
-                  placeholder="Quick note about your API integration"
-                />
+                <div>
+                  <label htmlFor="custom-email-subject" className="dashboard-field-label">
+                    Subject
+                  </label>
+                  <Input
+                    id="custom-email-subject"
+                    value={subject}
+                    onChange={(event) => setSubject(event.target.value)}
+                    disabled={!canSend}
+                    placeholder="Quick note about your API integration"
+                  />
+                </div>
               </div>
 
               {mode === 'html' ? (
                 <div>
-                  <label className="text-xs font-medium text-ink-dim block mb-1.5">HTML body</label>
+                  <label htmlFor="custom-email-html" className="dashboard-field-label">
+                    HTML body
+                  </label>
                   <textarea
-                    className="w-full min-h-[200px] rounded-brand border border-surface-border/80 p-3 text-sm font-mono
-                      focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand/50
-                      disabled:opacity-60 disabled:bg-surface-elevated"
+                    id="custom-email-html"
+                    className="dashboard-textarea min-h-[200px] font-mono text-xs leading-5"
                     value={bodyHtml}
                     onChange={(event) => setBodyHtml(event.target.value)}
                     disabled={!canSend}
                   />
-                  <label className="mt-2 flex items-center gap-2 text-xs text-ink-dim">
+                  <label className="mt-2.5 flex items-center gap-2 text-xs text-dash-body">
                     <input
                       type="checkbox"
+                      className="h-4 w-4 rounded border-dash-border accent-dash-teal-strong"
                       checked={wrapBranded}
                       onChange={(event) => setWrapBranded(event.target.checked)}
                       disabled={!canSend}
@@ -635,27 +715,31 @@ export default function AdminEmailsPage() {
                 </div>
               ) : (
                 <div>
-                  <label className="text-xs font-medium text-ink-dim block mb-1.5">Plain text body</label>
+                  <label htmlFor="custom-email-text" className="dashboard-field-label">
+                    Plain text body
+                  </label>
                   <textarea
-                    className="w-full min-h-[200px] rounded-brand border border-surface-border/80 p-3 text-sm
-                      focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand/50
-                      disabled:opacity-60 disabled:bg-surface-elevated"
+                    id="custom-email-text"
+                    className="dashboard-textarea min-h-[200px]"
                     value={bodyText}
                     onChange={(event) => setBodyText(event.target.value)}
                     disabled={!canSend}
                   />
-                  <p className="text-xs text-ink-muted mt-1.5">
+                  <p className="dashboard-field-hint">
                     Sent as plain text (with a simple HTML fallback for some clients).
                   </p>
                 </div>
               )}
 
-              <p className="text-xs text-ink-muted">
-                Personalize with <code className="text-xs">{'{{first_name}}'}</code>.
+              <p className="text-xs text-dash-muted">
+                Personalize with <code className="font-mono text-xs text-dash-body">{'{{first_name}}'}</code>.
               </p>
-
-              {canSend && (
+            </AdminPanelBody>
+            {canSend && (
+              <div className="flex justify-end gap-2 border-t border-dash-border px-5 py-4">
                 <Button
+                  size="sm"
+                  className="h-9 gap-1.5"
                   onClick={sendCustom}
                   disabled={
                     sendingCustom ||
@@ -664,92 +748,101 @@ export default function AdminEmailsPage() {
                     (mode === 'html' ? !bodyHtml.trim() : !bodyText.trim())
                   }
                 >
-                  <Send className="h-4 w-4 mr-1.5" />
+                  <Send className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
                   {sendingCustom ? 'Sending…' : 'Send custom email'}
                 </Button>
-              )}
-            </AdminPanelBody>
+              </div>
+            )}
           </AdminPanel>
         </TabsContent>
 
-        <TabsContent value="conversion" className="flex flex-col gap-4">
-          <div className="grid gap-6 lg:grid-cols-2">
-            <AdminPanel>
+        <TabsContent value="conversion" className="flex flex-col gap-5">
+          <div className="dashboard-grid-narrow-wide">
+            <AdminPanel className="self-start">
               <AdminPanelHeader title="Template" icon={Send} />
-              <AdminPanelBody className="space-y-4">
-                <div>
-                  <label className="text-xs font-medium text-ink-dim block mb-1.5">
-                    Conversion drip email
-                  </label>
-                  <select
-                    className="w-full rounded-brand border border-surface-border/80 p-2.5 text-sm bg-white
-                      focus:outline-none focus:ring-2 focus:ring-brand/30"
-                    value={templateId}
-                    onChange={(event) => {
-                      setTemplateId(event.target.value)
-                      setPreview(null)
-                    }}
-                    disabled={!canSend || templates.length === 0}
-                  >
-                    {templates.map((template) => (
-                      <option key={template.id} value={template.id}>
-                        [{template.campaign_kind || 'usage'}] #{template.email_number} —{' '}
-                        {template.label} ({template.when})
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <p className="text-xs text-ink-muted">
+              <AdminPanelBody>
+                <label htmlFor="conversion-template" className="dashboard-field-label">
+                  Conversion drip email
+                </label>
+                <select
+                  id="conversion-template"
+                  className="dashboard-select w-full"
+                  value={templateId}
+                  onChange={(event) => {
+                    setTemplateId(event.target.value)
+                    setPreview(null)
+                  }}
+                  disabled={!canSend || templates.length === 0}
+                >
+                  {templates.map((template) => (
+                    <option key={template.id} value={template.id}>
+                      [{template.campaign_kind || 'usage'}] #{template.email_number} —{' '}
+                      {template.label} ({template.when})
+                    </option>
+                  ))}
+                </select>
+                <p className="dashboard-field-hint">
                   Manual sends do not advance or suppress the automated drip schedule. You can send a
                   template to an address that is not in the database.
                 </p>
-                <div className="flex flex-wrap gap-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={loadPreview}
-                    disabled={!selectedTemplate || previewing}
-                  >
-                    <Eye className="h-4 w-4 mr-1.5" />
-                    {previewing ? 'Loading…' : 'Preview'}
-                  </Button>
-                  {canSend && (
-                    <Button
-                      onClick={sendTemplate}
-                      disabled={!effectiveRecipient || !selectedTemplate || sendingTemplate}
-                    >
-                      <Send className="h-4 w-4 mr-1.5" />
-                      {sendingTemplate ? 'Sending…' : 'Send template'}
-                    </Button>
-                  )}
-                </div>
               </AdminPanelBody>
+              <div className="flex flex-wrap justify-end gap-2 border-t border-dash-border px-5 py-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="h-9 gap-1.5"
+                  onClick={loadPreview}
+                  disabled={!selectedTemplate || previewing}
+                >
+                  <Eye className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
+                  {previewing ? 'Loading…' : 'Preview'}
+                </Button>
+                {canSend && (
+                  <Button
+                    size="sm"
+                    className="h-9 gap-1.5"
+                    onClick={sendTemplate}
+                    disabled={!effectiveRecipient || !selectedTemplate || sendingTemplate}
+                  >
+                    <Send className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
+                    {sendingTemplate ? 'Sending…' : 'Send template'}
+                  </Button>
+                )}
+              </div>
             </AdminPanel>
 
             <AdminPanel>
-              <AdminPanelHeader title="Preview" icon={Eye} />
+              <AdminPanelHeader
+                title="Preview"
+                icon={Eye}
+                actions={
+                  preview ? <DashboardPill tone="neutral">Variant: {preview.variant}</DashboardPill> : undefined
+                }
+              />
               <AdminPanelBody className="space-y-3">
                 {!preview ? (
-                  <p className="text-sm text-ink-muted">
-                    Choose a template and click Preview to inspect subject and HTML.
-                  </p>
+                  <DashboardEmpty
+                    icon={Eye}
+                    title="No preview loaded"
+                    description="Choose a template and click Preview to inspect subject and HTML."
+                  />
                 ) : (
                   <>
-                    <div>
-                      <p className="text-xs text-ink-muted">Subject</p>
-                      <p className="text-sm font-medium text-ink">{preview.subject}</p>
-                      <p className="text-xs text-ink-dim mt-1">Variant: {preview.variant}</p>
+                    <div className="rounded-xl border border-dash-border px-4 py-3">
+                      <p className="text-xs text-dash-muted">Subject</p>
+                      <p className="mt-0.5 text-[13px] font-medium text-dash-ink">{preview.subject}</p>
                     </div>
-                    <div className="rounded-brand border border-surface-border/60 overflow-hidden bg-white p-4">
+                    <div className="overflow-hidden rounded-xl border border-dash-border bg-dash-hover p-4">
                       {preview.html ? (
                         <iframe
                           title="Email preview"
                           sandbox=""
                           srcDoc={preview.html}
-                          className="w-full h-[420px] bg-white"
+                          className="h-[420px] w-full rounded-lg border border-dash-border bg-white"
                         />
                       ) : (
-                        <pre className="whitespace-pre-wrap text-sm text-ink font-sans leading-relaxed">
+                        <pre className="whitespace-pre-wrap rounded-lg border border-dash-border bg-white p-4 font-sans text-[13px] leading-relaxed text-dash-ink">
                           {preview.text}
                         </pre>
                       )}
@@ -763,108 +856,110 @@ export default function AdminEmailsPage() {
 
         <TabsContent value="feedback">
           <AdminPanel>
-            <AdminPanelHeader title="Feedback request" icon={Mail} />
-            <AdminPanelBody className="space-y-4">
-              <p className="text-sm text-ink-muted">
+            <AdminPanelHeader title="Feedback request" icon={MessageSquareText} />
+            <AdminPanelBody>
+              <p className="max-w-3xl text-[13px] leading-5 text-dash-muted">
                 Sends the standard plain-text feedback request (reply-to Resend Receiving inbox). Same
                 action as on the user detail page. The recipient must already exist in the user list.
               </p>
-              {canSend && (
+            </AdminPanelBody>
+            {canSend && (
+              <div className="flex justify-end gap-2 border-t border-dash-border px-5 py-4">
                 <Button
+                  size="sm"
+                  className="h-9 gap-1.5"
                   onClick={sendFeedbackTemplate}
                   disabled={recipient?.userId == null || sendingTemplate}
                 >
-                  <Send className="h-4 w-4 mr-1.5" />
+                  <Send className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
                   {sendingTemplate ? 'Sending…' : 'Send feedback email'}
                 </Button>
-              )}
-            </AdminPanelBody>
+              </div>
+            )}
           </AdminPanel>
         </TabsContent>
 
-        <TabsContent value="log" className="flex flex-col gap-4">
+        <TabsContent value="log" className="flex flex-col gap-5">
           <AdminPanel>
             <AdminPanelHeader
               title="Outbound log"
               icon={ScrollText}
-              actions={<AdminRefreshButton onClick={loadEmailLog} loading={logLoading} />}
-            />
-            <AdminPanelBody className="space-y-4">
-              <p className="text-sm text-ink-muted">
-                Every send attempt is recorded here (drip, verification, feedback, custom). Selecting a
-                recipient above filters to that user. Verification codes log the subject only, never the
-                OTP.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-3">
-                <div className="sm:w-56">
-                  <label className="text-xs font-medium text-ink-dim block mb-1.5">Kind</label>
-                  <select
-                    className="w-full rounded-brand border border-surface-border/80 p-2.5 text-sm bg-white
-                      focus:outline-none focus:ring-2 focus:ring-brand/30"
-                    value={logKind}
-                    onChange={(event) => {
-                      setLogKind(event.target.value)
-                      setLogPage(1)
-                    }}
-                  >
-                    {EMAIL_LOG_KINDS.map((item) => (
-                      <option key={item.value || 'all'} value={item.value}>
-                        {item.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="flex-1">
-                  <label className="text-xs font-medium text-ink-dim block mb-1.5">To email contains</label>
-                  <Input
-                    placeholder="name@company.com"
-                    value={logEmailInput}
-                    onChange={(event) => setLogEmailInput(event.target.value)}
-                    onKeyDown={(event) => {
-                      if (event.key === 'Enter') {
-                        setLogEmailFilter(logEmailInput.trim())
-                        setLogPage(1)
-                      }
-                    }}
-                  />
-                </div>
-              </div>
-              {recipient && (
-                <p className="text-xs text-ink-dim">
-                  {recipient.fromDirectory && recipient.userId != null
-                    ? `Filtered to user #${recipient.userId} (${recipient.email}). Clear the recipient to see everyone.`
-                    : `Filtered to ${recipient.email}. Clear the recipient to see everyone.`}
-                </p>
-              )}
-            </AdminPanelBody>
-          </AdminPanel>
-
-          {logError && (
-            <DashboardAlert variant="error">
-              {logError}
-              <Button variant="outline" size="sm" className="ml-3" onClick={loadEmailLog}>
-                Retry
-              </Button>
-            </DashboardAlert>
-          )}
-
-          <AdminPanel>
-            <AdminPanelHeader
-              title="Sends"
-              icon={Mail}
+              description="Every send attempt is recorded here (drip, verification, feedback, custom). Selecting a recipient above filters to that user. Verification codes log the subject only, never the OTP."
               actions={
-                <span className="text-xs text-ink-muted tabular-nums">
-                  {logTotal.toLocaleString()} entries
-                </span>
+                <>
+                  <span className="dashboard-meta-pill tabular-nums">
+                    {logTotal.toLocaleString()} entries
+                  </span>
+                  <AdminRefreshButton onClick={loadEmailLog} loading={logLoading} />
+                </>
               }
             />
+            <div className="flex flex-col gap-3 px-5 pb-4 pt-3 sm:flex-row sm:items-end">
+              <div className="sm:w-56">
+                <label htmlFor="email-log-kind" className="dashboard-field-label">
+                  Kind
+                </label>
+                <select
+                  id="email-log-kind"
+                  className="dashboard-select w-full"
+                  value={logKind}
+                  onChange={(event) => {
+                    setLogKind(event.target.value)
+                    setLogPage(1)
+                  }}
+                >
+                  {EMAIL_LOG_KINDS.map((item) => (
+                    <option key={item.value || 'all'} value={item.value}>
+                      {item.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="min-w-0 flex-1 sm:max-w-md">
+                <label htmlFor="email-log-to" className="dashboard-field-label">
+                  To email contains
+                </label>
+                <Input
+                  id="email-log-to"
+                  placeholder="name@company.com"
+                  value={logEmailInput}
+                  onChange={(event) => setLogEmailInput(event.target.value)}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter') {
+                      setLogEmailFilter(logEmailInput.trim())
+                      setLogPage(1)
+                    }
+                  }}
+                />
+              </div>
+            </div>
+            {recipient && (
+              <p className="px-5 pb-4 text-xs text-dash-muted">
+                {recipient.fromDirectory && recipient.userId != null
+                  ? `Filtered to user #${recipient.userId} (${recipient.email}). Clear the recipient to see everyone.`
+                  : `Filtered to ${recipient.email}. Clear the recipient to see everyone.`}
+              </p>
+            )}
+
+            {logError && (
+              <div className="px-5 pb-4">
+                <DashboardAlert variant="error">
+                  <span className="min-w-0 flex-1">{logError}</span>
+                  <Button variant="outline" size="sm" className="h-8" onClick={loadEmailLog}>
+                    Retry
+                  </Button>
+                </DashboardAlert>
+              </div>
+            )}
+
             {logLoading && logEntries.length === 0 ? (
-              <DashboardLoading message="Loading email log…" />
+              <DashboardLoading message="Loading email log…" className="border-t border-dash-border" />
             ) : logEntries.length === 0 ? (
               <DashboardEmpty
                 icon={ScrollText}
                 title="No emails logged yet"
                 description="Sends will appear here after the next verification, drip, or admin email."
+                className="border-t border-dash-border"
               />
             ) : (
               <>
@@ -889,31 +984,42 @@ export default function AdminEmailsPage() {
                               : entry.template_key
                           return (
                             <tr key={entry.id}>
-                              <td className="whitespace-nowrap text-xs text-ink-muted">
+                              <td className="whitespace-nowrap text-xs tabular-nums text-dash-muted">
                                 {new Date(entry.sent_at).toLocaleString()}
                               </td>
-                              <td className="max-w-[220px]">
-                                <p className="text-sm text-ink truncate">
-                                  {name || entry.user_email || '—'}
-                                  {entry.user_id ? (
-                                    <span className="font-normal text-ink-muted"> #{entry.user_id}</span>
-                                  ) : null}
-                                </p>
-                                <p className="text-xs text-ink-muted truncate">{entry.to_email}</p>
+                              <td className="max-w-[260px]">
+                                <div className="flex min-w-0 items-center gap-3">
+                                  <InitialsCircle
+                                    text={initialsFrom(
+                                      entry.first_name,
+                                      entry.last_name,
+                                      entry.user_email || entry.to_email
+                                    )}
+                                  />
+                                  <div className="min-w-0">
+                                    <p className="truncate font-medium text-dash-ink">
+                                      {name || entry.user_email || '—'}
+                                      {entry.user_id ? (
+                                        <span className="font-normal text-dash-muted"> #{entry.user_id}</span>
+                                      ) : null}
+                                    </p>
+                                    <p className="truncate text-xs text-dash-muted">{entry.to_email}</p>
+                                  </div>
+                                </div>
                               </td>
                               <td>
-                                <p className="text-xs text-ink">{formatLogKind(entry.kind)}</p>
+                                <p className="text-dash-ink">{formatLogKind(entry.kind)}</p>
                                 {template ? (
-                                  <p className="text-xs text-ink-muted">{template}</p>
+                                  <p className="text-xs text-dash-muted">{template}</p>
                                 ) : null}
                               </td>
                               <td className="max-w-[280px]">
-                                <p className="text-sm text-ink truncate">{entry.subject}</p>
+                                <p className="truncate text-dash-ink">{entry.subject}</p>
                               </td>
                               <td>
-                                <Badge variant={entry.status === 'sent' ? 'default' : 'secondary'}>
+                                <DashboardPill tone={entry.status === 'sent' ? 'green' : 'rose'}>
                                   {entry.status}
-                                </Badge>
+                                </DashboardPill>
                               </td>
                             </tr>
                           )

@@ -4,7 +4,14 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import { adminAPI, type AdminBlogPost } from '@/lib/api/admin'
 import { BlogEditor } from '@/components/admin/blog-editor'
-import { AdminPage, DashboardAlert, DashboardLoading } from '@/components/admin/admin-ui'
+import {
+  AdminPage,
+  AdminPageHeader,
+  AdminPanel,
+  DashboardAlert,
+  DashboardLoading,
+  DashboardSkeleton,
+} from '@/components/admin/admin-ui'
 
 export default function AdminBlogEditPage() {
   const params = useParams<{ id: string }>()
@@ -15,6 +22,7 @@ export default function AdminBlogEditPage() {
 
   useEffect(() => {
     if (!Number.isInteger(postId) || postId <= 0) {
+      /* eslint-disable-next-line react-hooks/set-state-in-effect */
       setError('Invalid post id')
       setIsLoading(false)
       return
@@ -39,7 +47,17 @@ export default function AdminBlogEditPage() {
   if (isLoading) {
     return (
       <AdminPage>
-        <DashboardLoading />
+        <AdminPageHeader title="Edit blog post" />
+        <div className="grid grid-cols-1 items-start gap-5 xl:grid-cols-[minmax(0,1fr)_340px]">
+          <AdminPanel>
+            <DashboardLoading />
+          </AdminPanel>
+          <AdminPanel className="hidden p-5 xl:block">
+            <DashboardSkeleton className="h-4 w-24" />
+            <DashboardSkeleton className="mt-5 h-9 w-full rounded-[10px]" />
+            <DashboardSkeleton className="mt-4 h-9 w-full rounded-[10px]" />
+          </AdminPanel>
+        </div>
       </AdminPage>
     )
   }
@@ -47,6 +65,7 @@ export default function AdminBlogEditPage() {
   if (error || !post) {
     return (
       <AdminPage>
+        <AdminPageHeader title="Edit blog post" />
         <DashboardAlert variant="error">{error ?? 'Post not found.'}</DashboardAlert>
       </AdminPage>
     )

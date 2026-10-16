@@ -2,16 +2,19 @@
 
 import { useState, useEffect } from 'react'
 import { useAdmin } from '@/lib/hooks/use-admin'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { ErrorBoundary } from '@/components/ui/error-boundary'
 import { UnauthorizedErrorMessage } from '@/components/ui/error-message'
 import {
   Users, Activity, TrendingUp, AlertTriangle,
-  Database, Clock, Zap
+  Database, Clock, Zap, PieChart, Server, ListChecks,
 } from 'lucide-react'
 import Link from 'next/link'
-import { AdminDualLineChart } from '@/components/admin/admin-charts'
+import {
+  AreaTrendChart,
+  BarTrendChart,
+  DonutChart,
+} from '@/components/admin/admin-charts'
 import {
   AdminPage,
   AdminPageHeader,
@@ -21,61 +24,31 @@ import {
   AdminPanelHeader,
   AdminPanelBody,
   AdminTimeRangeToggle,
-  AdminActivityFeed,
   AdminRefreshButton,
   AdminSkeletonStats,
+  AdminTable,
+  AdminTableWrap,
   DashboardAlert,
   DashboardEmpty,
   DashboardQuickAction,
+  DashboardPill,
+  DashboardSkeleton,
+  DashboardStatList,
+  DeltaPill,
+  DASHBOARD_ICON_STROKE,
 } from '@/components/admin/admin-ui'
 import { formatAuditTarget } from '@/lib/api/admin'
+import type { AdminAnalytics } from '@/lib/api/admin'
+import { cn } from '@/lib/utils/cn'
 
-interface DashboardStats {
-  totalUsers: number
-  activeUsers: number
-  totalRequests: number
-  requestsToday: number
-  requestsThisMonth: number
-  revenue: number
-  revenueGrowth: number
-  averageResponseTime: number
-  errorRate: number
-  systemUptime: number
-  timeRange?: '7d' | '30d' | '1y'
-  dailyUsageData?: Array<{
-    date: string
-    requests: number
-    errors: number
-    avg_response_time: number
-    active_users: number
-  }>
-  systemMetrics?: {
-    nodeVersion: string
-    databaseVersion: string
-    redisVersion: string
-    uptime: string
-    memoryUsage: string
-    diskUsage: string
-    activeSubscriptions: number
-    requestsToday: number
-    errorRateToday: number
-    systemLoad: number
-  }
-}
+type TimeRange = '7d' | '30d' | '1y'
 
-interface AnalyticsData {
-  total_users: number
+interface DailyUsagePoint {
+  date: string
+  requests: number
+  errors: number
+  avg_response_time: number
   active_users: number
-  total_requests: number
-  avg_response_time_ms: number
-  error_rate_percent: number
-  daily_usage: Array<{
-    date: string
-    requests: number
-    errors: number
-    avg_response_time: number
-    active_users: number
-  }>
 }
 
 interface SystemMetricsData {
@@ -91,6 +64,21 @@ interface SystemMetricsData {
   systemLoad: number
 }
 
+interface DashboardStats {
+  totalUsers: number | null
+  activeUsers: number | null
+  totalRequests: number | null
+  requestsToday: number | null
+  revenue: number | null
+  revenueGrowth: number | null
+  averageResponseTime: number | null
+  errorRate: number | null
+  systemUptime: number | null
+  dailyUsageData: DailyUsagePoint[]
+  statusMix: Array<{ status_code: number; count: number }>
+  systemMetrics?: SystemMetricsData
+}
+
 interface RecentActivity {
   id: string
   type: 'user_registered' | 'user_upgraded' | 'api_usage' | 'error_occurred'
@@ -99,23 +87,32 @@ interface RecentActivity {
   severity: 'info' | 'warning' | 'error'
 }
 
+function finiteOrNull(...values: unknown[]): number | null {
+  for (const value of values) {
+    if (value == null || value === '') continue
+    const n = typeof value === 'number' ? value : Number(value)
+    if (Number.isFinite(n)) return n
+  }
+  return null
+}
+
+function countOrDash(value: number | null): string | null {
+  return value == null ? null : value.toLocaleString()
+}
+
 function AdminDashboard() {
   const { user, isSuperAdmin, hasPermission } = useAdmin()
   const [stats, setStats] = useState<DashboardStats | null>(null)
   const [recentActivity, setRecentActivity] = useState<RecentActivity[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [timeRange, setTimeRange] = useState<'7d' | '30d' | '1y'>('7d')
+  const [timeRange, setTimeRange] = useState<TimeRange>('7d')
 
-  useEffect(() => {
-    loadDashboardData(timeRange)
-  }, [timeRange])
-
-  const handleTimeRangeChange = (newTimeRange: '7d' | '30d' | '1y') => {
+  const handleTimeRangeChange = (newTimeRange: TimeRange) => {
     setTimeRange(newTimeRange)
   }
 
-  const loadDashboardData = async (range: '7d' | '30d' | '1y' = '7d') => {
+  const loadDashboardData = async (range: TimeRange = '7d') => {
     setIsLoading(true)
     setError(null)
     try {
@@ -140,32 +137,34 @@ function AdminDashboard() {
 
       const analyticsDataTyped =
         analyticsResult.status === 'fulfilled'
-          ? (analyticsResult.value as AnalyticsData)
+          ? (analyticsResult.value as AdminAnalytics)
           : null
       const metricsTyped =
         metricsResult.status === 'fulfilled' ? metricsResult.value : null
       const systemMetricsTyped =
         systemMetricsResponse.status === 'fulfilled'
-          ? (systemMetricsResponse.value.data as SystemMetricsData)
+          ? (systemMetricsResponse.value.data as SystemMetricsData | undefined)
           : undefined
 
       const dashboardStats: DashboardStats = {
-        totalUsers: analyticsDataTyped?.total_users ?? 0,
-        activeUsers: analyticsDataTyped?.active_users ?? 0,
-        totalRequests: analyticsDataTyped?.total_requests ?? 0,
-        requestsToday: systemMetricsTyped?.requestsToday ?? 0,
-        requestsThisMonth: analyticsDataTyped?.total_requests ?? 0,
-        revenue: metricsTyped?.revenue ?? 0,
-        revenueGrowth: metricsTyped?.revenueGrowth ?? 0,
-        averageResponseTime: metricsTyped?.averageResponseTime ?? analyticsDataTyped?.avg_response_time_ms ?? 0,
-        errorRate:
-          metricsTyped?.errorRate ??
-          systemMetricsTyped?.errorRateToday ??
-          analyticsDataTyped?.error_rate_percent ??
-          0,
-        systemUptime: metricsTyped?.systemUptime ?? 99.9,
-        timeRange: range,
+        totalUsers: finiteOrNull(analyticsDataTyped?.total_users),
+        activeUsers: finiteOrNull(analyticsDataTyped?.active_users),
+        totalRequests: finiteOrNull(analyticsDataTyped?.total_requests),
+        requestsToday: finiteOrNull(systemMetricsTyped?.requestsToday),
+        revenue: finiteOrNull(metricsTyped?.revenue),
+        revenueGrowth: finiteOrNull(metricsTyped?.revenueGrowth),
+        averageResponseTime: finiteOrNull(
+          metricsTyped?.averageResponseTime,
+          analyticsDataTyped?.avg_response_time_ms
+        ),
+        errorRate: finiteOrNull(
+          metricsTyped?.errorRate != null ? Number(metricsTyped.errorRate) * 100 : null,
+          systemMetricsTyped?.errorRateToday,
+          analyticsDataTyped?.error_rate_percent
+        ),
+        systemUptime: finiteOrNull(metricsTyped?.systemUptime),
         dailyUsageData: analyticsDataTyped?.daily_usage ?? [],
+        statusMix: analyticsDataTyped?.status_code_distribution ?? [],
         systemMetrics: systemMetricsTyped,
       }
 
@@ -204,6 +203,11 @@ function AdminDashboard() {
     }
   }
 
+  useEffect(() => {
+    /* eslint-disable-next-line react-hooks/set-state-in-effect */
+    loadDashboardData(timeRange)
+  }, [timeRange])
+
   const getActivityIcon = (type: string) => {
     switch (type) {
       case 'user_registered':
@@ -219,20 +223,58 @@ function AdminDashboard() {
     }
   }
 
+  const rangeLabel =
+    timeRange === '7d' ? 'Last 7 days' : timeRange === '30d' ? 'Last 30 days' : 'Last 12 months'
+
   const chartData =
-    stats?.dailyUsageData?.map((d) => ({
+    stats?.dailyUsageData.map((d) => ({
       date: new Date(d.date).toLocaleDateString('en', { month: 'short', day: 'numeric' }),
       requests: d.requests,
       errors: d.errors,
     })) ?? []
 
-  const activityItems = recentActivity.map((a) => ({
-    id: a.id,
-    message: a.message,
-    timestamp: a.timestamp,
-    severity: a.severity,
-    icon: getActivityIcon(a.type),
-  }))
+  const periodErrors = chartData.reduce((sum, d) => sum + (Number(d.errors) || 0), 0)
+
+  const statusMix =
+    stats?.statusMix.map((d) => ({ name: String(d.status_code), value: Number(d.count) || 0 })) ?? []
+  const hasStatusMix = statusMix.some((d) => d.value > 0)
+
+  const sm = stats?.systemMetrics
+
+  const platformPanel = stats ? (
+    <AdminPanel>
+      <AdminPanelHeader title="Platform" icon={Server} description="Business and service health" />
+      <AdminPanelBody>
+        <DashboardStatList
+          items={[
+            { label: 'Total users', value: countOrDash(stats.totalUsers) },
+            {
+              label: 'Revenue (MTD)',
+              value: stats.revenue != null ? `$${stats.revenue.toLocaleString()}` : null,
+              hint: (
+                <DeltaPill value={stats.revenueGrowth} label="vs last month" />
+              ),
+            },
+            {
+              label: 'Avg response',
+              value:
+                stats.averageResponseTime != null
+                  ? `${Math.round(stats.averageResponseTime)}ms`
+                  : null,
+            },
+            {
+              label: 'System uptime',
+              value: stats.systemUptime != null ? `${stats.systemUptime}%` : null,
+            },
+            {
+              label: 'Active subscriptions',
+              value: sm?.activeSubscriptions != null ? sm.activeSubscriptions.toLocaleString() : null,
+            },
+          ]}
+        />
+      </AdminPanelBody>
+    </AdminPanel>
+  ) : null
 
   return (
     <AdminPage>
@@ -241,10 +283,14 @@ function AdminDashboard() {
         description={`Platform health and API usage for the last ${
           timeRange === '7d' ? '7 days' : timeRange === '30d' ? '30 days' : 'year'
         }.`}
+        meta={
+          <>
+            <DashboardPill tone="neutral">Admin</DashboardPill>
+            {isSuperAdmin && <DashboardPill tone="indigo">Super admin</DashboardPill>}
+          </>
+        }
         actions={
-          <div className="flex flex-wrap items-center gap-2">
-            <Badge className="bg-violet-100 text-violet-800 border-violet-200/80">Admin</Badge>
-            {isSuperAdmin && <Badge variant="secondary">Super admin</Badge>}
+          <>
             <AdminTimeRangeToggle
               value={timeRange}
               options={[
@@ -255,74 +301,85 @@ function AdminDashboard() {
               onChange={handleTimeRangeChange}
             />
             <AdminRefreshButton onClick={() => loadDashboardData(timeRange)} loading={isLoading} />
-          </div>
+          </>
         }
       />
 
       {error && (
         <DashboardAlert variant="warning">
           {error}
-          <Button variant="outline" size="sm" className="ml-3" onClick={() => loadDashboardData(timeRange)}>
+          <Button variant="outline" size="sm" className="h-8" onClick={() => loadDashboardData(timeRange)}>
             Retry
           </Button>
         </DashboardAlert>
       )}
 
       {isLoading && !stats ? (
-        <AdminSkeletonStats />
+        <>
+          <AdminSkeletonStats count={3} />
+          <div className="dashboard-grid-wide" aria-hidden>
+            <div className="dashboard-card h-[360px] p-5">
+              <DashboardSkeleton className="h-4 w-36" />
+              <DashboardSkeleton className="mt-6 h-[260px] w-full rounded-xl" />
+            </div>
+            <div className="dashboard-card h-[360px] p-5">
+              <DashboardSkeleton className="h-4 w-28" />
+              <DashboardSkeleton className="mt-6 h-[260px] w-full rounded-xl" />
+            </div>
+          </div>
+        </>
       ) : (
         <>
-          <AdminStatGrid>
+          <AdminStatGrid columns={3}>
             <DashboardStatCard
-              label="Total users"
-              value={stats?.totalUsers.toLocaleString() ?? '-'}
-              hint={`${stats?.activeUsers ?? 0} active in period`}
-              icon={Users}
+              label="Requests today"
+              value={countOrDash(stats?.requestsToday ?? null)}
+              hint={
+                stats?.totalRequests != null
+                  ? `${stats.totalRequests.toLocaleString()} in the ${rangeLabel.toLowerCase()}`
+                  : undefined
+              }
+              icon={Activity}
               accent="brand"
             />
             <DashboardStatCard
-              label="API requests"
-              value={stats?.totalRequests.toLocaleString() ?? '-'}
-              hint={`${stats?.requestsToday ?? 0} today`}
-              icon={Activity}
-              accent="green"
-            />
-            <DashboardStatCard
-              label="Avg response"
-              value={
-                stats?.averageResponseTime != null
-                  ? `${Math.round(stats.averageResponseTime)}ms`
-                  : '-'
-              }
-              hint={`Error rate ${stats?.errorRate?.toFixed(2) ?? '0'}%`}
-              icon={Zap}
-              accent="purple"
-            />
-            <DashboardStatCard
-              label="Revenue (MTD)"
-              value={stats?.revenue != null ? `$${stats.revenue.toLocaleString()}` : '-'}
+              label="Active users"
+              value={countOrDash(stats?.activeUsers ?? null)}
               hint={
-                stats?.revenueGrowth != null
-                  ? `${stats.revenueGrowth >= 0 ? '+' : ''}${stats.revenueGrowth}% vs last month`
+                stats?.totalUsers != null
+                  ? `${stats.totalUsers.toLocaleString()} total users`
                   : undefined
               }
-              icon={TrendingUp}
-              accent="orange"
+              icon={Users}
+              accent="indigo"
+            />
+            <DashboardStatCard
+              label="Error rate"
+              value={stats?.errorRate != null ? `${stats.errorRate.toFixed(2)}%` : null}
+              hint={
+                stats?.averageResponseTime != null
+                  ? `Avg response ${Math.round(stats.averageResponseTime)}ms`
+                  : undefined
+              }
+              icon={Zap}
+              accent={stats?.errorRate != null && stats.errorRate >= 5 ? 'rose' : 'green'}
             />
           </AdminStatGrid>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="dashboard-grid-wide">
             <AdminPanel>
-              <AdminPanelHeader title="API usage trends" icon={TrendingUp} />
+              <AdminPanelHeader title="API requests" icon={TrendingUp} description={rangeLabel} />
               <AdminPanelBody>
+                <p className="dashboard-summary-value">
+                  {stats?.totalRequests != null ? stats.totalRequests.toLocaleString() : '—'}
+                </p>
                 {chartData.length > 0 ? (
-                  <AdminDualLineChart
+                  <AreaTrendChart
+                    className="mt-4"
                     data={chartData}
                     xKey="date"
-                    lines={[
-                      { key: 'requests', name: 'Requests', color: '#7c3aed' },
-                      { key: 'errors', name: 'Errors', color: '#EF4444' },
-                    ]}
+                    height={260}
+                    series={[{ key: 'requests', name: 'Requests' }]}
                   />
                 ) : (
                   <DashboardEmpty
@@ -335,70 +392,172 @@ function AdminDashboard() {
             </AdminPanel>
 
             <AdminPanel>
-              <AdminPanelHeader
-                title="Recent activity"
-                icon={Activity}
-                actions={
-                  hasPermission('admin:analytics:view') ? (
-                    <Link href="/admin/requests">
-                      <Button variant="outline" size="sm">
-                        View log
-                      </Button>
-                    </Link>
-                  ) : undefined
-                }
-              />
+              <AdminPanelHeader title="Errors" icon={AlertTriangle} description={rangeLabel} />
               <AdminPanelBody>
-                <AdminActivityFeed items={activityItems} />
+                <p className="dashboard-summary-value">
+                  {chartData.length > 0 ? periodErrors.toLocaleString() : '—'}
+                </p>
+                {chartData.length > 0 ? (
+                  <BarTrendChart
+                    className="mt-4"
+                    data={chartData}
+                    xKey="date"
+                    yKey="errors"
+                    name="Errors"
+                    height={260}
+                  />
+                ) : (
+                  <DashboardEmpty icon={AlertTriangle} title="No error data yet" />
+                )}
               </AdminPanelBody>
             </AdminPanel>
           </div>
 
-          {stats?.systemMetrics && (
+          <div className="dashboard-grid-narrow-wide">
+            <div className="flex min-w-0 flex-col gap-5">
+              {hasStatusMix && (
+                <AdminPanel>
+                  <AdminPanelHeader title="Status codes" icon={PieChart} description={rangeLabel} />
+                  <AdminPanelBody>
+                    <DonutChart data={statusMix} centerLabel="responses" />
+                  </AdminPanelBody>
+                </AdminPanel>
+              )}
+              {platformPanel}
+            </div>
+
+            <AdminPanel className="flex flex-col">
+              <AdminPanelHeader
+                title="Recent activity"
+                icon={ListChecks}
+                description="Latest audit entries and API requests"
+                actions={
+                  hasPermission('admin:analytics:view') ? (
+                    <Button asChild variant="outline" size="sm" className="h-9">
+                      <Link href="/admin/requests">View log</Link>
+                    </Button>
+                  ) : undefined
+                }
+              />
+              {recentActivity.length === 0 ? (
+                <AdminPanelBody>
+                  <DashboardEmpty
+                    icon={Activity}
+                    title="No recent activity"
+                    description="No activity in this period yet."
+                  />
+                </AdminPanelBody>
+              ) : (
+                <AdminPanelBody noPadding>
+                  <AdminTableWrap>
+                    <AdminTable>
+                      <thead>
+                        <tr>
+                          <th>Event</th>
+                          <th>Source</th>
+                          <th className="dashboard-num">Time</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {recentActivity.map((a) => {
+                          const Icon = getActivityIcon(a.type)
+                          return (
+                            <tr key={a.id}>
+                              <td className="max-w-0 w-full">
+                                <div className="flex min-w-0 items-center gap-3">
+                                  <span
+                                    className={cn(
+                                      'dashboard-icon-tile',
+                                      a.severity === 'error'
+                                        ? 'bg-dash-negative-soft text-dash-negative'
+                                        : a.severity === 'warning'
+                                          ? 'bg-dash-warning-soft text-dash-warning'
+                                          : 'bg-dash-teal-soft text-dash-teal-strong'
+                                    )}
+                                    aria-hidden
+                                  >
+                                    <Icon className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} />
+                                  </span>
+                                  <span className="truncate text-dash-ink" title={a.message}>
+                                    {a.message}
+                                  </span>
+                                </div>
+                              </td>
+                              <td>
+                                <DashboardPill tone="neutral">
+                                  {a.id.startsWith('audit-') ? 'Audit' : 'Request'}
+                                </DashboardPill>
+                              </td>
+                              <td className="dashboard-num whitespace-nowrap text-xs text-dash-muted">
+                                {new Date(a.timestamp).toLocaleString()}
+                              </td>
+                            </tr>
+                          )
+                        })}
+                      </tbody>
+                    </AdminTable>
+                  </AdminTableWrap>
+                </AdminPanelBody>
+              )}
+            </AdminPanel>
+          </div>
+
+          <div className="dashboard-grid-halves">
+            {sm && (
+              <AdminPanel>
+                <AdminPanelHeader title="System information" icon={Database} />
+                <AdminPanelBody className="grid gap-x-8 sm:grid-cols-2">
+                  <DashboardStatList
+                    items={[
+                      { label: 'Python', value: sm.nodeVersion },
+                      {
+                        label: 'Database',
+                        value: (
+                          <span className="block max-w-[180px] truncate" title={sm.databaseVersion}>
+                            {sm.databaseVersion}
+                          </span>
+                        ),
+                      },
+                      { label: 'Redis', value: sm.redisVersion },
+                    ]}
+                  />
+                  <DashboardStatList
+                    items={[
+                      { label: 'CPU', value: sm.systemLoad != null ? `${sm.systemLoad}%` : null },
+                      { label: 'Memory', value: sm.memoryUsage },
+                      { label: 'Uptime', value: sm.uptime },
+                      {
+                        label: 'Requests today',
+                        value: sm.requestsToday != null ? sm.requestsToday.toLocaleString() : null,
+                      },
+                      {
+                        label: 'Errors today',
+                        value: sm.errorRateToday != null ? `${sm.errorRateToday}%` : null,
+                      },
+                    ]}
+                  />
+                </AdminPanelBody>
+              </AdminPanel>
+            )}
+
             <AdminPanel>
-              <AdminPanelHeader title="System information" icon={Database} />
-              <AdminPanelBody>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
-                  <div className="space-y-2">
-                    <h4 className="text-xs font-semibold uppercase tracking-wide text-ink-dim">Runtime</h4>
-                    <p className="text-ink-muted">Python {stats.systemMetrics.nodeVersion}</p>
-                    <p className="text-ink-muted truncate">{stats.systemMetrics.databaseVersion}</p>
-                    <p className="text-ink-muted">Redis {stats.systemMetrics.redisVersion}</p>
-                  </div>
-                  <div className="space-y-2">
-                    <h4 className="text-xs font-semibold uppercase tracking-wide text-ink-dim">Performance</h4>
-                    <p className="text-ink-muted">CPU {stats.systemMetrics.systemLoad}%</p>
-                    <p className="text-ink-muted">Memory {stats.systemMetrics.memoryUsage}</p>
-                    <p className="text-ink-muted">Uptime {stats.systemMetrics.uptime}</p>
-                  </div>
-                  <div className="space-y-2">
-                    <h4 className="text-xs font-semibold uppercase tracking-wide text-ink-dim">Activity</h4>
-                    <p className="text-ink-muted">{stats.systemMetrics.activeSubscriptions} subscriptions</p>
-                    <p className="text-ink-muted">{stats.systemMetrics.requestsToday} requests today</p>
-                    <p className="text-ink-muted">{stats.systemMetrics.errorRateToday}% errors today</p>
-                  </div>
-                </div>
+              <AdminPanelHeader title="Quick actions" icon={Clock} />
+              <AdminPanelBody className="grid gap-2 sm:grid-cols-2">
+                {hasPermission('admin:users:view') && (
+                  <DashboardQuickAction href="/admin/users" icon={Users} title="Manage users" description="Accounts, plans, API keys" primary />
+                )}
+                {hasPermission('admin:analytics:view') && (
+                  <DashboardQuickAction href="/admin/analytics" icon={TrendingUp} title="Analytics" description="Endpoints, latency, errors" />
+                )}
+                {hasPermission('admin:monitoring:view') && (
+                  <DashboardQuickAction href="/admin/monitoring" icon={Activity} title="Monitoring" description="Services and alerts" />
+                )}
+                {hasPermission('admin:settings:view') && (
+                  <DashboardQuickAction href="/admin/settings" icon={Clock} title="Settings" description="Maintenance and feature flags" />
+                )}
               </AdminPanelBody>
             </AdminPanel>
-          )}
-
-          <AdminPanel>
-            <AdminPanelHeader title="Quick actions" />
-            <AdminPanelBody className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 !p-4">
-              {hasPermission('admin:users:view') && (
-                <DashboardQuickAction href="/admin/users" icon={Users} title="Manage users" description="Accounts, plans, API keys" primary />
-              )}
-              {hasPermission('admin:analytics:view') && (
-                <DashboardQuickAction href="/admin/analytics" icon={TrendingUp} title="Analytics" description="Endpoints, latency, errors" />
-              )}
-              {hasPermission('admin:monitoring:view') && (
-                <DashboardQuickAction href="/admin/monitoring" icon={Activity} title="Monitoring" description="Services and alerts" />
-              )}
-              {hasPermission('admin:settings:view') && (
-                <DashboardQuickAction href="/admin/settings" icon={Clock} title="Settings" description="Maintenance and feature flags" />
-              )}
-            </AdminPanelBody>
-          </AdminPanel>
+          </div>
         </>
       )}
     </AdminPage>

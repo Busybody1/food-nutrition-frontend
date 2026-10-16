@@ -4,31 +4,41 @@ import { useEffect, useState } from 'react'
 import { adminAPI, AdminPlan, AdminPlanFeature } from '@/lib/api/admin'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Badge } from '@/components/ui/badge'
 import { useAdmin } from '@/lib/hooks/use-admin'
 import {
   Layers,
   Save,
   Power,
+  PowerOff,
   Plus,
   Trash2,
   ChevronUp,
   ChevronDown,
   Star,
-  Users,
+  CheckCircle2,
+  Pencil,
+  SlidersHorizontal,
+  X,
 } from 'lucide-react'
 import { formatCount } from '@/lib/utils/format'
+import { cn } from '@/lib/utils/cn'
 import {
   AdminPage,
   AdminPageHeader,
   AdminPanel,
   AdminPanelHeader,
   AdminPanelBody,
+  AdminTableWrap,
+  AdminTable,
   DashboardStatCard,
   AdminStatGrid,
   DashboardAlert,
   DashboardLoading,
   DashboardEmpty,
+  DashboardIconTile,
+  DashboardPanelHeader,
+  DashboardPill,
+  DASHBOARD_ICON_STROKE,
 } from '@/components/admin/admin-ui'
 
 const MAX_HIGHLIGHTS = 12
@@ -40,6 +50,50 @@ function formatPlanPriceLabel(price?: number): string {
 
 function sanitizeHighlight(value: string): string {
   return value.replace(/<[^>]*>/g, '').replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, '').trim()
+}
+
+function Field({
+  id,
+  label,
+  hint,
+  className,
+  children,
+}: {
+  id: string
+  label: string
+  hint?: React.ReactNode
+  className?: string
+  children: React.ReactNode
+}) {
+  return (
+    <div className={cn('min-w-0', className)}>
+      <label htmlFor={id} className="dashboard-field-label">
+        {label}
+      </label>
+      {children}
+      {hint && <p className="dashboard-field-hint">{hint}</p>}
+    </div>
+  )
+}
+
+function SectionHeading({
+  title,
+  hint,
+  action,
+}: {
+  title: string
+  hint?: React.ReactNode
+  action?: React.ReactNode
+}) {
+  return (
+    <div className="flex items-start justify-between gap-3">
+      <div className="min-w-0">
+        <h3 className="text-[13px] font-semibold leading-5 text-dash-ink">{title}</h3>
+        {hint && <p className="mt-0.5 text-xs leading-4 text-dash-muted">{hint}</p>}
+      </div>
+      {action}
+    </div>
+  )
 }
 
 export default function AdminPlansPage() {
@@ -80,6 +134,7 @@ export default function AdminPlansPage() {
   }
 
   useEffect(() => {
+    /* eslint-disable-next-line react-hooks/set-state-in-effect */
     loadPlans()
   }, [])
 
@@ -306,10 +361,11 @@ export default function AdminPlansPage() {
         <>
           <AdminStatGrid>
             <DashboardStatCard label="Total plans" value={plans.length} icon={Layers} accent="brand" />
-            <DashboardStatCard label="Active" value={activeCount} accent="green" />
+            <DashboardStatCard label="Active" value={activeCount} icon={CheckCircle2} accent="green" />
             <DashboardStatCard
               label="Inactive"
               value={plans.length - activeCount}
+              icon={PowerOff}
               accent="orange"
             />
             <DashboardStatCard
@@ -317,173 +373,154 @@ export default function AdminPlansPage() {
               value={recommendedPlan?.name ?? 'None'}
               hint="Shown as “Most popular” on /pricing"
               icon={Star}
-              accent="purple"
+              accent="indigo"
             />
           </AdminStatGrid>
 
           <AdminPanel>
             <AdminPanelHeader
-              title="Recommended plan"
-              icon={Star}
-              actions={
-                recommendedPlan && canEdit ? (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    disabled={saving}
-                    onClick={() => setRecommended(recommendedPlan, false)}
-                  >
-                    Clear
-                  </Button>
-                ) : undefined
-              }
+              title="All plans"
+              icon={Layers}
+              description="Select a plan to edit its pricing, quotas, and features."
             />
-            <AdminPanelBody>
-              <p className="text-sm text-ink-muted mb-4">
-                Pick the plan that carries the “Most popular” badge on the public pricing page.
-                Only one plan can hold it, and the change is live immediately — no redeploy.
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {plans.map((p) => {
-                  const isRecommended = Boolean(p.is_recommended)
-                  return (
-                    <button
-                      key={p.id}
-                      type="button"
-                      disabled={!canEdit || saving || !p.is_active}
-                      onClick={() => setRecommended(p, !isRecommended)}
-                      title={
-                        !p.is_active
-                          ? 'Inactive plans are not shown on the pricing page'
-                          : isRecommended
-                            ? 'Clear the recommended badge'
-                            : `Make ${p.name} the recommended plan`
-                      }
-                      className={`inline-flex items-center gap-2 rounded-brand border px-3.5 py-2 text-sm font-medium transition-all disabled:cursor-not-allowed disabled:opacity-50 ${
-                        isRecommended
-                          ? 'border-violet-400 bg-violet-50 text-violet-800 shadow-sm'
-                          : 'border-surface-border/80 text-ink hover:border-brand/40 hover:bg-surface-elevated/60'
-                      }`}
-                      aria-pressed={isRecommended}
-                    >
-                      <Star
-                        className={`h-4 w-4 ${isRecommended ? 'fill-violet-500 text-violet-500' : 'text-ink-dim'}`}
-                        aria-hidden
-                      />
-                      {p.name}
-                      {!p.is_active && (
-                        <span className="text-[10px] uppercase tracking-wide text-ink-dim">
-                          off
-                        </span>
-                      )}
-                    </button>
-                  )
-                })}
-              </div>
-              {!recommendedPlan && (
-                <p className="text-xs text-ink-muted mt-3">
-                  No plan is highlighted right now — the pricing grid renders every card equally.
-                </p>
-              )}
-            </AdminPanelBody>
+            {plans.length === 0 ? (
+              <DashboardEmpty icon={Layers} title="No plans found" />
+            ) : (
+              <AdminPanelBody noPadding>
+                <AdminTableWrap>
+                  <AdminTable className="[&_td]:px-3 [&_th]:px-3">
+                    <thead>
+                      <tr>
+                        <th>Plan</th>
+                        <th>Status</th>
+                        <th className="dashboard-num">Monthly</th>
+                        <th className="dashboard-num">Annual</th>
+                        <th className="dashboard-num">Quota</th>
+                        <th className="dashboard-num">Rate limit</th>
+                        <th className="dashboard-num">Foods / query</th>
+                        <th className="dashboard-num">Users</th>
+                        <th>
+                          <span className="sr-only">Actions</span>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {plans.map((p) => {
+                        const isSelected = selected?.id === p.id
+                        return (
+                          <tr
+                            key={p.id}
+                            onClick={() => selectPlan(p)}
+                            aria-selected={isSelected}
+                            className={cn(
+                              'dashboard-table-row-clickable',
+                              isSelected && 'bg-dash-teal-soft/60'
+                            )}
+                          >
+                            <td>
+                              <div className="flex min-w-0 items-center gap-3">
+                                <DashboardIconTile
+                                  icon={Layers}
+                                  tone={p.is_active ? 'brand' : 'neutral'}
+                                  className="h-8 w-8"
+                                />
+                                <span className="truncate font-medium text-dash-ink">{p.name}</span>
+                              </div>
+                            </td>
+                            <td>
+                              <div className="flex flex-wrap items-center gap-1.5">
+                                <DashboardPill tone={p.is_active ? 'green' : 'neutral'}>
+                                  {p.is_active ? 'Active' : 'Off'}
+                                </DashboardPill>
+                                {p.is_recommended && (
+                                  <DashboardPill tone="brand" icon={Star} title="Recommended plan">
+                                    Recommended
+                                  </DashboardPill>
+                                )}
+                              </div>
+                            </td>
+                            <td className="dashboard-num whitespace-nowrap font-medium text-dash-ink">
+                              {formatPlanPriceLabel(p.monthly_price)}/mo
+                            </td>
+                            <td className="dashboard-num whitespace-nowrap">
+                              {p.annual_price != null ? `${formatPlanPriceLabel(p.annual_price)}/yr` : '—'}
+                            </td>
+                            <td className="dashboard-num">{formatCount(p.monthly_quota ?? 0)}</td>
+                            <td className="dashboard-num whitespace-nowrap">
+                              {p.rate_limit_per_minute != null ? `${p.rate_limit_per_minute}/min` : '—'}
+                            </td>
+                            <td className="dashboard-num">{p.max_results_per_query ?? '—'}</td>
+                            <td className="dashboard-num">
+                              {p.users_count != null ? formatCount(p.users_count) : '—'}
+                            </td>
+                            <td className="text-right">
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                className="h-8 gap-1.5"
+                                aria-label={`Edit ${p.name}`}
+                              >
+                                <Pencil className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
+                                Edit
+                              </Button>
+                            </td>
+                          </tr>
+                        )
+                      })}
+                    </tbody>
+                  </AdminTable>
+                </AdminTableWrap>
+              </AdminPanelBody>
+            )}
           </AdminPanel>
 
-          <div className="grid gap-6 lg:grid-cols-5">
-            <AdminPanel className="lg:col-span-2">
-              <AdminPanelHeader title="All plans" icon={Layers} />
-              <AdminPanelBody className="space-y-2 !p-3">
-                {plans.length === 0 ? (
-                  <DashboardEmpty icon={Layers} title="No plans found" />
-                ) : (
-                  plans.map((p) => (
-                    <button
-                      key={p.id}
-                      type="button"
-                      onClick={() => selectPlan(p)}
-                      className={`w-full text-left rounded-brand border p-4 transition-all ${
-                        selected?.id === p.id
-                          ? 'border-violet-400 bg-violet-50/80 shadow-sm'
-                          : 'border-surface-border/80 hover:border-brand/30 hover:bg-surface-elevated/50'
-                      }`}
-                    >
-                      <div className="flex justify-between items-start gap-2">
-                        <span className="font-semibold text-ink flex items-center gap-1.5">
-                          {p.name}
-                          {p.is_recommended && (
-                            <Star
-                              className="h-3.5 w-3.5 fill-violet-500 text-violet-500 shrink-0"
-                              aria-label="Recommended plan"
-                            />
-                          )}
-                        </span>
-                        <Badge variant={p.is_active ? 'default' : 'outline'}>
-                          {p.is_active ? 'Active' : 'Off'}
-                        </Badge>
-                      </div>
-                      <p className="text-xs text-ink-muted mt-2">
-                        {formatPlanPriceLabel(p.monthly_price)}/mo
-                        {p.annual_price != null ? ` · ${formatPlanPriceLabel(p.annual_price)}/yr` : ''} · quota{' '}
-                        {formatCount(p.monthly_quota ?? 0)} · {p.rate_limit_per_minute ?? '-'}/min
-                        {' · '}
-                        {p.max_results_per_query ?? '-'} foods/query
-                      </p>
-                      {p.users_count != null && (
-                        <p className="text-xs text-ink-dim mt-1 flex items-center gap-1">
-                          <Users className="h-3 w-3" aria-hidden />
-                          {formatCount(p.users_count)} {p.users_count === 1 ? 'user' : 'users'}
-                        </p>
-                      )}
-                    </button>
-                  ))
-                )}
-              </AdminPanelBody>
-            </AdminPanel>
-
-            <AdminPanel className="lg:col-span-3">
+          <div className="dashboard-grid-wide items-start">
+            <AdminPanel>
               {selected ? (
                 <>
-                  <AdminPanelHeader title={`Edit ${selected.name}`} />
-                  <AdminPanelBody className="space-y-5">
-                    <div className="grid sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className="text-xs font-medium text-ink-dim block mb-1.5">
-                          Plan name
-                        </label>
+                  <AdminPanelHeader
+                    title={`Edit ${selected.name}`}
+                    icon={Pencil}
+                    actions={
+                      <DashboardPill tone={selected.is_active ? 'green' : 'neutral'}>
+                        {selected.is_active ? 'Active' : 'Off'}
+                      </DashboardPill>
+                    }
+                  />
+                  <AdminPanelBody className="space-y-6">
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      <Field id="plan-name" label="Plan name">
                         <Input
+                          id="plan-name"
                           value={planName}
                           onChange={(e) => setPlanName(e.target.value)}
                           disabled={!canEdit}
                           maxLength={50}
                         />
-                      </div>
-                      <div>
-                        <label className="text-xs font-medium text-ink-dim block mb-1.5">
-                          Price display label
-                        </label>
+                      </Field>
+                      <Field id="plan-price-label" label="Price display label">
                         <Input
+                          id="plan-price-label"
                           value={priceDisplayLabel}
                           onChange={(e) => setPriceDisplayLabel(e.target.value)}
                           disabled={!canEdit}
                           placeholder="e.g. Enterprise"
                           maxLength={50}
                         />
-                      </div>
-                      <div className="sm:col-span-2">
-                        <label className="text-xs font-medium text-ink-dim block mb-1.5">
-                          Description
-                        </label>
+                      </Field>
+                      <Field id="plan-description" label="Description" className="sm:col-span-2">
                         <Input
+                          id="plan-description"
                           value={description}
                           onChange={(e) => setDescription(e.target.value)}
                           disabled={!canEdit}
                           maxLength={2000}
                         />
-                      </div>
-                      <div>
-                        <label className="text-xs font-medium text-ink-dim block mb-1.5">
-                          Monthly price (USD)
-                        </label>
+                      </Field>
+                      <Field id="plan-monthly-price" label="Monthly price (USD)">
                         <Input
+                          id="plan-monthly-price"
                           value={monthlyPrice}
                           onChange={(e) => setMonthlyPrice(e.target.value)}
                           disabled={!canEdit}
@@ -492,12 +529,10 @@ export default function AdminPlansPage() {
                           step="0.01"
                           placeholder="0.00"
                         />
-                      </div>
-                      <div>
-                        <label className="text-xs font-medium text-ink-dim block mb-1.5">
-                          Annual price (USD)
-                        </label>
+                      </Field>
+                      <Field id="plan-annual-price" label="Annual price (USD)">
                         <Input
+                          id="plan-annual-price"
                           value={annualPrice}
                           onChange={(e) => setAnnualPrice(e.target.value)}
                           disabled={!canEdit}
@@ -506,71 +541,69 @@ export default function AdminPlansPage() {
                           step="0.01"
                           placeholder="0.00"
                         />
-                      </div>
-                      <div>
-                        <label className="text-xs font-medium text-ink-dim block mb-1.5">
-                          Monthly quota
-                        </label>
+                      </Field>
+                      <Field id="plan-quota" label="Monthly quota">
                         <Input
+                          id="plan-quota"
                           value={quota}
                           onChange={(e) => setQuota(e.target.value)}
                           disabled={!canEdit}
                           type="number"
                         />
-                      </div>
-                      <div>
-                        <label className="text-xs font-medium text-ink-dim block mb-1.5">
-                          Rate limit (per minute)
-                        </label>
+                      </Field>
+                      <Field id="plan-rate-limit" label="Rate limit (per minute)">
                         <Input
+                          id="plan-rate-limit"
                           value={rateLimit}
                           onChange={(e) => setRateLimit(e.target.value)}
                           disabled={!canEdit}
                           type="number"
                         />
-                      </div>
-                      <div>
-                        <label className="text-xs font-medium text-ink-dim block mb-1.5">
-                          Foods per query
-                        </label>
+                      </Field>
+                      <Field
+                        id="plan-results-per-query"
+                        label="Foods per query"
+                        className="sm:col-span-2"
+                        hint="Max foods returned in one search or catalog request (1–100). Free default 20; paid default 100."
+                      >
                         <Input
+                          id="plan-results-per-query"
                           value={resultsPerQuery}
                           onChange={(e) => setResultsPerQuery(e.target.value)}
                           disabled={!canEdit}
                           type="number"
                           min="1"
                           max="100"
+                          className="sm:max-w-[calc(50%-0.5rem)]"
                         />
-                        <p className="text-xs text-ink-muted mt-1">
-                          Max foods returned in one search or catalog request (1–100). Free default 20; paid default 100.
-                        </p>
-                      </div>
+                      </Field>
                     </div>
 
-                    <div className="space-y-3 pt-1 border-t border-surface-border/60">
-                      <div className="flex items-center justify-between pt-3">
-                        <p className="text-xs font-medium uppercase tracking-wide text-ink-dim">
-                          Pricing card highlights
-                        </p>
-                        {canEdit && (
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={addHighlight}
-                            disabled={highlights.length >= MAX_HIGHLIGHTS}
-                          >
-                            <Plus className="h-3.5 w-3.5 mr-1" />
-                            Add
-                          </Button>
-                        )}
-                      </div>
-                      <p className="text-xs text-ink-muted">
-                        Bullet points shown on the public pricing page (max {MAX_HIGHLIGHTS}).
-                      </p>
+                    <section className="space-y-3 border-t border-dash-border pt-5">
+                      <SectionHeading
+                        title="Pricing card highlights"
+                        hint={`Bullet points shown on the public pricing page (max ${MAX_HIGHLIGHTS}).`}
+                        action={
+                          canEdit ? (
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              className="h-9 gap-1.5"
+                              onClick={addHighlight}
+                              disabled={highlights.length >= MAX_HIGHLIGHTS}
+                            >
+                              <Plus className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
+                              Add
+                            </Button>
+                          ) : undefined
+                        }
+                      />
                       <div className="space-y-2">
                         {highlights.length === 0 ? (
-                          <p className="text-sm text-ink-muted">No highlights yet.</p>
+                          <p className="rounded-xl bg-dash-hover px-4 py-3 text-[13px] text-dash-muted">
+                            No highlights yet.
+                          </p>
                         ) : (
                           highlights.map((item, index) => (
                             <div key={`hl-${index}`} className="flex items-center gap-2">
@@ -582,35 +615,38 @@ export default function AdminPlansPage() {
                                 placeholder="Feature bullet"
                               />
                               {canEdit && (
-                                <div className="flex shrink-0 gap-1">
+                                <div className="flex shrink-0 gap-0.5">
                                   <Button
                                     type="button"
-                                    variant="outline"
+                                    variant="ghost"
                                     size="sm"
+                                    className="h-8 w-8 p-0"
                                     onClick={() => moveHighlight(index, -1)}
                                     disabled={index === 0}
                                     aria-label="Move up"
                                   >
-                                    <ChevronUp className="h-3.5 w-3.5" />
+                                    <ChevronUp className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} />
                                   </Button>
                                   <Button
                                     type="button"
-                                    variant="outline"
+                                    variant="ghost"
                                     size="sm"
+                                    className="h-8 w-8 p-0"
                                     onClick={() => moveHighlight(index, 1)}
                                     disabled={index === highlights.length - 1}
                                     aria-label="Move down"
                                   >
-                                    <ChevronDown className="h-3.5 w-3.5" />
+                                    <ChevronDown className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} />
                                   </Button>
                                   <Button
                                     type="button"
-                                    variant="outline"
+                                    variant="ghost"
                                     size="sm"
+                                    className="h-8 w-8 p-0 text-dash-negative hover:bg-dash-negative-soft hover:text-dash-negative"
                                     onClick={() => removeHighlight(index)}
                                     aria-label="Remove highlight"
                                   >
-                                    <Trash2 className="h-3.5 w-3.5" />
+                                    <Trash2 className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} />
                                   </Button>
                                 </div>
                               )}
@@ -618,149 +654,88 @@ export default function AdminPlansPage() {
                           ))
                         )}
                       </div>
-                    </div>
+                    </section>
 
-                    <div className="space-y-3 pt-1 border-t border-surface-border/60">
-                      <p className="text-xs font-medium uppercase tracking-wide text-ink-dim pt-3">
-                        Stripe price IDs
-                      </p>
-                      <div>
-                        <label className="text-xs font-medium text-ink-dim block mb-1.5">
-                          Legacy price ID (fallback)
-                        </label>
-                        <Input
-                          value={stripePriceId}
-                          onChange={(e) => setStripePriceId(e.target.value)}
-                          disabled={!canEdit}
-                          placeholder="price_..."
-                        />
+                    <section className="space-y-4 border-t border-dash-border pt-5">
+                      <SectionHeading
+                        title="Stripe price IDs"
+                        hint="Checkout uses test or live IDs based on your Stripe secret key. Clear a field to remove the stored ID."
+                      />
+                      <div className="grid gap-4 sm:grid-cols-2">
+                        <Field
+                          id="plan-stripe-legacy"
+                          label="Legacy price ID (fallback)"
+                          className="sm:col-span-2"
+                        >
+                          <Input
+                            id="plan-stripe-legacy"
+                            value={stripePriceId}
+                            onChange={(e) => setStripePriceId(e.target.value)}
+                            disabled={!canEdit}
+                            placeholder="price_..."
+                            className="font-mono"
+                          />
+                        </Field>
+                        <Field id="plan-stripe-test" label="Test mode price ID">
+                          <Input
+                            id="plan-stripe-test"
+                            value={stripeTestPriceId}
+                            onChange={(e) => setStripeTestPriceId(e.target.value)}
+                            disabled={!canEdit}
+                            placeholder="price_..."
+                            className="font-mono"
+                          />
+                        </Field>
+                        <Field id="plan-stripe-live" label="Live mode price ID">
+                          <Input
+                            id="plan-stripe-live"
+                            value={stripeLivePriceId}
+                            onChange={(e) => setStripeLivePriceId(e.target.value)}
+                            disabled={!canEdit}
+                            placeholder="price_..."
+                            className="font-mono"
+                          />
+                        </Field>
+                        <Field id="plan-stripe-test-annual" label="Test annual price ID">
+                          <Input
+                            id="plan-stripe-test-annual"
+                            value={stripeTestAnnualPriceId}
+                            onChange={(e) => setStripeTestAnnualPriceId(e.target.value)}
+                            disabled={!canEdit}
+                            placeholder="price_..."
+                            className="font-mono"
+                          />
+                        </Field>
+                        <Field id="plan-stripe-live-annual" label="Live annual price ID">
+                          <Input
+                            id="plan-stripe-live-annual"
+                            value={stripeLiveAnnualPriceId}
+                            onChange={(e) => setStripeLiveAnnualPriceId(e.target.value)}
+                            disabled={!canEdit}
+                            placeholder="price_..."
+                            className="font-mono"
+                          />
+                        </Field>
                       </div>
-                      <div>
-                        <label className="text-xs font-medium text-ink-dim block mb-1.5">
-                          Test mode price ID
-                        </label>
-                        <Input
-                          value={stripeTestPriceId}
-                          onChange={(e) => setStripeTestPriceId(e.target.value)}
-                          disabled={!canEdit}
-                          placeholder="price_..."
-                        />
-                      </div>
-                      <div>
-                        <label className="text-xs font-medium text-ink-dim block mb-1.5">
-                          Live mode price ID
-                        </label>
-                        <Input
-                          value={stripeLivePriceId}
-                          onChange={(e) => setStripeLivePriceId(e.target.value)}
-                          disabled={!canEdit}
-                          placeholder="price_..."
-                        />
-                      </div>
-                      <div>
-                        <label className="text-xs font-medium text-ink-dim block mb-1.5">
-                          Test annual price ID
-                        </label>
-                        <Input
-                          value={stripeTestAnnualPriceId}
-                          onChange={(e) => setStripeTestAnnualPriceId(e.target.value)}
-                          disabled={!canEdit}
-                          placeholder="price_..."
-                        />
-                      </div>
-                      <div>
-                        <label className="text-xs font-medium text-ink-dim block mb-1.5">
-                          Live annual price ID
-                        </label>
-                        <Input
-                          value={stripeLiveAnnualPriceId}
-                          onChange={(e) => setStripeLiveAnnualPriceId(e.target.value)}
-                          disabled={!canEdit}
-                          placeholder="price_..."
-                        />
-                      </div>
-                      <p className="text-xs text-ink-muted">
-                        Checkout uses test or live IDs based on your Stripe secret key. Clear a field
-                        to remove the stored ID.
-                      </p>
-                    </div>
-
-                    <div className="space-y-3 pt-1 border-t border-surface-border/60">
-                      <button
-                        type="button"
-                        className="pt-3 text-xs font-medium uppercase tracking-wide text-ink-dim hover:text-ink"
-                        onClick={() => setShowFeatures((v) => !v)}
-                      >
-                        Enforcement features {showFeatures ? '(hide)' : '(show)'}
-                      </button>
-                      {showFeatures && (
-                        <div className="space-y-3">
-                          <p className="text-xs text-ink-muted">
-                            Runtime plan gates (commercial_use, unique_foods_pct, etc.).
-                          </p>
-                          <ul className="space-y-2">
-                            {features.map((f) => (
-                              <li
-                                key={f.feature_name}
-                                className="flex items-center justify-between gap-2 rounded-brand border border-surface-border/80 px-3 py-2 text-sm"
-                              >
-                                <span className="text-ink">
-                                  {f.feature_name}
-                                  <span className="text-ink-muted ml-2">
-                                    {f.feature_value === false ? 'off' : 'on'}
-                                    {f.feature_limit != null ? ` · limit ${f.feature_limit}` : ''}
-                                  </span>
-                                </span>
-                                {canEdit && (
-                                  <Button
-                                    type="button"
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() => removeFeature(f.feature_name)}
-                                  >
-                                    <Trash2 className="h-3.5 w-3.5" />
-                                  </Button>
-                                )}
-                              </li>
-                            ))}
-                          </ul>
-                          {canEdit && (
-                            <div className="flex flex-wrap gap-2">
-                              <Input
-                                value={newFeatureName}
-                                onChange={(e) => setNewFeatureName(e.target.value)}
-                                placeholder="feature_name"
-                                className="max-w-[180px]"
-                              />
-                              <Input
-                                value={newFeatureLimit}
-                                onChange={(e) => setNewFeatureLimit(e.target.value)}
-                                placeholder="limit (optional)"
-                                type="number"
-                                className="max-w-[140px]"
-                              />
-                              <Button type="button" variant="outline" onClick={saveFeature}>
-                                Save feature
-                              </Button>
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </div>
-
-                    {canEdit && (
-                      <div className="flex flex-wrap gap-2 pt-2">
-                        <Button onClick={save} disabled={saving}>
-                          <Save className="h-4 w-4 mr-1.5" />
-                          {saving ? 'Saving…' : 'Save changes'}
-                        </Button>
-                        <Button variant="outline" onClick={() => toggleActive(selected)}>
-                          <Power className="h-4 w-4 mr-1.5" />
-                          {selected.is_active ? 'Deactivate plan' : 'Activate plan'}
-                        </Button>
-                      </div>
-                    )}
+                    </section>
                   </AdminPanelBody>
+                  {canEdit && (
+                    <div className="flex flex-wrap justify-end gap-2 border-t border-dash-border px-5 py-4">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-9 gap-1.5"
+                        onClick={() => toggleActive(selected)}
+                      >
+                        <Power className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
+                        {selected.is_active ? 'Deactivate plan' : 'Activate plan'}
+                      </Button>
+                      <Button size="sm" className="h-9 gap-1.5" onClick={save} disabled={saving}>
+                        <Save className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
+                        {saving ? 'Saving…' : 'Save changes'}
+                      </Button>
+                    </div>
+                  )}
                 </>
               ) : (
                 <DashboardEmpty
@@ -770,6 +745,182 @@ export default function AdminPlansPage() {
                 />
               )}
             </AdminPanel>
+
+            <div className="flex min-w-0 flex-col gap-5">
+              <AdminPanel>
+                <AdminPanelHeader
+                  title="Recommended plan"
+                  icon={Star}
+                  actions={
+                    recommendedPlan && canEdit ? (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-9 gap-1.5"
+                        disabled={saving}
+                        onClick={() => setRecommended(recommendedPlan, false)}
+                      >
+                        <X className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
+                        Clear
+                      </Button>
+                    ) : undefined
+                  }
+                />
+                <AdminPanelBody className="space-y-4">
+                  <p className="text-[13px] leading-5 text-dash-muted">
+                    Pick the plan that carries the “Most popular” badge on the public pricing page.
+                    Only one plan can hold it, and the change is live immediately — no redeploy.
+                  </p>
+                  <div className="flex flex-col gap-2">
+                    {plans.map((p) => {
+                      const isRecommended = Boolean(p.is_recommended)
+                      return (
+                        <button
+                          key={p.id}
+                          type="button"
+                          disabled={!canEdit || saving || !p.is_active}
+                          onClick={() => setRecommended(p, !isRecommended)}
+                          title={
+                            !p.is_active
+                              ? 'Inactive plans are not shown on the pricing page'
+                              : isRecommended
+                                ? 'Clear the recommended badge'
+                                : `Make ${p.name} the recommended plan`
+                          }
+                          className={cn(
+                            'flex h-10 w-full items-center gap-2.5 rounded-[10px] border px-3 text-left text-[13px] font-medium transition-colors',
+                            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 disabled:cursor-not-allowed disabled:opacity-50',
+                            isRecommended
+                              ? 'border-dash-teal bg-dash-teal-soft text-dash-teal-strong'
+                              : 'border-dash-border bg-white text-dash-ink hover:border-dash-border-strong hover:bg-dash-hover'
+                          )}
+                          aria-pressed={isRecommended}
+                        >
+                          <Star
+                            className={cn(
+                              'h-4 w-4 shrink-0',
+                              isRecommended ? 'fill-dash-teal text-dash-teal-strong' : 'text-dash-dim'
+                            )}
+                            strokeWidth={DASHBOARD_ICON_STROKE}
+                            aria-hidden
+                          />
+                          <span className="min-w-0 truncate">{p.name}</span>
+                          {!p.is_active && (
+                            <DashboardPill tone="neutral" className="ml-auto">
+                              off
+                            </DashboardPill>
+                          )}
+                        </button>
+                      )
+                    })}
+                  </div>
+                  {!recommendedPlan && (
+                    <p className="text-xs text-dash-muted">
+                      No plan is highlighted right now — the pricing grid renders every card equally.
+                    </p>
+                  )}
+                </AdminPanelBody>
+              </AdminPanel>
+
+              {selected && (
+                <AdminPanel>
+                  <DashboardPanelHeader
+                    className={showFeatures ? undefined : 'pb-4'}
+                    title="Enforcement features"
+                    icon={SlidersHorizontal}
+                    description="Runtime plan gates (commercial_use, unique_foods_pct, etc.)."
+                    actions={
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="h-9 gap-1.5"
+                        onClick={() => setShowFeatures((v) => !v)}
+                        aria-expanded={showFeatures}
+                      >
+                        {showFeatures ? (
+                          <ChevronUp className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
+                        ) : (
+                          <ChevronDown className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
+                        )}
+                        {showFeatures ? 'Hide' : 'Show'}
+                      </Button>
+                    }
+                  />
+                  {showFeatures && (
+                    <>
+                      <AdminPanelBody className="space-y-4">
+                        <ul className="flex flex-wrap gap-2">
+                          {features.map((f) => (
+                            <li
+                              key={f.feature_name}
+                              className={cn(
+                                'inline-flex h-8 max-w-full items-center gap-1.5 rounded-md bg-dash-pill pl-2.5 text-xs text-dash-body',
+                                canEdit ? 'pr-1' : 'pr-2.5'
+                              )}
+                            >
+                              <span className="truncate font-mono font-medium text-dash-ink">
+                                {f.feature_name}
+                              </span>
+                              <span className="shrink-0 text-dash-muted">
+                                {f.feature_value === false ? 'off' : 'on'}
+                                {f.feature_limit != null ? ` · limit ${f.feature_limit}` : ''}
+                              </span>
+                              {canEdit && (
+                                <button
+                                  type="button"
+                                  onClick={() => removeFeature(f.feature_name)}
+                                  aria-label={`Delete ${f.feature_name}`}
+                                  className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded text-dash-dim transition-colors hover:bg-dash-negative-soft hover:text-dash-negative focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
+                                >
+                                  <Trash2 className="h-3.5 w-3.5" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
+                                </button>
+                              )}
+                            </li>
+                          ))}
+                        </ul>
+                        {canEdit && (
+                          <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_140px]">
+                            <Field id="plan-feature-name" label="Feature name">
+                              <Input
+                                id="plan-feature-name"
+                                value={newFeatureName}
+                                onChange={(e) => setNewFeatureName(e.target.value)}
+                                placeholder="feature_name"
+                                className="font-mono"
+                              />
+                            </Field>
+                            <Field id="plan-feature-limit" label="Limit">
+                              <Input
+                                id="plan-feature-limit"
+                                value={newFeatureLimit}
+                                onChange={(e) => setNewFeatureLimit(e.target.value)}
+                                placeholder="limit (optional)"
+                                type="number"
+                              />
+                            </Field>
+                          </div>
+                        )}
+                      </AdminPanelBody>
+                      {canEdit && (
+                        <div className="flex justify-end gap-2 border-t border-dash-border px-5 py-4">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            className="h-9 gap-1.5"
+                            onClick={saveFeature}
+                          >
+                            <Plus className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
+                            Save feature
+                          </Button>
+                        </div>
+                      )}
+                    </>
+                  )}
+                </AdminPanel>
+              )}
+            </div>
           </div>
         </>
       )}

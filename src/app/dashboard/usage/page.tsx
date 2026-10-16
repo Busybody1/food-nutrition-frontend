@@ -1,32 +1,21 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { UsageChart } from '@/components/dashboard/UsageChart'
+import { UsageTrendCards, EndpointUsageTable } from '@/components/dashboard/UsageChart'
+import type { UsageData, EndpointUsage } from '@/components/dashboard/UsageChart'
 import { useAuth } from '@/lib/hooks/use-auth'
 import { useRouter } from 'next/navigation'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import {
   DashboardPage,
   DashboardPageHeader,
-  DashboardLoading,
+  DashboardPageSkeleton,
   DashboardAlert,
+  DashboardSegmented,
+  DashboardStatCard,
+  DASHBOARD_ICON_STROKE,
 } from '@/components/dashboard/dashboard-shell'
-import { RefreshCw, Calendar, Download } from 'lucide-react'
-
-interface UsageData {
-  date: string
-  requests: number
-  errors: number
-  avgResponseTime: number
-}
-
-interface EndpointUsage {
-  endpoint: string
-  request_count: number
-  avg_response_time: number
-  error_count: number
-}
+import { Activity, Download, Gauge, RefreshCw, Zap } from 'lucide-react'
 
 interface UsageStats {
   requests_this_month: number
@@ -34,6 +23,14 @@ interface UsageStats {
   rate_limit_per_minute: number
   plan_name: string
   remaining_requests: number
+}
+
+type TimeRange = '7d' | '30d' | '90d'
+
+const RANGE_LABELS: Record<TimeRange, string> = {
+  '7d': 'Last 7 days',
+  '30d': 'Last 30 days',
+  '90d': 'Last 90 days',
 }
 
 export default function UsagePage() {
@@ -45,7 +42,7 @@ export default function UsagePage() {
   const [isLoading, setIsLoading] = useState(true)
   const [isExporting, setIsExporting] = useState(false)
   const [error, setError] = useState('')
-  const [timeRange, setTimeRange] = useState<'7d' | '30d' | '90d'>('7d')
+  const [timeRange, setTimeRange] = useState<TimeRange>('7d')
 
   useEffect(() => {
     if (!loading && !isAuthenticated) {
@@ -88,6 +85,7 @@ export default function UsagePage() {
 
   useEffect(() => {
     if (!loading && isAuthenticated) {
+      /* eslint-disable-next-line react-hooks/set-state-in-effect */
       loadUsageData()
     }
   }, [isAuthenticated, loading, timeRange, loadUsageData])
@@ -123,153 +121,117 @@ export default function UsagePage() {
   }
 
   if (loading || isLoading) {
-    return <DashboardLoading message="Loading usage analytics..." />
+    return <DashboardPageSkeleton kpis={3} label="Loading usage analytics..." />
   }
 
   if (!isAuthenticated) {
     return null
   }
 
+  const now = new Date()
+  const periodEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0)
+  const periodEndLabel = periodEnd.toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  })
+  const daysRemaining = periodEnd.getDate() - now.getDate()
+
+  const quota = usageStats?.monthly_quota ?? 0
+  const current = usageStats?.requests_this_month ?? 0
+  const usagePercentage = quota > 0 ? (current / quota) * 100 : 0
+  const rateLimit = usageStats?.rate_limit_per_minute || 0
+
   return (
     <DashboardPage>
-        <DashboardPageHeader
-          title="Usage analytics"
-          description="Track requests, errors, and quota consumption over time."
+      <DashboardPageHeader
+        title="Usage analytics"
+        description="Track requests, errors, and quota consumption over time."
+        meta={
+          usageStats?.plan_name ? (
+            <span className="dashboard-meta-pill" title="Current plan">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" aria-hidden />
+              {usageStats.plan_name}
+              <span className="text-dash-dim" aria-hidden>
+                ·
+              </span>
+              <span className="text-dash-muted">Active</span>
+            </span>
+          ) : undefined
+        }
+      >
+        <DashboardSegmented
+          value={timeRange}
+          onChange={setTimeRange}
+          ariaLabel="Time range"
+          options={[
+            { value: '7d', label: '7d' },
+            { value: '30d', label: '30d' },
+            { value: '90d', label: '90d' },
+          ]}
+        />
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={loadUsageData}
+          disabled={isLoading}
+          className="h-9 gap-1.5"
         >
-          <div className="inline-flex rounded-brand border border-surface-border bg-white p-0.5">
-            {(['7d', '30d', '90d'] as const).map((range) => (
-              <Button
-                key={range}
-                variant={timeRange === range ? 'default' : 'ghost'}
-                size="sm"
-                onClick={() => setTimeRange(range)}
-                className="rounded-[10px] h-8 px-3"
-              >
-                {range === '7d' ? '7d' : range === '30d' ? '30d' : '90d'}
-              </Button>
-            ))}
-          </div>
-          <Button variant="outline" size="sm" onClick={loadUsageData} disabled={isLoading} className="gap-2">
-            <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
-            Refresh
-          </Button>
-          <Button variant="outline" size="sm" onClick={handleExport} disabled={isExporting} className="gap-2">
-            <Download className="h-4 w-4" />
-            {isExporting ? 'Exporting...' : 'Export'}
-          </Button>
-        </DashboardPageHeader>
-
-        {error && <DashboardAlert variant="error">{error}</DashboardAlert>}
-
-        {usageStats && (
-          <UsageChart
-            data={usageData}
-            endpointData={endpointData}
-            currentUsage={usageStats.requests_this_month}
-            quota={usageStats.monthly_quota}
-            planName={usageStats.plan_name}
+          <RefreshCw
+            className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`}
+            strokeWidth={DASHBOARD_ICON_STROKE}
           />
-        )}
+          Refresh
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleExport}
+          disabled={isExporting}
+          className="h-9 gap-1.5"
+        >
+          <Download className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} />
+          {isExporting ? 'Exporting...' : 'Export'}
+        </Button>
+      </DashboardPageHeader>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <Calendar className="h-5 w-5 mr-2" />
-                Current Period
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-sm text-ink-muted">Start Date</span>
-                  <span className="text-sm font-medium">
-                    {new Date().toLocaleDateString('en-US', {
-                      month: 'long',
-                      day: 'numeric',
-                      year: 'numeric'
-                    })}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">End Date</span>
-                  <span className="text-sm font-medium">
-                    {new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0)
-                      .toLocaleDateString('en-US', {
-                        month: 'long',
-                        day: 'numeric',
-                        year: 'numeric'
-                      })}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Days Remaining</span>
-                  <span className="text-sm font-medium">
-                    {new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate() - new Date().getDate()}
-                  </span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+      {error && <DashboardAlert variant="error">{error}</DashboardAlert>}
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Rate Limits</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Per Minute</span>
-                  <span className="text-sm font-medium">
-                    {usageStats?.rate_limit_per_minute || 0} requests
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Per Hour</span>
-                  <span className="text-sm font-medium">
-                    {(usageStats?.rate_limit_per_minute || 0) * 60} requests
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Per Day</span>
-                  <span className="text-sm font-medium">
-                    {(usageStats?.rate_limit_per_minute || 0) * 60 * 24} requests
-                  </span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+      <div className="dashboard-grid-kpi">
+        <DashboardStatCard
+          label="Requests this month"
+          value={usageStats ? current.toLocaleString() : null}
+          hint={
+            usageStats
+              ? `${Math.round(usagePercentage)}% of ${quota.toLocaleString()} monthly quota`
+              : undefined
+          }
+          icon={Activity}
+          accent="brand"
+        />
+        <DashboardStatCard
+          label="Remaining"
+          value={usageStats ? Math.max(0, quota - current).toLocaleString() : null}
+          hint={`Period ends ${periodEndLabel} · ${daysRemaining} days left`}
+          icon={Gauge}
+          accent="indigo"
+        />
+        <DashboardStatCard
+          label="Rate limit"
+          value={usageStats ? `${rateLimit.toLocaleString()}/min` : null}
+          hint={
+            usageStats
+              ? `${(rateLimit * 60).toLocaleString()}/hour · ${(rateLimit * 60 * 24).toLocaleString()}/day`
+              : undefined
+          }
+          icon={Zap}
+          accent="orange"
+        />
+      </div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Performance</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Avg Response Time</span>
-                  <span className="text-sm font-medium">
-                    {usageData.length > 0
-                      ? Math.round(usageData.reduce((sum, d) => sum + d.avgResponseTime, 0) / usageData.length)
-                      : 0}ms
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Error Rate</span>
-                  <span className="text-sm font-medium">
-                    {usageData.length > 0
-                      ? ((usageData.reduce((sum, d) => sum + d.errors, 0) / usageData.reduce((sum, d) => sum + d.requests, 0)) * 100).toFixed(2)
-                      : 0}%
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">Uptime</span>
-                  <span className="text-sm font-medium text-green-600">99.9%</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+      <UsageTrendCards data={usageData} rangeLabel={RANGE_LABELS[timeRange]} />
+
+      <EndpointUsageTable endpointData={endpointData} />
     </DashboardPage>
   )
 }

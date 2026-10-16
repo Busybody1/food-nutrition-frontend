@@ -12,11 +12,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-surface-elevated flex items-center justify-center px-6">
+      <div className="dashboard-app flex items-center justify-center px-6">
         <div className="text-center max-w-sm">
           <div className="dashboard-spinner mx-auto mb-4" role="status" aria-label="Loading" />
-          <p className="text-sm font-medium text-ink">Verifying admin access</p>
-          <p className="text-xs text-ink-muted mt-1">Checking your permissions…</p>
+          <p className="text-sm font-medium text-dash-ink">Verifying admin access</p>
+          <p className="text-xs text-dash-muted mt-1">Checking your permissions…</p>
         </div>
       </div>
     )
@@ -24,11 +24,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   if (!isAdmin) {
     return (
-      <div className="min-h-screen bg-surface-elevated flex items-center justify-center p-6">
-        <div className="max-w-md w-full text-center bg-white border border-surface-border/80 rounded-brand p-8 shadow-glass">
-          <Shield className="w-12 h-12 text-ink-dim mx-auto mb-4" />
-          <h1 className="text-xl font-semibold text-ink mb-2">Access denied</h1>
-          <p className="text-sm text-ink-muted mb-6">
+      <div className="dashboard-app flex items-center justify-center p-6">
+        <div className="dashboard-card max-w-md p-8 text-center">
+          <span className="mx-auto mb-4 flex h-11 w-11 items-center justify-center rounded-xl border border-dash-border bg-dash-hover">
+            <Shield className="h-5 w-5 text-dash-muted" strokeWidth={1.75} aria-hidden />
+          </span>
+          <h1 className="mb-2 text-lg font-semibold text-dash-ink">Access denied</h1>
+          <p className="mb-6 text-[13px] text-dash-muted">
             This area is for platform administrators only.
           </p>
           <Button onClick={() => router.push('/dashboard')} className="w-full sm:w-auto">

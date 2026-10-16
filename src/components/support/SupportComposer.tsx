@@ -4,6 +4,7 @@ import { useRef, type FormEvent, type KeyboardEvent } from 'react'
 import { Paperclip, Send } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils/cn'
+import { DASHBOARD_ICON_STROKE } from '@/components/dashboard/dashboard-shell'
 
 const MAX_MESSAGE_LENGTH = 4000
 
@@ -18,6 +19,7 @@ export function SupportComposer({
   error,
   cannedReplies,
   placeholder = 'Write a message…',
+  className,
 }: {
   value: string
   onChange: (value: string) => void
@@ -29,6 +31,7 @@ export function SupportComposer({
   error?: string | null
   cannedReplies?: { label: string; text: string }[]
   placeholder?: string
+  className?: string
 }) {
   const fileRef = useRef<HTMLInputElement>(null)
   const busy = Boolean(disabled || sending || attaching)
@@ -47,16 +50,16 @@ export function SupportComposer({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="border-t border-surface-border/70 bg-white p-3">
+    <form onSubmit={handleSubmit} className={cn('border-t border-dash-border bg-white px-4 py-3', className)}>
       {cannedReplies && cannedReplies.length > 0 ? (
-        <div className="mb-2 flex flex-wrap gap-1.5">
+        <div className="mb-3 flex flex-wrap gap-1.5">
           {cannedReplies.map((reply) => (
             <button
               key={reply.label}
               type="button"
               disabled={busy}
               onClick={() => onChange(reply.text)}
-              className="rounded-full border border-surface-border/80 px-2.5 py-1 text-[11px] font-medium text-ink-muted hover:border-brand/30 hover:text-ink"
+              className="inline-flex h-7 items-center rounded-md border border-dash-border bg-white px-2.5 text-xs font-medium text-dash-body transition-colors hover:border-dash-border-strong hover:bg-dash-hover hover:text-dash-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 disabled:opacity-50"
             >
               {reply.label}
             </button>
@@ -79,15 +82,15 @@ export function SupportComposer({
             />
             <Button
               type="button"
-              variant="ghost"
+              variant="outline"
               size="sm"
-              className="h-9 w-9 p-0 shrink-0"
+              className="h-9 w-9 shrink-0 p-0"
               disabled={busy}
               onClick={() => fileRef.current?.click()}
               aria-label="Attach screenshot"
               title="Attach screenshot"
             >
-              <Paperclip className="h-4 w-4" />
+              <Paperclip className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
             </Button>
           </>
         ) : null}
@@ -99,18 +102,15 @@ export function SupportComposer({
           disabled={busy}
           rows={2}
           maxLength={MAX_MESSAGE_LENGTH}
-          className={cn(
-            'flex-1 min-h-[44px] max-h-32 resize-none rounded-brand border border-surface-border bg-white px-3 py-2 text-sm text-ink',
-            'placeholder:text-ink-dim focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/30'
-          )}
+          className="dashboard-textarea max-h-32 min-h-[44px] flex-1 resize-none"
         />
-        <Button type="submit" size="sm" className="h-9 shrink-0" disabled={busy}>
-          <Send className="h-4 w-4" />
-          <span className="sr-only">Send</span>
+        <Button type="submit" size="sm" className="h-9 shrink-0 gap-1.5" disabled={busy}>
+          <Send className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
+          Send
         </Button>
       </div>
-      {error ? <p className="mt-2 text-xs text-red-600">{error}</p> : null}
-      {attaching ? <p className="mt-2 text-xs text-ink-muted">Uploading screenshot…</p> : null}
+      {error ? <p className="mt-2 text-xs text-dash-negative">{error}</p> : null}
+      {attaching ? <p className="mt-2 text-xs text-dash-muted">Uploading screenshot…</p> : null}
     </form>
   )
 }

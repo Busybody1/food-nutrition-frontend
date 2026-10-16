@@ -8,12 +8,12 @@ import {
   SystemSettingRow,
 } from '@/lib/api/admin'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -26,6 +26,7 @@ import {
   ScanSearch,
   Eye,
   Settings2,
+  UserRound,
 } from 'lucide-react'
 import {
   AdminPage,
@@ -38,9 +39,13 @@ import {
   AdminTableWrap,
   AdminTable,
   AdminRefreshButton,
+  AdminDetailGrid,
+  DASHBOARD_ICON_STROKE,
+  DashboardIconTile,
   DashboardLoading,
   DashboardEmpty,
   DashboardAlert,
+  DashboardPill,
 } from '@/components/admin/admin-ui'
 
 const DETECTION_KEY = 'anomaly_detection_enabled'
@@ -52,20 +57,43 @@ function settingIsTrue(settings: SystemSettingRow[], key: string): boolean {
 
 function KindBadge({ kind }: { kind: string }) {
   if (kind === 'breadth_foods') {
-    return <Badge variant="destructive">Scrape breadth</Badge>
+    return <DashboardPill tone="rose">Scrape breadth</DashboardPill>
   }
   if (kind === 'volume_hourly' || kind === 'volume_daily') {
-    return <Badge variant="warning">{kind === 'volume_hourly' ? 'Volume · hourly' : 'Volume · daily'}</Badge>
+    return (
+      <DashboardPill tone="orange">
+        {kind === 'volume_hourly' ? 'Volume · hourly' : 'Volume · daily'}
+      </DashboardPill>
+    )
   }
-  if (kind === 'manual') return <Badge variant="secondary">Manual</Badge>
-  return <Badge variant="outline">{kind}</Badge>
+  if (kind === 'manual') return <DashboardPill tone="neutral">Manual</DashboardPill>
+  return <DashboardPill tone="outline">{kind}</DashboardPill>
 }
 
 function ActionBadge({ action }: { action: string }) {
   return action === 'held' ? (
-    <Badge variant="destructive">Held (423)</Badge>
+    <DashboardPill tone="rose">Held (423)</DashboardPill>
   ) : (
-    <Badge variant="warning">Alert only</Badge>
+    <DashboardPill tone="orange">Alert only</DashboardPill>
+  )
+}
+
+function ResolvedBadge({ resolved }: { resolved: boolean }) {
+  return resolved ? (
+    <DashboardPill tone="neutral">Resolved</DashboardPill>
+  ) : (
+    <DashboardPill tone="orange">Open</DashboardPill>
+  )
+}
+
+function UserAvatar() {
+  return (
+    <span
+      className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-dash-pill text-dash-body"
+      aria-hidden
+    >
+      <UserRound className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} />
+    </span>
   )
 }
 
@@ -105,6 +133,7 @@ export default function AdminSecurityPage() {
   }, [onlyUnresolved])
 
   useEffect(() => {
+    /* eslint-disable-next-line react-hooks/set-state-in-effect */
     load()
   }, [load])
 
@@ -169,61 +198,23 @@ export default function AdminSecurityPage() {
         title="Security"
         description="Usage-anomaly incidents and temporary account holds for suspected scraping / abuse."
         actions={
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={() => setHoldDialogOpen(true)}>
-              <Lock className="h-4 w-4 mr-1.5" aria-hidden />
+          <>
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-9 gap-1.5"
+              onClick={() => setHoldDialogOpen(true)}
+            >
+              <Lock className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
               Hold a user
             </Button>
             <AdminRefreshButton onClick={load} loading={loading} />
-          </div>
+          </>
         }
       />
 
       {error && <DashboardAlert variant="error">{error}</DashboardAlert>}
       {notice && <DashboardAlert variant="success">{notice}</DashboardAlert>}
-
-      {}
-      <AdminPanel
-        className={autoblockOn ? '' : 'border-amber-200/80 bg-amber-50/40'}
-      >
-        <AdminPanelHeader title="Detection status" icon={Settings2} />
-        <AdminPanelBody className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <span className="font-semibold text-ink">Anomaly detection</span>
-              <Badge variant={detectionOn ? 'success' : 'outline'}>
-                {detectionOn ? 'On' : 'Off'}
-              </Badge>
-              <span className="text-ink-dim">·</span>
-              <span className="font-semibold text-ink">Auto-block</span>
-              <Badge variant={autoblockOn ? 'destructive' : 'warning'}>
-                {autoblockOn ? 'Armed' : 'Shadow (alert only)'}
-              </Badge>
-            </div>
-            <p className="text-sm text-ink-muted max-w-2xl">
-              {autoblockOn
-                ? 'Tripwires auto-place a temporary, auto-expiring hold (HTTP 423) and alert Discord. Holds appear below for review.'
-                : 'Shadow mode: tripwires alert Discord but do not block. Calibrate thresholds on the Settings page, then arm auto-block once the signals look right.'}
-            </p>
-          </div>
-          <div className="flex items-center gap-6 shrink-0">
-            <label className="flex items-center gap-2 text-sm">
-              <Switch
-                checked={detectionOn}
-                onCheckedChange={(v) => toggleSetting(DETECTION_KEY, v)}
-              />
-              <span className="text-ink-muted">Detect</span>
-            </label>
-            <label className="flex items-center gap-2 text-sm">
-              <Switch
-                checked={autoblockOn}
-                onCheckedChange={(v) => toggleSetting(AUTOBLOCK_KEY, v)}
-              />
-              <span className="text-ink-muted">Auto-block</span>
-            </label>
-          </div>
-        </AdminPanelBody>
-      </AdminPanel>
 
       <AdminStatGrid>
         <DashboardStatCard label="Active holds" value={holds.length} icon={Lock} accent="orange" />
@@ -231,13 +222,13 @@ export default function AdminSecurityPage() {
           label={onlyUnresolved ? 'Open incidents' : 'Incidents shown'}
           value={onlyUnresolved ? unresolvedCount : incidents.length}
           icon={ShieldAlert}
-          accent="brand"
+          accent="rose"
         />
         <DashboardStatCard
           label="Auto-block"
           value={autoblockOn ? 'Armed' : 'Shadow'}
           icon={Activity}
-          accent={autoblockOn ? 'purple' : 'orange'}
+          accent={autoblockOn ? 'indigo' : 'orange'}
         />
         <DashboardStatCard
           label="Detection"
@@ -247,7 +238,51 @@ export default function AdminSecurityPage() {
         />
       </AdminStatGrid>
 
-      {}
+      <AdminPanel
+        className={autoblockOn ? undefined : 'border-dash-warning/30 bg-dash-warning-soft/40'}
+      >
+        <AdminPanelHeader title="Detection status" icon={Settings2} />
+        <AdminPanelBody className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <p className="max-w-2xl text-[13px] leading-5 text-dash-muted">
+            {autoblockOn
+              ? 'Tripwires auto-place a temporary, auto-expiring hold (HTTP 423) and alert Discord. Holds appear below for review.'
+              : 'Shadow mode: tripwires alert Discord but do not block. Calibrate thresholds on the Settings page, then arm auto-block once the signals look right.'}
+          </p>
+          <div className="grid shrink-0 gap-3 sm:grid-cols-2 lg:w-[600px]">
+            <div className="flex items-center justify-between gap-3 rounded-xl border border-dash-border bg-white px-4 py-3">
+              <div className="min-w-0 space-y-1">
+                <p className="text-[13px] font-semibold text-dash-ink">Anomaly detection</p>
+                <DashboardPill tone={detectionOn ? 'green' : 'outline'}>
+                  {detectionOn ? 'On' : 'Off'}
+                </DashboardPill>
+              </div>
+              <label className="flex shrink-0 items-center gap-2 text-[13px]">
+                <Switch
+                  checked={detectionOn}
+                  onCheckedChange={(v) => toggleSetting(DETECTION_KEY, v)}
+                />
+                <span className="text-dash-muted">Detect</span>
+              </label>
+            </div>
+            <div className="flex items-center justify-between gap-3 rounded-xl border border-dash-border bg-white px-4 py-3">
+              <div className="min-w-0 space-y-1">
+                <p className="text-[13px] font-semibold text-dash-ink">Auto-block</p>
+                <DashboardPill tone={autoblockOn ? 'rose' : 'orange'}>
+                  {autoblockOn ? 'Armed' : 'Shadow (alert only)'}
+                </DashboardPill>
+              </div>
+              <label className="flex shrink-0 items-center gap-2 text-[13px]">
+                <Switch
+                  checked={autoblockOn}
+                  onCheckedChange={(v) => toggleSetting(AUTOBLOCK_KEY, v)}
+                />
+                <span className="text-dash-muted">Auto-block</span>
+              </label>
+            </div>
+          </div>
+        </AdminPanelBody>
+      </AdminPanel>
+
       <AdminPanel>
         <AdminPanelHeader title={`Active holds (${holds.length})`} icon={Lock} />
         {loading && holds.length === 0 ? (
@@ -266,32 +301,40 @@ export default function AdminSecurityPage() {
                   <tr>
                     <th>User</th>
                     <th>Reason</th>
-                    <th>Holds</th>
+                    <th className="dashboard-num">Holds</th>
                     <th>Until</th>
-                    <th>Action</th>
+                    <th className="text-right">Action</th>
                   </tr>
                 </thead>
                 <tbody>
                   {holds.map((h) => (
                     <tr key={h.id}>
                       <td>
-                        <div className="font-medium text-ink">{h.email || `User ${h.id}`}</div>
-                        <div className="text-xs text-ink-muted">ID {h.id}</div>
+                        <div className="flex min-w-0 items-center gap-3">
+                          <UserAvatar />
+                          <div className="min-w-0">
+                            <div className="max-w-[200px] truncate font-medium text-dash-ink">
+                              {h.email || `User ${h.id}`}
+                            </div>
+                            <div className="text-xs tabular-nums text-dash-muted">ID {h.id}</div>
+                          </div>
+                        </div>
                       </td>
-                      <td className="max-w-[280px] text-xs text-ink-muted">
+                      <td className="max-w-[280px] text-xs text-dash-muted">
                         {h.security_hold_reason || '—'}
                       </td>
-                      <td className="tabular-nums">{h.security_hold_count ?? 1}</td>
-                      <td className="whitespace-nowrap text-xs text-ink-muted">
+                      <td className="dashboard-num">{h.security_hold_count ?? 1}</td>
+                      <td className="whitespace-nowrap text-xs tabular-nums text-dash-muted">
                         {new Date(h.security_hold_until).toLocaleString()}
                       </td>
-                      <td>
+                      <td className="text-right">
                         <Button
                           variant="outline"
                           size="sm"
+                          className="h-8 gap-1.5"
                           onClick={() => releaseHold(h.id, h.email)}
                         >
-                          <Unlock className="h-4 w-4 mr-1.5" aria-hidden />
+                          <Unlock className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
                           Release
                         </Button>
                       </td>
@@ -304,13 +347,12 @@ export default function AdminSecurityPage() {
         )}
       </AdminPanel>
 
-      {}
       <AdminPanel>
         <AdminPanelHeader
           title="Incidents"
           icon={ShieldAlert}
           actions={
-            <label className="flex items-center gap-2 text-xs text-ink-muted">
+            <label className="flex items-center gap-2 text-xs text-dash-muted">
               <Switch checked={onlyUnresolved} onCheckedChange={setOnlyUnresolved} />
               Unresolved only
             </label>
@@ -340,7 +382,9 @@ export default function AdminSecurityPage() {
                     <th>Detail</th>
                     <th>Action</th>
                     <th>Status</th>
-                    <th></th>
+                    <th>
+                      <span className="sr-only">Actions</span>
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -348,21 +392,26 @@ export default function AdminSecurityPage() {
                     const heldOpen = inc.action_taken === 'held' && !inc.resolved
                     return (
                       <tr key={inc.id}>
-                        <td className="whitespace-nowrap text-xs text-ink-muted">
+                        <td className="whitespace-nowrap text-xs tabular-nums text-dash-muted">
                           {new Date(inc.created_at).toLocaleString()}
                         </td>
                         <td>
-                          <div className="font-medium text-ink truncate max-w-[160px]">
-                            {inc.email || (inc.user_id ? `User ${inc.user_id}` : '—')}
+                          <div className="flex min-w-0 items-center gap-3">
+                            <UserAvatar />
+                            <div className="min-w-0">
+                              <div className="max-w-[160px] truncate font-medium text-dash-ink">
+                                {inc.email || (inc.user_id ? `User ${inc.user_id}` : '—')}
+                              </div>
+                              {inc.ip_address && (
+                                <div className="font-mono text-xs text-dash-muted">{inc.ip_address}</div>
+                              )}
+                            </div>
                           </div>
-                          {inc.ip_address && (
-                            <div className="text-xs text-ink-muted font-mono">{inc.ip_address}</div>
-                          )}
                         </td>
                         <td>
                           <KindBadge kind={inc.kind} />
                         </td>
-                        <td className="max-w-[260px] text-xs text-ink-muted">
+                        <td className="max-w-[260px] text-xs text-dash-muted">
                           {(inc.detail?.reasons && inc.detail.reasons[0]) ||
                             inc.detail?.reason ||
                             '—'}
@@ -371,21 +420,25 @@ export default function AdminSecurityPage() {
                           <ActionBadge action={inc.action_taken} />
                         </td>
                         <td>
-                          {inc.resolved ? (
-                            <Badge variant="secondary">Resolved</Badge>
-                          ) : (
-                            <Badge variant="warning">Open</Badge>
-                          )}
+                          <ResolvedBadge resolved={inc.resolved} />
                         </td>
                         <td>
-                          <div className="flex items-center gap-1.5 justify-end">
-                            <Button variant="ghost" size="sm" onClick={() => setDetail(inc)}>
-                              <Eye className="h-4 w-4" aria-hidden />
+                          <div className="flex items-center justify-end gap-1.5">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 w-8 p-0"
+                              onClick={() => setDetail(inc)}
+                              aria-label={`View incident #${inc.id}`}
+                              title="View details"
+                            >
+                              <Eye className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
                             </Button>
                             {heldOpen && inc.user_id && (
                               <Button
                                 variant="outline"
                                 size="sm"
+                                className="h-8"
                                 onClick={() => releaseHold(inc.user_id!, inc.email)}
                               >
                                 Release
@@ -403,70 +456,54 @@ export default function AdminSecurityPage() {
         )}
       </AdminPanel>
 
-      {}
       <Dialog open={!!detail} onOpenChange={(open) => !open && setDetail(null)}>
         <DialogContent className="max-w-lg">
-          <DialogHeader>
-            <DialogTitle>Incident #{detail?.id}</DialogTitle>
+          <DialogHeader className="text-left">
+            <div className="flex items-center gap-2.5">
+              <DashboardIconTile icon={ShieldAlert} tone="rose" />
+              <DialogTitle>Incident #{detail?.id}</DialogTitle>
+            </div>
           </DialogHeader>
           {detail && (
-            <div className="space-y-4 text-sm">
+            <div className="space-y-5 text-[13px]">
               <div className="flex flex-wrap items-center gap-2">
                 <KindBadge kind={detail.kind} />
                 <ActionBadge action={detail.action_taken} />
-                {detail.resolved ? (
-                  <Badge variant="secondary">Resolved</Badge>
-                ) : (
-                  <Badge variant="warning">Open</Badge>
-                )}
+                <ResolvedBadge resolved={detail.resolved} />
               </div>
 
               <div>
-                <p className="text-xs font-medium uppercase tracking-wide text-ink-dim mb-1">
-                  Signals
-                </p>
-                <ul className="space-y-1">
+                <p className="dashboard-field-label">Signals</p>
+                <ul className="space-y-1 rounded-xl border border-dash-border bg-dash-hover px-3 py-2.5">
                   {(detail.detail?.reasons || (detail.detail?.reason ? [detail.detail.reason] : [])).map(
                     (r, i) => (
-                      <li key={i} className="text-ink">• {String(r)}</li>
+                      <li key={i} className="text-dash-ink">• {String(r)}</li>
                     )
                   )}
                 </ul>
               </div>
 
-              <dl className="grid grid-cols-2 gap-3">
-                <div>
-                  <dt className="text-xs font-medium uppercase tracking-wide text-ink-dim">User</dt>
-                  <dd className="text-ink">{detail.email || `ID ${detail.user_id ?? '—'}`}</dd>
-                </div>
-                <div>
-                  <dt className="text-xs font-medium uppercase tracking-wide text-ink-dim">When</dt>
-                  <dd className="text-ink">{new Date(detail.created_at).toLocaleString()}</dd>
-                </div>
-                <div>
-                  <dt className="text-xs font-medium uppercase tracking-wide text-ink-dim">Requests / hr</dt>
-                  <dd className="text-ink tabular-nums">{detail.requests_in_window ?? '—'}</dd>
-                </div>
-                <div>
-                  <dt className="text-xs font-medium uppercase tracking-wide text-ink-dim">Distinct foods / hr</dt>
-                  <dd className="text-ink tabular-nums">{detail.distinct_foods ?? '—'}</dd>
-                </div>
-                <div>
-                  <dt className="text-xs font-medium uppercase tracking-wide text-ink-dim">IP</dt>
-                  <dd className="text-ink font-mono text-xs break-all">{detail.ip_address || '—'}</dd>
-                </div>
-                <div>
-                  <dt className="text-xs font-medium uppercase tracking-wide text-ink-dim">Last path</dt>
-                  <dd className="text-ink font-mono text-xs break-all">{detail.detail?.path || '—'}</dd>
-                </div>
-              </dl>
+              <AdminDetailGrid
+                items={[
+                  { label: 'User', value: detail.email || `ID ${detail.user_id ?? '—'}` },
+                  { label: 'When', value: new Date(detail.created_at).toLocaleString() },
+                  {
+                    label: 'Requests / hr',
+                    value: <span className="tabular-nums">{detail.requests_in_window ?? '—'}</span>,
+                  },
+                  {
+                    label: 'Distinct foods / hr',
+                    value: <span className="tabular-nums">{detail.distinct_foods ?? '—'}</span>,
+                  },
+                  { label: 'IP', value: detail.ip_address || '—', mono: true },
+                  { label: 'Last path', value: detail.detail?.path || '—', mono: true },
+                ]}
+              />
 
               {detail.user_agent && (
                 <div>
-                  <p className="text-xs font-medium uppercase tracking-wide text-ink-dim mb-1">
-                    User agent
-                  </p>
-                  <p className="text-ink font-mono text-xs break-all">{detail.user_agent}</p>
+                  <p className="dashboard-field-label">User agent</p>
+                  <p className="dashboard-code-block block">{detail.user_agent}</p>
                 </div>
               )}
             </div>
@@ -475,35 +512,39 @@ export default function AdminSecurityPage() {
             {detail?.action_taken === 'held' && !detail?.resolved && detail?.user_id && (
               <Button
                 variant="outline"
+                size="sm"
+                className="h-9 gap-1.5"
                 onClick={() => {
                   releaseHold(detail.user_id!, detail.email)
                   setDetail(null)
                 }}
               >
-                <Unlock className="h-4 w-4 mr-1.5" aria-hidden />
+                <Unlock className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
                 Release hold
               </Button>
             )}
-            <Button onClick={() => setDetail(null)}>Close</Button>
+            <Button size="sm" className="h-9" onClick={() => setDetail(null)}>
+              Close
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {}
       <Dialog open={holdDialogOpen} onOpenChange={(open) => !open && setHoldDialogOpen(false)}>
         <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>Place a security hold</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 text-sm">
-            <p className="text-ink-muted">
+          <DialogHeader className="text-left">
+            <div className="flex items-center gap-2.5">
+              <DashboardIconTile icon={Lock} tone="orange" />
+              <DialogTitle>Place a security hold</DialogTitle>
+            </div>
+            <DialogDescription>
               Temporarily blocks the user&apos;s API traffic (HTTP 423). The hold auto-expires after
               the set minutes and can be released any time.
-            </p>
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
             <div>
-              <label className="block text-xs font-medium uppercase tracking-wide text-ink-dim mb-1">
-                User ID
-              </label>
+              <label className="dashboard-field-label">User ID</label>
               <Input
                 inputMode="numeric"
                 placeholder="e.g. 128"
@@ -512,27 +553,30 @@ export default function AdminSecurityPage() {
               />
             </div>
             <div>
-              <label className="block text-xs font-medium uppercase tracking-wide text-ink-dim mb-1">
-                Duration (minutes)
-              </label>
+              <label className="dashboard-field-label">Duration (minutes)</label>
               <Input
                 inputMode="numeric"
                 value={holdMinutes}
                 onChange={(e) => setHoldMinutes(e.target.value)}
+                className="tabular-nums"
               />
             </div>
             <div>
-              <label className="block text-xs font-medium uppercase tracking-wide text-ink-dim mb-1">
-                Reason
-              </label>
+              <label className="dashboard-field-label">Reason</label>
               <Input value={holdReason} onChange={(e) => setHoldReason(e.target.value)} />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setHoldDialogOpen(false)} disabled={holdSubmitting}>
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-9"
+              onClick={() => setHoldDialogOpen(false)}
+              disabled={holdSubmitting}
+            >
               Cancel
             </Button>
-            <Button onClick={submitHold} disabled={holdSubmitting}>
+            <Button size="sm" className="h-9" onClick={submitHold} disabled={holdSubmitting}>
               {holdSubmitting ? 'Placing…' : 'Place hold'}
             </Button>
           </DialogFooter>

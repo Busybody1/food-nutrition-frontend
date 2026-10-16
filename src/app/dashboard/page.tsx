@@ -1,27 +1,35 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
 import { useAuth } from '@/lib/hooks/use-auth'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
+import { formatCompact } from '@/components/dashboard/dashboard-charts'
 import {
   DashboardPage as DashboardShell,
   DashboardPageHeader,
+  DashboardPageSkeleton,
   DashboardStatCard,
-  DashboardLoading,
   DashboardAlert,
   DashboardProgress,
   DashboardQuickAction,
   DashboardEmpty,
+  DashboardPanel,
+  DashboardPanelHeader,
+  DashboardPanelBody,
+  DashboardPill,
+  DASHBOARD_ICON_STROKE,
 } from '@/components/dashboard/dashboard-shell'
 import {
   Key,
   BarChart3,
   CreditCard,
   Activity,
-  TrendingUp,
+  Gauge,
   RefreshCw,
+  Zap,
+  ArrowUpRight,
 } from 'lucide-react'
 
 interface ApiKey {
@@ -70,12 +78,6 @@ export default function DashboardPage() {
       router.push('/auth/login')
     }
   }, [isAuthenticated, loading, router])
-
-  useEffect(() => {
-    if (!loading && isAuthenticated) {
-      loadDashboardData()
-    }
-  }, [isAuthenticated, loading])
 
   const loadDashboardData = async () => {
     try {
@@ -127,8 +129,15 @@ export default function DashboardPage() {
     }
   }
 
+  useEffect(() => {
+    if (!loading && isAuthenticated) {
+      /* eslint-disable-next-line react-hooks/set-state-in-effect */
+      loadDashboardData()
+    }
+  }, [isAuthenticated, loading])
+
   if (loading || isLoading) {
-    return <DashboardLoading message="Loading dashboard..." />
+    return <DashboardPageSkeleton kpis={3} label="Loading dashboard..." />
   }
 
   if (!isAuthenticated) return null
@@ -138,20 +147,47 @@ export default function DashboardPage() {
       ? Math.min((stats.requestsThisMonth / stats.monthlyQuota) * 100, 100)
       : 0
 
+  const resetDate = new Date(
+    new Date().getFullYear(),
+    new Date().getMonth() + 1,
+    1
+  ).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+
+  const planMeta = stats ? (
+    <Link
+      href="/dashboard/billing"
+      className="dashboard-meta-pill transition-colors hover:bg-dash-hover"
+      title="Current plan"
+    >
+      <CreditCard className="h-3.5 w-3.5 text-dash-muted" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
+      <span>{stats.planName}</span>
+      <span className="text-dash-dim" aria-hidden>
+        ·
+      </span>
+      <span className="tabular-nums text-dash-muted">
+        {stats.planPrice > 0 ? `$${stats.planPrice}/mo` : 'Free tier'}
+      </span>
+    </Link>
+  ) : undefined
+
   return (
     <DashboardShell>
       <DashboardPageHeader
         title={`Welcome back${user?.first_name ? `, ${user.first_name}` : ''}`}
         description="Monitor API usage, manage keys, and billing from one place."
+        meta={planMeta}
       >
         <Button
           variant="outline"
           size="sm"
           onClick={loadDashboardData}
           disabled={isLoading}
-          className="gap-2"
+          className="h-9 gap-1.5"
         >
-          <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+          <RefreshCw
+            className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`}
+            strokeWidth={DASHBOARD_ICON_STROKE}
+          />
           Refresh
         </Button>
       </DashboardPageHeader>
@@ -159,44 +195,94 @@ export default function DashboardPage() {
       {error && <DashboardAlert variant="error">{error}</DashboardAlert>}
 
       {stats && (
-        <div className="space-y-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+        <>
+          <div className="dashboard-grid-kpi">
             <DashboardStatCard
-              label="API keys"
-              value={`${stats.activeApiKeys} / ${stats.totalApiKeys}`}
-              hint="Active keys"
-              icon={Key}
-              accent="brand"
-            />
-            <DashboardStatCard
-              label="This month"
+              label="Requests this month"
               value={stats.requestsThisMonth.toLocaleString()}
               hint="API requests"
-              icon={BarChart3}
-              accent="green"
+              icon={Activity}
+              accent="brand"
             />
             <DashboardStatCard
               label="Quota used"
               value={`${usagePct.toFixed(1)}%`}
               hint={`${stats.monthlyQuota.toLocaleString()} monthly limit`}
-              icon={TrendingUp}
-              accent="purple"
+              icon={Gauge}
+              accent="indigo"
             />
             <DashboardStatCard
-              label="Current plan"
-              value={stats.planName}
-              hint={stats.planPrice > 0 ? `$${stats.planPrice}/mo` : 'Free tier'}
-              icon={CreditCard}
-              accent="orange"
+              label="Active API keys"
+              value={stats.activeApiKeys.toLocaleString()}
+              hint={`${stats.activeApiKeys} / ${stats.totalApiKeys} keys active`}
+              icon={Key}
+              accent="green"
             />
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <div className="dashboard-panel">
-              <div className="dashboard-panel-header">
-                <h2 className="dashboard-panel-title">Quick actions</h2>
-              </div>
-              <div className="dashboard-panel-body space-y-2">
+          <div className="dashboard-grid-wide">
+            <DashboardPanel className="flex flex-col">
+              <DashboardPanelHeader
+                title="Monthly usage"
+                icon={BarChart3}
+                description={`Resets ${resetDate}`}
+                actions={
+                  <Button asChild variant="outline" size="sm" className="h-9 gap-1.5">
+                    <Link href="/dashboard/usage">
+                      Usage details
+                      <ArrowUpRight className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
+                    </Link>
+                  </Button>
+                }
+              />
+              <DashboardPanelBody className="flex flex-1 flex-col">
+                <div className="flex flex-wrap items-end justify-between gap-3">
+                  <div>
+                    <p className="dashboard-summary-value">
+                      {stats.requestsThisMonth.toLocaleString()}
+                    </p>
+                    <p className="mt-0.5 text-xs text-dash-muted tabular-nums">
+                      of {stats.monthlyQuota.toLocaleString()} requests
+                    </p>
+                  </div>
+                  <DashboardPill tone={usagePct >= 90 ? 'rose' : usagePct >= 75 ? 'orange' : 'brand'}>
+                    <span className="tabular-nums">{usagePct.toFixed(1)}%</span> consumed
+                  </DashboardPill>
+                </div>
+                <DashboardProgress
+                  className="mt-5 h-3"
+                  value={stats.requestsThisMonth}
+                  max={stats.monthlyQuota}
+                />
+                <div className="mt-2 flex justify-between text-[11px] tabular-nums text-dash-dim" aria-hidden>
+                  {[0, 0.25, 0.5, 0.75, 1].map((step) => (
+                    <span key={step}>{formatCompact(stats.monthlyQuota * step)}</span>
+                  ))}
+                </div>
+                <div className="mt-auto grid grid-cols-1 gap-3 pt-6 sm:grid-cols-3">
+                  <div className="rounded-xl bg-dash-hover px-4 py-3">
+                    <p className="text-xs text-dash-muted">Remaining</p>
+                    <p className="mt-0.5 text-lg font-semibold leading-7 text-dash-ink tabular-nums">
+                      {Math.max(0, stats.monthlyQuota - stats.requestsThisMonth).toLocaleString()}
+                    </p>
+                  </div>
+                  <div className="rounded-xl bg-dash-hover px-4 py-3">
+                    <p className="text-xs text-dash-muted">Monthly limit</p>
+                    <p className="mt-0.5 text-lg font-semibold leading-7 text-dash-ink tabular-nums">
+                      {stats.monthlyQuota.toLocaleString()}
+                    </p>
+                  </div>
+                  <div className="rounded-xl bg-dash-hover px-4 py-3">
+                    <p className="text-xs text-dash-muted">Resets</p>
+                    <p className="mt-0.5 text-lg font-semibold leading-7 text-dash-ink">{resetDate}</p>
+                  </div>
+                </div>
+              </DashboardPanelBody>
+            </DashboardPanel>
+
+            <DashboardPanel>
+              <DashboardPanelHeader title="Quick actions" icon={Zap} />
+              <DashboardPanelBody className="space-y-2">
                 <DashboardQuickAction
                   href="/dashboard/api-keys"
                   icon={Key}
@@ -222,79 +308,52 @@ export default function DashboardPage() {
                   title="Billing & invoices"
                   description="Payment methods and subscription"
                 />
-              </div>
-            </div>
-
-            <div className="dashboard-panel">
-              <div className="dashboard-panel-header">
-                <h2 className="dashboard-panel-title">Monthly usage</h2>
-                <span className="text-xs font-medium text-ink-muted tabular-nums">
-                  {stats.requestsThisMonth.toLocaleString()} / {stats.monthlyQuota.toLocaleString()}
-                </span>
-              </div>
-              <div className="dashboard-panel-body space-y-5">
-                <div>
-                  <div className="flex justify-between text-xs text-ink-muted mb-2">
-                    <span>Consumed</span>
-                    <span className="font-medium text-ink">{usagePct.toFixed(1)}%</span>
-                  </div>
-                  <DashboardProgress
-                    value={stats.requestsThisMonth}
-                    max={stats.monthlyQuota}
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="rounded-brand bg-surface-elevated px-4 py-3">
-                    <p className="text-xs text-ink-muted">Remaining</p>
-                    <p className="text-lg font-semibold text-ink tabular-nums mt-0.5">
-                      {Math.max(0, stats.monthlyQuota - stats.requestsThisMonth).toLocaleString()}
-                    </p>
-                  </div>
-                  <div className="rounded-brand bg-surface-elevated px-4 py-3">
-                    <p className="text-xs text-ink-muted">Resets</p>
-                    <p className="text-lg font-semibold text-ink mt-0.5">
-                      {new Date(
-                        new Date().getFullYear(),
-                        new Date().getMonth() + 1,
-                        1
-                      ).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
+              </DashboardPanelBody>
+            </DashboardPanel>
           </div>
 
-          <div className="dashboard-panel">
-            <div className="dashboard-panel-header">
-              <h2 className="dashboard-panel-title">Recent activity</h2>
-              <Button variant="ghost" size="sm" onClick={loadDashboardData} disabled={isLoading}>
-                <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
-              </Button>
-            </div>
-            <div className="dashboard-panel-body">
+          <DashboardPanel>
+            <DashboardPanelHeader
+              title="Recent activity"
+              icon={Activity}
+              actions={
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={loadDashboardData}
+                  disabled={isLoading}
+                  className="h-8 w-8 p-0"
+                  aria-label="Refresh activity"
+                  title="Refresh activity"
+                >
+                  <RefreshCw
+                    className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`}
+                    strokeWidth={DASHBOARD_ICON_STROKE}
+                  />
+                </Button>
+              }
+            />
+            <DashboardPanelBody>
               {stats.recentActivity.length === 0 ? (
                 <DashboardEmpty
                   icon={Activity}
                   title="No activity yet"
                   description="API key events and usage alerts will show up here."
+                  className="py-8"
                 />
               ) : (
-                <ul className="space-y-3">
+                <ul>
                   {stats.recentActivity.map((activity) => (
-                    <li
-                      key={activity.id}
-                      className="flex items-start justify-between gap-3 py-2 border-b border-surface-border/50 last:border-0"
-                    >
-                      <p className="text-sm text-ink">{activity.message}</p>
-                      <Badge variant="secondary">{activity.type.replace('_', ' ')}</Badge>
+                    <li key={activity.id} className="dashboard-activity-item items-center justify-between">
+                      <p className="text-[13px] text-dash-ink">{activity.message}</p>
+                      <DashboardPill tone="neutral">{activity.type.replace('_', ' ')}</DashboardPill>
                     </li>
                   ))}
                 </ul>
               )}
-            </div>
-          </div>
-        </div>
+            </DashboardPanelBody>
+          </DashboardPanel>
+        </>
       )}
     </DashboardShell>
   )

@@ -20,7 +20,12 @@ import {
   AdminPanel,
   AdminPanelBody,
   AdminPanelHeader,
+  AdminTable,
+  AdminTableWrap,
   DashboardAlert,
+  DashboardLoading,
+  InfoHint,
+  DASHBOARD_ICON_STROKE,
 } from '@/components/admin/admin-ui'
 
 export function emailDomainLabel(email: string): string {
@@ -28,6 +33,17 @@ export function emailDomainLabel(email: string): string {
   const at = trimmed.lastIndexOf('@')
   const domain = (at >= 0 ? trimmed.slice(at + 1) : trimmed).replace(/\.+$/, '')
   return domain || trimmed
+}
+
+const CHECKBOX_CLASS =
+  'mt-0.5 h-4 w-4 shrink-0 cursor-pointer rounded border-dash-border accent-dash-teal-strong disabled:cursor-not-allowed'
+
+const WARNING_OPTION_CLASS =
+  'flex items-start gap-2.5 rounded-xl border border-dash-warning/20 bg-dash-warning-soft px-3.5 py-2.5 text-dash-warning'
+
+function formatBanDate(value: string): string {
+  const date = new Date(value)
+  return Number.isNaN(date.getTime()) ? '—' : date.toLocaleDateString()
 }
 
 function messageFrom(err: unknown, fallback: string): string {
@@ -54,10 +70,10 @@ function BanConfirmOptions({
   disabled: boolean
 }) {
   return (
-    <div className="space-y-2 text-sm text-ink-muted">
+    <div className="space-y-2.5 text-[13px] leading-5 text-dash-body">
       {preview && (
-        <p>
-          <span className="font-medium text-ink">{preview.domain}</span>
+        <p className="rounded-xl border border-dash-border bg-dash-hover px-3.5 py-2.5 text-dash-muted">
+          <span className="font-medium text-dash-ink">{preview.domain}</span>
           {' '}matches {preview.account_count.toLocaleString()} account
           {preview.account_count === 1 ? '' : 's'}
           {preview.active_account_count > 0
@@ -66,10 +82,10 @@ function BanConfirmOptions({
           . New signups on this domain and its subdomains are blocked.
         </p>
       )}
-      <label className="flex items-start gap-2">
+      <label className="flex items-start gap-2.5">
         <input
           type="checkbox"
-          className="mt-1 rounded border-gray-300"
+          className={CHECKBOX_CLASS}
           checked={deactivateExisting}
           disabled={disabled}
           onChange={(event) => onDeactivateExisting(event.target.checked)}
@@ -77,10 +93,10 @@ function BanConfirmOptions({
         <span>Deactivate existing non-admin accounts on this domain.</span>
       </label>
       {preview?.locks_out_actor && (
-        <label className="flex items-start gap-2">
+        <label className={WARNING_OPTION_CLASS}>
           <input
             type="checkbox"
-            className="mt-1 rounded border-gray-300"
+            className={CHECKBOX_CLASS}
             checked={allowSelfLockout}
             disabled={disabled}
             onChange={(event) => onAllowSelfLockout(event.target.checked)}
@@ -89,10 +105,10 @@ function BanConfirmOptions({
         </label>
       )}
       {preview?.requires_large_confirm && (
-        <label className="flex items-start gap-2">
+        <label className={WARNING_OPTION_CLASS}>
           <input
             type="checkbox"
-            className="mt-1 rounded border-gray-300"
+            className={CHECKBOX_CLASS}
             checked={confirmLarge}
             disabled={disabled}
             onChange={(event) => onConfirmLarge(event.target.checked)}
@@ -236,11 +252,14 @@ export function BannedEmailDomainsPanel({
 
   return (
     <AdminPanel>
-      <AdminPanelHeader title="Banned email domains" icon={AtSign} />
+      <AdminPanelHeader
+        title="Banned email domains"
+        icon={AtSign}
+        actions={
+          <InfoHint text="Stop new accounts from a spam domain. Subdomains are included. Admin accounts stay active." />
+        }
+      />
       <AdminPanelBody>
-        <p className="text-sm text-ink-muted mb-4">
-          Stop new accounts from a spam domain. Subdomains are included. Admin accounts stay active.
-        </p>
         {error && <div className="mb-3"><DashboardAlert variant="error">{error}</DashboardAlert></div>}
         {notice && <div className="mb-3"><DashboardAlert variant="success">{notice}</DashboardAlert></div>}
         <form
@@ -250,7 +269,7 @@ export function BannedEmailDomainsPanel({
             void handleAdd()
           }}
         >
-          <div className="flex flex-col lg:flex-row gap-2">
+          <div className="flex flex-col gap-2 lg:flex-row">
             <Input
               value={domain}
               onChange={(event) => {
@@ -268,7 +287,12 @@ export function BannedEmailDomainsPanel({
               aria-label="Reason for the email domain ban"
               disabled={saving}
             />
-            <Button type="submit" disabled={saving || !domain.trim()}>
+            <Button
+              type="submit"
+              size="sm"
+              className="h-9 shrink-0"
+              disabled={saving || !domain.trim()}
+            >
               {saving
                 ? 'Saving…'
                 : preview && domain.trim() === previewInput
@@ -287,40 +311,74 @@ export function BannedEmailDomainsPanel({
             disabled={saving}
           />
         </form>
-        <div className="mt-4 space-y-2 max-h-64 overflow-y-auto">
-          {loading && bans.length === 0 ? (
-            <p className="text-sm text-ink-muted">Loading banned domains…</p>
-          ) : bans.length === 0 ? (
-            <p className="text-sm text-ink-muted">No email domains are banned.</p>
-          ) : (
-            bans.map((ban) => (
-              <div
-                key={ban.id}
-                className="flex items-start justify-between gap-3 rounded-md border border-gray-200 px-3 py-2"
-              >
-                <div className="min-w-0">
-                  <div className="text-sm font-medium text-ink truncate">{ban.domain}</div>
-                  <div className="text-xs text-ink-muted">
-                    {ban.account_count.toLocaleString()} accounts
-                    {ban.reason ? ` · ${ban.reason}` : ''}
-                  </div>
-                </div>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  title={`Remove ban for ${ban.domain}`}
-                  aria-label={`Remove ban for ${ban.domain}`}
-                  disabled={saving}
-                  onClick={() => void handleRemove(ban)}
-                >
-                  <Trash2 className="w-4 h-4" />
-                </Button>
-              </div>
-            ))
-          )}
-        </div>
       </AdminPanelBody>
+      {loading && bans.length === 0 ? (
+        <DashboardLoading message="Loading banned domains…" className="min-h-[120px] pb-5" />
+      ) : bans.length === 0 ? (
+        <p className="border-t border-dash-border px-5 py-4 text-[13px] text-dash-muted">
+          No email domains are banned.
+        </p>
+      ) : (
+        <div className="max-h-80 overflow-y-auto rounded-b-2xl">
+          <AdminTableWrap>
+            <AdminTable>
+              <thead>
+                <tr>
+                  <th>Domain</th>
+                  <th>Reason</th>
+                  <th>Created</th>
+                  <th className="dashboard-num">Accounts</th>
+                  <th className="text-right">
+                    <span className="sr-only">Actions</span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {bans.map((ban) => (
+                  <tr key={ban.id}>
+                    <td className="max-w-[240px]">
+                      <div className="flex min-w-0 items-center gap-2.5">
+                        <span
+                          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-dash-negative-soft text-dash-negative"
+                          aria-hidden
+                        >
+                          <AtSign className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} />
+                        </span>
+                        <span className="truncate font-medium text-dash-ink" title={ban.domain}>
+                          {ban.domain}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="max-w-[280px] truncate text-dash-muted" title={ban.reason || undefined}>
+                      {ban.reason || '—'}
+                    </td>
+                    <td className="whitespace-nowrap text-xs text-dash-muted">
+                      {formatBanDate(ban.created_at)}
+                    </td>
+                    <td className="dashboard-num font-medium text-dash-ink">
+                      {ban.account_count.toLocaleString()}
+                    </td>
+                    <td className="text-right">
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 w-8 p-0 text-dash-negative hover:bg-dash-negative-soft hover:text-dash-negative"
+                        title={`Remove ban for ${ban.domain}`}
+                        aria-label={`Remove ban for ${ban.domain}`}
+                        disabled={saving}
+                        onClick={() => void handleRemove(ban)}
+                      >
+                        <Trash2 className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} />
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </AdminTable>
+          </AdminTableWrap>
+        </div>
+      )}
     </AdminPanel>
   )
 }
@@ -401,7 +459,9 @@ export function BanEmailDomainDialog({
           <DialogTitle>Ban this email domain?</DialogTitle>
         </DialogHeader>
         <div className="space-y-3">
-          {loading && <p className="text-sm text-ink-muted">Checking {emailDomainLabel(email)}…</p>}
+          {loading && (
+            <p className="text-[13px] text-dash-muted">Checking {emailDomainLabel(email)}…</p>
+          )}
           {error && <DashboardAlert variant="error">{error}</DashboardAlert>}
           <BanConfirmOptions
             preview={preview}
@@ -421,12 +481,20 @@ export function BanEmailDomainDialog({
             disabled={saving || loading}
           />
         </div>
-        <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={saving}>
+        <DialogFooter className="gap-2 sm:space-x-0">
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-9"
+            onClick={() => onOpenChange(false)}
+            disabled={saving}
+          >
             Cancel
           </Button>
           <Button
             variant="destructive"
+            size="sm"
+            className="h-9"
             onClick={() => void handleBan()}
             disabled={saving || loading || !preview}
           >

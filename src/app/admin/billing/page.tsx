@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { adminAPI } from '@/lib/api/admin'
-import { CreditCard, DollarSign, Users } from 'lucide-react'
+import { CreditCard, DollarSign, Receipt, Users } from 'lucide-react'
 import { AdminLineChart } from '@/components/admin/admin-charts'
 import { formatCount } from '@/lib/utils/format'
 import {
@@ -23,9 +23,23 @@ import {
   DashboardLoading,
   DashboardAlert,
   DashboardEmpty,
+  DashboardPill,
+  DashboardStatList,
+  type DashboardTone,
 } from '@/components/admin/admin-ui'
 
 type SubSortKey = 'created_at' | 'current_period_end' | 'status' | 'email' | 'plan_price'
+
+function formatUsd(value: number): string {
+  return `$${value.toLocaleString(undefined, { maximumFractionDigits: 2 })}`
+}
+
+function subscriptionTone(status: string): DashboardTone {
+  if (status === 'active' || status === 'trialing') return 'green'
+  if (status === 'past_due' || status === 'incomplete' || status === 'paused') return 'orange'
+  if (status === 'unpaid' || status === 'incomplete_expired') return 'rose'
+  return 'neutral'
+}
 
 export default function AdminBillingPage() {
   const [summary, setSummary] = useState<Record<string, unknown>>({})
@@ -87,10 +101,12 @@ export default function AdminBillingPage() {
   }, [loadSummary, loadSubs])
 
   useEffect(() => {
+    /* eslint-disable-next-line react-hooks/set-state-in-effect */
     loadSummary()
   }, [loadSummary])
 
   useEffect(() => {
+    /* eslint-disable-next-line react-hooks/set-state-in-effect */
     loadSubs()
   }, [loadSubs])
 
@@ -102,6 +118,14 @@ export default function AdminBillingPage() {
     setPageSize(next)
     setPage(1)
   }
+
+  const revenueValues = series.map((row) => Number(row.revenue) || 0)
+  const windowRevenue = revenueValues.reduce((sum, value) => sum + value, 0)
+  const peakRevenue = revenueValues.length > 0 ? Math.max(...revenueValues) : null
+  const peakRow = peakRevenue != null ? series[revenueValues.indexOf(peakRevenue)] : null
+  const latestRow = series.length > 0 ? series[series.length - 1] : null
+  const totalRevenue = Number(summary.total_revenue_usd ?? 0)
+  const paymentEvents = Number(summary.payment_events ?? 0)
 
   return (
     <AdminPage>
@@ -117,7 +141,7 @@ export default function AdminBillingPage() {
         <DashboardLoading message="Loading billing data…" />
       ) : (
         <>
-          <AdminStatGrid>
+          <AdminStatGrid columns={3}>
             <DashboardStatCard
               label="Total revenue"
               value={`$${Number(summary.total_revenue_usd ?? 0).toLocaleString()}`}
@@ -134,31 +158,78 @@ export default function AdminBillingPage() {
               label="Active subscriptions"
               value={formatCount(Number(summary.active_subscriptions ?? 0))}
               icon={Users}
-              accent="purple"
+              accent="indigo"
             />
           </AdminStatGrid>
 
-          <AdminPanel>
-            <AdminPanelHeader title="Revenue trend (12 months)" icon={DollarSign} />
-            <AdminPanelBody>
-              {series.length > 0 ? (
-                <AdminLineChart data={series} xKey="month" yKey="revenue" height={280} color="#22C55E" />
-              ) : (
-                <DashboardEmpty
-                  icon={DollarSign}
-                  title="No revenue data yet"
-                  description="Payment events will appear after Stripe invoices succeed."
+          <div className="dashboard-grid-wide">
+            <AdminPanel>
+              <AdminPanelHeader title="Revenue trend (12 months)" icon={DollarSign} />
+              <AdminPanelBody>
+                {series.length > 0 ? (
+                  <AdminLineChart
+                    data={series}
+                    xKey="month"
+                    yKey="revenue"
+                    name="Revenue"
+                    height={280}
+                    valueFormatter={(value) => formatUsd(Number(value) || 0)}
+                  />
+                ) : (
+                  <DashboardEmpty
+                    icon={DollarSign}
+                    title="No revenue data yet"
+                    description="Payment events will appear after Stripe invoices succeed."
+                  />
+                )}
+              </AdminPanelBody>
+            </AdminPanel>
+
+            <AdminPanel>
+              <AdminPanelHeader
+                title="Revenue summary"
+                icon={Receipt}
+                description="Based on succeeded payment events."
+              />
+              <AdminPanelBody>
+                <DashboardStatList
+                  items={[
+                    {
+                      label: 'Last 12 months',
+                      value: series.length > 0 ? formatUsd(windowRevenue) : null,
+                    },
+                    {
+                      label: 'Best month',
+                      value: peakRow && peakRevenue != null ? formatUsd(peakRevenue) : null,
+                      hint:
+                        peakRow && peakRow.month ? (
+                          <DashboardPill tone="neutral">{String(peakRow.month)}</DashboardPill>
+                        ) : undefined,
+                    },
+                    {
+                      label: 'Latest month',
+                      value: latestRow ? formatUsd(Number(latestRow.revenue) || 0) : null,
+                      hint:
+                        latestRow && latestRow.month ? (
+                          <DashboardPill tone="neutral">{String(latestRow.month)}</DashboardPill>
+                        ) : undefined,
+                    },
+                    {
+                      label: 'Average per payment',
+                      value: paymentEvents > 0 ? formatUsd(totalRevenue / paymentEvents) : null,
+                    },
+                  ]}
                 />
-              )}
-            </AdminPanelBody>
-          </AdminPanel>
+              </AdminPanelBody>
+            </AdminPanel>
+          </div>
 
           <AdminPanel>
             <AdminPanelHeader
               title="Subscriptions"
               icon={CreditCard}
               actions={
-                <span className="text-xs text-ink-muted tabular-nums">
+                <span className="dashboard-meta-pill tabular-nums">
                   {subsTotal.toLocaleString()} total
                 </span>
               }
@@ -185,6 +256,7 @@ export default function AdminBillingPage() {
                             sort={sort}
                             onSort={applySort}
                           />
+                          <th className="dashboard-num">Monthly price</th>
                           <AdminSortableTh
                             label="Status"
                             sortKey="status"
@@ -210,29 +282,45 @@ export default function AdminBillingPage() {
                         {subs.map((s) => (
                           <tr key={String(s.id)}>
                             <td>
-                              {s.user_id ? (
-                                <Link
-                                  href={`/admin/users/${s.user_id}`}
-                                  className="hover:text-brand-strong hover:underline"
+                              <div className="flex min-w-0 items-center gap-3">
+                                <span
+                                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-dash-pill text-xs font-semibold uppercase text-dash-body"
+                                  aria-hidden
                                 >
-                                  {String(s.email)}
-                                </Link>
-                              ) : (
-                                String(s.email)
-                              )}
+                                  {String(s.email ?? '').charAt(0) || '?'}
+                                </span>
+                                {s.user_id ? (
+                                  <Link
+                                    href={`/admin/users/${s.user_id}`}
+                                    className="truncate font-medium text-dash-ink hover:text-dash-teal-strong hover:underline"
+                                  >
+                                    {String(s.email)}
+                                  </Link>
+                                ) : (
+                                  <span className="truncate font-medium text-dash-ink">{String(s.email)}</span>
+                                )}
+                              </div>
                             </td>
-                            <td>{String(s.plan_name ?? s.plan_id ?? '—')}</td>
+                            <td className="text-dash-ink">{String(s.plan_name ?? s.plan_id ?? '—')}</td>
+                            <td className="dashboard-num whitespace-nowrap">
+                              {s.plan_price != null && s.plan_price !== ''
+                                ? formatUsd(Number(s.plan_price) || 0)
+                                : '—'}
+                            </td>
                             <td>
-                              <span className="inline-flex rounded-md bg-surface-elevated px-2 py-0.5 text-xs font-medium capitalize">
+                              <DashboardPill
+                                tone={subscriptionTone(String(s.status))}
+                                className="capitalize"
+                              >
                                 {String(s.status)}
-                              </span>
+                              </DashboardPill>
                             </td>
-                            <td className="text-ink-muted whitespace-nowrap">
+                            <td className="whitespace-nowrap text-dash-muted">
                               {s.created_at
                                 ? new Date(String(s.created_at)).toLocaleDateString()
                                 : '—'}
                             </td>
-                            <td className="text-ink-muted whitespace-nowrap">
+                            <td className="whitespace-nowrap text-dash-muted">
                               {s.current_period_end
                                 ? new Date(String(s.current_period_end)).toLocaleDateString()
                                 : '—'}

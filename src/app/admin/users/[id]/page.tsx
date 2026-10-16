@@ -8,10 +8,12 @@ import {
   ArrowLeft,
   Ban,
   CheckCircle,
+  Code,
   Gauge,
   KeyRound,
   List,
   Mail,
+  ReceiptText,
   RotateCcw,
   Search,
   Shield,
@@ -33,17 +35,18 @@ import { DeleteUserDialog } from '@/components/admin/delete-user-dialog'
 import { ResetUserPasswordDialog } from '@/components/admin/reset-user-password-dialog'
 import { useAdmin } from '@/lib/hooks/use-admin'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
 import { AdminLineChart } from '@/components/admin/admin-charts'
-import { formatCount, formatMs } from '@/lib/utils/format'
+import { formatCount, formatMs, toNumber } from '@/lib/utils/format'
+import { cn } from '@/lib/utils/cn'
 import {
   AdminPage,
   AdminPageHeader,
@@ -66,6 +69,11 @@ import {
   DashboardLoading,
   DashboardAlert,
   DashboardEmpty,
+  DashboardIconTile,
+  DashboardPageSkeleton,
+  DashboardPill,
+  RateBar,
+  DASHBOARD_ICON_STROKE,
 } from '@/components/admin/admin-ui'
 
 type UsageRange = '7d' | '30d' | '90d' | '1y' | 'all'
@@ -198,14 +206,17 @@ export default function AdminUserDetailPage() {
   }, [userId, requestsPage, requestsPageSize, requestSort, appliedFilters])
 
   useEffect(() => {
+    /* eslint-disable-next-line react-hooks/set-state-in-effect */
     loadUser()
   }, [loadUser])
 
   useEffect(() => {
+    /* eslint-disable-next-line react-hooks/set-state-in-effect */
     loadUsage()
   }, [loadUsage])
 
   useEffect(() => {
+    /* eslint-disable-next-line react-hooks/set-state-in-effect */
     loadRequests()
   }, [loadRequests])
 
@@ -341,11 +352,7 @@ export default function AdminUserDetailPage() {
   )
 
   if (loading && !user) {
-    return (
-      <AdminPage>
-        <DashboardLoading message="Loading user…" />
-      </AdminPage>
-    )
+    return <DashboardPageSkeleton kpis={4} label="Loading user…" />
   }
 
   if (error && !user) {
@@ -353,59 +360,71 @@ export default function AdminUserDetailPage() {
       <AdminPage>
         <DashboardAlert variant="error">
           {error}
-          <Button variant="outline" size="sm" className="ml-3" onClick={loadUser}>
+          <Button variant="outline" size="sm" className="h-8" onClick={loadUser}>
             Retry
           </Button>
         </DashboardAlert>
-        <Button variant="outline" onClick={() => router.push('/admin/users')}>
-          <ArrowLeft className="h-4 w-4 mr-1.5" />
-          Back to users
-        </Button>
+        <div>
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-9 gap-1.5"
+            onClick={() => router.push('/admin/users')}
+          >
+            <ArrowLeft className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
+            Back to users
+          </Button>
+        </div>
       </AdminPage>
     )
   }
 
   if (!user) return null
 
+  const statusTotal = summary
+    ? summary.status_mix.reduce((sum, row) => sum + toNumber(row.count), 0)
+    : 0
+  const methodRows = summary?.by_method ?? []
+  const methodTotal = methodRows.reduce((sum, row) => sum + toNumber(row.count), 0)
+  const rangeTotal = usage?.summary?.total_requests
+  const destructiveOutline =
+    'text-dash-negative hover:bg-dash-negative-soft hover:text-dash-negative'
+
   return (
     <AdminPage>
-      <div>
-        <Link
-          href="/admin/users"
-          className="inline-flex items-center gap-1.5 text-sm text-ink-muted hover:text-brand-strong transition-colors"
-        >
-          <ArrowLeft className="h-4 w-4" aria-hidden />
-          Back to users
-        </Link>
-      </div>
-
       <AdminPageHeader
         title={fullName(user)}
         description={`${user.email} · joined ${relativeAge(user.created_at)}`}
-        actions={
-          <div className="flex flex-wrap items-center gap-2">
-            <Badge
-              className={
-                user.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-              }
-            >
+        meta={
+          <span className="flex flex-wrap items-center gap-1.5">
+            <DashboardPill tone={user.is_active ? 'green' : 'rose'}>
               {user.is_active ? 'Active' : 'Inactive'}
-            </Badge>
-            {user.is_admin && <Badge className="bg-purple-100 text-purple-800">Admin</Badge>}
+            </DashboardPill>
+            {user.is_admin && <DashboardPill tone="indigo">Admin</DashboardPill>}
             {user.email_verified ? (
-              <Badge className="bg-blue-100 text-blue-800">Verified</Badge>
+              <DashboardPill tone="neutral">Verified</DashboardPill>
             ) : (
-              <Badge className="bg-amber-100 text-amber-900">Unverified</Badge>
+              <DashboardPill tone="orange">Unverified</DashboardPill>
             )}
+          </span>
+        }
+        actions={
+          <>
+            <Button variant="outline" size="sm" className="h-9 gap-1.5" asChild>
+              <Link href="/admin/users">
+                <ArrowLeft className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
+                Back to users
+              </Link>
+            </Button>
             <AdminRefreshButton onClick={refreshAll} loading={loading} />
-          </div>
+          </>
         }
       />
 
       {actionError && <DashboardAlert variant="error">{actionError}</DashboardAlert>}
       {actionSuccess && <DashboardAlert variant="success">{actionSuccess}</DashboardAlert>}
 
-      <AdminStatGrid>
+      <AdminStatGrid columns={4}>
         <DashboardStatCard
           label="Total requests"
           value={formatCount(user.total_requests)}
@@ -427,7 +446,7 @@ export default function AdminUserDetailPage() {
           }
           hint={`Error rate ${errorRate.toFixed(2)}%`}
           icon={Gauge}
-          accent="purple"
+          accent="indigo"
         />
         <DashboardStatCard
           label="API keys"
@@ -438,8 +457,8 @@ export default function AdminUserDetailPage() {
         />
       </AdminStatGrid>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <AdminPanel className="lg:col-span-2">
+      <div className="dashboard-grid-wide">
+        <AdminPanel>
           <AdminPanelHeader
             title="Usage over time"
             icon={TrendingUp}
@@ -458,8 +477,14 @@ export default function AdminUserDetailPage() {
             }
           />
           <AdminPanelBody>
+            <p className="dashboard-summary-value">
+              {rangeTotal != null ? formatCount(rangeTotal) : '—'}
+            </p>
+            <p className="mt-0.5 text-xs text-dash-muted">Requests in this range</p>
             {usageChartData.length > 0 ? (
-              <AdminLineChart data={usageChartData} xKey="date" yKey="requests" height={240} />
+              <div className="mt-5">
+                <AdminLineChart data={usageChartData} xKey="date" yKey="requests" height={240} />
+              </div>
             ) : (
               <DashboardEmpty
                 icon={Activity}
@@ -502,26 +527,27 @@ export default function AdminUserDetailPage() {
               ]}
             />
           </AdminPanelBody>
-          <div className="flex flex-wrap gap-2 px-5 pb-5">
+          <div className="flex flex-wrap gap-2 border-t border-dash-border px-5 py-4">
             <Button
               variant="outline"
               size="sm"
               onClick={toggleActive}
               disabled={busy}
-              className={
+              className={cn(
+                'h-9 gap-1.5',
                 user.is_active
-                  ? 'text-red-600 hover:text-red-700'
-                  : 'text-green-600 hover:text-green-700'
-              }
+                  ? destructiveOutline
+                  : 'text-dash-positive hover:bg-dash-positive-soft hover:text-dash-positive'
+              )}
             >
               {user.is_active ? (
                 <>
-                  <Ban className="h-4 w-4 mr-1.5" />
+                  <Ban className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
                   Deactivate
                 </>
               ) : (
                 <>
-                  <CheckCircle className="h-4 w-4 mr-1.5" />
+                  <CheckCircle className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
                   Activate
                 </>
               )}
@@ -529,33 +555,41 @@ export default function AdminUserDetailPage() {
             <Button
               variant="outline"
               size="sm"
+              className="h-9 gap-1.5"
               onClick={() => setConfirmFeedback(true)}
               disabled={busy}
             >
-              <Mail className="h-4 w-4 mr-1.5" />
+              <Mail className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
               Request feedback
             </Button>
             {user && !user.is_admin && adminUser?.id !== user.id && (
               <Button
                 variant="outline"
                 size="sm"
+                className="h-9 gap-1.5"
                 onClick={() => setConfirmReset(true)}
                 disabled={busy}
               >
-                <KeyRound className="h-4 w-4 mr-1.5" />
+                <KeyRound className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
                 Reset password
               </Button>
             )}
             {supportThreadId ? (
-              <Button variant="outline" size="sm" asChild>
+              <Button variant="outline" size="sm" className="h-9 gap-1.5" asChild>
                 <Link href={`/admin/support/${supportThreadId}`}>
-                  <LifeBuoy className="h-4 w-4 mr-1.5" />
+                  <LifeBuoy className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
                   Open support chat
                 </Link>
               </Button>
             ) : (
-              <Button variant="outline" size="sm" disabled title="This user has not started a support chat">
-                <LifeBuoy className="h-4 w-4 mr-1.5" />
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-9 gap-1.5"
+                disabled
+                title="This user has not started a support chat"
+              >
+                <LifeBuoy className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
                 No support thread
               </Button>
             )}
@@ -565,23 +599,23 @@ export default function AdminUserDetailPage() {
                 size="sm"
                 onClick={() => setConfirmDelete(true)}
                 disabled={busy}
-                className="text-red-600 hover:text-red-700"
+                className={cn('h-9 gap-1.5', destructiveOutline)}
               >
-                <Trash2 className="h-4 w-4 mr-1.5" />
+                <Trash2 className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
                 Delete
               </Button>
             )}
-            <Link href={`/admin/requests?user_id=${user.id}`}>
-              <Button variant="outline" size="sm">
-                <List className="h-4 w-4 mr-1.5" />
+            <Button variant="outline" size="sm" className="h-9 gap-1.5" asChild>
+              <Link href={`/admin/requests?user_id=${user.id}`}>
+                <List className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
                 Global log
-              </Button>
-            </Link>
+              </Link>
+            </Button>
           </div>
         </AdminPanel>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="dashboard-grid-halves">
         <AdminPanel>
           <AdminPanelHeader title="Top endpoints (all time)" icon={Activity} />
           {!summary || summary.by_endpoint.length === 0 ? (
@@ -593,26 +627,33 @@ export default function AdminUserDetailPage() {
                   <thead>
                     <tr>
                       <th>Endpoint</th>
-                      <th>Requests</th>
-                      <th>Errors</th>
-                      <th>Avg</th>
+                      <th className="dashboard-num">Requests</th>
+                      <th className="dashboard-num">Errors</th>
+                      <th className="dashboard-num">Avg</th>
                     </tr>
                   </thead>
                   <tbody>
                     {summary.by_endpoint.slice(0, 10).map((row) => (
                       <tr key={row.endpoint}>
-                        <td className="font-mono text-xs max-w-[220px] truncate" title={row.endpoint}>
+                        <td
+                          className="max-w-[220px] truncate font-mono text-xs text-dash-ink"
+                          title={row.endpoint}
+                        >
                           {row.endpoint}
                         </td>
-                        <td className="tabular-nums">{formatCount(row.requests)}</td>
-                        <td className="tabular-nums">
+                        <td className="dashboard-num font-medium text-dash-ink">
+                          {formatCount(row.requests)}
+                        </td>
+                        <td className="dashboard-num">
                           {row.errors > 0 ? (
-                            <span className="text-amber-800">{formatCount(row.errors)}</span>
+                            <span className="font-medium text-dash-warning">
+                              {formatCount(row.errors)}
+                            </span>
                           ) : (
                             '0'
                           )}
                         </td>
-                        <td className="tabular-nums text-ink-muted">
+                        <td className="dashboard-num whitespace-nowrap text-dash-muted">
                           {row.avg_response_time != null ? `${formatMs(row.avg_response_time)}ms` : '—'}
                         </td>
                       </tr>
@@ -644,14 +685,27 @@ export default function AdminUserDetailPage() {
                   <tbody>
                     {apiKeys.map((key) => (
                       <tr key={key.id}>
-                        <td className="max-w-[160px] truncate">{key.name || `Key #${key.id}`}</td>
-                        <td className="text-xs text-ink-muted">
-                          {key.product === 'mcp' ? 'MCP' : key.product === 'rest' ? 'REST' : '—'}
+                        <td className="max-w-[180px]">
+                          <div className="flex min-w-0 items-center gap-2.5">
+                            <DashboardIconTile icon={KeyRound} tone="neutral" />
+                            <span className="truncate font-medium text-dash-ink">
+                              {key.name || `Key #${key.id}`}
+                            </span>
+                          </div>
                         </td>
-                        <td className="text-xs text-ink-muted whitespace-nowrap">
+                        <td>
+                          {key.product === 'mcp' ? (
+                            <DashboardPill tone="indigo">MCP</DashboardPill>
+                          ) : key.product === 'rest' ? (
+                            <DashboardPill tone="brand">REST</DashboardPill>
+                          ) : (
+                            <span className="text-dash-dim">—</span>
+                          )}
+                        </td>
+                        <td className="whitespace-nowrap text-xs text-dash-muted">
                           {key.created_at ? new Date(key.created_at).toLocaleDateString() : '—'}
                         </td>
-                        <td className="text-xs text-ink-muted whitespace-nowrap">
+                        <td className="whitespace-nowrap text-xs text-dash-muted">
                           {key.last_used_at
                             ? new Date(key.last_used_at).toLocaleDateString()
                             : 'Never'}
@@ -661,13 +715,14 @@ export default function AdminUserDetailPage() {
                             <Button
                               size="sm"
                               variant="outline"
+                              className={cn('h-8', destructiveOutline)}
                               disabled={revokingKeyId === key.id}
                               onClick={() => revokeKey(key.id)}
                             >
                               {revokingKeyId === key.id ? 'Revoking…' : 'Revoke'}
                             </Button>
                           ) : (
-                            <Badge variant="outline">Revoked</Badge>
+                            <DashboardPill tone="neutral">Revoked</DashboardPill>
                           )}
                         </td>
                       </tr>
@@ -680,23 +735,85 @@ export default function AdminUserDetailPage() {
         </AdminPanel>
       </div>
 
-      {summary && summary.status_mix.length > 0 && (
-        <AdminPanel>
-          <AdminPanelHeader title="Status codes (all time)" icon={Shield} />
-          <AdminPanelBody>
-            <div className="flex flex-wrap gap-2">
-              {summary.status_mix.map((row) => (
-                <div
-                  key={row.status_code}
-                  className="flex items-center gap-2 rounded-brand border border-surface-border/60 px-3 py-2"
-                >
-                  <AdminHttpStatusBadge code={row.status_code} />
-                  <span className="text-sm tabular-nums text-ink">{formatCount(row.count)}</span>
-                </div>
-              ))}
-            </div>
-          </AdminPanelBody>
-        </AdminPanel>
+      {summary && (summary.status_mix.length > 0 || methodRows.length > 0) && (
+        <div className="dashboard-grid-halves">
+          {summary.status_mix.length > 0 && (
+            <AdminPanel>
+              <AdminPanelHeader title="Status codes (all time)" icon={Shield} />
+              <AdminPanelBody noPadding>
+                <AdminTableWrap>
+                  <AdminTable>
+                    <thead>
+                      <tr>
+                        <th>Status</th>
+                        <th className="dashboard-num">Requests</th>
+                        <th>Share</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {summary.status_mix.map((row) => (
+                        <tr key={row.status_code}>
+                          <td>
+                            <AdminHttpStatusBadge code={row.status_code} />
+                          </td>
+                          <td className="dashboard-num font-medium text-dash-ink">
+                            {formatCount(row.count)}
+                          </td>
+                          <td>
+                            <RateBar
+                              value={
+                                statusTotal > 0 ? (toNumber(row.count) / statusTotal) * 100 : 0
+                              }
+                            />
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </AdminTable>
+                </AdminTableWrap>
+              </AdminPanelBody>
+            </AdminPanel>
+          )}
+          {methodRows.length > 0 && (
+            <AdminPanel>
+              <AdminPanelHeader title="Methods (all time)" icon={Code} />
+              <AdminPanelBody noPadding>
+                <AdminTableWrap>
+                  <AdminTable>
+                    <thead>
+                      <tr>
+                        <th>Method</th>
+                        <th className="dashboard-num">Requests</th>
+                        <th>Share</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {methodRows.map((row) => (
+                        <tr key={row.method}>
+                          <td>
+                            <DashboardPill tone="neutral" className="font-mono text-[11px]">
+                              {row.method}
+                            </DashboardPill>
+                          </td>
+                          <td className="dashboard-num font-medium text-dash-ink">
+                            {formatCount(row.count)}
+                          </td>
+                          <td>
+                            <RateBar
+                              value={
+                                methodTotal > 0 ? (toNumber(row.count) / methodTotal) * 100 : 0
+                              }
+                            />
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </AdminTable>
+                </AdminTableWrap>
+              </AdminPanelBody>
+            </AdminPanel>
+          )}
+        </div>
       )}
 
       <AdminPanel>
@@ -704,7 +821,7 @@ export default function AdminUserDetailPage() {
           title="Request history"
           icon={List}
           actions={
-            <span className="text-xs text-ink-muted tabular-nums">
+            <span className="dashboard-meta-pill tabular-nums">
               {formatCount(requestsTotal)} {filtersActive ? 'matching' : 'total'} since signup
             </span>
           }
@@ -756,21 +873,28 @@ export default function AdminUserDetailPage() {
               />
             </AdminFilterField>
           </AdminFilterBar>
-          <div className="flex flex-wrap gap-2 mt-4">
-            <Button onClick={() => applyRequestFilters(draftFilters)} disabled={!filtersDirty}>
-              <Search className="h-4 w-4 mr-1.5" />
-              Apply filters
-            </Button>
+          <div className="mt-4 flex flex-wrap justify-end gap-2">
             <Button
               variant="outline"
+              size="sm"
+              className="h-9 gap-1.5"
               disabled={!filtersActive && !filtersDirty}
               onClick={() => {
                 setDraftFilters(EMPTY_FILTERS)
                 applyRequestFilters(EMPTY_FILTERS)
               }}
             >
-              <RotateCcw className="h-4 w-4 mr-1.5" />
+              <RotateCcw className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
               Clear
+            </Button>
+            <Button
+              size="sm"
+              className="h-9 gap-1.5"
+              onClick={() => applyRequestFilters(draftFilters)}
+              disabled={!filtersDirty}
+            >
+              <Search className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
+              Apply filters
             </Button>
           </div>
         </AdminPanelBody>
@@ -779,7 +903,7 @@ export default function AdminUserDetailPage() {
           <div className="px-5 pb-4">
             <DashboardAlert variant="error">
               {requestsError}
-              <Button variant="outline" size="sm" className="ml-3" onClick={loadRequests}>
+              <Button variant="outline" size="sm" className="h-8" onClick={loadRequests}>
                 Retry
               </Button>
             </DashboardAlert>
@@ -835,6 +959,7 @@ export default function AdminUserDetailPage() {
                       sortKey="response_time_ms"
                       sort={requestSort}
                       onSort={applyRequestSort}
+                      align="right"
                     />
                     <th>Key</th>
                   </tr>
@@ -846,12 +971,16 @@ export default function AdminUserDetailPage() {
                       className="dashboard-table-row-clickable"
                       onClick={() => setSelectedRequest(row)}
                     >
-                      <td className="whitespace-nowrap text-ink-muted text-xs">
+                      <td className="whitespace-nowrap text-xs text-dash-muted">
                         {new Date(row.created_at).toLocaleString()}
                       </td>
-                      <td className="font-mono text-xs text-ink-dim">{row.method}</td>
+                      <td>
+                        <DashboardPill tone="neutral" className="font-mono text-[11px]">
+                          {row.method}
+                        </DashboardPill>
+                      </td>
                       <td
-                        className="font-mono text-xs max-w-[280px] truncate"
+                        className="max-w-[280px] truncate font-mono text-xs text-dash-ink"
                         title={row.endpoint}
                       >
                         {row.endpoint}
@@ -859,8 +988,10 @@ export default function AdminUserDetailPage() {
                       <td>
                         <AdminHttpStatusBadge code={row.status_code} />
                       </td>
-                      <td className="tabular-nums">{formatMs(row.response_time_ms)}ms</td>
-                      <td className="text-xs text-ink-muted">{row.api_key_id ?? '—'}</td>
+                      <td className="dashboard-num whitespace-nowrap">
+                        {formatMs(row.response_time_ms)}ms
+                      </td>
+                      <td className="text-xs text-dash-muted">{row.api_key_id ?? '—'}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -883,7 +1014,10 @@ export default function AdminUserDetailPage() {
       <Dialog open={!!selectedRequest} onOpenChange={() => setSelectedRequest(null)}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>Request #{selectedRequest?.id}</DialogTitle>
+            <DialogTitle className="flex items-center gap-2.5">
+              <DashboardIconTile icon={ReceiptText} outline />
+              Request #{selectedRequest?.id}
+            </DialogTitle>
           </DialogHeader>
           {selectedRequest && (
             <AdminDetailGrid
@@ -917,16 +1051,23 @@ export default function AdminUserDetailPage() {
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>Send feedback request</DialogTitle>
+            <DialogDescription>
+              Send a plain-text email to{' '}
+              <span className="font-medium text-dash-ink">{user.email}</span> asking for feedback
+              on the Food Nutrition API. They reply directly to that email.
+            </DialogDescription>
           </DialogHeader>
-          <p className="text-sm text-ink-muted">
-            Send a plain-text email to <span className="font-medium text-ink">{user.email}</span>{' '}
-            asking for feedback on the Food Nutrition API. They reply directly to that email.
-          </p>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setConfirmFeedback(false)} disabled={busy}>
+          <DialogFooter className="gap-2 sm:space-x-0">
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-9"
+              onClick={() => setConfirmFeedback(false)}
+              disabled={busy}
+            >
               Cancel
             </Button>
-            <Button onClick={sendFeedbackEmail} disabled={busy}>
+            <Button size="sm" className="h-9" onClick={sendFeedbackEmail} disabled={busy}>
               {busy ? 'Sending…' : 'Send email'}
             </Button>
           </DialogFooter>

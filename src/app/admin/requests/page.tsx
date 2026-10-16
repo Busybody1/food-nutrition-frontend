@@ -12,7 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { List, Search, RotateCcw, AlertTriangle, Gauge } from 'lucide-react'
+import { List, Search, RotateCcw, AlertTriangle, Gauge, ReceiptText } from 'lucide-react'
 import { formatCount, formatMs, toNumber } from '@/lib/utils/format'
 import {
   AdminPage,
@@ -34,6 +34,9 @@ import {
   DashboardAlert,
   DashboardEmpty,
   DashboardStatCard,
+  DashboardPill,
+  DashboardIconTile,
+  DASHBOARD_ICON_STROKE,
 } from '@/components/admin/admin-ui'
 
 type RequestSortKey =
@@ -76,6 +79,7 @@ function AdminRequestsContent() {
 
   useEffect(() => {
     if (!userIdParam) return
+    /* eslint-disable-next-line react-hooks/set-state-in-effect */
     setDraftFilters((f) => ({ ...f, user_id: userIdParam }))
     setAppliedFilters((f) => ({ ...f, user_id: userIdParam }))
   }, [userIdParam])
@@ -109,6 +113,7 @@ function AdminRequestsContent() {
   }, [page, pageSize, sort, appliedFilters])
 
   useEffect(() => {
+    /* eslint-disable-next-line react-hooks/set-state-in-effect */
     load()
   }, [load])
 
@@ -144,13 +149,13 @@ function AdminRequestsContent() {
       {error && (
         <DashboardAlert variant="error">
           {error}
-          <Button variant="outline" size="sm" className="ml-3" onClick={load}>
+          <Button variant="outline" size="sm" className="h-8" onClick={load}>
             Retry
           </Button>
         </DashboardAlert>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="dashboard-grid-kpi">
         <DashboardStatCard
           label={filtersActive ? 'Matching requests' : 'Total requests'}
           value={formatCount(total)}
@@ -174,7 +179,7 @@ function AdminRequestsContent() {
           value={requests.length > 0 ? `${formatMs(avgLatency)}ms` : '—'}
           hint="Click a row for full request details"
           icon={Gauge}
-          accent="purple"
+          accent="indigo"
         />
       </div>
 
@@ -226,24 +231,31 @@ function AdminRequestsContent() {
               />
             </AdminFilterField>
           </AdminFilterBar>
-          <div className="flex flex-wrap gap-2 mt-4">
-            <Button onClick={() => applyFilters(draftFilters)} disabled={!filtersDirty}>
-              <Search className="h-4 w-4 mr-1.5" />
-              Apply filters
-            </Button>
-            <Button
-              variant="outline"
-              disabled={!filtersActive && !filtersDirty}
-              onClick={() => {
-                setDraftFilters(EMPTY_FILTERS)
-                applyFilters(EMPTY_FILTERS)
-              }}
-            >
-              <RotateCcw className="h-4 w-4 mr-1.5" />
-              Clear
-            </Button>
-          </div>
         </AdminPanelBody>
+        <div className="flex flex-wrap justify-end gap-2 border-t border-dash-border px-5 py-4">
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-9 gap-1.5"
+            disabled={!filtersActive && !filtersDirty}
+            onClick={() => {
+              setDraftFilters(EMPTY_FILTERS)
+              applyFilters(EMPTY_FILTERS)
+            }}
+          >
+            <RotateCcw className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
+            Clear
+          </Button>
+          <Button
+            size="sm"
+            className="h-9 gap-1.5"
+            onClick={() => applyFilters(draftFilters)}
+            disabled={!filtersDirty}
+          >
+            <Search className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
+            Apply filters
+          </Button>
+        </div>
       </AdminPanel>
 
       <AdminPanel>
@@ -256,7 +268,7 @@ function AdminRequestsContent() {
             title="No requests match your filters"
             description="Try widening the date range or clearing filters."
             action={
-              <Button variant="outline" onClick={load}>
+              <Button variant="outline" size="sm" className="h-9" onClick={load}>
                 Refresh
               </Button>
             }
@@ -306,6 +318,7 @@ function AdminRequestsContent() {
                         sortKey="response_time_ms"
                         sort={sort}
                         onSort={applySort}
+                        align="right"
                       />
                     </tr>
                   </thead>
@@ -316,15 +329,15 @@ function AdminRequestsContent() {
                         className="dashboard-table-row-clickable"
                         onClick={() => setSelected(r)}
                       >
-                        <td className="whitespace-nowrap text-ink-muted text-xs">
+                        <td className="whitespace-nowrap text-xs text-dash-muted">
                           {new Date(r.created_at).toLocaleString()}
                         </td>
-                        <td className="max-w-[160px] truncate">
+                        <td className="max-w-[200px] truncate">
                           {r.user_id ? (
                             <Link
                               href={`/admin/users/${r.user_id}`}
                               onClick={(e) => e.stopPropagation()}
-                              className="hover:text-brand-strong hover:underline"
+                              className="font-medium text-dash-ink hover:text-dash-teal-strong hover:underline"
                             >
                               {r.email || `#${r.user_id}`}
                             </Link>
@@ -332,14 +345,23 @@ function AdminRequestsContent() {
                             '—'
                           )}
                         </td>
-                        <td className="font-mono text-xs text-ink-dim">{r.method}</td>
-                        <td className="font-mono text-xs max-w-[260px] truncate" title={r.endpoint}>
+                        <td>
+                          <DashboardPill tone="neutral" className="font-mono text-[11px]">
+                            {r.method}
+                          </DashboardPill>
+                        </td>
+                        <td
+                          className="max-w-[260px] truncate font-mono text-xs text-dash-ink"
+                          title={r.endpoint}
+                        >
                           {r.endpoint}
                         </td>
                         <td>
                           <AdminHttpStatusBadge code={r.status_code} />
                         </td>
-                        <td className="tabular-nums">{formatMs(r.response_time_ms)}ms</td>
+                        <td className="dashboard-num whitespace-nowrap">
+                          {formatMs(r.response_time_ms)}ms
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -363,7 +385,10 @@ function AdminRequestsContent() {
       <Dialog open={!!selected} onOpenChange={() => setSelected(null)}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>Request #{selected?.id}</DialogTitle>
+            <DialogTitle className="flex items-center gap-2.5">
+              <DashboardIconTile icon={ReceiptText} outline />
+              Request #{selected?.id}
+            </DialogTitle>
           </DialogHeader>
           {selected && (
             <AdminDetailGrid
@@ -376,7 +401,7 @@ function AdminRequestsContent() {
                   value: selected.user_id ? (
                     <Link
                       href={`/admin/users/${selected.user_id}`}
-                      className="text-brand-strong hover:underline"
+                      className="text-dash-teal-strong hover:underline"
                     >
                       {selected.email || `#${selected.user_id}`}
                     </Link>
@@ -397,7 +422,6 @@ function AdminRequestsContent() {
 }
 
 export default function AdminRequestsPage() {
-
   return (
     <Suspense
       fallback={

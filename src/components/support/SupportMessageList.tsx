@@ -33,12 +33,10 @@ export function SupportMessageList({
   if (messages.length === 0) {
     return (
       <div className={cn('flex flex-1 items-center justify-center px-6 py-10', className)}>
-        <p className="text-sm text-ink-muted text-center max-w-xs">
+        <p className="max-w-xs text-center text-[13px] text-dash-muted">
           Send a message and the team will reply here. Typical response is one business day.
         </p>
-
       </div>
-
     )
   }
 
@@ -54,49 +52,39 @@ export function SupportMessageList({
           return (
             <p
               key={message.id}
-              className="self-center text-[11px] text-ink-dim text-center max-w-[90%]"
+              className="max-w-[90%] self-center rounded-full bg-dash-hover px-3 py-1 text-center text-[11px] text-dash-dim"
             >
               {message.body}
             </p>
-
           )
         }
         const mine = align === 'right'
         return (
           <div
             key={message.id}
-            className={cn('flex flex-col max-w-[85%]', mine ? 'self-end items-end' : 'self-start items-start')}
+            className={cn('flex max-w-[85%] flex-col', mine ? 'items-end self-end' : 'items-start self-start')}
           >
             <div
               className={cn(
-                'rounded-brand px-3 py-2 text-sm whitespace-pre-wrap break-words',
-                mine
-                  ? 'bg-brand-muted text-brand-strong'
-                  : 'bg-surface-elevated text-ink border border-surface-border/70'
+                'whitespace-pre-wrap break-words rounded-2xl px-3.5 py-2 text-[13px] leading-5',
+                mine ? 'rounded-br-md bg-dash-teal-strong text-white' : 'rounded-bl-md bg-dash-pill text-dash-ink'
               )}
             >
               {message.body ? <p>{message.body}</p> : null}
-
               {message.attachment_url ? (
-
                 <img
                   src={message.attachment_url}
                   alt="Screenshot attached to this support message"
-                  className={cn('mt-2 max-h-48 rounded-md object-contain', message.body ? '' : 'mt-0')}
+                  className={cn('mt-2 max-h-48 rounded-lg object-contain', message.body ? '' : 'mt-0')}
                 />
-
               ) : null}
             </div>
-
-            <span className="mt-1 text-[10px] text-ink-dim tabular-nums">
+            <span className="mt-1 text-[11px] tabular-nums text-dash-dim">
               {formatStamp(message.created_at)}
             </span>
-
           </div>
-
         )
       })}
     </div>
-
   )
 }

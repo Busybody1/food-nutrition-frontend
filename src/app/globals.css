@@ -770,154 +770,294 @@
     @apply h-9 w-9 rounded-full border-2 border-surface-border border-t-brand animate-spin;
   }
 
+  .dashboard-app {
+    @apply min-h-screen bg-dash-canvas text-dash-ink;
+  }
+
+  .dashboard-app [data-slot='card'] {
+    @apply rounded-2xl border-dash-border shadow-dash;
+  }
+
+  .dashboard-app [data-slot='button'][data-variant='default']:not(:focus-visible) {
+    @apply shadow-dash;
+  }
+
+  .dashboard-app [data-slot='input'] {
+    @apply h-9 rounded-[10px] border-dash-border text-[13px] shadow-dash;
+  }
+
+  .dashboard-app [data-slot='textarea'],
+  body:has(.dashboard-app) [data-slot='dialog-content'] [data-slot='textarea'] {
+    @apply rounded-[10px] border-dash-border bg-white text-[13px] text-dash-ink shadow-dash placeholder:text-dash-dim
+      focus-visible:border-brand/50 focus-visible:ring-brand/25 focus-visible:ring-offset-0;
+  }
+
+  body:has(.dashboard-app) [data-slot='dialog-content'] [data-slot='input'] {
+    @apply h-9 rounded-[10px] border-dash-border text-[13px] shadow-dash;
+  }
+
+  body:has(.dashboard-app) [data-slot='dialog-overlay'] {
+    @apply bg-dash-ink/30 backdrop-blur-[2px];
+  }
+
+  body:has(.dashboard-app) [data-slot='dialog-content'] {
+    @apply rounded-2xl border-dash-border shadow-dash-pop;
+  }
+
+  body:has(.dashboard-app) [data-slot='dialog-content'] [data-slot='dialog-title'] {
+    @apply text-base font-semibold leading-6 text-dash-ink;
+  }
+
+  body:has(.dashboard-app) [data-slot='dialog-content'] [data-slot='dialog-description'] {
+    @apply text-[13px] leading-5 text-dash-muted;
+  }
+
+  .dashboard-sidebar {
+    @apply flex h-full w-full flex-col bg-white;
+  }
+
+  .dashboard-sidebar-group-label {
+    @apply mb-1 px-2.5 text-[11px] font-medium uppercase tracking-[0.06em] text-dash-dim;
+  }
+
+  .dashboard-topbar {
+    @apply sticky top-0 z-20 flex h-16 items-center justify-between gap-3 border-b border-dash-border
+      bg-white/95 px-4 backdrop-blur-md sm:px-6 lg:px-8;
+  }
+
   .dashboard-page {
-    @apply min-h-full min-w-0 bg-surface-elevated;
+    @apply min-h-full min-w-0;
   }
 
   .dashboard-container {
-    @apply mx-auto flex w-full min-w-0 max-w-[1200px] flex-col gap-6 px-4 py-7 sm:px-6 sm:gap-7
-      lg:gap-8 lg:px-8 lg:py-9;
+    @apply mx-auto flex w-full min-w-0 max-w-[1360px] flex-col gap-5 px-4 py-6 sm:px-6 lg:px-8 lg:py-7;
   }
 
   .dashboard-page-header {
-    @apply flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4;
+    @apply flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between;
   }
 
   .dashboard-title {
-    @apply text-2xl sm:text-[1.75rem] font-semibold tracking-tight text-ink;
+    @apply text-[22px] font-semibold leading-7 tracking-[-0.01em] text-dash-ink;
   }
 
   .dashboard-description {
-    @apply mt-1.5 text-sm text-ink-muted leading-relaxed max-w-2xl;
+    @apply mt-0.5 text-[13px] leading-5 text-dash-muted sm:truncate;
   }
 
   .dashboard-header-actions {
-    @apply flex flex-wrap items-center gap-2 shrink-0;
+    @apply flex shrink-0 flex-wrap items-center gap-2;
+  }
+
+  .dashboard-meta-pill {
+    @apply inline-flex h-6 items-center gap-1.5 rounded-full border border-dash-border bg-white px-2.5
+      text-xs font-medium text-dash-body;
+  }
+
+  .dashboard-card {
+    @apply w-full min-w-0 rounded-2xl border border-dash-border bg-white shadow-dash;
+  }
+
+  .dashboard-grid-kpi {
+    @apply grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3;
+  }
+
+  .dashboard-grid-kpi-4 {
+    @apply grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4;
+  }
+
+  .dashboard-grid-wide {
+    @apply grid grid-cols-1 gap-5 xl:grid-cols-[minmax(0,1.62fr)_minmax(0,1fr)];
+  }
+
+  .dashboard-grid-narrow-wide {
+    @apply grid grid-cols-1 gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.62fr)];
+  }
+
+  .dashboard-grid-halves {
+    @apply grid grid-cols-1 gap-5 lg:grid-cols-2;
   }
 
   .dashboard-stat-card {
-    @apply bg-white border border-surface-border/80 rounded-brand p-5 shadow-glass
-      hover:shadow-[0_8px_30px_rgba(15,23,42,0.08)] transition-shadow duration-200;
+    @apply flex min-w-0 flex-col rounded-2xl border border-dash-border bg-white p-5 shadow-dash;
   }
 
   .dashboard-stat-label {
-    @apply text-xs font-medium uppercase tracking-wide text-ink-dim;
+    @apply min-w-0 truncate text-[13px] font-medium text-dash-body;
   }
 
   .dashboard-stat-value {
-    @apply mt-1 text-2xl font-semibold tracking-tight text-ink tabular-nums;
+    @apply text-[30px] font-semibold leading-9 tracking-[-0.02em] text-dash-ink tabular-nums;
   }
 
   .dashboard-stat-hint {
-    @apply mt-1 text-xs text-ink-muted;
+    @apply mt-1.5 text-xs leading-4 text-dash-muted;
   }
 
-  .dashboard-stat-icon {
-    @apply flex h-10 w-10 shrink-0 items-center justify-center rounded-brand;
+  .dashboard-icon-tile {
+    @apply flex h-7 w-7 shrink-0 items-center justify-center rounded-lg;
   }
 
-  /* overflow-visible so comboboxes, selects, and chart tooltips are not clipped */
+  .dashboard-icon-tile-outline {
+    @apply flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-dash-border bg-white
+      text-dash-muted;
+  }
+
+  .dashboard-delta {
+    @apply inline-flex h-[22px] items-center gap-0.5 rounded-md px-1.5 text-xs font-medium tabular-nums;
+  }
+
+  .dashboard-delta-up {
+    @apply bg-dash-positive-soft text-dash-positive;
+  }
+
+  .dashboard-delta-down {
+    @apply bg-dash-negative-soft text-dash-negative;
+  }
+
   .dashboard-panel {
-    @apply w-full min-w-0 overflow-visible bg-white border border-surface-border/80 rounded-brand shadow-glass;
+    @apply w-full min-w-0 overflow-visible rounded-2xl border border-dash-border bg-white shadow-dash;
   }
 
   .dashboard-panel-header {
-    @apply px-5 py-4 border-b border-surface-border/60 flex items-center justify-between gap-3 rounded-t-[11px];
+    @apply flex min-h-[60px] items-center justify-between gap-3 px-5 pt-4;
   }
 
   .dashboard-panel-title {
-    @apply text-sm font-semibold text-ink;
+    @apply truncate text-[15px] font-semibold leading-5 text-dash-ink;
+  }
+
+  .dashboard-panel-description {
+    @apply mt-0.5 text-xs leading-4 text-dash-muted;
   }
 
   .dashboard-panel-body {
     @apply p-5;
   }
 
+  .dashboard-panel-header + .dashboard-panel-body {
+    @apply pt-3;
+  }
+
+  .dashboard-panel-header + .dashboard-panel-body-flush {
+    @apply mt-3;
+  }
+
+  .dashboard-panel-toolbar {
+    @apply flex flex-col gap-2 px-5 pb-3 pt-1 sm:flex-row sm:flex-wrap sm:items-center;
+  }
+
+  .dashboard-summary-value {
+    @apply text-[28px] font-semibold leading-8 tracking-[-0.02em] text-dash-ink tabular-nums;
+  }
+
   .dashboard-nav-link {
-    @apply flex items-center gap-3 rounded-brand px-3 py-2 text-sm font-medium text-ink-muted
-      transition-colors hover:bg-surface-elevated hover:text-ink;
+    @apply flex h-9 w-full items-center gap-2.5 rounded-[10px] px-2.5 text-[13px] font-medium text-dash-muted
+      transition-colors hover:bg-dash-hover hover:text-dash-ink
+      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40;
   }
 
   .dashboard-nav-link-active {
-    @apply bg-brand-muted text-brand-strong hover:bg-brand-muted hover:text-brand-strong;
+    @apply bg-dash-pill text-dash-ink hover:bg-dash-pill hover:text-dash-ink;
+  }
+
+  .dashboard-count-badge {
+    @apply ml-auto inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-dash-teal-strong
+      px-1.5 text-[10px] font-semibold leading-none text-white tabular-nums;
   }
 
   .dashboard-progress-track {
-    @apply w-full h-2 rounded-pill bg-surface-elevated overflow-hidden;
+    @apply h-2 w-full overflow-hidden rounded-full bg-dash-grid;
   }
 
   .dashboard-progress-fill {
-    @apply h-full rounded-pill bg-brand transition-all duration-500 ease-out;
+    @apply h-full rounded-full bg-dash-teal transition-all duration-500 ease-out;
+  }
+
+  .dashboard-rate {
+    @apply inline-flex items-center gap-2.5;
+  }
+
+  .dashboard-rate-track {
+    @apply h-1 w-16 overflow-hidden rounded-full bg-dash-grid sm:w-20;
+  }
+
+  .dashboard-rate-fill {
+    @apply h-full rounded-full bg-dash-teal;
   }
 
   .dashboard-quick-action {
-    @apply flex items-center gap-3 rounded-brand border border-surface-border/80 bg-white px-4 py-3
-      transition-all hover:border-brand/30 hover:shadow-glass;
+    @apply flex items-center gap-3 rounded-xl border border-dash-border bg-white px-3.5 py-3
+      transition-colors hover:border-dash-border-strong hover:bg-dash-hover
+      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40;
   }
 
   .dashboard-quick-action-primary {
-    @apply border-brand/25 bg-brand-muted/40 hover:bg-brand-muted/60;
+    @apply border-brand/30 bg-dash-teal-soft/60 hover:border-brand/40 hover:bg-dash-teal-soft;
   }
 
   .dashboard-quick-action-icon {
-    @apply flex h-9 w-9 shrink-0 items-center justify-center rounded-brand bg-surface-elevated text-brand-strong;
+    @apply flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-dash-pill text-dash-body;
   }
 
   .dashboard-loading {
-    @apply flex flex-col items-center justify-center min-h-[320px] gap-4;
+    @apply flex min-h-[240px] flex-col items-center justify-center gap-3;
   }
 
   .dashboard-spinner {
-    @apply h-9 w-9 rounded-full border-2 border-surface-border border-t-brand animate-spin;
+    @apply h-8 w-8 animate-spin rounded-full border-2 border-dash-border border-t-brand;
+  }
+
+  .dashboard-skeleton {
+    @apply animate-pulse rounded-md bg-dash-pill;
   }
 
   .dashboard-alert {
-    @apply rounded-brand px-4 py-3 text-sm border;
+    @apply flex flex-wrap items-center gap-x-3 gap-y-2 rounded-xl border px-4 py-3 text-[13px] leading-5;
   }
 
   .dashboard-alert-error {
-    @apply bg-red-50 border-red-200/80 text-red-800;
+    @apply border-dash-negative/20 bg-dash-negative-soft text-dash-negative;
   }
 
   .dashboard-alert-success {
-    @apply bg-emerald-50 border-emerald-200/80 text-emerald-800;
+    @apply border-dash-positive/20 bg-dash-positive-soft text-dash-positive;
   }
 
   .dashboard-alert-warning {
-    @apply bg-amber-50 border-amber-200/80 text-amber-900;
+    @apply border-dash-warning/20 bg-dash-warning-soft text-dash-warning;
   }
 
   .dashboard-empty {
-    @apply flex flex-col items-center justify-center text-center py-12 px-6;
+    @apply flex flex-col items-center justify-center px-6 py-10 text-center;
   }
 
   .dashboard-empty-icon {
-    @apply flex h-12 w-12 items-center justify-center rounded-brand bg-surface-elevated mb-4;
+    @apply mb-3 flex h-10 w-10 items-center justify-center rounded-xl border border-dash-border bg-dash-hover;
   }
 
   .dashboard-code-block {
-    @apply flex-1 px-3 py-2.5 bg-surface-elevated border border-surface-border rounded-brand
-      font-mono text-sm text-ink break-all;
+    @apply flex-1 break-all rounded-[10px] border border-dash-border bg-dash-hover px-3 py-2 font-mono text-xs
+      text-dash-ink;
   }
 
   .dashboard-table-wrap {
-    @apply overflow-x-auto rounded-b-[11px];
+    @apply overflow-x-auto rounded-b-2xl;
   }
 
   .dashboard-tabs-list {
-    @apply flex w-full flex-wrap items-center gap-1 rounded-brand border border-surface-border/80
-      bg-surface-elevated/80 p-1;
+    @apply inline-flex flex-wrap items-center gap-0.5 rounded-xl border border-dash-border bg-white p-1 shadow-dash;
   }
 
   .dashboard-tabs-trigger {
-    @apply inline-flex items-center justify-center whitespace-nowrap rounded-[8px] px-3 py-1.5 text-sm
-      font-medium text-ink-muted transition-colors hover:text-ink cursor-pointer
+    @apply inline-flex h-8 cursor-pointer items-center justify-center whitespace-nowrap rounded-lg px-3 text-[13px]
+      font-medium text-dash-muted transition-colors hover:text-dash-ink
       focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40
-      data-[state=active]:bg-white data-[state=active]:text-ink data-[state=active]:shadow-sm;
+      data-[state=active]:bg-dash-pill data-[state=active]:text-dash-ink;
   }
 
   .dashboard-tabs-content {
-    @apply mt-4 focus-visible:outline-none;
+    @apply mt-5 focus-visible:outline-none;
   }
 
   .dashboard-modal-root {
@@ -925,39 +1065,84 @@
   }
 
   .dashboard-modal-backdrop {
-    @apply absolute inset-0 bg-ink/25 backdrop-blur-sm cursor-pointer;
+    @apply absolute inset-0 cursor-pointer bg-dash-ink/30 backdrop-blur-[2px];
+  }
+
+  .dashboard-modal-card {
+    @apply w-full rounded-2xl border border-dash-border bg-white shadow-dash-pop;
   }
 
   .dashboard-popover {
-    @apply z-[70] rounded-brand border border-surface-border/80 bg-white shadow-lg;
+    @apply z-[70] rounded-xl border border-dash-border bg-white shadow-dash-pop;
   }
 
   .dashboard-table {
-    @apply w-full text-sm;
+    @apply w-full text-[13px] text-dash-body;
   }
 
   .dashboard-table thead tr {
-    @apply border-b border-surface-border/80 bg-surface-elevated/60;
+    @apply border-y border-dash-border bg-dash-hover;
   }
 
   .dashboard-table th {
-    @apply px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-ink-dim;
+    @apply h-10 whitespace-nowrap px-4 text-left align-middle text-[11px] font-medium uppercase tracking-[0.06em]
+      text-dash-dim;
   }
 
   .dashboard-table tbody tr {
-    @apply border-b border-surface-border/50 transition-colors;
+    @apply border-b border-dash-border/70 transition-colors last:border-b-0;
   }
 
   .dashboard-table tbody tr:hover {
-    @apply bg-brand-muted/30;
+    @apply bg-dash-hover;
   }
 
   .dashboard-table td {
-    @apply px-4 py-3 text-ink align-middle;
+    @apply h-12 px-4 py-2.5 align-middle;
+  }
+
+  .dashboard-table th:first-child,
+  .dashboard-table td:first-child {
+    @apply pl-5;
+  }
+
+  .dashboard-table th:last-child,
+  .dashboard-table td:last-child {
+    @apply pr-5;
+  }
+
+  .dashboard-table .dashboard-num {
+    @apply text-right tabular-nums;
   }
 
   .dashboard-table-row-clickable {
     @apply cursor-pointer;
+  }
+
+  .dashboard-input {
+    @apply h-9 w-full rounded-[10px] border border-dash-border bg-white px-3 text-[13px] text-dash-ink shadow-dash
+      placeholder:text-dash-dim focus-visible:border-brand/50 focus-visible:outline-none
+      focus-visible:ring-2 focus-visible:ring-brand/25 disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .dashboard-select {
+    @apply h-9 rounded-[10px] border border-dash-border bg-white pl-3 pr-8 text-[13px] text-dash-body shadow-dash
+      focus-visible:border-brand/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/25
+      disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .dashboard-textarea {
+    @apply min-h-[96px] w-full rounded-[10px] border border-dash-border bg-white px-3 py-2 text-[13px] leading-5
+      text-dash-ink shadow-dash placeholder:text-dash-dim focus-visible:border-brand/50 focus-visible:outline-none
+      focus-visible:ring-2 focus-visible:ring-brand/25 disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .dashboard-field-label {
+    @apply mb-1.5 block text-xs font-medium text-dash-body;
+  }
+
+  .dashboard-field-hint {
+    @apply mt-1.5 text-xs leading-4 text-dash-muted;
   }
 
   .dashboard-filter-bar {
@@ -965,28 +1150,48 @@
   }
 
   .dashboard-filter-field label {
-    @apply block text-xs font-medium text-ink-dim mb-1.5;
+    @apply mb-1.5 block text-xs font-medium text-dash-body;
   }
 
   .dashboard-segmented {
-    @apply inline-flex rounded-brand border border-surface-border/80 bg-surface-elevated/50 p-0.5;
+    @apply inline-flex items-center gap-0.5 rounded-[10px] border border-dash-border bg-white p-0.5 shadow-dash;
   }
 
   .dashboard-segmented-btn {
-    @apply px-3 py-1.5 text-xs font-medium rounded-[6px] text-ink-muted transition-colors
-      hover:text-ink;
+    @apply inline-flex h-7 items-center rounded-lg px-2.5 text-xs font-medium text-dash-muted transition-colors
+      hover:text-dash-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40;
   }
 
   .dashboard-segmented-btn-active {
-    @apply bg-white text-ink shadow-sm border border-surface-border/60;
+    @apply bg-dash-pill text-dash-ink;
+  }
+
+  .dashboard-pill {
+    @apply inline-flex h-[22px] items-center gap-1 whitespace-nowrap rounded-md px-2 text-xs font-medium;
   }
 
   .dashboard-activity-item {
-    @apply flex items-start gap-3 rounded-brand px-2 py-2 -mx-2 transition-colors hover:bg-surface-elevated/80;
+    @apply flex items-start gap-3 border-b border-dash-border/70 py-3 last:border-b-0;
   }
 
   .dashboard-activity-icon {
-    @apply flex h-9 w-9 shrink-0 items-center justify-center rounded-brand;
+    @apply flex h-8 w-8 shrink-0 items-center justify-center rounded-lg;
+  }
+
+  .dashboard-legend {
+    @apply flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-dash-muted;
+  }
+
+  .dashboard-legend-dot {
+    @apply inline-block h-2 w-2 shrink-0 rounded-[3px];
+  }
+
+  .dashboard-stat-list {
+    @apply divide-y divide-dash-border/70;
+  }
+
+  .dashboard-stat-row {
+    @apply flex items-center justify-between gap-4 py-2.5 text-[13px];
   }
 }
 

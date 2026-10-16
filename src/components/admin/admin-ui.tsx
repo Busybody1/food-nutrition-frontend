@@ -2,7 +2,16 @@
 
 import { cn } from '@/lib/utils/cn'
 import { Button } from '@/components/ui/button'
-import { ArrowDown, ArrowUp, ChevronsUpDown, RefreshCw } from 'lucide-react'
+import {
+  ArrowDown,
+  ArrowUp,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+  ChevronsUpDown,
+  RefreshCw,
+} from 'lucide-react'
 import {
   DashboardPage,
   DashboardPageHeader,
@@ -11,6 +20,23 @@ import {
   DashboardAlert,
   DashboardEmpty,
   DashboardQuickAction,
+  DashboardPanel,
+  DashboardPanelHeader,
+  DashboardPanelBody,
+  DashboardPanelToolbar,
+  DashboardSegmented,
+  DashboardPill,
+  DashboardStatList,
+  DashboardIconTile,
+  DashboardModalCard,
+  DashboardPageSkeleton,
+  DashboardSkeleton,
+  DashboardSearchInput,
+  DeltaPill,
+  InfoHint,
+  RateBar,
+  DASHBOARD_ICON_STROKE,
+  type DashboardTone,
 } from '@/components/dashboard/dashboard-shell'
 
 export {
@@ -21,7 +47,24 @@ export {
   DashboardAlert,
   DashboardEmpty,
   DashboardQuickAction,
+  DashboardPanel,
+  DashboardPanelHeader,
+  DashboardPanelBody,
+  DashboardPanelToolbar,
+  DashboardSegmented,
+  DashboardPill,
+  DashboardStatList,
+  DashboardIconTile,
+  DashboardModalCard,
+  DashboardPageSkeleton,
+  DashboardSkeleton,
+  DashboardSearchInput,
+  DeltaPill,
+  InfoHint,
+  RateBar,
+  DASHBOARD_ICON_STROKE,
 }
+export type { DashboardTone }
 
 export function AdminPage({
   children,
@@ -40,20 +83,22 @@ export function AdminPageBody({
   children: React.ReactNode
   className?: string
 }) {
-  return <div className={cn('flex flex-col gap-6', className)}>{children}</div>
+  return <div className={cn('flex flex-col gap-5', className)}>{children}</div>
 }
 
 export function AdminPageHeader({
   title,
   description,
   actions,
+  meta,
 }: {
   title: string
   description?: string
   actions?: React.ReactNode
+  meta?: React.ReactNode
 }) {
   return (
-    <DashboardPageHeader title={title} description={description}>
+    <DashboardPageHeader title={title} description={description} meta={meta}>
       {actions}
     </DashboardPageHeader>
   )
@@ -62,12 +107,14 @@ export function AdminPageHeader({
 export function AdminStatGrid({
   children,
   className,
+  columns = 4,
 }: {
   children: React.ReactNode
   className?: string
+  columns?: 3 | 4
 }) {
   return (
-    <div className={cn('grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4', className)}>
+    <div className={cn(columns === 3 ? 'dashboard-grid-kpi' : 'dashboard-grid-kpi-4', className)}>
       {children}
     </div>
   )
@@ -80,26 +127,26 @@ export function AdminPanel({
   children: React.ReactNode
   className?: string
 }) {
-  return <div className={cn('dashboard-panel', className)}>{children}</div>
+  return (
+    <DashboardPanel as="div" className={className}>
+      {children}
+    </DashboardPanel>
+  )
 }
 
 export function AdminPanelHeader({
   title,
-  icon: Icon,
+  icon,
   actions,
+  description,
 }: {
-  title: string
-  icon?: React.ComponentType<{ className?: string }>
+  title: React.ReactNode
+  icon?: React.ComponentType<{ className?: string; strokeWidth?: number }>
   actions?: React.ReactNode
+  description?: React.ReactNode
 }) {
   return (
-    <div className="dashboard-panel-header">
-      <h2 className="dashboard-panel-title flex items-center gap-2">
-        {Icon && <Icon className="h-4 w-4 text-brand-strong shrink-0" aria-hidden />}
-        {title}
-      </h2>
-      {actions}
-    </div>
+    <DashboardPanelHeader title={title} icon={icon} actions={actions} description={description} />
   )
 }
 
@@ -113,7 +160,9 @@ export function AdminPanelBody({
   noPadding?: boolean
 }) {
   return (
-    <div className={cn(noPadding ? '' : 'dashboard-panel-body', className)}>{children}</div>
+    <DashboardPanelBody flush={noPadding} className={className}>
+      {children}
+    </DashboardPanelBody>
   )
 }
 
@@ -121,8 +170,14 @@ export function AdminTableWrap({ children }: { children: React.ReactNode }) {
   return <div className="dashboard-table-wrap">{children}</div>
 }
 
-export function AdminTable({ children }: { children: React.ReactNode }) {
-  return <table className="dashboard-table">{children}</table>
+export function AdminTable({
+  children,
+  className,
+}: {
+  children: React.ReactNode
+  className?: string
+}) {
+  return <table className={cn('dashboard-table', className)}>{children}</table>
 }
 
 export type AdminSortOrder = 'asc' | 'desc'
@@ -157,7 +212,7 @@ export function AdminSortableTh<K extends string>({
 
   return (
     <th
-      className={className}
+      className={cn(align === 'right' && 'text-right', className)}
       aria-sort={isActive ? (sort.order === 'asc' ? 'ascending' : 'descending') : 'none'}
     >
       <button
@@ -170,10 +225,10 @@ export function AdminSortableTh<K extends string>({
           })
         }
         className={cn(
-          'group inline-flex items-center gap-1 rounded-md px-1 -mx-1 py-0.5 transition-colors',
-          'hover:text-brand-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-strong/40',
+          'group -mx-1 inline-flex items-center gap-1 rounded-md px-1 py-0.5 uppercase tracking-[0.06em] transition-colors',
+          'hover:text-dash-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40',
           align === 'right' && 'flex-row-reverse',
-          isActive && 'text-brand-strong'
+          isActive && 'text-dash-ink'
         )}
       >
         {label}
@@ -186,6 +241,31 @@ export function AdminSortableTh<K extends string>({
         />
       </button>
     </th>
+  )
+}
+
+function PagerButton({
+  label,
+  icon: Icon,
+  onClick,
+  disabled,
+}: {
+  label: string
+  icon: React.ComponentType<{ className?: string; strokeWidth?: number }>
+  onClick: () => void
+  disabled?: boolean
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      aria-label={label}
+      title={label}
+      className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-dash-border bg-white text-dash-body shadow-dash transition-colors hover:bg-dash-hover hover:text-dash-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 disabled:pointer-events-none disabled:opacity-40"
+    >
+      <Icon className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
+    </button>
   )
 }
 
@@ -213,18 +293,18 @@ export function AdminPagination({
   const end = Math.min(page * pageSize, total)
 
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-5 py-4 border-t border-surface-border/60">
-      <div className="flex items-center gap-3">
-        <p className="text-sm text-ink-muted tabular-nums">
+    <div className="flex flex-col items-center justify-between gap-3 border-t border-dash-border px-5 py-3 sm:flex-row">
+      <div className="flex items-center gap-4">
+        <p className="text-xs tabular-nums text-dash-muted">
           {total === 0 ? `No ${noun}` : `${start}–${end} of ${total.toLocaleString()} ${noun}`}
         </p>
         {onPageSizeChange && (
-          <label className="hidden sm:flex items-center gap-1.5 text-xs text-ink-muted">
-            <span className="sr-only sm:not-sr-only">Per page</span>
+          <label className="hidden items-center gap-2 text-xs text-dash-muted sm:flex">
+            Per page
             <select
               value={pageSize}
               onChange={(e) => onPageSizeChange(Number(e.target.value))}
-              className="rounded-md border border-surface-border/80 bg-white px-1.5 py-1 text-xs"
+              className="dashboard-select h-8 pl-2.5 pr-7 text-xs"
             >
               {pageSizeOptions.map((size) => (
                 <option key={size} value={size}>
@@ -235,42 +315,34 @@ export function AdminPagination({
           </label>
         )}
       </div>
-      <div className="flex items-center gap-2">
-        <Button
-          variant="outline"
-          size="sm"
+      <div className="flex items-center gap-1.5">
+        <PagerButton
+          label="First page"
+          icon={ChevronsLeft}
           onClick={() => onPageChange(1)}
           disabled={page <= 1 || loading}
-        >
-          First
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
+        />
+        <PagerButton
+          label="Previous page"
+          icon={ChevronLeft}
           onClick={() => onPageChange(page - 1)}
           disabled={page <= 1 || loading}
-        >
-          Previous
-        </Button>
-        <span className="text-sm text-ink-muted tabular-nums whitespace-nowrap">
-          Page {page} of {totalPages}
+        />
+        <span className="whitespace-nowrap px-2 text-xs tabular-nums text-dash-muted">
+          Page <span className="font-medium text-dash-ink">{page}</span> of {totalPages}
         </span>
-        <Button
-          variant="outline"
-          size="sm"
+        <PagerButton
+          label="Next page"
+          icon={ChevronRight}
           onClick={() => onPageChange(page + 1)}
           disabled={page >= totalPages || loading}
-        >
-          Next
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
+        />
+        <PagerButton
+          label="Last page"
+          icon={ChevronsRight}
           onClick={() => onPageChange(totalPages)}
           disabled={page >= totalPages || loading}
-        >
-          Last
-        </Button>
+        />
       </div>
     </div>
   )
@@ -307,22 +379,7 @@ export function AdminTimeRangeToggle<T extends string>({
   onChange: (v: T) => void
 }) {
   return (
-    <div className="dashboard-segmented" role="group" aria-label="Time range">
-      {options.map((opt) => (
-        <button
-          key={opt.value}
-          type="button"
-          className={cn(
-            'dashboard-segmented-btn',
-            value === opt.value && 'dashboard-segmented-btn-active'
-          )}
-          onClick={() => onChange(opt.value)}
-          aria-pressed={value === opt.value}
-        >
-          {opt.label}
-        </button>
-      ))}
-    </div>
+    <DashboardSegmented value={value} options={options} onChange={onChange} ariaLabel="Time range" />
   )
 }
 
@@ -336,28 +393,24 @@ export function AdminRefreshButton({
   label?: string
 }) {
   return (
-    <Button variant="outline" size="sm" onClick={onClick} disabled={loading}>
-      <RefreshCw className={cn('h-4 w-4 mr-1.5', loading && 'animate-spin')} aria-hidden />
+    <Button variant="outline" size="sm" onClick={onClick} disabled={loading} className="h-9 gap-1.5">
+      <RefreshCw
+        className={cn('h-4 w-4', loading && 'animate-spin')}
+        strokeWidth={DASHBOARD_ICON_STROKE}
+        aria-hidden
+      />
       {label}
     </Button>
   )
 }
 
 export function AdminHttpStatusBadge({ code }: { code: number }) {
-  const variant =
-    code >= 500 ? 'bg-red-100 text-red-800 border-red-200/80' :
-    code >= 400 ? 'bg-amber-100 text-amber-900 border-amber-200/80' :
-    code >= 300 ? 'bg-sky-100 text-sky-800 border-sky-200/80' :
-    'bg-emerald-100 text-emerald-800 border-emerald-200/80'
+  const tone: DashboardTone =
+    code >= 500 ? 'rose' : code >= 400 ? 'orange' : code >= 300 ? 'indigo' : 'green'
   return (
-    <span
-      className={cn(
-        'inline-flex items-center rounded-md border px-2 py-0.5 text-xs font-semibold tabular-nums',
-        variant
-      )}
-    >
+    <DashboardPill tone={tone} className="font-semibold tabular-nums">
       {code}
-    </span>
+    </DashboardPill>
   )
 }
 
@@ -367,11 +420,16 @@ export function AdminDetailGrid({
   items: { label: string; value: React.ReactNode; mono?: boolean }[]
 }) {
   return (
-    <dl className="grid gap-3 sm:grid-cols-2">
+    <dl className="grid gap-x-6 gap-y-4 sm:grid-cols-2">
       {items.map((item) => (
-        <div key={item.label}>
-          <dt className="text-xs font-medium uppercase tracking-wide text-ink-dim">{item.label}</dt>
-          <dd className={cn('mt-0.5 text-sm text-ink', item.mono && 'font-mono text-xs break-all')}>
+        <div key={item.label} className="min-w-0">
+          <dt className="text-xs text-dash-muted">{item.label}</dt>
+          <dd
+            className={cn(
+              'mt-1 text-[13px] font-medium text-dash-ink',
+              item.mono && 'break-all font-mono text-xs font-normal'
+            )}
+          >
             {item.value}
           </dd>
         </div>
@@ -389,32 +447,37 @@ export function AdminActivityFeed({
     message: string
     timestamp: string
     severity: 'info' | 'warning' | 'error'
-    icon: React.ComponentType<{ className?: string }>
+    icon: React.ComponentType<{ className?: string; strokeWidth?: number }>
   }>
   emptyTitle?: string
 }) {
   if (items.length === 0) {
     return (
-      <p className="text-sm text-ink-muted text-center py-8">No activity in this period yet.</p>
+      <div className="py-8 text-center">
+        <p className="text-sm font-medium text-dash-ink">{emptyTitle}</p>
+        <p className="mt-1 text-[13px] text-dash-muted">No activity in this period yet.</p>
+      </div>
     )
   }
   const severityStyles = {
-    info: 'bg-brand-muted text-brand-strong',
-    warning: 'bg-amber-50 text-amber-800',
-    error: 'bg-red-50 text-red-800',
+    info: 'bg-dash-teal-soft text-dash-teal-strong',
+    warning: 'bg-dash-warning-soft text-dash-warning',
+    error: 'bg-dash-negative-soft text-dash-negative',
   }
   return (
-    <ul className="space-y-1">
+    <ul>
       {items.map((item) => {
         const Icon = item.icon
         return (
           <li key={item.id} className="dashboard-activity-item">
             <div className={cn('dashboard-activity-icon', severityStyles[item.severity])}>
-              <Icon className="h-4 w-4" aria-hidden />
+              <Icon className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-sm text-ink leading-snug">{item.message}</p>
-              <p className="text-xs text-ink-muted mt-0.5">
+              <p className="truncate text-[13px] leading-5 text-dash-ink" title={item.message}>
+                {item.message}
+              </p>
+              <p className="mt-0.5 text-xs text-dash-muted">
                 {new Date(item.timestamp).toLocaleString()}
               </p>
             </div>
@@ -427,12 +490,16 @@ export function AdminActivityFeed({
 
 export function AdminSkeletonStats({ count = 4 }: { count?: number }) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 animate-pulse">
+    <div className={count === 3 ? 'dashboard-grid-kpi' : 'dashboard-grid-kpi-4'} aria-hidden>
       {Array.from({ length: count }).map((_, i) => (
-        <div
-          key={i}
-          className="h-[108px] rounded-brand bg-white border border-surface-border/60"
-        />
+        <div key={i} className="dashboard-stat-card gap-4">
+          <div className="flex items-center gap-2.5">
+            <DashboardSkeleton className="h-7 w-7 rounded-lg" />
+            <DashboardSkeleton className="h-4 w-24" />
+          </div>
+          <DashboardSkeleton className="h-8 w-28" />
+          <DashboardSkeleton className="h-3 w-36" />
+        </div>
       ))}
     </div>
   )

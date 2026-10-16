@@ -166,6 +166,7 @@ export function useAdmin(): AdminAuthState {
   }, [authLoading, authIsAuthenticated, authUser])
 
   useEffect(() => {
+    /* eslint-disable-next-line react-hooks/set-state-in-effect */
     checkAdminAccess()
   }, [checkAdminAccess])
 

@@ -1,8 +1,14 @@
 'use client'
 
 import { useMemo } from 'react'
+import { ChevronRight } from 'lucide-react'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import { cn } from '@/lib/utils/cn'
+import {
+  DASHBOARD_ICON_STROKE,
+  DashboardTable,
+  DashboardTableWrap,
+} from '@/components/dashboard/dashboard-shell'
 import {
   atwaterEnergyRange,
   atwaterInBand,
@@ -41,10 +47,10 @@ export const EXTRA_NUTRIENTS: Array<{ id: number; label: string; unit: string }>
 ]
 
 const TONE_CLASS = {
-  green: 'text-emerald-700',
-  amber: 'text-amber-700',
-  red: 'text-red-700',
-  neutral: 'text-ink-dim',
+  green: 'border-dash-positive/20 bg-dash-positive-soft text-dash-positive',
+  amber: 'border-dash-warning/20 bg-dash-warning-soft text-dash-warning',
+  red: 'border-dash-negative/20 bg-dash-negative-soft text-dash-negative',
+  neutral: 'border-dash-border bg-dash-hover text-dash-muted',
 }
 
 function num(values: Record<number, string>, id: number): number {
@@ -60,6 +66,50 @@ export function amountsFromRows(rows: AdminFoodNutrientRow[]): Record<number, st
     out[row.nutrient_id] = String(row.amount)
   }
   return out
+}
+
+function NutrientRow({
+  item,
+  value,
+  previous,
+  showPrevious,
+  disabled,
+  onChange,
+}: {
+  item: { id: number; label: string; unit: string }
+  value: string | undefined
+  previous?: string
+  showPrevious?: boolean
+  disabled?: boolean
+  onChange: (value: string) => void
+}) {
+  const inputId = `n-${item.id}`
+  return (
+    <tr>
+      <td>
+        <label htmlFor={inputId} className="block">
+          <span className="block font-medium text-dash-ink">{item.label}</span>
+          <span className="block text-xs text-dash-muted">{item.unit} / 100 g</span>
+        </label>
+      </td>
+      {showPrevious && <td className="dashboard-num text-dash-muted">{previous ?? '—'}</td>}
+      <td className="dashboard-num">
+        <div className="ml-auto flex w-full max-w-[200px] items-center justify-end gap-2">
+          <Input
+            id={inputId}
+            type="number"
+            min={0}
+            step="0.01"
+            disabled={disabled}
+            value={value ?? ''}
+            onChange={(event) => onChange(event.target.value)}
+            className="text-right tabular-nums"
+          />
+          <span className="w-9 shrink-0 text-left text-xs text-dash-muted">{item.unit}</span>
+        </div>
+      </td>
+    </tr>
+  )
 }
 
 export function FoodMacroEditor({
@@ -98,62 +148,82 @@ export function FoodMacroEditor({
   }, [original, values])
 
   return (
-    <div className="flex flex-col gap-6">
-      <p className="text-sm text-ink-dim">
-        All amounts are <strong>per 100 g</strong>. The source CSV was per 1 g; do not enter per-gram values here.
+    <div className="flex flex-col">
+      <p className="px-5 pb-4 pt-3 text-[13px] leading-5 text-dash-muted">
+        All amounts are <strong className="font-semibold text-dash-ink">per 100 g</strong>. The source CSV was
+        per 1 g; do not enter per-gram values here.
       </p>
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-        {CORE_NUTRIENTS.map((item) => (
-          <div key={item.id} className="flex flex-col gap-1">
-            <Label htmlFor={`n-${item.id}`}>
-              {item.label} ({item.unit} / 100 g)
-            </Label>
-            <Input
-              id={`n-${item.id}`}
-              type="number"
-              min={0}
-              step="0.01"
-              disabled={disabled}
-              value={values[item.id] ?? ''}
-              onChange={(event) => onChange(item.id, event.target.value)}
-            />
-            <span className="text-xs text-ink-dim">DB was {original[item.id] ?? '—'}</span>
-          </div>
-        ))}
-      </div>
-      <div className={`text-sm ${TONE_CLASS[tone]}`}>
-        Plausible energy {range.min.toFixed(0)}-{range.max.toFixed(0)} kcal/100 g after fiber
-        (0-2-4 kcal/g) and alcohol (7). EU-style estimate {estimate.toFixed(0)}. Entered{' '}
-        {kcal.toFixed(0)} {inBand ? 'is inside the range' : 'is outside the range'}.
-      </div>
-      {impossible && <p className="text-sm text-red-700">{impossible}</p>}
-      <details>
-        <summary className="cursor-pointer text-sm font-medium">Other nutrients (per 100 g)</summary>
-        <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-          {EXTRA_NUTRIENTS.map((item) => (
-            <div key={item.id} className="flex flex-col gap-1">
-              <Label htmlFor={`n-${item.id}`}>
-                {item.label} ({item.unit} / 100 g)
-              </Label>
-              <Input
-                id={`n-${item.id}`}
-                type="number"
-                min={0}
-                step="0.01"
+      <DashboardTableWrap>
+        <DashboardTable>
+          <thead>
+            <tr>
+              <th>Nutrient</th>
+              <th className="dashboard-num">DB was</th>
+              <th className="dashboard-num">Per 100 g</th>
+            </tr>
+          </thead>
+          <tbody>
+            {CORE_NUTRIENTS.map((item) => (
+              <NutrientRow
+                key={item.id}
+                item={item}
+                value={values[item.id]}
+                previous={original[item.id]}
+                showPrevious
                 disabled={disabled}
-                value={values[item.id] ?? ''}
-                onChange={(event) => onChange(item.id, event.target.value)}
+                onChange={(next) => onChange(item.id, next)}
               />
-            </div>
-          ))}
+            ))}
+          </tbody>
+        </DashboardTable>
+      </DashboardTableWrap>
+      <div className="flex flex-col gap-3 border-t border-dash-border px-5 py-4">
+        <div className={cn('rounded-xl border px-4 py-3 text-[13px] leading-5', TONE_CLASS[tone])}>
+          Plausible energy {range.min.toFixed(0)}-{range.max.toFixed(0)} kcal/100 g after fiber
+          (0-2-4 kcal/g) and alcohol (7). EU-style estimate {estimate.toFixed(0)}. Entered{' '}
+          {kcal.toFixed(0)} {inBand ? 'is inside the range' : 'is outside the range'}.
         </div>
+        {impossible && <p className="text-[13px] font-medium text-dash-negative">{impossible}</p>}
+      </div>
+      <details className="group border-t border-dash-border">
+        <summary className="flex h-12 cursor-pointer list-none items-center gap-2 px-5 text-[13px] font-medium text-dash-ink transition-colors hover:text-dash-teal-strong [&::-webkit-details-marker]:hidden">
+          <ChevronRight
+            className="h-4 w-4 shrink-0 text-dash-dim transition-transform group-open:rotate-90"
+            strokeWidth={DASHBOARD_ICON_STROKE}
+            aria-hidden
+          />
+          Other nutrients (per 100 g)
+        </summary>
+        <DashboardTableWrap>
+          <DashboardTable>
+            <thead>
+              <tr>
+                <th>Nutrient</th>
+                <th className="dashboard-num">Per 100 g</th>
+              </tr>
+            </thead>
+            <tbody>
+              {EXTRA_NUTRIENTS.map((item) => (
+                <NutrientRow
+                  key={item.id}
+                  item={item}
+                  value={values[item.id]}
+                  disabled={disabled}
+                  onChange={(next) => onChange(item.id, next)}
+                />
+              ))}
+            </tbody>
+          </DashboardTable>
+        </DashboardTableWrap>
       </details>
       {diffs.length > 0 && (
-        <div className="text-sm">
-          <p className="font-medium mb-1">Pending changes</p>
-          <ul className="list-disc pl-5 text-ink-dim">
+        <div className="border-t border-dash-border px-5 py-4 text-[13px]">
+          <p className="mb-2 font-medium text-dash-ink">Pending changes</p>
+          <ul className="space-y-1 rounded-xl border border-dash-border bg-dash-hover px-4 py-3 text-dash-body">
             {diffs.map((line) => (
-              <li key={line}>{line}</li>
+              <li key={line} className="tabular-nums">
+                {line}
+              </li>
             ))}
           </ul>
         </div>

@@ -2,30 +2,32 @@
 
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import {
-  Key, Copy, Eye, EyeOff, Trash2,
-  Calendar, Activity, AlertCircle, CheckCircle
-} from 'lucide-react'
+import { Key, Copy, Eye, EyeOff, Trash2, AlertCircle, CheckCircle } from 'lucide-react'
 import {
   resolveApiKeyPlaintext,
   formatMaskedApiKey,
   type ApiKeyRecord,
 } from '@/lib/api/api-keys'
+import {
+  DASHBOARD_ICON_STROKE,
+  DashboardIconTile,
+  DashboardPill,
+} from './dashboard-shell'
+import { cn } from '@/lib/utils/cn'
 
-interface ApiKeyCardProps {
+interface ApiKeyRowProps {
   apiKey: ApiKeyRecord
   onDelete: (id: number) => void
   onToggleVisibility: (id: number) => void
   isVisible: boolean
 }
 
-export function ApiKeyCard({
+export function ApiKeyRow({
   apiKey,
   onDelete,
   onToggleVisibility,
   isVisible,
-}: ApiKeyCardProps) {
+}: ApiKeyRowProps) {
   const [copied, setCopied] = useState(false)
   const [copyError, setCopyError] = useState('')
 
@@ -58,10 +60,10 @@ export function ApiKeyCard({
     })
   }
 
-  const statusVariant = () => {
-    if (!apiKey.is_active) return 'secondary' as const
-    if (apiKey.last_used_at) return 'success' as const
-    return 'warning' as const
+  const statusTone = () => {
+    if (!apiKey.is_active) return 'neutral' as const
+    if (apiKey.last_used_at) return 'green' as const
+    return 'orange' as const
   }
 
   const statusText = () => {
@@ -75,121 +77,97 @@ export function ApiKeyCard({
     : formatMaskedApiKey(plaintext)
 
   return (
-    <div className="dashboard-panel hover:shadow-glass-lg transition-shadow duration-200">
-      <div className="dashboard-panel-header">
-        <div className="flex items-center gap-3 min-w-0">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-brand bg-brand-muted">
-            <Key className="h-5 w-5 text-brand-strong" aria-hidden />
-          </div>
-          <div className="min-w-0">
-            <div className="flex items-center gap-2 min-w-0">
-              <h3 className="text-sm font-semibold text-ink truncate">{apiKey.name}</h3>
-              {apiKey.product === 'mcp' || apiKey.product === 'rest' ? (
-                <Badge variant="outline">{apiKey.product === 'mcp' ? 'MCP' : 'REST'}</Badge>
-              ) : null}
-            </div>
-            <p className="text-xs text-ink-muted">
-              Created{' '}
-              {apiKey.created_at
-                ? new Date(apiKey.created_at).toLocaleDateString()
-                : 'recently'}
-            </p>
+    <tr>
+      <td>
+        <div className="flex min-w-0 items-center gap-3">
+          <DashboardIconTile icon={Key} tone="brand" className="h-8 w-8" />
+          <div className="flex min-w-0 items-center gap-2">
+            <span className="max-w-[220px] truncate font-medium text-dash-ink" title={apiKey.name}>
+              {apiKey.name}
+            </span>
+            {apiKey.product === 'mcp' || apiKey.product === 'rest' ? (
+              <DashboardPill tone="outline">{apiKey.product === 'mcp' ? 'MCP' : 'REST'}</DashboardPill>
+            ) : null}
           </div>
         </div>
-        <div className="flex items-center gap-1 shrink-0">
-          <Badge variant={statusVariant()}>{statusText()}</Badge>
+      </td>
+      <td>
+        <div className="flex items-center gap-1">
+          {canCopy ? (
+            <code className="inline-block max-w-[240px] break-all rounded-md border border-dash-border bg-dash-hover px-2 py-1 font-mono text-xs leading-4 text-dash-ink">
+              {displayValue}
+            </code>
+          ) : (
+            <span className="block max-w-[220px] text-xs leading-4 text-dash-dim">{displayValue}</span>
+          )}
           <Button
             variant="ghost"
             size="sm"
             onClick={() => onToggleVisibility(apiKey.id)}
-            className="h-8 w-8 p-0"
+            className="h-8 w-8 shrink-0 p-0 text-dash-muted hover:bg-dash-hover hover:text-dash-ink"
             title={isVisible ? 'Hide API key' : 'Show API key'}
+            aria-label={isVisible ? 'Hide API key' : 'Show API key'}
             disabled={!canCopy}
           >
-            {isVisible ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            {isVisible ? (
+              <EyeOff className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} />
+            ) : (
+              <Eye className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} />
+            )}
           </Button>
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => onDelete(apiKey.id)}
-            className="h-8 w-8 p-0 text-error-500 hover:text-error-600 hover:bg-red-50"
-            title="Delete API key"
+            onClick={handleCopy}
+            className="h-8 w-8 shrink-0 p-0 text-dash-muted hover:bg-dash-hover hover:text-dash-ink"
+            disabled={!canCopy}
+            title={canCopy ? 'Copy full API key' : 'Full key not available'}
+            aria-label={canCopy ? 'Copy full API key' : 'Full key not available'}
           >
-            <Trash2 className="h-4 w-4" />
+            {copied ? (
+              <CheckCircle className="h-4 w-4 text-dash-positive" strokeWidth={DASHBOARD_ICON_STROKE} />
+            ) : (
+              <Copy className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} />
+            )}
           </Button>
         </div>
-      </div>
-
-      <div className="dashboard-panel-body space-y-4">
-        <div>
-          <label className="text-xs font-medium text-ink-muted uppercase tracking-wide mb-2 block">
-            Secret key
-          </label>
-          <div className="flex items-center gap-2">
-            <code className="dashboard-code-block">{displayValue}</code>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleCopy}
-              className="shrink-0"
-              disabled={!canCopy}
-              title={canCopy ? 'Copy full API key' : 'Full key not available'}
-            >
-              {copied ? (
-                <CheckCircle className="h-4 w-4 text-success-600" />
-              ) : (
-                <Copy className="h-4 w-4" />
-              )}
-            </Button>
-          </div>
-          {copied && (
-            <p className="text-xs text-success-600 mt-2 flex items-center gap-1">
-              <CheckCircle className="h-3 w-3" />
-              Copied to clipboard
-            </p>
-          )}
-          {copyError && (
-            <p className="text-xs text-amber-700 mt-2 flex items-start gap-1">
-              <AlertCircle className="h-3 w-3 mt-0.5 shrink-0" />
-              {copyError}
-            </p>
-          )}
-          {!canCopy && !copyError && (
-            <p className="text-xs text-ink-muted mt-2">
-              The full key is only returned at creation. Save it then or create a new key.
-            </p>
-          )}
-        </div>
-
-        <div className="grid grid-cols-2 gap-3">
-          <div className="rounded-brand bg-surface-elevated px-3 py-2.5 flex items-center gap-2">
-            <Activity className="h-4 w-4 text-ink-dim shrink-0" />
-            <div>
-              <p className="text-[11px] text-ink-muted uppercase tracking-wide">Last used</p>
-              <p className="text-sm font-medium text-ink">{formatDate(apiKey.last_used_at)}</p>
-            </div>
-          </div>
-          <div className="rounded-brand bg-surface-elevated px-3 py-2.5 flex items-center gap-2">
-            <Calendar className="h-4 w-4 text-ink-dim shrink-0" />
-            <div>
-              <p className="text-[11px] text-ink-muted uppercase tracking-wide">Requests</p>
-              <p className="text-sm font-medium text-ink tabular-nums">
-                {(apiKey.usage_count || 0).toLocaleString()}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {isVisible && canCopy && (
-          <div className="flex items-start gap-2 rounded-brand border border-amber-200/80 bg-amber-50 px-3 py-2.5 text-sm text-amber-900">
-            <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
-            <p>
-              <span className="font-medium">Keep this key private.</span> Never commit it to git or
-              expose it in client-side code.
-            </p>
-          </div>
+        {copied && (
+          <p className="mt-1 flex items-center gap-1 text-xs text-dash-positive" role="status">
+            <CheckCircle className="h-3 w-3" aria-hidden />
+            Copied to clipboard
+          </p>
         )}
-      </div>
-    </div>
+        {copyError && (
+          <p className="mt-1 flex max-w-[320px] items-start gap-1 text-xs text-dash-warning" role="alert">
+            <AlertCircle className="mt-0.5 h-3 w-3 shrink-0" aria-hidden />
+            {copyError}
+          </p>
+        )}
+      </td>
+      <td>
+        <DashboardPill tone={statusTone()}>{statusText()}</DashboardPill>
+      </td>
+      <td className={cn('whitespace-nowrap', !apiKey.last_used_at && 'text-dash-dim')}>
+        {formatDate(apiKey.last_used_at)}
+      </td>
+      <td className="dashboard-num font-medium text-dash-ink">
+        {(apiKey.usage_count || 0).toLocaleString()}
+      </td>
+      <td className="whitespace-nowrap">
+        {apiKey.created_at ? new Date(apiKey.created_at).toLocaleDateString() : 'recently'}
+      </td>
+      <td className="text-right">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => onDelete(apiKey.id)}
+          className="h-8 w-8 p-0 text-dash-negative hover:bg-dash-negative-soft hover:text-dash-negative"
+          title="Delete API key"
+          aria-label="Delete API key"
+        >
+          <Trash2 className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} />
+        </Button>
+      </td>
+    </tr>
   )
 }

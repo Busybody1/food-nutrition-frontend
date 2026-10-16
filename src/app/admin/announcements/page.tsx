@@ -6,15 +6,18 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useAdmin } from '@/lib/hooks/use-admin'
 import { Mail, Send, History, AlertCircle } from 'lucide-react'
-import { Badge } from '@/components/ui/badge'
 import {
   AdminPage,
   AdminPageHeader,
   AdminPanel,
   AdminPanelHeader,
   AdminPanelBody,
+  AdminTableWrap,
+  AdminTable,
   DashboardAlert,
   DashboardEmpty,
+  DashboardPill,
+  DASHBOARD_ICON_STROKE,
 } from '@/components/admin/admin-ui'
 
 export default function AdminAnnouncementsPage() {
@@ -79,20 +82,22 @@ export default function AdminAnnouncementsPage() {
       <AdminPageHeader
         title="Announcements"
         description="Broadcast email to active users via Resend (same as the companion app admin). Each send is logged in the audit trail."
-        actions={
+        meta={
           emailStatus ? (
-            <Badge variant={emailStatus.resend_configured ? 'default' : 'secondary'}>
+            <DashboardPill tone={emailStatus.resend_configured ? 'green' : 'neutral'}>
               Resend {emailStatus.resend_configured ? 'configured' : 'not configured'}
-            </Badge>
+            </DashboardPill>
           ) : undefined
         }
       />
 
       {emailStatus && !emailStatus.resend_configured && !emailStatus.smtp_configured && (
         <DashboardAlert variant="warning">
-          <AlertCircle className="h-4 w-4 shrink-0 inline mr-1.5 align-text-bottom" />
-          Email is not configured on the API. Set <code className="text-xs">RESEND_API_KEY</code> on Heroku
-          (recommended) or SMTP credentials before sending.
+          <AlertCircle className="h-4 w-4 shrink-0" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
+          <span className="min-w-0 flex-1">
+            Email is not configured on the API. Set <code className="font-mono text-xs">RESEND_API_KEY</code> on
+            Heroku (recommended) or SMTP credentials before sending.
+          </span>
         </DashboardAlert>
       )}
 
@@ -102,7 +107,7 @@ export default function AdminAnnouncementsPage() {
         </DashboardAlert>
       )}
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="dashboard-grid-halves">
         <AdminPanel>
           <AdminPanelHeader title="Compose email" icon={Mail} />
           <AdminPanelBody className="space-y-4">
@@ -112,8 +117,11 @@ export default function AdminAnnouncementsPage() {
               </DashboardAlert>
             )}
             <div>
-              <label className="text-xs font-medium text-ink-dim block mb-1.5">Subject</label>
+              <label htmlFor="announcement-subject" className="dashboard-field-label">
+                Subject
+              </label>
               <Input
+                id="announcement-subject"
                 placeholder="Product update, March 2026"
                 value={subject}
                 onChange={(e) => setSubject(e.target.value)}
@@ -121,26 +129,29 @@ export default function AdminAnnouncementsPage() {
               />
             </div>
             <div>
-              <label className="text-xs font-medium text-ink-dim block mb-1.5">HTML body</label>
+              <label htmlFor="announcement-body" className="dashboard-field-label">
+                HTML body
+              </label>
               <textarea
-                className="w-full min-h-[160px] rounded-brand border border-surface-border/80 p-3 text-sm
-                  focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand/50
-                  disabled:opacity-60 disabled:bg-surface-elevated"
+                id="announcement-body"
+                className="dashboard-textarea min-h-[160px] font-mono text-xs leading-5"
                 placeholder="<p>Hello {{first_name}}, …</p>"
                 value={body}
                 onChange={(e) => setBody(e.target.value)}
                 disabled={!canSend}
               />
-              <p className="text-xs text-ink-muted mt-1.5">
+              <p className="dashboard-field-hint">
                 Use HTML fragments; we wrap them in a branded template. Personalize with{' '}
-                <code className="text-xs">{'{{first_name}}'}</code>.
+                <code className="font-mono text-xs text-dash-body">{'{{first_name}}'}</code>.
               </p>
             </div>
             <div>
-              <label className="text-xs font-medium text-ink-dim block mb-1.5">Recipients</label>
+              <label htmlFor="announcement-recipients" className="dashboard-field-label">
+                Recipients
+              </label>
               <select
-                className="w-full rounded-brand border border-surface-border/80 p-2.5 text-sm bg-white
-                  focus:outline-none focus:ring-2 focus:ring-brand/30"
+                id="announcement-recipients"
+                className="dashboard-select w-full"
                 value={mode}
                 onChange={(e) => setMode(e.target.value as 'all' | 'active' | 'plan')}
                 disabled={!canSend}
@@ -150,38 +161,73 @@ export default function AdminAnnouncementsPage() {
                 <option value="plan">By plan (configure in API)</option>
               </select>
             </div>
-            {canSend && (
-              <Button onClick={send} disabled={sending || !subject.trim() || !body.trim()} className="w-full sm:w-auto">
-                <Send className="h-4 w-4 mr-1.5" />
+          </AdminPanelBody>
+          {canSend && (
+            <div className="flex justify-end gap-2 border-t border-dash-border px-5 py-4">
+              <Button
+                size="sm"
+                onClick={send}
+                disabled={sending || !subject.trim() || !body.trim()}
+                className="h-9 w-full gap-1.5 sm:w-auto"
+              >
+                <Send className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
                 {sending ? 'Sending…' : 'Send announcement'}
               </Button>
-            )}
-          </AdminPanelBody>
+            </div>
+          )}
         </AdminPanel>
 
         <AdminPanel>
-          <AdminPanelHeader title="Send history" icon={History} />
-          <AdminPanelBody className="space-y-3 max-h-[480px] overflow-y-auto">
-            {history.length === 0 ? (
+          <AdminPanelHeader
+            title="Send history"
+            icon={History}
+            actions={
+              history.length > 0 ? (
+                <span className="dashboard-meta-pill tabular-nums">{history.length.toLocaleString()}</span>
+              ) : undefined
+            }
+          />
+          {history.length === 0 ? (
+            <AdminPanelBody>
               <DashboardEmpty icon={History} title="No announcements sent yet" />
-            ) : (
-              history.map((h) => (
-                <div
-                  key={String(h.id)}
-                  className="rounded-brand border border-surface-border/60 p-4 hover:bg-surface-elevated/40 transition-colors"
-                >
-                  <p className="font-medium text-sm text-ink">{String(h.subject)}</p>
-                  <p className="text-xs text-ink-muted mt-1">
-                    {String(h.recipient_count)} delivered · {String(h.recipient_mode)} ·{' '}
-                    {new Date(String(h.created_at)).toLocaleString()}
-                  </p>
-                  {h.admin_email != null && String(h.admin_email) !== '' && (
-                    <p className="text-xs text-ink-dim mt-0.5">by {String(h.admin_email)}</p>
-                  )}
-                </div>
-              ))
-            )}
-          </AdminPanelBody>
+            </AdminPanelBody>
+          ) : (
+            <AdminPanelBody noPadding className="max-h-[480px] overflow-y-auto">
+              <AdminTableWrap>
+                <AdminTable>
+                  <thead>
+                    <tr>
+                      <th>Subject</th>
+                      <th>Recipients</th>
+                      <th className="dashboard-num">Delivered</th>
+                      <th>Sent</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {history.map((h) => (
+                      <tr key={String(h.id)}>
+                        <td className="max-w-[260px]">
+                          <p className="truncate font-medium text-dash-ink" title={String(h.subject)}>
+                            {String(h.subject)}
+                          </p>
+                          {h.admin_email != null && String(h.admin_email) !== '' && (
+                            <p className="truncate text-xs text-dash-muted">by {String(h.admin_email)}</p>
+                          )}
+                        </td>
+                        <td>
+                          <DashboardPill tone="neutral">{String(h.recipient_mode)}</DashboardPill>
+                        </td>
+                        <td className="dashboard-num text-dash-ink">{String(h.recipient_count)}</td>
+                        <td className="whitespace-nowrap text-xs text-dash-muted">
+                          {new Date(String(h.created_at)).toLocaleString()}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </AdminTable>
+              </AdminTableWrap>
+            </AdminPanelBody>
+          )}
         </AdminPanel>
       </div>
     </AdminPage>

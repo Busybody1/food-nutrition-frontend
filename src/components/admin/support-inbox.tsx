@@ -3,12 +3,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { LifeBuoy, Search, UserRound } from 'lucide-react'
+import { CircleCheck, Inbox, LifeBuoy, RotateCcw, Search, UserRound } from 'lucide-react'
 import { adminAPI } from '@/lib/api/admin'
 import { useAdmin } from '@/lib/hooks/use-admin'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Badge } from '@/components/ui/badge'
 import { ApiError } from '@/types/api'
 import type { SupportConversation, SupportMessage, SupportStatus } from '@/types/support'
 import { SupportComposer } from '@/components/support/SupportComposer'
@@ -21,6 +20,11 @@ import {
   DashboardAlert,
   DashboardEmpty,
   DashboardLoading,
+  DashboardPanelHeader,
+  DashboardPill,
+  DashboardSegmented,
+  DASHBOARD_ICON_STROKE,
+  type DashboardTone,
 } from '@/components/admin/admin-ui'
 import { cn } from '@/lib/utils/cn'
 
@@ -42,6 +46,13 @@ function displayName(convo: SupportConversation): string {
   return name || convo.email || `User #${convo.user_id}`
 }
 
+function initialsFor(convo: SupportConversation): string {
+  const letters = `${(convo.first_name || '').trim().charAt(0)}${(convo.last_name || '').trim().charAt(0)}`
+  if (letters) return letters.toUpperCase()
+  const email = (convo.email || '').trim()
+  return email ? email.charAt(0).toUpperCase() : '#'
+}
+
 function waitingLabel(iso: string | null): string {
   if (!iso) return '—'
   const mins = Math.max(0, Math.floor((Date.now() - new Date(iso).getTime()) / 60000))
@@ -52,23 +63,31 @@ function waitingLabel(iso: string | null): string {
   return `${Math.floor(hours / 24)}d`
 }
 
-function statusChip(status: SupportStatus): { label: string; className: string } {
-  if (status === 'waiting_on_admin') {
-    return { label: 'Waiting', className: 'bg-amber-50 text-amber-800 border-amber-200/80' }
-  }
-  if (status === 'waiting_on_user') {
-    return { label: 'Waiting on user', className: 'bg-blue-50 text-blue-800 border-blue-200/80' }
-  }
-  if (status === 'closed') {
-    return { label: 'Closed', className: 'bg-surface-elevated text-ink-muted border-surface-border/80' }
-  }
-  return { label: 'Open', className: 'bg-emerald-50 text-emerald-800 border-emerald-200/80' }
+function statusChip(status: SupportStatus): { label: string; tone: DashboardTone } {
+  if (status === 'waiting_on_admin') return { label: 'Waiting', tone: 'orange' }
+  if (status === 'waiting_on_user') return { label: 'Waiting on user', tone: 'indigo' }
+  if (status === 'closed') return { label: 'Closed', tone: 'neutral' }
+  return { label: 'Open', tone: 'green' }
 }
 
 function mergeMessages(current: SupportMessage[], incoming: SupportMessage[]): SupportMessage[] {
   const byId = new Map(current.map((item) => [item.id, item]))
   for (const item of incoming) byId.set(item.id, item)
   return Array.from(byId.values()).sort((a, b) => a.id - b.id)
+}
+
+function InitialsAvatar({ convo, className }: { convo: SupportConversation; className?: string }) {
+  return (
+    <span
+      aria-hidden
+      className={cn(
+        'flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-dash-pill text-[11px] font-semibold text-dash-body',
+        className
+      )}
+    >
+      {initialsFor(convo)}
+    </span>
+  )
 }
 
 export function SupportInbox({ initialConversationId }: { initialConversationId?: number }) {
@@ -128,6 +147,7 @@ export function SupportInbox({ initialConversationId }: { initialConversationId?
   }, [])
 
   useEffect(() => {
+    /* eslint-disable-next-line react-hooks/set-state-in-effect */
     void loadList()
     const timer = window.setInterval(() => {
       if (!document.hidden) void loadList()
@@ -137,6 +157,7 @@ export function SupportInbox({ initialConversationId }: { initialConversationId?
 
   useEffect(() => {
     if (!selectedId) return
+    /* eslint-disable-next-line react-hooks/set-state-in-effect */
     void loadThread(selectedId)
   }, [loadThread, selectedId])
 
@@ -240,50 +261,47 @@ export function SupportInbox({ initialConversationId }: { initialConversationId?
       {listError ? <DashboardAlert variant="error">{listError}</DashboardAlert> : null}
       {actionError ? <DashboardAlert variant="error">{actionError}</DashboardAlert> : null}
 
-      <div className="grid grid-cols-1 lg:grid-cols-[340px_minmax(0,1fr)] gap-4 min-h-[560px]">
-        <AdminPanel className="flex flex-col min-h-[420px]">
-          <div className="p-3 border-b border-surface-border/70 space-y-2">
+      <div className="grid grid-cols-1 gap-5 lg:h-[clamp(560px,calc(100dvh_-_12rem),860px)] lg:grid-cols-[360px_minmax(0,1fr)]">
+        <AdminPanel className="flex min-h-[420px] flex-col overflow-hidden lg:min-h-0">
+          <DashboardPanelHeader
+            title="Conversations"
+            icon={Inbox}
+            description={`${total} conversation${total === 1 ? '' : 's'}`}
+          />
+          <div className="space-y-2.5 border-b border-dash-border px-5 pb-4 pt-3">
             <form
               onSubmit={(event) => {
                 event.preventDefault()
                 setAppliedQuery(query.trim())
                 setListLoading(true)
               }}
-              className="flex gap-2"
             >
-              <div className="relative flex-1">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-ink-dim" aria-hidden />
+              <div className="relative">
+                <Search
+                  className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-dash-dim"
+                  strokeWidth={DASHBOARD_ICON_STROKE}
+                  aria-hidden
+                />
                 <Input
                   value={query}
                   onChange={(event) => setQuery(event.target.value)}
                   placeholder="Search email or preview"
-                  className="pl-8"
+                  aria-label="Search email or preview"
+                  className="pl-9"
                 />
               </div>
             </form>
-            <div className="flex flex-wrap gap-1.5">
-              {STATUS_FILTERS.map((filter) => (
-                <button
-                  key={filter.value || 'all'}
-                  type="button"
-                  onClick={() => {
-                    setStatus(filter.value)
-                    setListLoading(true)
-                  }}
-                  className={cn(
-                    'rounded-full border px-2.5 py-1 text-[11px] font-medium',
-                    status === filter.value
-                      ? 'border-brand/30 bg-brand-muted text-brand-strong'
-                      : 'border-surface-border/80 text-ink-muted hover:text-ink'
-                  )}
-                >
-                  {filter.label}
-                </button>
-              ))}
-            </div>
-            <p className="text-[11px] text-ink-dim">{total} conversation{total === 1 ? '' : 's'}</p>
+            <DashboardSegmented
+              value={status}
+              options={STATUS_FILTERS}
+              ariaLabel="Conversation status"
+              onChange={(value) => {
+                setStatus(value)
+                setListLoading(true)
+              }}
+            />
           </div>
-          <div className="flex-1 overflow-y-auto">
+          <div className="min-h-0 flex-1 overflow-y-auto">
             {listLoading && conversations.length === 0 ? (
               <DashboardLoading message="Loading conversations…" />
             ) : conversations.length === 0 ? (
@@ -298,34 +316,41 @@ export function SupportInbox({ initialConversationId }: { initialConversationId?
                   const chip = statusChip(item.status)
                   const active = item.id === selectedId
                   return (
-                    <li key={item.id}>
+                    <li key={item.id} className="border-b border-dash-border/70 last:border-b-0">
                       <button
                         type="button"
                         onClick={() => selectConversation(item.id)}
+                        aria-current={active ? 'true' : undefined}
                         className={cn(
-                          'w-full text-left px-4 py-3 border-b border-surface-border/50 hover:bg-surface-elevated',
-                          active && 'bg-brand-muted/40'
+                          'flex w-full items-start gap-3 px-5 py-3.5 text-left transition-colors hover:bg-dash-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand/40',
+                          active && 'bg-dash-teal-soft/60 hover:bg-dash-teal-soft/60'
                         )}
                       >
-                        <div className="flex items-center justify-between gap-2">
-                          <p className="text-sm font-medium text-ink truncate">{displayName(item)}</p>
-                          <span className="text-[11px] text-ink-dim tabular-nums shrink-0">
-                            {waitingLabel(item.last_message_at)}
-                          </span>
-                        </div>
-                        <p className="mt-0.5 text-xs text-ink-muted truncate">
-                          {item.last_message_preview || 'No messages yet'}
-                        </p>
-                        <div className="mt-1.5 flex items-center gap-1.5">
-                          <span className={cn('rounded-full border px-1.5 py-0.5 text-[10px] font-medium', chip.className)}>
-                            {chip.label}
-                          </span>
-                          {item.plan_name ? (
-                            <span className="text-[10px] text-ink-dim">{item.plan_name}</span>
-                          ) : null}
-                          {item.unread_count > 0 ? (
-                            <span className="ml-auto h-2 w-2 rounded-full bg-violet-600" aria-label="Unread" />
-                          ) : null}
+                        <InitialsAvatar convo={item} />
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center justify-between gap-2">
+                            <p className="truncate text-[13px] font-medium text-dash-ink">{displayName(item)}</p>
+                            <span className="shrink-0 text-xs tabular-nums text-dash-dim">
+                              {waitingLabel(item.last_message_at)}
+                            </span>
+                          </div>
+                          <div className="mt-0.5 flex items-center gap-2">
+                            <p className="min-w-0 flex-1 truncate text-xs text-dash-muted">
+                              {item.last_message_preview || 'No messages yet'}
+                            </p>
+                            {item.unread_count > 0 ? (
+                              <span className="dashboard-count-badge" title="Unread">
+                                <span className="sr-only">Unread: </span>
+                                {item.unread_count}
+                              </span>
+                            ) : null}
+                          </div>
+                          <div className="mt-2 flex items-center gap-1.5">
+                            <DashboardPill tone={chip.tone}>{chip.label}</DashboardPill>
+                            {item.plan_name ? (
+                              <span className="truncate text-[11px] text-dash-dim">{item.plan_name}</span>
+                            ) : null}
+                          </div>
                         </div>
                       </button>
                     </li>
@@ -336,54 +361,65 @@ export function SupportInbox({ initialConversationId }: { initialConversationId?
           </div>
         </AdminPanel>
 
-        <AdminPanel className="flex flex-col min-h-[420px]">
+        <AdminPanel className="flex min-h-[420px] flex-col overflow-hidden lg:min-h-0">
           {!selectedId ? (
             <DashboardEmpty
               icon={LifeBuoy}
               title="Select a conversation"
               description="Choose a thread from the list to reply."
+              className="flex-1"
             />
           ) : threadLoading && !thread ? (
-            <DashboardLoading message="Loading thread…" />
+            <DashboardLoading message="Loading thread…" className="flex-1" />
           ) : !thread ? (
-            <DashboardEmpty icon={LifeBuoy} title="Conversation not found" description="It may have been deleted." />
+            <DashboardEmpty
+              icon={LifeBuoy}
+              title="Conversation not found"
+              description="It may have been deleted."
+              className="flex-1"
+            />
           ) : (
             <>
-              <div className="flex items-start justify-between gap-3 border-b border-surface-border/70 px-4 py-3">
-                <div className="min-w-0">
-                  <p className="text-sm font-semibold text-ink truncate">{displayName(thread)}</p>
-                  <p className="text-xs text-ink-muted truncate">{thread.email}</p>
-                  <div className="mt-1.5 flex flex-wrap items-center gap-2">
-                    <Badge className={statusChip(thread.status).className}>{statusChip(thread.status).label}</Badge>
-                    {thread.plan_name ? <span className="text-[11px] text-ink-dim">{thread.plan_name}</span> : null}
-                    <Link
-                      href={`/admin/users/${thread.user_id}`}
-                      className="inline-flex items-center gap-1 text-[11px] font-medium text-brand-strong hover:underline"
-                    >
-                      <UserRound className="h-3 w-3" />
-                      User #{thread.user_id}
-                    </Link>
+              <div className="flex flex-col gap-3 border-b border-dash-border px-5 py-4 sm:flex-row sm:items-start sm:justify-between">
+                <div className="flex min-w-0 items-start gap-3">
+                  <InitialsAvatar convo={thread} className="h-9 w-9 text-xs" />
+                  <div className="min-w-0">
+                    <p className="truncate text-[15px] font-semibold leading-5 text-dash-ink">{displayName(thread)}</p>
+                    <p className="truncate text-xs text-dash-muted">{thread.email}</p>
+                    <div className="mt-2 flex flex-wrap items-center gap-2">
+                      <DashboardPill tone={statusChip(thread.status).tone}>{statusChip(thread.status).label}</DashboardPill>
+                      {thread.plan_name ? <DashboardPill tone="outline">{thread.plan_name}</DashboardPill> : null}
+                      <Link
+                        href={`/admin/users/${thread.user_id}`}
+                        className="inline-flex items-center gap-1 text-xs font-medium text-dash-teal-strong hover:underline"
+                      >
+                        <UserRound className="h-3.5 w-3.5" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
+                        User #{thread.user_id}
+                      </Link>
+                    </div>
                   </div>
                 </div>
                 {canReply ? (
-                  <div className="flex gap-2 shrink-0">
+                  <div className="flex shrink-0 gap-2">
                     {thread.status === 'closed' ? (
-                      <Button variant="outline" size="sm" onClick={() => void reopenThread()}>
+                      <Button variant="outline" size="sm" className="h-9 gap-1.5" onClick={() => void reopenThread()}>
+                        <RotateCcw className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
                         Reopen
                       </Button>
                     ) : (
-                      <Button variant="outline" size="sm" onClick={() => void closeThread()}>
+                      <Button variant="outline" size="sm" className="h-9 gap-1.5" onClick={() => void closeThread()}>
+                        <CircleCheck className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
                         Close
                       </Button>
                     )}
                   </div>
                 ) : null}
               </div>
-              <div ref={listRef} className="flex-1 min-h-0 overflow-y-auto">
-                <SupportMessageList messages={messages} viewer="admin" />
+              <div ref={listRef} className="flex min-h-0 flex-1 flex-col overflow-y-auto">
+                <SupportMessageList messages={messages} viewer="admin" className="px-5 py-5" />
               </div>
               {pendingFile ? (
-                <p className="px-4 pb-1 text-[11px] text-ink-muted truncate">
+                <p className="truncate px-5 pb-2 text-xs text-dash-muted">
                   Screenshot ready: {pendingFile.name}
                 </p>
               ) : null}
@@ -404,9 +440,10 @@ export function SupportInbox({ initialConversationId }: { initialConversationId?
                   attaching={attaching}
                   cannedReplies={CANNED_REPLIES}
                   placeholder="Reply to the user…"
+                  className="px-5 py-4"
                 />
               ) : (
-                <p className="px-4 py-3 text-xs text-ink-muted border-t border-surface-border/70">
+                <p className="border-t border-dash-border bg-dash-hover px-5 py-3.5 text-xs text-dash-muted">
                   {thread.status === 'closed'
                     ? 'This conversation is closed. Reopen it to send another reply.'
                     : 'You do not have permission to reply.'}
