@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { AtSign, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -16,6 +16,7 @@ import {
   EmailDomainBan,
   EmailDomainBanPreview,
 } from '@/lib/api/admin'
+import { emailDomainBanNeedsConfirm } from '@/lib/admin/email-domain-ban'
 import {
   AdminPanel,
   AdminPanelBody,
@@ -79,7 +80,7 @@ function BanConfirmOptions({
           {preview.active_account_count > 0
             ? ` (${preview.active_account_count.toLocaleString()} active)`
             : ''}
-          . New signups on this domain and its subdomains are blocked.
+          . New signups on this domain and its subdomains will be blocked.
         </p>
       )}
       <label className="flex items-start gap-2.5">
@@ -122,17 +123,6 @@ function BanConfirmOptions({
   )
 }
 
-function banNeedsConfirm(
-  preview: EmailDomainBanPreview,
-  allowSelfLockout: boolean,
-  confirmLarge: boolean
-): boolean {
-  return (
-    (preview.locks_out_actor && !allowSelfLockout) ||
-    (preview.requires_large_confirm && !confirmLarge)
-  )
-}
-
 export function BannedEmailDomainsPanel({
   refreshKey = 0,
   onAccountsChanged,
@@ -152,9 +142,12 @@ export function BannedEmailDomainsPanel({
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
+  const listRequest = useRef(0)
 
   const load = useCallback(async () => {
+    const requestId = ++listRequest.current
     const response = await adminAPI.listEmailDomainBans()
+    if (requestId !== listRequest.current) return
     setBans(response.bans || [])
     setError('')
     setLoading(false)
@@ -162,19 +155,20 @@ export function BannedEmailDomainsPanel({
 
   useEffect(() => {
     let cancelled = false
+    const requestId = ++listRequest.current
     adminAPI
       .listEmailDomainBans()
       .then((response) => {
-        if (cancelled) return
+        if (cancelled || requestId !== listRequest.current) return
         setBans(response.bans || [])
         setError('')
       })
       .catch((err: unknown) => {
-        if (cancelled) return
+        if (cancelled || requestId !== listRequest.current) return
         setError(messageFrom(err, 'Failed to load banned email domains'))
       })
       .finally(() => {
-        if (!cancelled) setLoading(false)
+        if (!cancelled && requestId === listRequest.current) setLoading(false)
       })
     return () => {
       cancelled = true
@@ -195,15 +189,18 @@ export function BannedEmailDomainsPanel({
       setSaving(true)
       setError('')
       setNotice('')
+      const needsFreshPreview = typed !== previewInput || !preview
       let nextPreview = preview
-      if (typed !== previewInput || !nextPreview) {
+      if (needsFreshPreview || !nextPreview) {
         nextPreview = await adminAPI.previewEmailDomainBan(typed)
         setPreview(nextPreview)
         setPreviewInput(typed)
-        return
       }
-      if (banNeedsConfirm(nextPreview, allowSelfLockout, confirmLarge)) {
-        setError('Confirm the warning below before banning this domain.')
+      if (!nextPreview) return
+      if (emailDomainBanNeedsConfirm(nextPreview, allowSelfLockout, confirmLarge)) {
+        if (!needsFreshPreview) {
+          setError('Confirm the warning below before banning this domain.')
+        }
         return
       }
       const result = await adminAPI.createEmailDomainBan({
@@ -219,10 +216,22 @@ export function BannedEmailDomainsPanel({
           ? `Banned ${result.ban.domain}. Deactivated ${deactivated} account${deactivated === 1 ? '' : 's'}.`
           : `Banned ${result.ban.domain}.`
       )
+      setBans((current) => [
+        result.ban,
+        ...current.filter((ban) => ban.id !== result.ban.id && ban.domain !== result.ban.domain),
+      ])
       setDomain('')
       setReason('')
       resetConfirm()
-      await load()
+      const saved = result.ban
+      try {
+        await load()
+        setBans((current) =>
+          current.some((ban) => ban.id === saved.id) ? current : [saved, ...current]
+        )
+      } catch (err) {
+        setError(messageFrom(err, 'Banned the domain, but the list could not be refreshed.'))
+      }
       if (deactivated > 0) onAccountsChanged?.()
     } catch (err) {
       setError(messageFrom(err, 'Failed to ban this email domain'))
@@ -424,7 +433,7 @@ export function BanEmailDomainDialog({
 
   const handleBan = async () => {
     if (!preview) return
-    if (banNeedsConfirm(preview, allowSelfLockout, confirmLarge)) {
+    if (emailDomainBanNeedsConfirm(preview, allowSelfLockout, confirmLarge)) {
       setError('Confirm the warning below before banning this domain.')
       return
     }
