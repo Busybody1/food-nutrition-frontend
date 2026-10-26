@@ -21,6 +21,7 @@ import {
   Apple,
   Bot,
   Code2,
+  FlaskConical,
 } from 'lucide-react'
 import { useAuth } from '@/lib/hooks/use-auth'
 import { useAdmin } from '@/lib/hooks/use-admin'
@@ -52,6 +53,7 @@ const NAV_SECTIONS = [
     items: [
       { name: 'Plans', href: '/admin/plans', icon: Layers, permission: 'admin:settings:view' },
       { name: 'Billing', href: '/admin/billing', icon: CreditCard, permission: 'admin:billing:view' },
+      { name: 'Experiments', href: '/admin/experiments', icon: FlaskConical, permission: 'admin:settings:view' },
     ],
   },
   {
@@ -84,6 +86,7 @@ const PAGE_TITLES: Record<string, string> = {
   '/admin/analytics': 'Analytics',
   '/admin/plans': 'Plans',
   '/admin/billing': 'Billing',
+  '/admin/experiments': 'Experiments',
   '/admin/foods': 'Verified foods',
   '/admin/support': 'Support',
   '/admin/announcements': 'Announcements',

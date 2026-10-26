@@ -274,6 +274,16 @@ export interface SystemSettingRow {
   updated_at?: string
 }
 
+export interface CheckoutExperiment {
+  id: string
+  name: string
+  summary: string
+  control: string
+  treatment: string
+  enabled: boolean
+  env_locked: boolean
+}
+
 export interface ServiceStatus {
   name: string
   status: 'healthy' | 'warning' | 'critical'
@@ -1024,6 +1034,14 @@ class AdminAPI {
 
   async setMaintenanceMode(enabled: boolean): Promise<{ message: string }> {
     return adminPost('/maintenance', { maintenance_mode: enabled })
+  }
+
+  async getCheckoutExperiments(): Promise<{ experiments: CheckoutExperiment[] }> {
+    return adminGet('/experiments')
+  }
+
+  async setCheckoutExperiment(experimentId: string, enabled: boolean): Promise<CheckoutExperiment> {
+    return adminPut(`/experiments/${encodeURIComponent(experimentId)}`, { enabled })
   }
 
   async getEnvironmentInfo(): Promise<EnvironmentInfo> {
