@@ -44,6 +44,8 @@ export function PricingCard({
   isCurrent,
   isPopular,
   dense,
+  subscribeLabel,
+  subscribeDisabled,
   onSelect,
 }: {
   plan: PricingPlan
@@ -51,6 +53,8 @@ export function PricingCard({
   isPopular?: boolean
 
   dense?: boolean
+  subscribeLabel?: string | null
+  subscribeDisabled?: boolean
   onSelect: () => void
 }) {
   const { amount, suffix } = formatPlanPrice(plan)
@@ -67,7 +71,7 @@ export function PricingCard({
       ? 'Get started free'
       : isEnterprisePlan(plan.name)
         ? 'Schedule a call'
-        : 'Subscribe'
+        : subscribeLabel || 'Subscribe'
 
   return (
     <article
@@ -131,7 +135,7 @@ export function PricingCard({
             'h-11 font-semibold bg-brand text-white shadow-glow hover:bg-brand-strong hover:text-white hover:shadow-glow-lg'
         )}
         onClick={onSelect}
-        disabled={isCurrent}
+        disabled={isCurrent || subscribeDisabled === true}
         aria-label={`${ctaLabel} — ${plan.name} plan`}
       >
         {ctaLabel}

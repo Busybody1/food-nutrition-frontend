@@ -1,5 +1,12 @@
 import { STRIPE_API_ENDPOINTS } from './config'
 
+export type TrialOffer = {
+  experiment: string
+  variant: string
+  trial_days: number | null
+  requires_card: boolean
+}
+
 class StripeAPI {
   private baseURL: string
 
@@ -85,6 +92,13 @@ class StripeAPI {
     })
   }
 
+  async getTrialOffer(product: 'mcp' | 'rest' = 'mcp'): Promise<TrialOffer> {
+    const path = product === 'rest'
+      ? `${STRIPE_API_ENDPOINTS.TRIAL_OFFER}?product=rest`
+      : STRIPE_API_ENDPOINTS.TRIAL_OFFER
+    return this.request(path)
+  }
+
   async createCheckoutSession(data: {
     plan_id: number
     success_url?: string
@@ -141,6 +155,21 @@ class StripeAPI {
 }
 
 export const stripeAPI = new StripeAPI()
+
+const trialOfferRequests = new Map<string, Promise<TrialOffer>>()
+
+export function loadTrialOffer(product: 'mcp' | 'rest' = 'mcp'): Promise<TrialOffer> {
+  const token = window.localStorage.getItem('access_token')
+  const key = `${product}:${token ?? ''}`
+  const existing = trialOfferRequests.get(key)
+  if (existing) return existing
+  const request = stripeAPI.getTrialOffer(product)
+  trialOfferRequests.set(key, request)
+  request.catch(() => {
+    if (trialOfferRequests.get(key) === request) trialOfferRequests.delete(key)
+  })
+  return request
+}
 
 export const {
   createCustomer,

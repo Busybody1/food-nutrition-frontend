@@ -9,6 +9,8 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Loader2, CreditCard, CheckCircle, XCircle } from 'lucide-react'
 import { getErrorMessage } from '@/lib/stripe/config'
 import { stripeAPI } from '@/lib/stripe/api'
+import { isRestPaidPlan } from '@/lib/billing/trial-offer'
+import { useTrialOffer } from '@/lib/billing/use-trial-offer'
 
 interface DirectSubscriptionFormProps {
   planId: number
@@ -29,6 +31,8 @@ export function DirectSubscriptionForm({
 }: DirectSubscriptionFormProps) {
   const stripe = useStripe()
   const elements = useElements()
+  const { trialDays } = useTrialOffer('rest')
+  const fiveDayTrial = isRestPaidPlan({ name: planName, monthly_price: amount }) && trialDays === 5
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [step, setStep] = useState<'card' | 'processing' | 'confirming' | 'success'>('card')
@@ -155,7 +159,9 @@ export function DirectSubscriptionForm({
           Subscribe to {planName}
         </CardTitle>
         <CardDescription>
-          Complete your subscription - ${(amount / 100).toFixed(2)}/month
+          {fiveDayTrial
+            ? 'A card is required now. We charge it after 5 days unless you cancel.'
+            : `Complete your subscription - $${(amount / 100).toFixed(2)}/month`}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -201,7 +207,7 @@ export function DirectSubscriptionForm({
                   {step === 'processing' ? 'Creating Subscription...' : 'Confirming Payment...'}
                 </>
               ) : (
-                'Subscribe Now'
+                fiveDayTrial ? 'Save card' : 'Subscribe Now'
               )}
             </Button>
           </div>

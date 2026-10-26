@@ -280,6 +280,49 @@ export function safeNextPath(raw: string | null | undefined): string | null {
   return value
 }
 
+export const MCP_CARD_TRIAL_DAYS = 5
+
+export function mcpTrialCtaLabel(input: {
+  opening: boolean
+  trialDays: number | null
+  offerPending: boolean
+  offerFailed?: boolean
+}): string {
+  if (input.opening) return 'Opening checkout'
+  if (input.offerPending || input.offerFailed) return 'Start trial'
+  if (input.trialDays != null && input.trialDays > 0) return `Start ${input.trialDays}-day trial`
+  return 'Start 7-day trial'
+}
+
+export function mcpTrialChargeNote(trialDays: number | null): string | null {
+  if (trialDays !== MCP_CARD_TRIAL_DAYS) return null
+  return 'A card is required. We charge it after 5 days unless you cancel.'
+}
+
+const PUBLISHED_TRIAL_SENTENCE = 'The 7-day trial requires a card.'
+const CARD_TRIAL_SENTENCE =
+  'The 5-day trial requires a card. We charge it after 5 days unless you cancel.'
+const TRIAL_LIMITS_QUESTION = 'What are the nutrition MCP server trial limits?'
+
+export function mcpPricingLeadForTrial(text: string, trialDays: number | null): string {
+  if (trialDays !== MCP_CARD_TRIAL_DAYS || !text.includes(PUBLISHED_TRIAL_SENTENCE)) return text
+  return text.replace(PUBLISHED_TRIAL_SENTENCE, CARD_TRIAL_SENTENCE)
+}
+
+export function mcpFaqsForTrial(items: readonly FaqItem[], trialDays: number | null): FaqItem[] {
+  if (trialDays !== MCP_CARD_TRIAL_DAYS) return items.map((item) => ({ ...item }))
+  return items.map((item) => {
+    if (item.q !== TRIAL_LIMITS_QUESTION) return { ...item }
+    return {
+      ...item,
+      a: item.a.replace(
+        '7 days, card required.',
+        '5 days, card required. We charge the card after 5 days unless you cancel.'
+      ),
+    }
+  })
+}
+
 export type McpTrialClick = 'login' | 'wait' | 'closed' | 'checkout'
 
 export function mcpTrialClick(input: {

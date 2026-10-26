@@ -10,7 +10,11 @@ import {
   claudeCodeCommand,
   cursorConfig,
   mcpEndpoint,
+  mcpFaqsForTrial,
+  mcpPricingLeadForTrial,
+  mcpTrialChargeNote,
   mcpTrialClick,
+  mcpTrialCtaLabel,
   safeNextPath,
   isSafeOAuthRedirect,
 } from './catalog.ts'
@@ -73,6 +77,45 @@ test('oauth return urls stay on the client host', () => {
   assert.equal(isSafeOAuthRedirect('http://localhost:53123/callback?code=1', 'claude.ai'), false)
   assert.equal(isSafeOAuthRedirect('https://evil.example/callback', 'claude.ai'), false)
   assert.equal(isSafeOAuthRedirect('javascript:alert(1)', 'claude.ai'), false)
+})
+
+test('trial buttons name the assigned length and only the 5-day arm states the charge', () => {
+  assert.equal(
+    mcpTrialCtaLabel({ opening: false, trialDays: null, offerPending: false }),
+    'Start 7-day trial'
+  )
+  assert.equal(
+    mcpTrialCtaLabel({ opening: false, trialDays: 7, offerPending: false }),
+    'Start 7-day trial'
+  )
+  assert.equal(
+    mcpTrialCtaLabel({ opening: false, trialDays: 5, offerPending: false }),
+    'Start 5-day trial'
+  )
+  assert.equal(
+    mcpTrialCtaLabel({ opening: true, trialDays: 5, offerPending: false }),
+    'Opening checkout'
+  )
+  assert.equal(
+    mcpTrialCtaLabel({ opening: false, trialDays: null, offerPending: true }),
+    'Start trial'
+  )
+  assert.equal(
+    mcpTrialCtaLabel({ opening: false, trialDays: null, offerPending: false, offerFailed: true }),
+    'Start trial'
+  )
+  assert.equal(mcpTrialChargeNote(7), null)
+  assert.equal(mcpTrialChargeNote(null), null)
+  assert.match(mcpTrialChargeNote(5), /after 5 days/)
+  const lead = 'Calorie MCP pricing is $29 a month. The 7-day trial requires a card.'
+  assert.equal(mcpPricingLeadForTrial(lead, 7), lead)
+  assert.match(mcpPricingLeadForTrial(lead, 5), /5-day trial requires a card/)
+  const faqs = mcpFaqsForTrial(
+    [{ q: 'What are the nutrition MCP server trial limits?', a: '7 days, card required. Trial: 5/min.' }],
+    5
+  )
+  assert.match(faqs[0].a, /5 days, card required/)
+  assert.match(faqs[0].a, /5\/min/)
 })
 
 test('trial click signs out users in and only checks out an open plan', () => {

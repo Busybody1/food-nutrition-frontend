@@ -24,6 +24,8 @@ import { getErrorMessage, formatPrice } from '@/lib/stripe/config'
 import { stripeAPI } from '@/lib/stripe/api'
 import { useAuth } from '@/lib/hooks/use-auth'
 import { formatResultsPerQuery, resolveResultsPerQuery } from '@/lib/pricing/plan-display'
+import { isRestPaidPlan } from '@/lib/billing/trial-offer'
+import { useTrialOffer } from '@/lib/billing/use-trial-offer'
 
 interface PlanDetails {
   id: number
@@ -42,6 +44,7 @@ function CheckoutContent() {
   const stripe = useStripe()
   const elements = useElements()
   const { user, isAuthenticated } = useAuth()
+  const { trialDays } = useTrialOffer('rest')
 
   const [planDetails, setPlanDetails] = useState<PlanDetails | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -195,6 +198,8 @@ function CheckoutContent() {
     },
     hidePostalCode: true,
   }
+
+  const fiveDayTrial = planDetails != null && isRestPaidPlan(planDetails) && trialDays === 5
 
   if (!isAuthenticated) {
     return null
@@ -360,7 +365,9 @@ function CheckoutContent() {
                     Payment Information
                   </CardTitle>
                   <CardDescription>
-                    Enter your payment details to complete the subscription
+                    {fiveDayTrial
+                      ? 'A card is required now. We charge it after 5 days unless you cancel.'
+                      : 'Enter your payment details to complete the subscription'}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -401,8 +408,12 @@ function CheckoutContent() {
                         </div>
                         <Separator />
                         <div className="flex justify-between">
-                          <span className="text-lg font-semibold">Total</span>
-                          <span className="text-lg font-semibold">{formatPrice(planDetails.monthly_price)}</span>
+                          <span className="text-lg font-semibold">
+                            {fiveDayTrial ? 'Due today' : 'Total'}
+                          </span>
+                          <span className="text-lg font-semibold">
+                            {fiveDayTrial ? formatPrice(0) : formatPrice(planDetails.monthly_price)}
+                          </span>
                         </div>
                       </div>
 
@@ -420,7 +431,9 @@ function CheckoutContent() {
                         ) : (
                           <>
                             <CreditCard className="h-4 w-4 mr-2" />
-                            Complete Subscription - {formatPrice(planDetails.monthly_price)}
+                            {fiveDayTrial
+                              ? 'Save card'
+                              : `Complete Subscription - ${formatPrice(planDetails.monthly_price)}`}
                           </>
                         )}
                       </Button>

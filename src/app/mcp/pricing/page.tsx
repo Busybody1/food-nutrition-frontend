@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
-import { McpPricingCard } from '@/components/marketing/mcp-pricing-card'
-import { FaqList } from '@/components/marketing/faq-section'
+import { McpBillingFaq, McpPricingCard, McpPricingLead } from '@/components/marketing/mcp-pricing-card'
 import { MarketingImageHero } from '@/components/marketing/marketing-image-hero'
 import { MarketingCtaBand, MarketingSectionHeader } from '@/components/marketing/marketing-shell'
 import { JsonLdScript } from '@/components/seo/structured-data'
@@ -79,7 +78,7 @@ export default async function McpPricingPage() {
           {MCP_PRICING_H1}
         </h1>
         <p id="mcp-pricing-answer" className="aeo-answer mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-ink-muted">
-          {DESCRIPTION}
+          <McpPricingLead text={DESCRIPTION} />
         </p>
       </MarketingImageHero>
 
@@ -95,7 +94,7 @@ export default async function McpPricingPage() {
       <section className="section-pad bg-white" id="faq" aria-labelledby="mcp-billing-faq">
         <div className="container-narrow">
           <MarketingSectionHeader id="mcp-billing-faq" title="Calorie MCP pricing questions" />
-          <FaqList items={BILLING_FAQS} />
+          <McpBillingFaq items={BILLING_FAQS} />
         </div>
       </section>
 
@@ -111,7 +110,7 @@ export default async function McpPricingPage() {
           </>
         }
         primaryHref="#mcp-choose-plan"
-        primaryLabel="Start 7-day trial"
+        primaryLabel="Start trial"
         secondaryHref="/mcp"
         secondaryLabel="See the server"
       />

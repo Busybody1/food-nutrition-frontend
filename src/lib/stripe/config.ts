@@ -63,6 +63,7 @@ export const STRIPE_API_ENDPOINTS = {
   CUSTOMERS: '/api/v1/billing/customers',
   SUBSCRIPTIONS: '/api/v1/billing/subscription',
   CHECKOUT_SESSIONS: '/api/v1/billing/checkout-sessions',
+  TRIAL_OFFER: '/api/v1/billing/trial-offer',
   CUSTOMER_PORTAL: '/api/v1/billing/customer-portal',
   PAYMENT_METHODS: '/api/v1/billing/payment-methods',
   INVOICES: '/api/v1/billing/invoices',

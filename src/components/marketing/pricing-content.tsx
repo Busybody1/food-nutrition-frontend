@@ -17,6 +17,8 @@ import { TrackedCtaLink } from '@/components/analytics/tracked-cta-link'
 import { getPublicPageSeo } from '@/lib/public-page-seo'
 import { fetchPublicPlans } from '@/lib/pricing/fetch-plans'
 import { isContactSalesPlan, isEnterprisePlan, type PricingPlan } from '@/lib/pricing/plan-display'
+import { isRestPaidPlan, restSubscribeLabel, restTrialChargeNote } from '@/lib/billing/trial-offer'
+import { useTrialOffer } from '@/lib/billing/use-trial-offer'
 import { cn } from '@/lib/utils/cn'
 
 const PRICING_SEO = getPublicPageSeo('/pricing')
@@ -39,6 +41,8 @@ function selfServeGridClass(count: number): string {
 
 export function PricingContent({ initialPlans, initialError }: PricingContentProps) {
   const { isAuthenticated, user } = useAuth()
+  const { trialDays, offerPending } = useTrialOffer('rest')
+  const chargeNote = restTrialChargeNote(offerPending ? null : trialDays)
   const router = useRouter()
   const searchParams = useSearchParams()
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -221,20 +225,36 @@ export function PricingContent({ initialPlans, initialError }: PricingContentPro
           ) : (
             <>
               {selfServePlans.length > 0 && (
-                <RevealGroup
-                  className={selfServeGridClass(selfServePlans.length)}
-                  itemClassName="h-full min-w-0"
-                >
-                  {selfServePlans.map((plan) => (
-                    <PricingCard
-                      key={plan.id}
-                      plan={plan}
-                      isPopular={plan.is_recommended === true}
-                      isCurrent={currentSubscription?.plan_id === plan.id}
-                      onSelect={() => handlePlanSelect(plan)}
-                    />
-                  ))}
-                </RevealGroup>
+                <div className="space-y-4">
+                  {chargeNote ? (
+                    <p className="text-center text-sm text-ink" role="status">
+                      {chargeNote}
+                    </p>
+                  ) : null}
+                  <RevealGroup
+                    className={selfServeGridClass(selfServePlans.length)}
+                    itemClassName="h-full min-w-0"
+                  >
+                    {selfServePlans.map((plan) => {
+                      const paid = isRestPaidPlan(plan)
+                      return (
+                        <PricingCard
+                          key={plan.id}
+                          plan={plan}
+                          isPopular={plan.is_recommended === true}
+                          isCurrent={currentSubscription?.plan_id === plan.id}
+                          subscribeLabel={restSubscribeLabel({
+                            paid,
+                            trialDays,
+                            offerPending,
+                          })}
+                          subscribeDisabled={paid && offerPending}
+                          onSelect={() => handlePlanSelect(plan)}
+                        />
+                      )
+                    })}
+                  </RevealGroup>
+                </div>
               )}
 
               {enterprisePlans.map((plan) => (
@@ -258,6 +278,7 @@ export function PricingContent({ initialPlans, initialError }: PricingContentPro
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         plan={selectedPlan}
+        trialDays={chargeNote ? trialDays : null}
         onError={(error) => console.error('Subscription error:', error)}
       />
       <ScheduleCallDialog isOpen={isScheduleOpen} onClose={() => setIsScheduleOpen(false)} />

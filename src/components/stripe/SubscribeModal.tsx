@@ -30,6 +30,7 @@ interface SubscribeModalProps {
   isOpen: boolean
   onClose: () => void
   plan: PricingPlan | null
+  trialDays?: number | null
   onError: (error: string) => void
 }
 
@@ -37,6 +38,7 @@ export function SubscribeModal({
   isOpen,
   onClose,
   plan,
+  trialDays,
   onError
 }: SubscribeModalProps) {
 
@@ -176,8 +178,9 @@ export function SubscribeModal({
                   <div>
                     <h4 className="font-medium text-blue-900">Secure Checkout</h4>
                     <p className="text-sm text-blue-700 mt-1">
-                      You&apos;ll be redirected to Stripe&apos;s secure checkout page to complete your payment.
-                      Your payment information is never stored on our servers.
+                      {trialDays === 5
+                        ? 'A card is required now. We charge it after 5 days unless you cancel. Stripe collects the card. We do not store it.'
+                        : 'You\'ll be redirected to Stripe\'s secure checkout page to complete your payment. Your payment information is never stored on our servers.'}
                     </p>
                   </div>
                 </div>

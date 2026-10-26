@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Check } from 'lucide-react'
+import { useTrialOffer } from '@/lib/billing/use-trial-offer'
 import { stripeAPI } from '@/lib/stripe/api'
 import { useAuth } from '@/lib/hooks/use-auth'
 import {
@@ -12,13 +13,29 @@ import {
   MCP_PAID_LIMITS,
   annualAsMonthlyUsd,
   annualSavingsUsd,
+  mcpFaqsForTrial,
+  mcpPricingLeadForTrial,
+  mcpTrialChargeNote,
   mcpTrialClick,
+  mcpTrialCtaLabel,
   safeNextPath,
 } from '@/lib/mcp/catalog'
+import type { FaqItem } from '@/lib/faq-data'
+import { FaqList } from '@/components/marketing/faq-section'
 import type { PricingPlan } from '@/lib/pricing/plan-display'
 import { cn } from '@/lib/utils/cn'
 
 type Interval = 'year' | 'month'
+
+export function McpPricingLead({ text }: { text: string }) {
+  const { trialDays } = useTrialOffer()
+  return <>{mcpPricingLeadForTrial(text, trialDays)}</>
+}
+
+export function McpBillingFaq({ items }: { items: readonly FaqItem[] }) {
+  const { trialDays } = useTrialOffer()
+  return <FaqList items={mcpFaqsForTrial(items, trialDays)} />
+}
 
 const INCLUDED = [
   `${MCP_PAID_LIMITS.perMinute} calls per minute after the trial`,
@@ -32,6 +49,7 @@ const INCLUDED = [
 export function McpPricingCard({ plan }: { plan: PricingPlan | null }) {
   const router = useRouter()
   const { isAuthenticated, loading } = useAuth()
+  const { trialDays, offerPending, offerFailed } = useTrialOffer()
   const [error, setError] = useState('')
   const [pending, setPending] = useState<Interval | null>(null)
 
@@ -40,6 +58,7 @@ export function McpPricingCard({ plan }: { plan: PricingPlan | null }) {
   const savings = annualSavingsUsd(monthly, annual)
   const annualMonthly = annualAsMonthlyUsd(annual)
   const checkoutOpen = plan != null && plan.id > 0
+  const chargeNote = mcpTrialChargeNote(offerPending ? null : trialDays)
 
   const start = async (chosen: Interval) => {
     setError('')
@@ -90,6 +109,11 @@ export function McpPricingCard({ plan }: { plan: PricingPlan | null }) {
           published plan: ${monthly}/month or ${annualMonthly}/month.
         </p>
       )}
+      {chargeNote ? (
+        <p className="mx-auto mb-2 max-w-xl text-center text-sm text-ink" role="status">
+          {chargeNote}
+        </p>
+      ) : null}
       <div className="mx-auto grid max-w-4xl items-stretch gap-5 pt-4 md:grid-cols-2">
         <article className="flex h-full flex-col rounded-brand border border-surface-border/80 bg-white p-6 shadow-glass md:p-8">
           <h2 className="font-display text-2xl text-ink">Monthly</h2>
@@ -101,9 +125,14 @@ export function McpPricingCard({ plan }: { plan: PricingPlan | null }) {
             type="button"
             className="btn-brand-outline mt-6 h-12 w-full cursor-pointer text-base disabled:cursor-wait disabled:opacity-70"
             onClick={() => void start('month')}
-            disabled={pending !== null}
+            disabled={pending !== null || offerPending}
           >
-            {pending === 'month' ? 'Opening checkout' : 'Start 7-day trial'}
+            {mcpTrialCtaLabel({
+              opening: pending === 'month',
+              trialDays,
+              offerPending,
+              offerFailed,
+            })}
           </button>
         </article>
 
@@ -131,9 +160,14 @@ export function McpPricingCard({ plan }: { plan: PricingPlan | null }) {
             type="button"
             className="btn-brand mt-6 h-12 w-full cursor-pointer text-base disabled:cursor-wait disabled:opacity-70"
             onClick={() => void start('year')}
-            disabled={pending !== null}
+            disabled={pending !== null || offerPending}
           >
-            {pending === 'year' ? 'Opening checkout' : 'Start 7-day trial'}
+            {mcpTrialCtaLabel({
+              opening: pending === 'year',
+              trialDays,
+              offerPending,
+              offerFailed,
+            })}
           </button>
         </article>
       </div>
