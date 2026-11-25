@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { DocsCodeBlock } from '@/components/docs/docs-code-block'
 import { FaqList } from '@/components/marketing/faq-section'
 import type { DocsBlock } from '@/lib/docs/types'
@@ -5,6 +6,9 @@ import type { FaqItem } from '@/lib/faq-data'
 
 export const DOCS_H2_CLASS =
   'font-sans text-2xl md:text-[1.75rem] font-semibold leading-tight tracking-[-0.02em] text-mk-ink'
+
+const DOCS_INLINE_LINK_CLASS =
+  'rounded font-medium text-brand-strong underline decoration-brand/40 underline-offset-2 hover:decoration-brand-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2'
 
 export function DocsBlockRenderer({ blocks }: { blocks: DocsBlock[] }) {
   const answerIndex = blocks.findIndex((block) => block.kind === 'p')
@@ -23,6 +27,15 @@ export function DocsBlockRenderer({ blocks }: { blocks: DocsBlock[] }) {
                 }
               >
                 {block.text}
+                {block.link ? (
+                  <>
+                    {' '}
+                    <Link href={block.link.href} className={DOCS_INLINE_LINK_CLASS}>
+                      {block.link.label}
+                    </Link>
+                    {block.link.after ? ` ${block.link.after}` : null}
+                  </>
+                ) : null}
               </p>
             )
           case 'h2':

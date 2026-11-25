@@ -44,6 +44,11 @@ export const FOOD_SEARCH_CONTENT: DocsSectionContent = {
       text: 'A food search API looks up foods by name or brand and returns macros per 100 g. An empty query returns common foods. Results include the nutrients array and serving metadata, and only foods with complete macro data are returned.',
     },
     {
+      kind: 'p',
+      text: 'Catalog size, authentication, live prices, and the rule that you query the database instead of downloading it are on the',
+      link: { href: '/food-database-api', label: 'food database API', after: 'page.' },
+    },
+    {
       kind: 'code',
       title: 'GET /api/v1/search/foods',
       code: `curl "${API_BASE}/api/v1/search/foods?q=chicken+breast&match_mode=all" \\\n  -H "X-API-Key: your_api_key_here"`,

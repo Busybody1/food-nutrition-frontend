@@ -50,7 +50,7 @@ export const DOCS_SECTIONS: DocsSectionMeta[] = [
       'search foods endpoint',
     ],
     summary: 'Multi-word food search, ranking, filters, and autocomplete suggest.',
-    dateModified: '2026-09-29',
+    dateModified: '2026-11-26',
     group: 'Endpoints',
   },
   {
@@ -106,7 +106,7 @@ export const DOCS_SECTIONS: DocsSectionMeta[] = [
     title: 'API rate limits',
     metaTitle: 'API rate limits',
     description:
-      'API rate limits apply per account, not per IP. The free plan is 10 requests a minute. Plus is 5,000 requests a minute.',
+      'API rate limits apply per account, not per IP. The free plan is 10 requests a minute. Plus is 200 requests a minute.',
     keywords: [
       'API rate limits',
       'nutrition API quota',
@@ -114,7 +114,7 @@ export const DOCS_SECTIONS: DocsSectionMeta[] = [
       'X-RateLimit headers',
     ],
     summary: 'Plan limits, quotas, and commercial use.',
-    dateModified: '2026-09-29',
+    dateModified: '2026-11-26',
     group: 'Advanced',
   },
   {

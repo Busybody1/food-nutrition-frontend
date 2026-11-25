@@ -182,8 +182,11 @@ export default function DocsPage() {
               <div>
                 <h2 className="text-lg font-semibold text-mk-ink mb-2">Quick start</h2>
                 <p className="text-mk-body mb-4 leading-relaxed">
-                  Get started in minutes with our comprehensive food database API.
-                  Create an account, choose a plan, get your API key, and start making requests.
+                  Get started in minutes with our comprehensive{' '}
+                  <Link href="/food-database-api" className={INLINE_LINK_CLASS}>
+                    food database API
+                  </Link>
+                  . Create an account, choose a plan, get your API key, and start making requests.
                 </p>
                 <Link href="/playground" className="btn-brand-outline">
                   <FlaskConical className="w-4 h-4" aria-hidden />

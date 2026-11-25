@@ -41,12 +41,12 @@ const ROWS: SeoRow[] = [
   },
   {
     icon: DatabaseIcon,
-    title: 'Food database API coverage',
+    title: 'Catalog coverage',
     body: (
       <>
-        Search across a large verified food database API with brand, category, and nutrient
-        filters. Barcode lookup falls back to Open Food Facts when a product is not yet in the
-        local catalog, giving your food calorie API broad product coverage out of the box.
+        Search a large catalog with brand, category, and nutrient filters. Barcode lookup falls
+        back to Open Food Facts when a product is not yet local, so a food calorie API can cover
+        packaged goods without a second parser.
       </>
     ),
   },
@@ -123,9 +123,9 @@ export function HomeSeoContent() {
               </h2>
               <p className="marketing-body mt-5">
                 {SITE_NAME} is a production-ready food calorie API for teams shipping meal tracking,
-                macro logging, and barcode scan features in health and fitness apps. Our food database
-                API combines fast search, autocomplete suggest, and verified macro data per 100g so your
-                product can log meals accurately without maintaining a private food catalog.
+                macro logging, and barcode scan features in health and fitness apps. Search,
+                autocomplete, and verified macros per 100g let a product log meals without maintaining
+                a private food catalog.
               </p>
               <div className="mt-8 flex flex-wrap items-center gap-3">
                 <TrackedCtaLink href="/auth/register" eventLabel="Get API Key Free" className="btn-brand">

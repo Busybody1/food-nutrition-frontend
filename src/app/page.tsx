@@ -26,6 +26,7 @@ import { StructuredData, JsonLdScript } from '@/components/seo/structured-data'
 import { PublicPageSchema } from '@/components/seo/public-page-schema'
 import { getPublicPageSeo } from '@/lib/public-page-seo'
 import { HomeSeoContent } from '@/components/marketing/home-seo-content'
+import { SeoInlineLink } from '@/components/seo/marketing-seo-section'
 import { HomeMcpSection } from '@/components/marketing/home-mcp-section'
 import { StatsBand } from '@/components/marketing/stats-band'
 import { TestimonialStack, TESTIMONIALS_TITLE } from '@/components/marketing/testimonials'
@@ -46,12 +47,12 @@ const features = [
   {
     icon: DatabaseIcon,
     title: 'Nutrition API data',
-    description: 'Macros per 100g, full nutrient arrays, and serving metadata from our food database API.',
+    description: 'Macros per 100g, full nutrient arrays, and serving metadata from the catalog.',
   },
   {
     icon: LightningIcon,
-    title: 'Fast food database API',
-    description: 'Redis-backed caching and indexed Postgres search for low-latency calorie API responses.',
+    title: 'Low-latency search',
+    description: 'Redis-backed caching and indexed Postgres search for calorie API responses.',
   },
   {
     icon: ShieldIcon,
@@ -103,8 +104,14 @@ export default async function HomePage() {
           <Reveal>
             <MarketingSectionHeader
               id="home-platform-heading"
-              title="Food database API for modern health products"
-              description="Everything you need to integrate nutrition API data into mobile, web, and AI workflows."
+              title="Built for health and fitness products"
+              description={
+                <>
+                  Search, barcode, and macros for mobile, web, and AI products. Catalog size,
+                  authentication, and the no-download rule are on the{' '}
+                  <SeoInlineLink href="/food-database-api">food database API</SeoInlineLink> page.
+                </>
+              }
             />
           </Reveal>
           <MarketingFeatureGrid items={features} />

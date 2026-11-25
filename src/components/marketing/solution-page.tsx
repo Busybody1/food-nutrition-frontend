@@ -77,12 +77,25 @@ export function SolutionPageView({ page }: { page: SolutionPage }) {
         }
       />
 
-      {page.intro.length > 1 && (
+      {(page.intro.length > 1 || page.productLink) && (
         <section className="marketing-canvas-pad">
           <Reveal className="container-prose marketing-body space-y-4">
             {page.intro.slice(1).map((paragraph) => (
               <p key={paragraph.slice(0, 40)}>{paragraph}</p>
             ))}
+            {page.productLink && (
+              <p>
+                {page.productLink.before}{' '}
+                <Link
+                  href={page.productLink.href}
+                  prefetch={false}
+                  className="text-brand-strong font-medium underline decoration-brand/40 underline-offset-2 hover:decoration-brand-strong rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
+                >
+                  {page.productLink.label}
+                </Link>{' '}
+                {page.productLink.after}
+              </p>
+            )}
           </Reveal>
         </section>
       )}

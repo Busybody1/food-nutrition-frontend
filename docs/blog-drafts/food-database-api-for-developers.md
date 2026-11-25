@@ -1,22 +1,22 @@
 ---
 slug: food-database-api-for-developers
-title: Food Database API
-meta_title: Food Database API
-meta_description: A food database API with search and barcode. You query it. You do not download it. Free tier is 1,000 calls a month, no card.
-excerpt: A food database API lets you search foods and scan barcodes without hosting the catalog. Calorie API is that query layer over 4M+ foods, with a free developer tier.
-keywords: food database api, food data api, food database api for developers, food api database
+title: Query the catalog. Do not download it
+meta_title: Query a food catalog. Do not download it
+meta_description: Calorie API is a query, not a database file. Cache the foods users log. Free tier is 1,000 calls a month. Prices were read on 26 November 2026.
+excerpt: You search and scan. You do not receive the catalog as a file. Here is what a query costs, and what caching is allowed.
+keywords: download food database, food catalog query, bulk food database, food api no download
 ---
 
-A food database API is how you search a catalog you do not host. Calorie API is that API: multi-word search, autocomplete, barcode, and per-100g nutrition, over the 4M+ foods listed on the site. The product page is [/food-database-api](/food-database-api). This article is the version written for the search "food database API," including the limit people skip: you cannot take the database with you.
+A food catalog you can call is not a file you can take with you. The [food database API](/food-database-api) is the product page: 6.8M+ foods, search, barcode, and the live price grid. This article is the limit. You query it. You do not download it.
 
 ## Query, then stop
 
 ```bash
-curl "https://api.calorieapi.com/api/v1/search/foods?q=oat+milk&limit=20" \
+curl "https://calorieapiadmin.com/api/v1/search/foods?q=oat+milk&limit=20" \
   -H "X-API-Key: YOUR_API_KEY"
 ```
 
-`limit` tops out at 100 on an authenticated search. The free plan caps a response at 20 foods. Filters cover brand, category, and nutrients. `verified_only=true` keeps unverified rows out. Suggest is the lighter call for a dropdown. Food details by id is the record you store.
+That host is the base URL in the [food search docs](/docs/food-search). `limit` tops out at 100 on an authenticated search. The free plan caps a response at 20 foods. Basic caps a response at 50. Core and Plus cap a response at 100. Filters cover brand, category, and nutrients. `verified_only=true` keeps unverified rows out. Suggest is the lighter call for a dropdown. Food details by id is the record you store.
 
 Barcode lookup uses the same nutrition shape and falls through to Open Food Facts when we do not have the UPC or EAN. A code neither side knows is HTTP 404. That is a signal to search by name, not a broken client.
 
@@ -24,19 +24,19 @@ What you may cache is the foods your users log. Plus allows up to 30 days under 
 
 ## Price of a query, not of a dump
 
-From [pricing](/pricing) on 1 October 2026:
+From the public plans API on 26 November 2026. The [pricing page](/pricing) is the live grid if these numbers move.
 
 - Free, $0, 1,000 calls a month, 10 per minute, no card, non-commercial.
 - Basic, $15, 20,000 calls, 30 per minute, non-commercial.
 - Core, $50, 150,000 calls, 50 per minute, non-commercial.
 - Plus, $150, 1,000,000 calls, 200 per minute, commercial, with `X-API-Usage-Type: commercial`.
 
-A food database API that charges in "points," where one search plus the size of the page is not one request, will not match this table. That is Spoonacular. Read [Spoonacular API pricing](/blog/spoonacular-api-pricing) if you also need recipe articles. Read [Edamam pricing](/blog/edamam-food-database-api-pricing-startup-alternative) if you need their nutrition analysis and can live with recipe licenses that accumulate.
+A catalog API that charges in "points," where one search plus the size of the page is not one request, will not match this table. That is Spoonacular. Read [Spoonacular API pricing](/blog/spoonacular-api-pricing) if you also need recipe articles. Read [Edamam pricing](/blog/edamam-food-database-api-pricing-startup-alternative) if you need their nutrition analysis and can live with recipe licenses that accumulate.
 
-The sibling article [nutrition database API](/blog/nutrition-database-api) makes the same no-download rule from the nutrition side. Use one URL as the page you link internally. This one owns "food database API."
+The sibling article [nutrition database API](/blog/nutrition-database-api) makes the same no-download rule from the nutrition side. When you mean the product, link the [food database API](/food-database-api).
 ---FAQ---
 Q: What is a food database API?
-A: A REST API for searching foods and looking up barcodes, returning calories and macros per 100 grams. You do not receive a database file.
+A: A REST API for searching foods and looking up barcodes, returning calories and macros per 100 grams. You do not receive a database file. The product page is /food-database-api.
 Q: Can I download the food database?
 A: No. Bulk download and scraping are not allowed. Cache the foods your users select. Plus may keep a response for 30 days.
 Q: Is there a free food database API?

@@ -3,7 +3,7 @@ import type { FaqItem } from '@/lib/faq-data'
 export type DocsParamRow = { name: string; description: string }
 
 export type DocsBlock =
-  | { kind: 'p'; text: string }
+  | { kind: 'p'; text: string; link?: { href: string; label: string; after?: string } }
   | { kind: 'h2'; text: string; id?: string }
   | { kind: 'h3'; text: string; id?: string }
   | { kind: 'code'; title: string; code: string }

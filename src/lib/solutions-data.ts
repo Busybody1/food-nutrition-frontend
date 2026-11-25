@@ -22,6 +22,7 @@ export type SolutionPage = {
   related: { label: string; href: string }[]
   summary: string
   dateModified: string
+  productLink?: { before: string; label: string; href: string; after: string }
 }
 
 export const SOLUTION_PAGES: SolutionPage[] = [
@@ -39,7 +40,7 @@ export const SOLUTION_PAGES: SolutionPage[] = [
     ],
     heroBadge: 'Fitness apps',
     intro: [
-      'A nutrition API for fitness apps pairs a suggest endpoint with verified macros per 100 g. Paid plans scale to 5,000 requests a minute, and limits are per account rather than per end user.',
+      'A nutrition API for fitness apps pairs a suggest endpoint with verified macros per 100 g. Limits are per account, not per end user. Current caps are on the pricing page.',
       'Barcode scanning covers packaged foods and protein products, and stable food IDs make favorites and recents cost zero extra API calls once cached.',
     ],
     painPoints: [
@@ -68,7 +69,7 @@ export const SOLUTION_PAGES: SolutionPage[] = [
     faqs: [
       {
         q: 'Can the API handle a large mobile user base?',
-        a: 'Rate limits apply per account (your API account), not per end user or IP, and paid plans scale to 5,000 requests/minute. Cache food details by stable ID to keep per-user request counts low.',
+        a: 'Rate limits apply per account (your API account), not per end user or IP. Current caps are on the pricing page. Cache food details by stable ID to keep per-user request counts low.',
       },
       {
         q: 'Do I need a commercial plan for a paid fitness app?',
@@ -86,7 +87,7 @@ export const SOLUTION_PAGES: SolutionPage[] = [
       { label: 'Pricing plans', href: '/pricing' },
     ],
     summary: 'Food logging, macros, and barcode scanning for fitness and calorie apps.',
-    dateModified: '2026-07-03',
+    dateModified: '2026-11-26',
   },
   {
     slug: 'meal-planning-apps',
@@ -211,8 +212,14 @@ export const SOLUTION_PAGES: SolutionPage[] = [
       { label: 'Contact for enterprise', href: '/contact?inquiry=enterprise' },
       { label: 'API status & uptime', href: '/api-status' },
     ],
+    productLink: {
+      before: 'Search, barcode, and per-100g macros for clinical software are on the',
+      label: 'food database API',
+      href: '/food-database-api',
+      after: 'page. Patient diaries stay in your system.',
+    },
     summary: 'Verified nutrition data for dietitian tools and patient food diaries.',
-    dateModified: '2026-07-03',
+    dateModified: '2026-11-26',
   },
   {
     slug: 'grocery-retail',

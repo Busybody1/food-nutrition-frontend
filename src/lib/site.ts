@@ -10,7 +10,7 @@ export const SITE_TITLE =
 
 export const SITE_DESCRIPTION =
   process.env.NEXT_PUBLIC_SITE_DESCRIPTION?.trim() ||
-  'Food calorie API for developers: REST search, barcode lookup, macros per 100g, and autocomplete across our food database API. Free tier for nutrition apps.';
+  'Food calorie API for developers: REST search, barcode lookup, macros per 100g, and autocomplete. Free tier for nutrition apps.';
 
 export const LOGO_ALT = `${SITE_NAME} logo`;
 export const HERO_IMAGE_ALT =

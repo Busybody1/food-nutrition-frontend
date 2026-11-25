@@ -142,9 +142,9 @@ function formatDiscoveryResultsPerQuery(name: string, limit?: number): string {
 
 const FALLBACK_PRICING_ROWS: BlogDiscoveryPricingPlan[] = [
   { name: 'Free', monthly_price: 0, monthly_quota: 1000, rate_limit_per_minute: 10, max_results_per_query: 20 },
-  { name: 'Basic', monthly_price: 29, monthly_quota: 100_000, rate_limit_per_minute: 200, max_results_per_query: 100 },
-  { name: 'Core', monthly_price: 99, monthly_quota: 750_000, rate_limit_per_minute: 500, max_results_per_query: 100 },
-  { name: 'Plus', monthly_price: 299, monthly_quota: 0, rate_limit_per_minute: 5000, max_results_per_query: 100 },
+  { name: 'Basic', monthly_price: 15, monthly_quota: 20_000, rate_limit_per_minute: 30, max_results_per_query: 50 },
+  { name: 'Core', monthly_price: 50, monthly_quota: 150_000, rate_limit_per_minute: 50, max_results_per_query: 100 },
+  { name: 'Plus', monthly_price: 150, monthly_quota: 1_000_000, rate_limit_per_minute: 200, max_results_per_query: 100 },
   { name: 'Enterprise', monthly_price: 0, monthly_quota: 0, rate_limit_per_minute: 0, max_results_per_query: 100 },
 ]
 

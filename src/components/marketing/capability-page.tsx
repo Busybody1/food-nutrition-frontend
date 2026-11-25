@@ -1,4 +1,12 @@
 import Link from 'next/link'
+import {
+  allowsCommercialUse,
+  formatPlanPrice,
+  formatQuota,
+  formatRateLimit,
+  isEnterprisePlan,
+  type PricingPlan,
+} from '@/lib/pricing/plan-display'
 import { BarcodeIcon, ChartBarIcon, CodeIcon, DatabaseIcon, ForkKnifeIcon, HeartbeatIcon, LightningIcon, MagnifyingGlassIcon, ShieldIcon } from '@phosphor-icons/react/ssr'
 import type { MarketingIcon } from '@/components/marketing/marketing-shell'
 import {
@@ -39,7 +47,27 @@ const INLINE_LINK_CLASS =
   'hover:decoration-brand-strong rounded-sm focus-visible:outline-none ' +
   'focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2'
 
-export function CapabilityPageView({ page }: { page: CapabilityPage }) {
+function planQuotaLabel(plan: PricingPlan): string {
+  if (isEnterprisePlan(plan.name)) return 'Custom'
+  return formatQuota(plan.monthly_quota)
+}
+
+function orderedPlans(plans: PricingPlan[]): PricingPlan[] {
+  return [...plans].sort((left, right) => {
+    const leftEnterprise = isEnterprisePlan(left.name) ? 1 : 0
+    const rightEnterprise = isEnterprisePlan(right.name) ? 1 : 0
+    if (leftEnterprise !== rightEnterprise) return leftEnterprise - rightEnterprise
+    return left.monthly_price - right.monthly_price
+  })
+}
+
+export function CapabilityPageView({
+  page,
+  plans = [],
+}: {
+  page: CapabilityPage
+  plans?: PricingPlan[]
+}) {
   const path = capabilityPath(page.slug)
 
   return (
@@ -113,17 +141,39 @@ export function CapabilityPageView({ page }: { page: CapabilityPage }) {
                 {page.heroCopy.slice(1).map((paragraph) => (
                   <p key={paragraph.slice(0, 40)}>{paragraph}</p>
                 ))}
-                <p>
-                  Full parameters and response shapes live in the{' '}
-                  <Link href="/docs" prefetch={false} className={INLINE_LINK_CLASS}>
-                    API documentation
-                  </Link>
-                  , and you can try every endpoint in the{' '}
-                  <Link href="/playground" prefetch={false} className={INLINE_LINK_CLASS}>
-                    playground
-                  </Link>{' '}
-                  without signing up.
-                </p>
+                {page.slug === 'food-database-api' ? (
+                  <p>
+                    Field lists are in the{' '}
+                    <Link href="/docs/food-search" prefetch={false} className={INLINE_LINK_CLASS}>
+                      food search API reference
+                    </Link>
+                    . Monthly quotas and per-minute caps are on{' '}
+                    <Link href="/pricing" prefetch={false} className={INLINE_LINK_CLASS}>
+                      pricing
+                    </Link>
+                    , and 429 and 402 behavior is in{' '}
+                    <Link href="/docs/rate-limits" prefetch={false} className={INLINE_LINK_CLASS}>
+                      rate limits
+                    </Link>
+                    . Try search in the{' '}
+                    <Link href="/playground" prefetch={false} className={INLINE_LINK_CLASS}>
+                      playground
+                    </Link>{' '}
+                    without signing up.
+                  </p>
+                ) : (
+                  <p>
+                    Full parameters and response shapes live in the{' '}
+                    <Link href="/docs" prefetch={false} className={INLINE_LINK_CLASS}>
+                      API documentation
+                    </Link>
+                    , and you can try every endpoint in the{' '}
+                    <Link href="/playground" prefetch={false} className={INLINE_LINK_CLASS}>
+                      playground
+                    </Link>{' '}
+                    without signing up.
+                  </p>
+                )}
               </Reveal>
             }
             aside={
@@ -136,6 +186,64 @@ export function CapabilityPageView({ page }: { page: CapabilityPage }) {
           />
         </div>
       </MarketingSheet>
+
+      {page.slug === 'food-database-api' && plans.length > 0 && (
+        <MarketingSheet aria-labelledby="food-database-plans">
+          <div className="container-narrow">
+            <Reveal>
+              <MarketingSectionHeader
+                id="food-database-plans"
+                align="left"
+                title="Live plan quotas"
+                description="Loaded from the public plans API. Limits apply per account, not per IP."
+              />
+            </Reveal>
+            <div className="overflow-x-auto rounded-[22px] border border-mk-hair bg-white">
+              <table className="w-full min-w-[640px] text-sm">
+                <thead>
+                  <tr className="bg-mk-stage text-left">
+                    <th scope="col" className="px-5 py-3.5 font-semibold text-mk-ink">Plan</th>
+                    <th scope="col" className="px-5 py-3.5 font-semibold text-mk-ink">Price</th>
+                    <th scope="col" className="px-5 py-3.5 font-semibold text-mk-ink">Calls / month</th>
+                    <th scope="col" className="px-5 py-3.5 font-semibold text-mk-ink">Requests / minute</th>
+                    <th scope="col" className="px-5 py-3.5 font-semibold text-mk-ink">Commercial</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {orderedPlans(plans).map((plan) => {
+                    const price = formatPlanPrice(plan)
+                    return (
+                      <tr key={plan.id} className="border-t border-mk-hair">
+                        <th scope="row" className="px-5 py-3.5 text-left font-medium text-mk-ink">
+                          {plan.price_display_label?.trim() || plan.name}
+                        </th>
+                        <td className="px-5 py-3.5 text-mk-body">
+                          {price.amount}
+                          {price.suffix}
+                        </td>
+                        <td className="px-5 py-3.5 text-mk-body">{planQuotaLabel(plan)}</td>
+                        <td className="px-5 py-3.5 text-mk-body">
+                          {formatRateLimit(plan.rate_limit_per_minute)}
+                        </td>
+                        <td className="px-5 py-3.5 text-mk-body">
+                          {allowsCommercialUse(plan.name) ? 'Yes' : 'No'}
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
+            <p className="mt-4 text-sm leading-relaxed text-mk-muted">
+              Commercial production sends X-API-Usage-Type: commercial. The{' '}
+              <Link href="/pricing" prefetch={false} className={INLINE_LINK_CLASS}>
+                pricing page
+              </Link>{' '}
+              is the full grid.
+            </p>
+          </div>
+        </MarketingSheet>
+      )}
 
       {page.extraSections && page.extraSections.length > 0 && (
         <MarketingSheet>

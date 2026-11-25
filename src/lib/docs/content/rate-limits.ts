@@ -4,17 +4,17 @@ export const RATE_LIMITS_CONTENT: DocsSectionContent = {
   blocks: [
     {
       kind: 'p',
-      text: 'API rate limits apply per account, not per IP. The free plan is 10 requests a minute. Plus is 5,000 requests a minute. Monthly quotas are on the pricing page.',
+      text: 'API rate limits apply per account, not per IP. The free plan is 10 requests a minute. Plus is 200 requests a minute. Monthly quotas are on the pricing page. These caps match the public plans API as of 26 November 2026.',
     },
     {
       kind: 'params',
       title: 'Per-minute rate limits by plan',
       rows: [
         { name: 'Free', description: '10 requests/min' },
-        { name: 'Basic', description: '200 requests/min' },
-        { name: 'Core', description: '500 requests/min' },
-        { name: 'Plus', description: '5,000 requests/min · response caching' },
-        { name: 'Enterprise', description: 'Custom (negotiated)' },
+        { name: 'Basic', description: '30 requests/min' },
+        { name: 'Core', description: '50 requests/min' },
+        { name: 'Plus', description: '200 requests/min, with response caching' },
+        { name: 'Enterprise', description: '1,000 requests/min on the public Enterprise card. Higher caps are negotiated.' },
       ],
     },
     { kind: 'h2', text: 'Rate-limit headers', id: 'headers' },

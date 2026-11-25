@@ -1,5 +1,5 @@
 import { API_CONFIG } from '@/lib/config/api'
-import { FOOD_DATABASE_SIZE_LABEL } from '@/lib/site'
+import { FOOD_DATABASE_SIZE_LABEL, FREE_TIER_CALLS } from '@/lib/site'
 import type { FaqItem } from '@/lib/faq-data'
 
 const API_BASE = API_CONFIG.baseURL.replace(/\/$/, '')
@@ -291,7 +291,7 @@ export const CAPABILITY_PAGES: CapabilityPage[] = [
     h1: 'Food Database API',
     metaTitle: 'Food Database API: Search Millions of Foods',
     description:
-      `Search a food database of ${FOOD_DATABASE_SIZE_LABEL} over REST: multi-word matching, brand filters, verified foods, autocomplete, and complete per-100g nutrition data.`,
+      `Food database API for application developers. Query ${FOOD_DATABASE_SIZE_LABEL} over REST with barcode lookup and per-100g macros. You do not download the catalog. ${FREE_TIER_CALLS.toLocaleString('en-US')} calls a month, no card.`,
     keywords: [
       'food database API',
       'food search API',
@@ -301,8 +301,8 @@ export const CAPABILITY_PAGES: CapabilityPage[] = [
     ],
     heroBadge: 'Food database',
     heroCopy: [
-      `A food database API covers ${FOOD_DATABASE_SIZE_LABEL}: generic foods, branded products, and restaurant items over REST. Multi-word search, brand and category filters, and a verified-only mode are on the same endpoint.`,
-      'Every food returns complete nutrition data: per-100g macros, a structured nutrients array with micronutrients when available, and serving metadata that maps cleanly to meal-logging data models.',
+      `A food database API is for application developers putting nutrient data into software. Calorie API is that REST catalog: ${FOOD_DATABASE_SIZE_LABEL}, multi-word search, brand filters, verified foods, autocomplete, and barcode lookup. You query it. You do not download it.`,
+      `Authentication is an API key in the X-API-Key header. Search returns paginated JSON with stable food IDs and macros per 100 g. The free tier is ${FREE_TIER_CALLS.toLocaleString('en-US')} calls a month for non-commercial use. A monetized app needs Plus or Enterprise.`,
     ],
     stats: [
       { value: FOOD_DATABASE_SIZE_LABEL, label: 'searchable foods' },
@@ -346,33 +346,49 @@ export const CAPABILITY_PAGES: CapabilityPage[] = [
         description: 'Paginated JSON (data, total, skip, limit) with stable food IDs you can cache aggressively.',
       },
     ],
+    extraSections: [
+      {
+        title: 'For application developers',
+        paragraphs: [
+          `This page is for people putting nutrient data into software: meal logs, grocery scans, and dietitian tools. The catalog is ${FOOD_DATABASE_SIZE_LABEL}. Search is ranked keywords. It does not parse a sentence such as "two eggs and toast."`,
+          'Send the API key in the X-API-Key header. Search returns a paginated JSON envelope with stable food IDs. Macros are per 100 g. Barcode lookup uses the same nutrition shape and falls through to Open Food Facts. A code neither side knows is HTTP 404.',
+        ],
+      },
+      {
+        title: 'Query the catalog. Do not download it',
+        paragraphs: [
+          'Cache the foods your users log. IDs are stable. Walking page after page of search to build a private mirror is not permitted. If the requirement is a file you host yourself, USDA FoodData Central publishes reference data you can work from directly.',
+          `Non-commercial development starts at ${FREE_TIER_CALLS.toLocaleString('en-US')} calls a month, with no card. A monetized app needs Plus or Enterprise and the header X-API-Usage-Type: commercial. Current quotas are on the pricing page.`,
+        ],
+      },
+    ],
     faqs: [
+      {
+        q: 'Who is a food database API for?',
+        a: 'Application developers putting nutrient data into software. You call search, barcode, and food details. Your app stores the logs.',
+      },
       {
         q: 'How large is the food database?',
         a: `The catalog covers ${FOOD_DATABASE_SIZE_LABEL} across generic, branded, and restaurant foods, with barcode lookup extending coverage through Open Food Facts.`,
       },
       {
         q: 'Can I download the database in bulk?',
-        a: 'No. Query and cache the foods your users actually log; IDs are stable. Bulk catalog scraping is not permitted.',
+        a: 'No. Query and cache the foods your users actually log. IDs are stable. Bulk catalog scraping is not permitted.',
       },
       {
-        q: 'How fresh is the data?',
-        a: 'The catalog is continuously updated, and the Open Food Facts fallback covers newly released products before they land in the local database.',
-      },
-      {
-        q: 'Does search return micronutrients?',
-        a: 'Search results include per-100g macros; the food details endpoint adds the full nutrients array with vitamins and minerals when available.',
+        q: 'What does the free tier include?',
+        a: `The free plan is ${FREE_TIER_CALLS.toLocaleString('en-US')} calls a month for non-commercial use, with no card. Commercial production is Plus or Enterprise. The pricing page has the current quotas.`,
       },
     ],
     related: [
-      { label: 'Nutrition API overview', href: '/nutrition-api' },
       { label: 'Food Search API reference', href: '/docs/food-search' },
+      { label: 'Pricing', href: '/pricing' },
+      { label: 'Rate limits', href: '/docs/rate-limits' },
       { label: 'Node.js food search guide', href: '/docs/guides/nodejs-food-search' },
-      { label: 'Next.js nutrition app guide', href: '/docs/guides/nextjs-nutrition-app' },
       { label: 'Compare nutrition APIs', href: '/compare' },
     ],
-    summary: `REST search over ${FOOD_DATABASE_SIZE_LABEL} with filters, ranking, and autocomplete.`,
-    dateModified: '2026-07-03',
+    summary: `REST search over ${FOOD_DATABASE_SIZE_LABEL}. You query it. You do not download it.`,
+    dateModified: '2026-11-26',
   },
   {
     slug: 'meal-tracking-api',

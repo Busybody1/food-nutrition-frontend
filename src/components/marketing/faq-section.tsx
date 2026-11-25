@@ -55,7 +55,7 @@ export function FaqSection({
             <MarketingSectionHeader
               id="faq-heading"
               title="Food calorie API: frequently asked questions"
-              description="Answers for developers evaluating our food API, nutrition API, and food database API."
+              description="Answers for developers evaluating the food calorie API, search, and barcode lookup."
             />
           </Reveal>
         )}
