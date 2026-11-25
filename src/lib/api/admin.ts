@@ -361,6 +361,76 @@ export interface AdminPlan {
   card_highlights?: string[]
   price_display_label?: string | null
   users_count?: number
+  team_seat_limit?: number
+}
+
+export interface AdminTeamMember {
+  user_id: number
+  email: string
+  name: string | null
+  joined_at: string | null
+}
+
+export interface AdminTeamInvite {
+  id: number
+  email: string
+  created_at: string | null
+  expires_at: string | null
+  send_count: number
+}
+
+export interface AdminTeamMemberOf {
+  owner_user_id: number
+  owner_email: string
+  owner_display_name: string | null
+  joined_at: string | null
+}
+
+export interface AdminTeamChangeResult {
+  members_ended: number
+  keys_revoked: number
+  invites_revoked: number
+}
+
+export interface AdminUserTeam {
+  user_id: number
+  team_sharing_enabled: boolean
+  plan_id: number | null
+  plan_name: string | null
+  plan_team_seat_limit: number
+  seat_limit_override: number | null
+  effective_seat_limit: number
+  override_allowed: boolean
+  seats_used: number
+  role: 'owner' | 'member' | 'none'
+  state: 'active' | 'suspended' | null
+  members: AdminTeamMember[]
+  invites: AdminTeamInvite[]
+  member_of: AdminTeamMemberOf | null
+  result?: AdminTeamChangeResult | null
+}
+
+export interface ImageCaloriePilotStatus {
+  user_id: number
+  state: 'off' | 'active' | 'expired'
+  enabled: boolean
+  expires_on: string | null
+  reason: string | null
+  enabled_at: string | null
+  enabled_by_email: string | null
+  disabled_at: string | null
+  plan_name: string | null
+  meter: 'pilot' | 'credits' | 'mcp' | null
+  used_this_month: number
+  monthly_cap: number
+  used_today: number
+  daily_cap: number
+  failed_today: number
+  resets_on: string
+  today: string
+  default_expires_on: string
+  max_expires_on: string
+  platform_enabled: boolean
 }
 
 export interface AdminPlanFeature {
@@ -768,6 +838,28 @@ class AdminAPI {
     return adminPost(`/users/${userId}/api-keys/${keyId}/revoke`)
   }
 
+  async getUserTeam(userId: number): Promise<AdminUserTeam> {
+    return adminGet(`/users/${userId}/team`)
+  }
+
+  async setUserTeamSharing(
+    userId: number,
+    body: { enabled?: boolean; seat_limit_override?: number | null }
+  ): Promise<AdminUserTeam> {
+    return adminPut(`/users/${userId}/team-sharing`, body)
+  }
+
+  async getImageCaloriePilot(userId: number): Promise<ImageCaloriePilotStatus> {
+    return adminGet(`/users/${userId}/image-calorie-pilot`)
+  }
+
+  async setImageCaloriePilot(
+    userId: number,
+    body: { enabled: boolean; expires_on?: string; reason?: string }
+  ): Promise<ImageCaloriePilotStatus> {
+    return adminPut(`/users/${userId}/image-calorie-pilot`, body)
+  }
+
   async getSystemMetrics(): Promise<AdminStats> {
     return adminGet('/metrics')
   }
@@ -809,6 +901,7 @@ class AdminAPI {
       annual_price?: number | null
       card_highlights?: string[]
       price_display_label?: string | null
+      team_seat_limit?: number
     }
   ): Promise<{ message: string }> {
     return adminPatch(`/plans/${planId}`, data)

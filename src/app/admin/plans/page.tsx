@@ -38,6 +38,7 @@ import {
   DashboardIconTile,
   DashboardPanelHeader,
   DashboardPill,
+  InfoHint,
   DASHBOARD_ICON_STROKE,
 } from '@/components/admin/admin-ui'
 
@@ -56,20 +57,31 @@ function Field({
   id,
   label,
   hint,
+  info,
   className,
   children,
 }: {
   id: string
   label: string
   hint?: React.ReactNode
+  info?: string
   className?: string
   children: React.ReactNode
 }) {
   return (
     <div className={cn('min-w-0', className)}>
-      <label htmlFor={id} className="dashboard-field-label">
-        {label}
-      </label>
+      {info ? (
+        <div className="flex items-center gap-1.5">
+          <label htmlFor={id} className="dashboard-field-label">
+            {label}
+          </label>
+          <InfoHint text={info} className="mb-1.5" />
+        </div>
+      ) : (
+        <label htmlFor={id} className="dashboard-field-label">
+          {label}
+        </label>
+      )}
       {children}
       {hint && <p className="dashboard-field-hint">{hint}</p>}
     </div>
@@ -110,6 +122,7 @@ export default function AdminPlansPage() {
   const [quota, setQuota] = useState('')
   const [rateLimit, setRateLimit] = useState('')
   const [resultsPerQuery, setResultsPerQuery] = useState('')
+  const [teamSeats, setTeamSeats] = useState('')
   const [stripePriceId, setStripePriceId] = useState('')
   const [stripeTestPriceId, setStripeTestPriceId] = useState('')
   const [stripeLivePriceId, setStripeLivePriceId] = useState('')
@@ -158,6 +171,7 @@ export default function AdminPlansPage() {
     setQuota(String(p.monthly_quota ?? ''))
     setRateLimit(String(p.rate_limit_per_minute ?? ''))
     setResultsPerQuery(String(p.max_results_per_query ?? ''))
+    setTeamSeats(p.team_seat_limit == null ? '' : String(p.team_seat_limit))
     setStripePriceId(p.stripe_price_id ?? '')
     setStripeTestPriceId(p.stripe_test_price_id ?? '')
     setStripeLivePriceId(p.stripe_live_price_id ?? '')
@@ -234,6 +248,15 @@ export default function AdminPlansPage() {
           return
         }
         payload.max_results_per_query = perQuery
+      }
+      if (selected.team_seat_limit != null && teamSeats !== String(selected.team_seat_limit)) {
+        const seats = Number(teamSeats)
+        if (teamSeats === '' || !Number.isInteger(seats) || seats < 0 || seats > 100) {
+          setError('Team seats must be a whole number between 0 and 100')
+          setSaving(false)
+          return
+        }
+        payload.team_seat_limit = seats
       }
 
       const legacyStripe = stripePriceId.trim()
@@ -398,6 +421,7 @@ export default function AdminPlansPage() {
                         <th className="dashboard-num">Quota</th>
                         <th className="dashboard-num">Rate limit</th>
                         <th className="dashboard-num">Foods / query</th>
+                        <th className="dashboard-num">Team seats</th>
                         <th className="dashboard-num">Users</th>
                         <th>
                           <span className="sr-only">Actions</span>
@@ -450,6 +474,9 @@ export default function AdminPlansPage() {
                               {p.rate_limit_per_minute != null ? `${p.rate_limit_per_minute}/min` : '—'}
                             </td>
                             <td className="dashboard-num">{p.max_results_per_query ?? '—'}</td>
+                            <td className="dashboard-num">
+                              {p.team_seat_limit ?? <span className="text-dash-dim">Not set</span>}
+                            </td>
                             <td className="dashboard-num">
                               {p.users_count != null ? formatCount(p.users_count) : '—'}
                             </td>
@@ -577,6 +604,25 @@ export default function AdminPlansPage() {
                           className="sm:max-w-[calc(50%-0.5rem)]"
                         />
                       </Field>
+                      {selected.team_seat_limit != null && (
+                        <Field
+                          id="plan-team-seats"
+                          label="Team seats"
+                          className="sm:col-span-2"
+                          info="How many people an account on this plan can invite. 0 turns team sharing off for the plan."
+                        >
+                          <Input
+                            id="plan-team-seats"
+                            value={teamSeats}
+                            onChange={(e) => setTeamSeats(e.target.value)}
+                            disabled={!canEdit}
+                            type="number"
+                            min="0"
+                            max="100"
+                            className="sm:max-w-[calc(50%-0.5rem)]"
+                          />
+                        </Field>
+                      )}
                     </div>
 
                     <section className="space-y-3 border-t border-dash-border pt-5">

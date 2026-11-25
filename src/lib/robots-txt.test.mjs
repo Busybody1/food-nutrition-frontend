@@ -9,6 +9,7 @@ test('citation crawlers are allowed and private paths stay closed', () => {
   }
   assert.match(body, /ai-input=yes, ai-train=no/)
   assert.match(body, /Disallow: \/dashboard\//)
+  assert.match(body, /Disallow: \/team\//)
   assert.match(body, /Sitemap: https:\/\/calorieapi.com\/sitemap.xml/)
   assert.equal(body.includes('Disallow: /mcp'), false)
 })

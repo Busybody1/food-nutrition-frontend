@@ -68,6 +68,9 @@ test('login next paths stay on this site', () => {
   assert.equal(safeNextPath('/oauth/consent?request=abc'), '/oauth/consent?request=abc')
   assert.equal(safeNextPath('/oauth/authorize'), null)
   assert.equal(safeNextPath('/pricing'), null)
+  assert.equal(safeNextPath('/team/accept?token=abc_123'), '/team/accept?token=abc_123')
+  assert.equal(safeNextPath('/team/acceptx'), null)
+  assert.equal(safeNextPath('/team'), null)
 })
 
 test('oauth return urls stay on the client host', () => {

@@ -265,7 +265,7 @@ export function genericHeaderConfig(url: string = mcpEndpoint()): string {
   ].join('\n')
 }
 
-const SAFE_NEXT_PREFIXES = ['/mcp', '/dashboard']
+const SAFE_NEXT_PREFIXES = ['/mcp', '/dashboard', '/team/accept']
 
 export function safeNextPath(raw: string | null | undefined): string | null {
   if (!raw) return null

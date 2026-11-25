@@ -14,10 +14,13 @@ import {
   MessageCircle,
   MessageSquare,
   Settings,
+  Users,
   type LucideIcon,
 } from 'lucide-react'
 import { DashboardFeedbackForm } from '@/components/dashboard/DashboardFeedbackForm'
 import { SupportChatProvider, useSupportChat } from '@/components/support/SupportChatWidget'
+import { TeamProvider, useTeam } from '@/contexts/TeamContext'
+import { accountNavItems, TEAM_PATH } from '@/lib/dashboard/team'
 import {
   DashboardFrame,
   SidebarBrand,
@@ -63,10 +66,13 @@ const NAV_GROUPS: { label: string; items: NavItem[] }[] = [
   },
 ]
 
+const TEAM_NAV_ITEM: NavItem = { name: 'Team', href: TEAM_PATH, icon: Users }
+
 const SECTION_TITLES: Record<string, string> = {
   '/dashboard': 'Overview',
   '/dashboard/search': 'Search',
   '/dashboard/usage': 'Usage',
+  '/dashboard/team': 'Team',
   '/dashboard/billing': 'Billing',
   '/dashboard/account': 'Account',
 }
@@ -75,10 +81,16 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const onKeys = Boolean(pathname?.startsWith('/dashboard/api-keys'))
+  const { role } = useTeam()
+  const groups = NAV_GROUPS.map((group) =>
+    group.label === 'Account'
+      ? { ...group, items: accountNavItems(group.items, role, TEAM_NAV_ITEM) }
+      : group
+  )
 
   return (
     <nav aria-label="Dashboard">
-      {NAV_GROUPS.map((group) => (
+      {groups.map((group) => (
         <SidebarGroup key={group.label} label={group.label}>
           {group.items.map((item) => {
             const isHash = Boolean(item.hash)
@@ -161,26 +173,28 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   return (
     <SupportChatProvider>
-      <DashboardFrame
-        brand={<SidebarBrand href="/dashboard" />}
-        renderNav={(onNavigate) => (
-          <Suspense fallback={null}>
-            <NavLinks onNavigate={onNavigate} />
-          </Suspense>
-        )}
-        footer={<UserFooter onLogout={handleLogout} />}
-        topbarLeft={
-          <Suspense fallback={null}>
-            <Breadcrumb />
-          </Suspense>
-        }
-        topbarRight={<TopbarActions />}
-      >
-        {children}
-        <div className="mx-auto w-full max-w-[1360px] px-4 pb-10 pt-0 sm:px-6 lg:px-8">
-          <DashboardFeedbackForm />
-        </div>
-      </DashboardFrame>
+      <TeamProvider>
+        <DashboardFrame
+          brand={<SidebarBrand href="/dashboard" />}
+          renderNav={(onNavigate) => (
+            <Suspense fallback={null}>
+              <NavLinks onNavigate={onNavigate} />
+            </Suspense>
+          )}
+          footer={<UserFooter onLogout={handleLogout} />}
+          topbarLeft={
+            <Suspense fallback={null}>
+              <Breadcrumb />
+            </Suspense>
+          }
+          topbarRight={<TopbarActions />}
+        >
+          {children}
+          <div className="mx-auto w-full max-w-[1360px] px-4 pb-10 pt-0 sm:px-6 lg:px-8">
+            <DashboardFeedbackForm />
+          </div>
+        </DashboardFrame>
+      </TeamProvider>
     </SupportChatProvider>
   )
 }

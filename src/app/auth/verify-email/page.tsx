@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { AuthShell } from '@/components/marketing/auth-shell'
 import { api } from '@/lib/api/client'
+import { safeNextPath } from '@/lib/mcp/catalog'
 import { ApiError } from '@/types/api'
 import { CheckCircle2, Loader2 } from 'lucide-react'
 
@@ -16,6 +17,7 @@ function VerifyEmailForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const emailParam = searchParams.get('email') ?? ''
+  const nextPath = safeNextPath(searchParams.get('next'))
 
   const [email, setEmail] = useState(emailParam)
   const [code, setCode] = useState('')
@@ -61,7 +63,7 @@ function VerifyEmailForm() {
     setIsSubmitting(true)
     try {
       await api.auth.verifyEmailCode({ email: email.trim(), code })
-      router.push('/dashboard')
+      router.push(nextPath || '/dashboard')
     } catch (err) {
       if (err instanceof ApiError) {
 
@@ -222,7 +224,10 @@ function VerifyEmailForm() {
         </Button>
         <p className="mt-4 text-sm text-ink-muted">
           Wrong account?{' '}
-          <Link href="/auth/login" className={linkClass}>
+          <Link
+            href={nextPath ? `/auth/login?next=${encodeURIComponent(nextPath)}` : '/auth/login'}
+            className={linkClass}
+          >
             Sign in
           </Link>
         </p>

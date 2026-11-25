@@ -20,7 +20,7 @@ interface CreateApiKeyModalProps {
   onCreate: (name: string) => Promise<CreatedApiKeyResult | void>
   isLoading?: boolean
   namePlaceholder?: string
-  upgradeHref?: string
+  upgradeHref?: string | null
 }
 
 export function CreateApiKeyModal({
@@ -231,7 +231,7 @@ export function CreateApiKeyModal({
                       Verify your email
                     </Link>
                   )}
-                  {upgradeNeeded && (
+                  {upgradeNeeded && upgradeHref && (
                     <Link
                       href={upgradeHref}
                       className="mt-1 inline-block font-medium underline"

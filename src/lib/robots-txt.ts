@@ -4,6 +4,7 @@ const PRIVATE_PATHS = [
   '/auth/',
   '/checkout',
   '/feedback/',
+  '/team/',
   '/api/',
 ]
 

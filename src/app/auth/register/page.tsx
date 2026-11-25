@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input'
 import { AuthShell } from '@/components/marketing/auth-shell'
 import { useAuth } from '@/lib/hooks/use-auth'
 import { isDuplicateEmailMessage } from '@/lib/api/errors'
+import { safeNextPath } from '@/lib/mcp/catalog'
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
 
 export default function RegisterPage() {
@@ -24,9 +25,22 @@ export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
   const [agreedToTerms, setAgreedToTerms] = useState(false)
+  const [nextPath, setNextPath] = useState<string | null>(null)
 
   const { register } = useAuth()
   const router = useRouter()
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const invitedEmail = (params.get('email') || '').trim()
+    /* eslint-disable-next-line react-hooks/set-state-in-effect */
+    setNextPath(safeNextPath(params.get('next')))
+    if (invitedEmail) {
+      setFormData((prev) => (prev.email ? prev : { ...prev, email: invitedEmail }))
+    }
+  }, [])
+
+  const loginHref = nextPath ? `/auth/login?next=${encodeURIComponent(nextPath)}` : '/auth/login'
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }))
@@ -62,7 +76,9 @@ export default function RegisterPage() {
         company_name: formData.companyName || undefined,
       })
       if (result.success) {
-        router.push(`/auth/verify-email?email=${encodeURIComponent(formData.email)}`)
+        const query = new URLSearchParams({ email: formData.email })
+        if (nextPath) query.set('next', nextPath)
+        router.push(`/auth/verify-email?${query.toString()}`)
       } else {
         setError(result.error || 'Registration failed')
       }
@@ -85,7 +101,7 @@ export default function RegisterPage() {
       subtitle={
         <>
           Or{' '}
-          <Link href="/auth/login" className={linkClass}>
+          <Link href={loginHref} className={linkClass}>
             sign in
           </Link>
         </>
@@ -101,7 +117,7 @@ export default function RegisterPage() {
             {isDuplicateEmailMessage(error) && (
               <p className="mt-2 text-ink-muted">
                 Already have an account?{' '}
-                <Link href="/auth/login" className={`${linkClass} font-medium`}>
+                <Link href={loginHref} className={`${linkClass} font-medium`}>
                   Sign in
                 </Link>
               </p>

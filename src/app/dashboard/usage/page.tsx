@@ -6,6 +6,8 @@ import type { UsageData, EndpointUsage } from '@/components/dashboard/UsageChart
 import { useAuth } from '@/lib/hooks/use-auth'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
+import { PhotoTestLine } from '@/components/dashboard/PhotoTestLine'
+import type { PhotoTestUsage } from '@/types/api'
 import {
   DashboardPage,
   DashboardPageHeader,
@@ -15,7 +17,7 @@ import {
   DashboardStatCard,
   DASHBOARD_ICON_STROKE,
 } from '@/components/dashboard/dashboard-shell'
-import { Activity, Download, Gauge, RefreshCw, Zap } from 'lucide-react'
+import { Activity, Download, Gauge, RefreshCw, User, Zap } from 'lucide-react'
 
 interface UsageStats {
   requests_this_month: number
@@ -23,6 +25,9 @@ interface UsageStats {
   rate_limit_per_minute: number
   plan_name: string
   remaining_requests: number
+  my_requests_this_month?: number
+  scope?: 'personal' | 'team'
+  photo_test?: PhotoTestUsage | null
 }
 
 type TimeRange = '7d' | '30d' | '90d'
@@ -141,6 +146,8 @@ export default function UsagePage() {
   const current = usageStats?.requests_this_month ?? 0
   const usagePercentage = quota > 0 ? (current / quota) * 100 : 0
   const rateLimit = usageStats?.rate_limit_per_minute || 0
+  const teamScope = usageStats?.scope === 'team'
+  const myRequests = usageStats?.my_requests_this_month ?? 0
 
   return (
     <DashboardPage>
@@ -197,9 +204,9 @@ export default function UsagePage() {
 
       {error && <DashboardAlert variant="error">{error}</DashboardAlert>}
 
-      <div className="dashboard-grid-kpi">
+      <div className={teamScope ? 'dashboard-grid-kpi-4' : 'dashboard-grid-kpi'}>
         <DashboardStatCard
-          label="Requests this month"
+          label={teamScope ? 'Team requests this month' : 'Requests this month'}
           value={usageStats ? current.toLocaleString() : null}
           hint={
             usageStats
@@ -209,6 +216,15 @@ export default function UsagePage() {
           icon={Activity}
           accent="brand"
         />
+        {teamScope && (
+          <DashboardStatCard
+            label="Your requests"
+            value={myRequests.toLocaleString()}
+            hint="Calls made with your API keys"
+            icon={User}
+            accent="green"
+          />
+        )}
         <DashboardStatCard
           label="Remaining"
           value={usageStats ? Math.max(0, quota - current).toLocaleString() : null}
@@ -228,6 +244,8 @@ export default function UsagePage() {
           accent="orange"
         />
       </div>
+
+      <PhotoTestLine photoTest={usageStats?.photo_test} />
 
       <UsageTrendCards data={usageData} rangeLabel={RANGE_LABELS[timeRange]} />
 

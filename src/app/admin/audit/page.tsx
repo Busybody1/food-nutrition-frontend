@@ -84,7 +84,7 @@ export default function AdminAuditPage() {
     <AdminPage>
       <AdminPageHeader
         title="Audit log"
-        description="Immutable record of every mutating action performed in the admin console."
+        description="Immutable record of staff actions in the admin console and team actions by account owners and members."
         actions={<AdminRefreshButton onClick={load} loading={loading} />}
       />
 
@@ -167,7 +167,7 @@ export default function AdminAuditPage() {
                         onSort={applySort}
                       />
                       <AdminSortableTh
-                        label="Admin"
+                        label="Actor"
                         sortKey="admin_email"
                         sort={sort}
                         onSort={applySort}

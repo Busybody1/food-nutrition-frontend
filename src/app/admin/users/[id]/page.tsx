@@ -33,6 +33,8 @@ import {
 } from '@/lib/api/admin'
 import { DeleteUserDialog } from '@/components/admin/delete-user-dialog'
 import { ResetUserPasswordDialog } from '@/components/admin/reset-user-password-dialog'
+import { TeamSharingPanel } from '@/components/admin/team-sharing-panel'
+import { ImageCaloriePilotPanel } from '@/components/admin/image-calorie-pilot-panel'
 import { useAdmin } from '@/lib/hooks/use-admin'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -241,10 +243,13 @@ export default function AdminUserDetailPage() {
     setRequestsPage(1)
   }
 
+  const [pilotRefreshKey, setPilotRefreshKey] = useState(0)
+
   const refreshAll = useCallback(() => {
     loadUser()
     loadUsage()
     loadRequests()
+    setPilotRefreshKey((key) => key + 1)
   }, [loadUser, loadUsage, loadRequests])
 
   const deleteAccount = async () => {
@@ -614,6 +619,10 @@ export default function AdminUserDetailPage() {
           </div>
         </AdminPanel>
       </div>
+
+      <TeamSharingPanel key={user.id} userId={user.id} />
+
+      <ImageCaloriePilotPanel key={`pilot-${user.id}`} userId={user.id} refreshKey={pilotRefreshKey} />
 
       <div className="dashboard-grid-halves">
         <AdminPanel>

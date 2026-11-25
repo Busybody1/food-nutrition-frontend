@@ -51,7 +51,7 @@ interface ApiKeyListProps {
   description?: string
   emptyDescription?: string
   namePlaceholder?: string
-  upgradeHref?: string
+  upgradeHref?: string | null
 }
 
 export function ApiKeyList({

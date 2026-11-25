@@ -165,6 +165,16 @@ export interface UsageStats {
   plan_name: string;
   remaining_requests: number;
   usage_by_type: UsageByType[];
+  photo_test?: PhotoTestUsage | null;
+}
+
+export interface PhotoTestUsage {
+  used_this_month: number;
+  monthly_cap: number;
+  used_today: number;
+  daily_cap: number;
+  resets_on: string;
+  ends_on: string | null;
 }
 
 export interface UsageByType {

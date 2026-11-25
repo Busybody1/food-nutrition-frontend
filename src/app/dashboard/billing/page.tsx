@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useCallback, Suspense, type ReactNode } from 'react'
 import { useAuth } from '@/lib/hooks/use-auth'
+import { useTeam } from '@/contexts/TeamContext'
+import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { ErrorBoundary } from '@/components/ui/error-boundary'
@@ -35,6 +37,7 @@ import {
   ListChecks,
   Receipt,
   RefreshCw,
+  Users,
 } from 'lucide-react'
 import { cn } from '@/lib/utils/cn'
 import { fetchPublicPlans } from '@/lib/pricing/fetch-plans'
@@ -815,11 +818,37 @@ function BillingPageContent() {
   )
 }
 
+function MemberBillingNotice() {
+  return (
+    <DashboardPage>
+      <DashboardPageHeader title="Billing" />
+      <DashboardPanel>
+        <DashboardEmpty
+          icon={Users}
+          title="Billing is managed by your team owner."
+          action={
+            <Button asChild variant="outline" size="sm" className="h-9">
+              <Link href="/dashboard/team">Go to Team</Link>
+            </Button>
+          }
+        />
+      </DashboardPanel>
+    </DashboardPage>
+  )
+}
+
+function BillingGate() {
+  const { role, loading } = useTeam()
+  if (loading) return <DashboardLoading message="Loading billing..." />
+  if (role === 'member') return <MemberBillingNotice />
+  return <BillingPageContent />
+}
+
 export default function BillingPage() {
   return (
     <ErrorBoundary fallback={<PaymentErrorMessage />}>
       <Suspense fallback={<DashboardLoading message="Loading billing page..." />}>
-        <BillingPageContent />
+        <BillingGate />
       </Suspense>
     </ErrorBoundary>
   )

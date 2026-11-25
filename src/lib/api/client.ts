@@ -3,6 +3,7 @@
 import { ApiResponse, PaginatedResponse, ApiError, ApiErrorDetails } from '@/types/api';
 import { getUserFacingApiMessage } from '@/lib/api/errors';
 import { normalizePaginatedResponse, unwrapSuccessPayload } from '@/lib/api/paginated';
+import { createTeamApi } from '@/lib/api/team';
 
 interface RegisterData {
   email: string;
@@ -435,6 +436,8 @@ export const api = {
       return apiClient.postFormData('/api/v1/support/attachments', formData)
     },
   },
+
+  team: createTeamApi(apiClient),
 
   usage: {
     getUsageData: (timeRange: string) =>

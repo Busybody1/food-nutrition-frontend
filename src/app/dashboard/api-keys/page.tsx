@@ -15,6 +15,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
 import { Lock } from 'lucide-react'
 import { useAuth } from '@/lib/hooks/use-auth'
+import { useTeam } from '@/contexts/TeamContext'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import {
@@ -48,6 +49,7 @@ export default function ApiKeysPage() {
 
 function ApiKeysScreen() {
   const { isAuthenticated, loading, user } = useAuth()
+  const { role: teamRole } = useTeam()
   const router = useRouter()
   const searchParams = useSearchParams()
   const [apiKeys, setApiKeys] = useState<ApiKeyRecord[]>([])
@@ -201,7 +203,7 @@ function ApiKeysScreen() {
             : 'Create a key to call search, foods, calc, and vision.'
         }
         namePlaceholder={kind === 'mcp' ? 'e.g., Claude Code, Cursor' : 'e.g., Production app'}
-        upgradeHref={kind === 'mcp' ? '/mcp/pricing' : '/pricing'}
+        upgradeHref={teamRole === 'member' ? null : kind === 'mcp' ? '/mcp/pricing' : '/pricing'}
       />
     )
   }

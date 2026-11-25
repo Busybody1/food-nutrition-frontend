@@ -3,9 +3,13 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useAuth } from '@/lib/hooks/use-auth'
+import { useTeam } from '@/contexts/TeamContext'
+import { teamOwnerLabel } from '@/lib/dashboard/team'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { formatCompact } from '@/components/dashboard/dashboard-charts'
+import { PhotoTestLine } from '@/components/dashboard/PhotoTestLine'
+import type { PhotoTestUsage } from '@/types/api'
 import {
   DashboardPage as DashboardShell,
   DashboardPageHeader,
@@ -30,6 +34,7 @@ import {
   RefreshCw,
   Zap,
   ArrowUpRight,
+  Users,
 } from 'lucide-react'
 
 interface ApiKey {
@@ -40,6 +45,8 @@ interface ApiKey {
 interface UsageStats {
   requests_this_month: number
   monthly_quota: number
+  scope?: 'personal' | 'team'
+  photo_test?: PhotoTestUsage | null
 }
 
 interface UserProfile {
@@ -63,11 +70,15 @@ interface DashboardStats {
   monthlyQuota: number
   planName: string
   planPrice: number
+  teamScope: boolean
+  photoTest: PhotoTestUsage | null
   recentActivity: ActivityItem[]
 }
 
 export default function DashboardPage() {
   const { user, isAuthenticated, loading } = useAuth()
+  const { role: teamRole, me: teamMe } = useTeam()
+  const isMember = teamRole === 'member'
   const router = useRouter()
   const [stats, setStats] = useState<DashboardStats | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -120,6 +131,8 @@ export default function DashboardPage() {
         monthlyQuota: usageStats.monthly_quota,
         planName: userProfile.plan.name,
         planPrice: userProfile.plan.monthly_price,
+        teamScope: usageStats.scope === 'team',
+        photoTest: usageStats.photo_test ?? null,
         recentActivity: [],
       })
     } catch (err) {
@@ -155,26 +168,35 @@ export default function DashboardPage() {
 
   const planMeta = stats ? (
     <Link
-      href="/dashboard/billing"
+      href={isMember ? '/dashboard/team' : '/dashboard/billing'}
       className="dashboard-meta-pill transition-colors hover:bg-dash-hover"
-      title="Current plan"
+      title={isMember ? 'Team plan' : 'Current plan'}
     >
-      <CreditCard className="h-3.5 w-3.5 text-dash-muted" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
+      {isMember ? (
+        <Users className="h-3.5 w-3.5 text-dash-muted" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
+      ) : (
+        <CreditCard className="h-3.5 w-3.5 text-dash-muted" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
+      )}
       <span>{stats.planName}</span>
       <span className="text-dash-dim" aria-hidden>
         ·
       </span>
       <span className="tabular-nums text-dash-muted">
-        {stats.planPrice > 0 ? `$${stats.planPrice}/mo` : 'Free tier'}
+        {isMember ? 'Team plan' : stats.planPrice > 0 ? `$${stats.planPrice}/mo` : 'Free tier'}
       </span>
     </Link>
   ) : undefined
+  const teamRequests = isMember || Boolean(stats?.teamScope)
 
   return (
     <DashboardShell>
       <DashboardPageHeader
         title={`Welcome back${user?.first_name ? `, ${user.first_name}` : ''}`}
-        description="Monitor API usage, manage keys, and billing from one place."
+        description={
+          isMember
+            ? 'Monitor API usage and manage your keys.'
+            : 'Monitor API usage, manage keys, and billing from one place.'
+        }
         meta={planMeta}
       >
         <Button
@@ -194,13 +216,23 @@ export default function DashboardPage() {
 
       {error && <DashboardAlert variant="error">{error}</DashboardAlert>}
 
+      {isMember && (
+        <div className="dashboard-card flex flex-wrap items-center gap-x-2 gap-y-1 px-4 py-3 text-[13px] text-dash-ink">
+          <Users className="h-4 w-4 text-dash-muted" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
+          <span>You are on {teamOwnerLabel(teamMe.owner_display_name)}.</span>
+          <Link href="/dashboard/team" className="font-medium text-dash-teal-strong hover:underline">
+            View team
+          </Link>
+        </div>
+      )}
+
       {stats && (
         <>
           <div className="dashboard-grid-kpi">
             <DashboardStatCard
-              label="Requests this month"
+              label={teamRequests ? 'Team requests this month' : 'Requests this month'}
               value={stats.requestsThisMonth.toLocaleString()}
-              hint="API requests"
+              hint={teamRequests ? 'Shared team allowance' : 'API requests'}
               icon={Activity}
               accent="brand"
             />
@@ -277,6 +309,7 @@ export default function DashboardPage() {
                     <p className="mt-0.5 text-lg font-semibold leading-7 text-dash-ink">{resetDate}</p>
                   </div>
                 </div>
+                <PhotoTestLine photoTest={stats.photoTest} className="mt-4" />
               </DashboardPanelBody>
             </DashboardPanel>
 
@@ -295,19 +328,30 @@ export default function DashboardPage() {
                   title="Usage analytics"
                   description="Charts and endpoint breakdown"
                 />
-                <DashboardQuickAction
-                  href="/pricing"
-                  icon={CreditCard}
-                  title="Upgrade plan"
-                  description="Higher limits and priority support"
-                  primary
-                />
-                <DashboardQuickAction
-                  href="/dashboard/billing"
-                  icon={CreditCard}
-                  title="Billing & invoices"
-                  description="Payment methods and subscription"
-                />
+                {isMember ? (
+                  <DashboardQuickAction
+                    href="/dashboard/team"
+                    icon={Users}
+                    title="Team"
+                    description="Your membership and shared allowance"
+                  />
+                ) : (
+                  <>
+                    <DashboardQuickAction
+                      href="/pricing"
+                      icon={CreditCard}
+                      title="Upgrade plan"
+                      description="Higher limits and priority support"
+                      primary
+                    />
+                    <DashboardQuickAction
+                      href="/dashboard/billing"
+                      icon={CreditCard}
+                      title="Billing & invoices"
+                      description="Payment methods and subscription"
+                    />
+                  </>
+                )}
               </DashboardPanelBody>
             </DashboardPanel>
           </div>
