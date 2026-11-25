@@ -644,7 +644,7 @@
   }
 
   .marketing-icon-disc {
-    @apply flex h-9 w-9 shrink-0 items-center justify-center rounded-full;
+    @apply flex h-9 w-9 shrink-0 items-center justify-center;
   }
 
   .marketing-orbit-spin {
@@ -704,7 +704,7 @@
   }
 
   .marketing-feature-icon {
-    @apply marketing-icon-disc mb-4 bg-mk-blue-soft text-mk-blue;
+    @apply marketing-icon-disc mb-4 text-mk-blue;
   }
 
   .marketing-cta-band {

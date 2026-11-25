@@ -1,14 +1,8 @@
 'use client'
 
-import {
-  CheckCircle,
-  Zap,
-  Shield,
-  Star,
-  Crown,
-  Building2,
-  type LucideIcon,
-} from 'lucide-react'
+import { CheckCircle } from 'lucide-react'
+import { BuildingsIcon, CrownIcon, LightningIcon, ShieldIcon, StarIcon } from '@phosphor-icons/react/ssr'
+import type { MarketingIcon } from '@/components/marketing/marketing-shell'
 import type { PricingPlan } from '@/lib/pricing/plan-display'
 import {
   formatPlanPrice,
@@ -21,13 +15,13 @@ import { PricingMcpExclusionNote } from '@/components/marketing/pricing-mcp-note
 import { MarketingIconDisc, type DiscTone } from '@/components/marketing/marketing-shell'
 import { cn } from '@/lib/utils/cn'
 
-const PLAN_ICON: Record<string, { icon: LucideIcon; tone: DiscTone }> = {
-  free: { icon: Shield, tone: 'green' },
-  basic: { icon: Zap, tone: 'blue' },
-  core: { icon: Star, tone: 'violet' },
-  plus: { icon: Crown, tone: 'coral' },
-  enterprise: { icon: Building2, tone: 'blue' },
-  custom: { icon: Building2, tone: 'blue' },
+const PLAN_ICON: Record<string, { icon: MarketingIcon; tone: DiscTone }> = {
+  free: { icon: ShieldIcon, tone: 'green' },
+  basic: { icon: LightningIcon, tone: 'blue' },
+  core: { icon: StarIcon, tone: 'violet' },
+  plus: { icon: CrownIcon, tone: 'coral' },
+  enterprise: { icon: BuildingsIcon, tone: 'blue' },
+  custom: { icon: BuildingsIcon, tone: 'blue' },
 }
 
 function PlanIcon({ name }: { name: string }) {

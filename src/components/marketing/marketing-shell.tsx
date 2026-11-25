@@ -1,17 +1,19 @@
-import type { LucideIcon } from 'lucide-react'
+import type { Icon as PhosphorIcon } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils/cn'
 import { TrackedCtaLink } from '@/components/analytics/tracked-cta-link'
 import { RevealGroup } from '@/components/marketing/reveal'
 
 export const marketingCardClass = 'marketing-card'
 
+export type MarketingIcon = PhosphorIcon
+
 export type DiscTone = 'blue' | 'green' | 'violet' | 'coral'
 
 const DISC_TONE_CLASS: Record<DiscTone, string> = {
-  blue: 'bg-mk-blue-soft text-mk-blue',
-  green: 'bg-mk-green-soft text-mk-green',
-  violet: 'bg-mk-violet-soft text-mk-violet',
-  coral: 'bg-mk-coral-soft text-mk-coral',
+  blue: 'text-mk-blue',
+  green: 'text-mk-green',
+  violet: 'text-mk-violet',
+  coral: 'text-mk-coral',
 }
 
 const DISC_TONE_ORDER: DiscTone[] = ['blue', 'green', 'violet', 'coral']
@@ -29,13 +31,13 @@ export function MarketingIconDisc({
   tone = 'blue',
   className,
 }: {
-  icon: LucideIcon
+  icon: MarketingIcon
   tone?: DiscTone
   className?: string
 }) {
   return (
     <span className={cn('marketing-icon-disc', DISC_TONE_CLASS[tone], className)} aria-hidden>
-      <Icon className="h-[18px] w-[18px]" strokeWidth={1.9} />
+      <Icon weight="fill" className="h-7 w-7" />
     </span>
   )
 }
@@ -80,7 +82,7 @@ export function MarketingTrustPills({ items }: { items: string[] }) {
   )
 }
 
-export type MarketingHighlightStat = { icon: LucideIcon; value: string; label: string }
+export type MarketingHighlightStat = { icon: MarketingIcon; value: string; label: string }
 
 export function MarketingHighlightStats({
   stats,
@@ -123,7 +125,7 @@ export function MarketingFeatureCard({
   description,
   tone = 'blue',
 }: {
-  icon: LucideIcon
+  icon: MarketingIcon
   title: string
   description: string
   tone?: DiscTone
@@ -138,7 +140,7 @@ export function MarketingFeatureCard({
 }
 
 export type MarketingFeatureItem = {
-  icon: LucideIcon
+  icon: MarketingIcon
   title: string
   description: string
 }
@@ -226,7 +228,7 @@ const STAT_GRID_CLASS: Record<number, string> = {
 export function MarketingStatStrip({
   stats,
 }: {
-  stats: { value: string; label: string; icon?: LucideIcon }[]
+  stats: { value: string; label: string; icon?: MarketingIcon }[]
 }) {
   const gridClass = STAT_GRID_CLASS[stats.length] ?? STAT_GRID_CLASS[4]
   return (

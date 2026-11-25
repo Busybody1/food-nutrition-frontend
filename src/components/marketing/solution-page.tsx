@@ -1,21 +1,6 @@
 import Link from 'next/link'
-import {
-  BadgeCheck,
-  Blocks,
-  Building2,
-  Database,
-  FileCheck,
-  Lock,
-  Microscope,
-  Network,
-  PackageSearch,
-  Scale,
-  ShieldCheck,
-  Tags,
-  WheatOff,
-  Zap,
-  type LucideIcon,
-} from 'lucide-react'
+import { BuildingsIcon, CubeIcon, DatabaseIcon, FileTextIcon, FlaskIcon, GrainsSlashIcon, GraphIcon, LightningIcon, LockIcon, PackageIcon, ScalesIcon, SealCheckIcon, ShieldCheckIcon, TagIcon } from '@phosphor-icons/react/ssr'
+import type { MarketingIcon } from '@/components/marketing/marketing-shell'
 import {
   MarketingCtaBand,
   MarketingFeatureGrid,
@@ -36,15 +21,15 @@ import { buildFaqPageJsonLd } from '@/lib/faq-data'
 import { RelatedResources } from '@/components/seo/related-resources'
 import { solutionPath, type SolutionPage } from '@/lib/solutions-data'
 
-const PAIN_POINT_ICONS: Record<string, LucideIcon[]> = {
-  'fitness-apps': [Zap, ShieldCheck, Database],
-  'meal-planning-apps': [Database, Scale, Tags],
-  healthcare: [BadgeCheck, Lock, Microscope],
-  'grocery-retail': [PackageSearch, WheatOff, Network],
-  'wellness-saas': [Blocks, Building2, FileCheck],
+const PAIN_POINT_ICONS: Record<string, MarketingIcon[]> = {
+  'fitness-apps': [LightningIcon, ShieldCheckIcon, DatabaseIcon],
+  'meal-planning-apps': [DatabaseIcon, ScalesIcon, TagIcon],
+  healthcare: [SealCheckIcon, LockIcon, FlaskIcon],
+  'grocery-retail': [PackageIcon, GrainsSlashIcon, GraphIcon],
+  'wellness-saas': [CubeIcon, BuildingsIcon, FileTextIcon],
 }
 
-const DEFAULT_PAIN_POINT_ICONS: LucideIcon[] = [Zap, ShieldCheck, Database]
+const DEFAULT_PAIN_POINT_ICONS: MarketingIcon[] = [LightningIcon, ShieldCheckIcon, DatabaseIcon]
 
 export function SolutionPageView({ page }: { page: SolutionPage }) {
   const path = solutionPath(page.slug)

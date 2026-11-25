@@ -195,7 +195,7 @@ Paid limits: 20 calls/minute, 10000 calls/month, 25 foods per search, 150 photos
 Trial: 7 days, card required, 5 calls/minute, 200 calls total, 10 photos.
 
 ## Food database
-- Approximately 4 million food records spanning global cuisines and regional products - not limited to Western or US-only catalogs.
+- More than 6.8 million food records spanning global cuisines and regional products - not limited to Western or US-only catalogs.
 - Coverage includes packaged goods, branded items, restaurant-style entries, and culturally diverse ingredients across markets worldwide.
 - Barcode (UPC/EAN) lookup for retail products; text search and suggest for common and regional food names.
 - Verified foods filter for higher-confidence nutrition values.

@@ -29,7 +29,7 @@ export const SITE_KEYWORDS = (
   .filter(Boolean);
 
 export const FOOD_DATABASE_SIZE_LABEL =
-  process.env.NEXT_PUBLIC_FOOD_DATABASE_SIZE?.trim() || '4M+ foods';
+  process.env.NEXT_PUBLIC_FOOD_DATABASE_SIZE?.trim() || '6.8M+ foods';
 
 /**
  * Headline plan facts used in page titles, comparison tables and marketing copy.
@@ -77,10 +77,10 @@ export const WEBSITE_ID = `${SITE_URL}/#website`;
 export const SOFTWARE_ID = `${SITE_URL}/#software`;
 export const WEBAPI_ID = `${SITE_URL}/#api`;
 
-export const DEFAULT_OG_IMAGE_PATH = '/images/bg-banner.png';
+export const DEFAULT_OG_IMAGE_PATH = '/images/og-calorie-api.png';
 
 export const OG_IMAGE_VERSION =
-  process.env.NEXT_PUBLIC_OG_IMAGE_VERSION?.trim() || '1';
+  process.env.NEXT_PUBLIC_OG_IMAGE_VERSION?.trim() || '2';
 
 function resolveOgImageUrl(): string {
   const envOverride = process.env.NEXT_PUBLIC_OG_IMAGE_URL?.trim();

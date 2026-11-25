@@ -1,6 +1,7 @@
 'use client'
 
-import { Building2, CheckCircle } from 'lucide-react'
+import { CheckCircle } from 'lucide-react'
+import { BuildingsIcon } from '@phosphor-icons/react/ssr'
 import type { PricingPlan } from '@/lib/pricing/plan-display'
 import { formatPlanPrice, isMcpPlan } from '@/lib/pricing/plan-display'
 import { PricingMcpExclusionNote } from '@/components/marketing/pricing-mcp-note'
@@ -29,7 +30,7 @@ export function PricingEnterpriseBand({
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)_16rem] lg:items-center">
         <div>
           <div className="mb-3 flex items-center gap-2.5">
-            <MarketingIconDisc icon={Building2} tone="blue" />
+            <MarketingIconDisc icon={BuildingsIcon} tone="blue" />
             <div>
               <p className="text-xs font-medium text-mk-muted">Enterprise</p>
               <h3 className="text-xl font-semibold tracking-[-0.01em] text-mk-ink">{plan.name}</h3>

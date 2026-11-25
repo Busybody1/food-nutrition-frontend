@@ -1,23 +1,8 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import {
-  AlertCircle,
-  AlertTriangle,
-  ArrowRight,
-  Code2,
-  Database,
-  FileText,
-  FlaskConical,
-  Gauge,
-  Globe,
-  Key,
-  Layers,
-  ScanBarcode,
-  Search,
-  Smartphone,
-  Terminal,
-  Zap,
-} from 'lucide-react'
+import { AlertCircle, ArrowRight, Database, FlaskConical, Key, Zap } from 'lucide-react'
+import { BarcodeIcon, CodeIcon, DatabaseIcon, DeviceMobileIcon, FileTextIcon, GaugeIcon, GlobeIcon, KeyIcon, LightningIcon, MagnifyingGlassIcon, StackIcon, TerminalWindowIcon, WarningIcon } from '@phosphor-icons/react/ssr'
+import type { MarketingIcon } from '@/components/marketing/marketing-shell'
 import { FOOD_DATABASE_SIZE_LABEL } from '@/lib/site'
 import { API_CONFIG } from '@/lib/config/api'
 import { MarketingSheetHero } from '@/components/marketing/marketing-sheet'
@@ -99,22 +84,22 @@ const SECTION_CARD_IDS: Record<string, string> = {
   authentication: 'api-keys',
 }
 
-const SECTION_ICONS: Record<string, typeof Key> = {
-  authentication: Key,
-  'food-search': Search,
-  'barcode-lookup': ScanBarcode,
-  'food-details': FileText,
-  'reference-data': Database,
-  'rate-limits': Gauge,
-  errors: AlertTriangle,
+const SECTION_ICONS: Record<string, MarketingIcon> = {
+  authentication: KeyIcon,
+  'food-search': MagnifyingGlassIcon,
+  'barcode-lookup': BarcodeIcon,
+  'food-details': FileTextIcon,
+  'reference-data': DatabaseIcon,
+  'rate-limits': GaugeIcon,
+  errors: WarningIcon,
 }
 
-const GUIDE_ICONS: Record<string, typeof Key> = {
-  'React Native': Smartphone,
-  'Next.js': Globe,
-  Flutter: Layers,
-  'Node.js': Terminal,
-  Python: Code2,
+const GUIDE_ICONS: Record<string, MarketingIcon> = {
+  'React Native': DeviceMobileIcon,
+  'Next.js': GlobeIcon,
+  Flutter: StackIcon,
+  'Node.js': TerminalWindowIcon,
+  Python: CodeIcon,
 }
 
 const CARD_LINK_CLASS =
@@ -178,15 +163,15 @@ export default function DocsPage() {
         <section id="introduction" className="mb-16 scroll-mt-24">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4 mb-8">
             <div className={INTRO_CHIP_CLASS}>
-              <MarketingIconDisc icon={Key} tone="blue" className="h-8 w-8" />
+              <MarketingIconDisc icon={KeyIcon} tone="blue" className="h-8 w-8" />
               API key auth
             </div>
             <div className={INTRO_CHIP_CLASS}>
-              <MarketingIconDisc icon={Zap} tone="green" className="h-8 w-8" />
+              <MarketingIconDisc icon={LightningIcon} tone="green" className="h-8 w-8" />
               REST + JSON
             </div>
             <div className={INTRO_CHIP_CLASS}>
-              <MarketingIconDisc icon={Database} tone="violet" className="h-8 w-8" />
+              <MarketingIconDisc icon={DatabaseIcon} tone="violet" className="h-8 w-8" />
               Food database
             </div>
           </div>
@@ -287,7 +272,7 @@ export default function DocsPage() {
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
               {DOCS_SECTIONS.map((section, index) => {
-                const Icon = SECTION_ICONS[section.slug] ?? Database
+                const Icon = SECTION_ICONS[section.slug] ?? DatabaseIcon
                 const featured = index === 0
                 return (
                   <Reveal
@@ -329,7 +314,7 @@ export default function DocsPage() {
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
             {GUIDES.map((guide, index) => {
-              const Icon = GUIDE_ICONS[guide.framework] ?? Code2
+              const Icon = GUIDE_ICONS[guide.framework] ?? CodeIcon
               const featured = index === 0
               return (
                 <Reveal

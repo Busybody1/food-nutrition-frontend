@@ -1,16 +1,6 @@
 import Link from 'next/link'
-import {
-  Search,
-  Database,
-  Zap,
-  Shield,
-  BarChart3,
-  Code2,
-  ScanBarcode,
-  UtensilsCrossed,
-  HeartPulse,
-  type LucideIcon,
-} from 'lucide-react'
+import { BarcodeIcon, ChartBarIcon, CodeIcon, DatabaseIcon, ForkKnifeIcon, HeartbeatIcon, LightningIcon, MagnifyingGlassIcon, ShieldIcon } from '@phosphor-icons/react/ssr'
+import type { MarketingIcon } from '@/components/marketing/marketing-shell'
 import {
   MarketingCtaBand,
   MarketingFeatureGrid,
@@ -32,16 +22,16 @@ import { buildFaqPageJsonLd } from '@/lib/faq-data'
 import { capabilityPath, type CapabilityPage } from '@/lib/capability-pages-data'
 import { RelatedResources } from '@/components/seo/related-resources'
 
-const FEATURE_ICONS: Record<CapabilityPage['features'][number]['icon'], LucideIcon> = {
-  search: Search,
-  database: Database,
-  zap: Zap,
-  shield: Shield,
-  chart: BarChart3,
-  code: Code2,
-  scan: ScanBarcode,
-  utensils: UtensilsCrossed,
-  heart: HeartPulse,
+const FEATURE_ICONS: Record<CapabilityPage['features'][number]['icon'], MarketingIcon> = {
+  search: MagnifyingGlassIcon,
+  database: DatabaseIcon,
+  zap: LightningIcon,
+  shield: ShieldIcon,
+  chart: ChartBarIcon,
+  code: CodeIcon,
+  scan: BarcodeIcon,
+  utensils: ForkKnifeIcon,
+  heart: HeartbeatIcon,
 }
 
 const INLINE_LINK_CLASS =

@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ArrowRight, Code2, Globe, GraduationCap, Layers, Smartphone, Terminal } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
+import { CodeIcon, DeviceMobileIcon, GlobeIcon, GraduationCapIcon, StackIcon, TerminalWindowIcon } from '@phosphor-icons/react/ssr'
+import type { MarketingIcon } from '@/components/marketing/marketing-shell'
 import { buildPageMetadata } from '@/lib/metadata'
 import { JsonLdScript } from '@/components/seo/structured-data'
 import { buildBreadcrumbJsonLd, buildWebPageJsonLd } from '@/lib/seo-jsonld'
@@ -26,12 +28,12 @@ export const metadata: Metadata = buildPageMetadata({
   path: '/docs/guides',
 })
 
-const GUIDE_ICONS: Record<string, typeof Code2> = {
-  'React Native': Smartphone,
-  'Next.js': Globe,
-  Flutter: Layers,
-  'Node.js': Terminal,
-  Python: Code2,
+const GUIDE_ICONS: Record<string, MarketingIcon> = {
+  'React Native': DeviceMobileIcon,
+  'Next.js': GlobeIcon,
+  Flutter: StackIcon,
+  'Node.js': TerminalWindowIcon,
+  Python: CodeIcon,
 }
 
 const CARD_LINK_CLASS =
@@ -75,7 +77,7 @@ export default function GuidesIndexPage() {
           </nav>
 
           <header>
-            <MarketingIconDisc icon={GraduationCap} tone="violet" className="mb-4" />
+            <MarketingIconDisc icon={GraduationCapIcon} tone="violet" className="mb-4" />
             <h1 className="font-sans text-3xl md:text-[2.5rem] font-bold leading-[1.1] tracking-[-0.03em] text-mk-ink text-balance mb-3">Integration Guides</h1>
             <p className="text-mk-body leading-relaxed max-w-3xl">
               Working code for common nutrition features, one framework at a time. Every guide uses
@@ -86,7 +88,7 @@ export default function GuidesIndexPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
           {GUIDES.map((guide, index) => {
-            const Icon = GUIDE_ICONS[guide.framework] ?? Code2
+            const Icon = GUIDE_ICONS[guide.framework] ?? CodeIcon
             const featured = index === 0
             return (
               <Reveal

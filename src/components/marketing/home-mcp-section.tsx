@@ -1,4 +1,4 @@
-import { Camera, Scale, ScanBarcode, Search, Sparkles, Target, UtensilsCrossed } from 'lucide-react'
+import { BarcodeIcon, CameraIcon, ForkKnifeIcon, MagnifyingGlassIcon, ScalesIcon, SparkleIcon, TargetIcon } from '@phosphor-icons/react/ssr'
 import { TrackedCtaLink } from '@/components/analytics/tracked-cta-link'
 import { MarketingIconDisc, discToneAt } from '@/components/marketing/marketing-shell'
 import { MarketingSheet, MarketingSplit, MarketingSplitCopy } from '@/components/marketing/marketing-sheet'
@@ -7,7 +7,7 @@ import { Reveal } from '@/components/marketing/reveal'
 import { MCP_ANNUAL_USD, MCP_FEATURE_TITLES, MCP_MONTHLY_USD, MCP_PRODUCT_NAME } from '@/lib/mcp/catalog'
 import { FOOD_DATABASE_SIZE_LABEL } from '@/lib/site'
 
-const FEATURE_ICONS = [Search, Camera, Scale, UtensilsCrossed, ScanBarcode, Target]
+const FEATURE_ICONS = [MagnifyingGlassIcon, CameraIcon, ScalesIcon, ForkKnifeIcon, BarcodeIcon, TargetIcon]
 
 export function HomeMcpSection() {
   return (
@@ -18,7 +18,7 @@ export function HomeMcpSection() {
           copy={
             <Reveal>
               <p className="marketing-hero-badge mb-5">
-                <Sparkles className="h-3.5 w-3.5 text-mk-violet" aria-hidden />
+                <SparkleIcon weight="fill" className="h-3.5 w-3.5 text-mk-violet" aria-hidden />
                 {MCP_PRODUCT_NAME}
               </p>
               <MarketingSplitCopy
@@ -40,9 +40,9 @@ export function HomeMcpSection() {
                   {MCP_FEATURE_TITLES.map((title, index) => (
                     <li key={title} className="flex items-center gap-3 text-[15px] font-medium text-mk-ink">
                       <MarketingIconDisc
-                        icon={FEATURE_ICONS[index] ?? Search}
+                        icon={FEATURE_ICONS[index] ?? MagnifyingGlassIcon}
                         tone={discToneAt(index)}
-                        className="h-8 w-8 [&>svg]:h-4 [&>svg]:w-4"
+                        className="h-6 w-6 [&>svg]:h-6 [&>svg]:w-6"
                       />
                       {title}
                     </li>

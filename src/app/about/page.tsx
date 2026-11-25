@@ -20,19 +20,20 @@ import { PublicPageSchema } from '@/components/seo/public-page-schema'
 import { AboutSeoContent } from '@/components/seo/public-page-seo-content'
 import { buildAboutPageJsonLd } from '@/lib/seo-jsonld'
 import { getPublicPageSeo } from '@/lib/public-page-seo'
-import { Target, Award, Globe, Heart, Brain, Zap, Shield } from 'lucide-react'
+import { Target, Heart } from 'lucide-react'
+import { BrainIcon, GlobeIcon, HeartIcon, LightningIcon, MedalIcon, ShieldIcon } from '@phosphor-icons/react/ssr'
 
 const aboutSeo = getPublicPageSeo('/about')
 
 export const metadata: Metadata = buildPublicPageMetadata('/about')
 
 const CORE_VALUES = [
-  { icon: Zap, title: 'Innovation', description: 'Search, suggest, and barcode endpoints built for modern apps.' },
-  { icon: Shield, title: 'Reliability', description: 'Rate limits, usage tracking, and health checks you can monitor.' },
-  { icon: Heart, title: 'Community', description: 'Developer-first docs, examples, and responsive support.' },
-  { icon: Globe, title: 'Accessibility', description: 'Free tier and public demo so you can evaluate before you commit.' },
-  { icon: Brain, title: 'Intelligence', description: 'Verified foods, match modes, and rich nutrient payloads.' },
-  { icon: Award, title: 'Excellence', description: 'Clear changelogs, versioning, and honest SLAs per plan.' },
+  { icon: LightningIcon, title: 'Innovation', description: 'Search, suggest, and barcode endpoints built for modern apps.' },
+  { icon: ShieldIcon, title: 'Reliability', description: 'Rate limits, usage tracking, and health checks you can monitor.' },
+  { icon: HeartIcon, title: 'Community', description: 'Developer-first docs, examples, and responsive support.' },
+  { icon: GlobeIcon, title: 'Accessibility', description: 'Free tier and public demo so you can evaluate before you commit.' },
+  { icon: BrainIcon, title: 'Intelligence', description: 'Verified foods, match modes, and rich nutrient payloads.' },
+  { icon: MedalIcon, title: 'Excellence', description: 'Clear changelogs, versioning, and honest SLAs per plan.' },
 ]
 
 export default function AboutPage() {
@@ -96,7 +97,7 @@ export default function AboutPage() {
               <Reveal delay={120}>
                 <div className="marketing-callout px-4 py-10 sm:px-10 md:py-14">
                   <div className="marketing-float-card mx-auto max-w-sm p-6 text-center md:p-8">
-                    <MarketingIconDisc icon={Heart} tone="coral" className="mx-auto" />
+                    <MarketingIconDisc icon={HeartIcon} tone="coral" className="mx-auto" />
                     <h3 className="mt-5 text-xl font-semibold tracking-[-0.02em] text-mk-ink">Health first</h3>
                     <p className="marketing-body mt-3">
                       Every product decision is guided by helping people make better food choices

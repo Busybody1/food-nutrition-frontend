@@ -1,13 +1,6 @@
 import Link from 'next/link'
-import {
-  Camera,
-  Scale,
-  ScanBarcode,
-  Search,
-  Target,
-  UtensilsCrossed,
-  type LucideIcon,
-} from 'lucide-react'
+import { BarcodeIcon, CameraIcon, ForkKnifeIcon, MagnifyingGlassIcon, ScalesIcon, TargetIcon } from '@phosphor-icons/react/ssr'
+import type { MarketingIcon } from '@/components/marketing/marketing-shell'
 import {
   MarketingCtaBand,
   MarketingFeatureGrid,
@@ -44,13 +37,13 @@ import {
 } from '@/lib/mcp/catalog'
 import { FOOD_DATABASE_SIZE_LABEL } from '@/lib/site'
 
-const USES: { icon: LucideIcon; title: string; description: string }[] = [
-  { icon: Search, title: MCP_FEATURE_TITLES[0], description: 'Name a food. Get calories and a food_id.' },
-  { icon: Camera, title: MCP_FEATURE_TITLES[1], description: 'You pass image_base64. The chat does not attach it.' },
-  { icon: Scale, title: MCP_FEATURE_TITLES[2], description: 'Scale that food to the grams you ate.' },
-  { icon: UtensilsCrossed, title: MCP_FEATURE_TITLES[3], description: 'Total the ingredients, then split per serving.' },
-  { icon: ScanBarcode, title: MCP_FEATURE_TITLES[4], description: 'UPC or EAN. A fallback if the catalog misses.' },
-  { icon: Target, title: MCP_FEATURE_TITLES[5], description: 'Calories from age, weight, and goal.' },
+const USES: { icon: MarketingIcon; title: string; description: string }[] = [
+  { icon: MagnifyingGlassIcon, title: MCP_FEATURE_TITLES[0], description: 'Name a food. Get calories and a food_id.' },
+  { icon: CameraIcon, title: MCP_FEATURE_TITLES[1], description: 'You pass image_base64. The chat does not attach it.' },
+  { icon: ScalesIcon, title: MCP_FEATURE_TITLES[2], description: 'Scale that food to the grams you ate.' },
+  { icon: ForkKnifeIcon, title: MCP_FEATURE_TITLES[3], description: 'Total the ingredients, then split per serving.' },
+  { icon: BarcodeIcon, title: MCP_FEATURE_TITLES[4], description: 'UPC or EAN. A fallback if the catalog misses.' },
+  { icon: TargetIcon, title: MCP_FEATURE_TITLES[5], description: 'Calories from age, weight, and goal.' },
 ]
 
 export function McpLanding() {
@@ -157,7 +150,7 @@ export function McpLanding() {
                   <div className="marketing-callout px-4 py-8 sm:px-8 md:py-10">
                     <MarketingFloatCard className="mx-auto max-w-md p-5">
                       <div className="mb-4 flex items-center gap-3">
-                        <MarketingIconDisc icon={Camera} tone="violet" />
+                        <MarketingIconDisc icon={CameraIcon} tone="violet" />
                         <h3 className="font-mono text-[15px] font-semibold text-mk-ink">analyze_food_photo</h3>
                       </div>
                       <pre className="overflow-x-auto rounded-xl bg-[#0f172a] px-4 py-3 font-mono text-xs leading-relaxed text-slate-200">

@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
-import { BookOpen, Braces, Database, LayoutGrid, Rocket, Scale, ShieldCheck, type LucideIcon } from 'lucide-react'
+import { BookOpenIcon, BracketsCurlyIcon, DatabaseIcon, RocketIcon, ScalesIcon, ShieldCheckIcon, SquaresFourIcon } from '@phosphor-icons/react/ssr'
+import type { MarketingIcon } from '@/components/marketing/marketing-shell'
 import { Reveal, RevealGroup } from '@/components/marketing/reveal'
 import { SeoInlineLink } from '@/components/seo/marketing-seo-section'
 import { TrackedCtaLink } from '@/components/analytics/tracked-cta-link'
@@ -10,11 +11,11 @@ import { SITE_NAME } from '@/lib/site'
 const externalLinkClass =
   'text-brand-strong font-medium underline decoration-brand/40 underline-offset-2 transition-colors duration-200 hover:decoration-brand-strong rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2'
 
-type SeoRow = { icon: LucideIcon; title: string; body: ReactNode }
+type SeoRow = { icon: MarketingIcon; title: string; body: ReactNode }
 
 const ROWS: SeoRow[] = [
   {
-    icon: Braces,
+    icon: BracketsCurlyIcon,
     title: 'Food API endpoints built for scale',
     body: (
       <>
@@ -26,7 +27,7 @@ const ROWS: SeoRow[] = [
     ),
   },
   {
-    icon: ShieldCheck,
+    icon: ShieldCheckIcon,
     title: 'Nutrition API data you can trust',
     body: (
       <>
@@ -39,7 +40,7 @@ const ROWS: SeoRow[] = [
     ),
   },
   {
-    icon: Database,
+    icon: DatabaseIcon,
     title: 'Food database API coverage',
     body: (
       <>
@@ -50,7 +51,7 @@ const ROWS: SeoRow[] = [
     ),
   },
   {
-    icon: LayoutGrid,
+    icon: SquaresFourIcon,
     title: 'Popular use cases',
     body: (
       <>
@@ -70,7 +71,7 @@ const ROWS: SeoRow[] = [
     ),
   },
   {
-    icon: Rocket,
+    icon: RocketIcon,
     title: 'Integrate in minutes',
     body: (
       <>
@@ -83,7 +84,7 @@ const ROWS: SeoRow[] = [
     ),
   },
   {
-    icon: Scale,
+    icon: ScalesIcon,
     title: `How ${SITE_NAME} compares`,
     body: (
       <>
@@ -95,7 +96,7 @@ const ROWS: SeoRow[] = [
     ),
   },
   {
-    icon: BookOpen,
+    icon: BookOpenIcon,
     title: 'From the developer blog',
     body: (
       <>
@@ -159,9 +160,7 @@ export function HomeSeoContent() {
           >
             {ROWS.map((row, index) => (
               <div key={row.title} className="flex gap-4 py-7 md:gap-5 md:py-8">
-                <span className="h-fit shrink-0 rounded-full border border-mk-hair bg-white p-1.5 shadow-card">
-                  <MarketingIconDisc icon={row.icon} tone={discToneAt(index)} />
-                </span>
+                <MarketingIconDisc icon={row.icon} tone={discToneAt(index)} className="mt-0.5" />
                 <div className="min-w-0">
                   <h3 className="text-lg font-semibold tracking-[-0.01em] text-mk-ink">{row.title}</h3>
                   <p className="mt-2 text-[15px] leading-relaxed text-mk-muted md:text-base md:text-mk-body">

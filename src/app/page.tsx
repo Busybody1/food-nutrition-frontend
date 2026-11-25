@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { buildPublicPageMetadata } from '@/lib/build-public-metadata'
 import { HOME_FAQ_ITEMS, IMPLEMENTATION_FAQS, buildFaqPageJsonLd } from '@/lib/faq-data'
-import { Search, Shield, Zap, BarChart3, Code2, Database, Braces, Gift, ScanBarcode } from 'lucide-react'
+import { BarcodeIcon, BracketsCurlyIcon, ChartBarIcon, CodeIcon, DatabaseIcon, GiftIcon, LightningIcon, MagnifyingGlassIcon, ShieldIcon } from '@phosphor-icons/react/ssr'
 import { LazyApiPlayground } from '@/components/marketing/lazy-api-playground'
 import { FaqSection } from '@/components/marketing/faq-section'
 import { HomeOrbitHero } from '@/components/marketing/home-hero'
@@ -17,6 +17,7 @@ import {
   BarcodePreviewStage,
   ExampleResponseStack,
   MacroPreviewStage,
+  SPLIT_EXAMPLE_FOODS,
   SearchPreviewStage,
 } from '@/components/marketing/example-foods'
 import { Reveal, RevealGroup } from '@/components/marketing/reveal'
@@ -38,42 +39,42 @@ const HOME_SEO = getPublicPageSeo('/')
 
 const features = [
   {
-    icon: Search,
+    icon: MagnifyingGlassIcon,
     title: 'Food API search',
     description: 'Multi-word matching, verified filters, suggest, and barcode lookup in one food API.',
   },
   {
-    icon: Database,
+    icon: DatabaseIcon,
     title: 'Nutrition API data',
     description: 'Macros per 100g, full nutrient arrays, and serving metadata from our food database API.',
   },
   {
-    icon: Zap,
+    icon: LightningIcon,
     title: 'Fast food database API',
     description: 'Redis-backed caching and indexed Postgres search for low-latency calorie API responses.',
   },
   {
-    icon: Shield,
+    icon: ShieldIcon,
     title: 'Secure by default',
     description: 'API keys hashed at rest, plan-based rate limits, and Stripe-verified billing.',
   },
   {
-    icon: BarChart3,
+    icon: ChartBarIcon,
     title: 'Usage analytics',
     description: 'Track requests per endpoint in your dashboard with exportable reports.',
   },
   {
-    icon: Code2,
+    icon: CodeIcon,
     title: 'Developer-first nutrition API',
     description: 'OpenAPI docs, predictable JSON, and a public playground to try before you sign up.',
   },
 ]
 
 const HOME_STATS = [
-  { icon: Database, value: FOOD_DATABASE_SIZE_LABEL.replace(/\s+foods?$/i, ''), label: 'foods in database' },
-  { icon: Gift, value: new Intl.NumberFormat('en-US').format(FREE_TIER_CALLS), label: 'free calls/month' },
-  { icon: ScanBarcode, value: 'UPC + EAN', label: 'barcode lookup with fallback' },
-  { icon: Braces, value: 'REST + JSON', label: 'food nutrition API' },
+  { icon: DatabaseIcon, value: FOOD_DATABASE_SIZE_LABEL.replace(/\s+foods?$/i, ''), label: 'foods in database' },
+  { icon: GiftIcon, value: new Intl.NumberFormat('en-US').format(FREE_TIER_CALLS), label: 'free calls/month' },
+  { icon: BarcodeIcon, value: 'UPC + EAN', label: 'barcode lookup with fallback' },
+  { icon: BracketsCurlyIcon, value: 'REST + JSON', label: 'food nutrition API' },
 ]
 
 const RESPONSE_FORMAT_FAQ =
@@ -141,7 +142,7 @@ export default async function HomePage() {
                   {hasTestimonials ? (
                     <TestimonialStack testimonials={testimonials} />
                   ) : (
-                    <ExampleResponseStack withMacros />
+                    <ExampleResponseStack foods={SPLIT_EXAMPLE_FOODS} withMacros />
                   )}
                 </div>
               </Reveal>

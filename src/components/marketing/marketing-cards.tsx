@@ -1,8 +1,8 @@
 import Link from 'next/link'
 import { Children, type ReactNode } from 'react'
-import { ArrowUpRight, type LucideIcon } from 'lucide-react'
+import { ArrowUpRight } from 'lucide-react'
 import { cn } from '@/lib/utils/cn'
-import { MarketingIconDisc, discToneAt, type DiscTone } from '@/components/marketing/marketing-shell'
+import { MarketingIconDisc, discToneAt, type DiscTone, type MarketingIcon } from '@/components/marketing/marketing-shell'
 
 const STACK_INSET_CLASS = ['', 'md:mx-3', 'md:mx-6']
 
@@ -94,7 +94,7 @@ export function MarketingProductFrame({
 }
 
 export type MarketingIntegrationItem = {
-  icon: LucideIcon
+  icon: MarketingIcon
   title: string
   description: string
   href: string
@@ -111,9 +111,7 @@ export function MarketingIntegrationList({ items }: { items: readonly MarketingI
             prefetch={false}
             className="group flex items-start gap-4 rounded-xl py-5 transition-colors md:py-6"
           >
-            <span className="rounded-full border border-mk-hair bg-white p-1.5 shadow-card">
-              <MarketingIconDisc icon={item.icon} tone={item.tone ?? discToneAt(index)} />
-            </span>
+            <MarketingIconDisc icon={item.icon} tone={item.tone ?? discToneAt(index)} />
             <span className="min-w-0 flex-1">
               <span className="flex items-center gap-2 text-base font-semibold tracking-[-0.01em] text-mk-ink">
                 {item.title}

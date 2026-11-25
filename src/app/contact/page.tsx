@@ -12,16 +12,8 @@ import { SUPPORT_EMAIL } from '@/lib/site'
 const CONTACT_SEO = getPublicPageSeo('/contact')
 import { submitContactForm } from '@/lib/contact/submit-contact'
 import { CalendlyInlineEmbed } from '@/components/marketing/calendly-embed'
-import {
-  Mail,
-  Send,
-  CheckCircle,
-  Clock,
-  Building2,
-  BookOpen,
-  MessageSquare,
-  Calendar,
-} from 'lucide-react'
+import { Send, CheckCircle, BookOpen, MessageSquare, Calendar } from 'lucide-react'
+import { BuildingsIcon, ClockIcon, EnvelopeIcon } from '@phosphor-icons/react/ssr'
 
 const inlineLinkClass =
   'text-brand-strong underline decoration-brand/40 underline-offset-2 transition-colors duration-200 hover:decoration-brand-strong rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2'
@@ -170,8 +162,8 @@ function ContactPageContent() {
 
                 {isSubmitted ? (
                   <div className="rounded-2xl border border-mk-hair bg-mk-stage px-4 py-12 text-center">
-                    <span className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-mk-green-soft text-mk-green">
-                      <CheckCircle className="h-6 w-6" aria-hidden />
+                    <span className="mx-auto mb-4 flex h-12 w-12 items-center justify-center text-mk-green">
+                      <CheckCircle className="h-10 w-10" strokeWidth={1.75} aria-hidden />
                     </span>
                     <h3 className="mb-2 text-xl font-semibold text-mk-ink">Message sent</h3>
                     <p className="marketing-body mx-auto mb-6 max-w-sm">
@@ -336,7 +328,7 @@ function ContactPageContent() {
               delay={80}
             >
               <div className="py-4">
-                <MarketingIconDisc icon={Mail} tone="blue" />
+                <MarketingIconDisc icon={EnvelopeIcon} tone="blue" />
                 <h2 className="mt-4 text-base font-semibold tracking-[-0.01em] text-mk-ink">Email us</h2>
                 <p className="mt-1 text-[15px] text-mk-muted">
                   Technical support, billing, and partnerships
@@ -350,7 +342,7 @@ function ContactPageContent() {
               </div>
 
               <div className="relative -mx-3 rounded-2xl px-3 py-4 transition-colors duration-200 hover:bg-mk-stage">
-                <MarketingIconDisc icon={Building2} tone="violet" />
+                <MarketingIconDisc icon={BuildingsIcon} tone="violet" />
                 <h2 className="mt-4 text-base font-semibold tracking-[-0.01em] text-mk-ink">Enterprise</h2>
                 <p className="mt-1 text-[15px] leading-relaxed text-mk-muted">
                   Custom quotas, image-to-calorie API, credits-based usage, SLAs, white-label, and
@@ -368,7 +360,7 @@ function ContactPageContent() {
               </div>
 
               <div className="py-4">
-                <MarketingIconDisc icon={Clock} tone="green" />
+                <MarketingIconDisc icon={ClockIcon} tone="green" />
                 <h2 className="mt-4 text-base font-semibold tracking-[-0.01em] text-mk-ink">Response time</h2>
                 <p className="mt-1 text-[15px] text-mk-muted">
                   Most messages receive a reply within 24 hours on business days.

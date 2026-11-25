@@ -1,7 +1,9 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { ArrowLeft, ArrowRight, Code2, Globe, Layers, Smartphone, Terminal } from 'lucide-react'
+import { ArrowLeft, ArrowRight } from 'lucide-react'
+import { CodeIcon, DeviceMobileIcon, GlobeIcon, StackIcon, TerminalWindowIcon } from '@phosphor-icons/react/ssr'
+import type { MarketingIcon } from '@/components/marketing/marketing-shell'
 import { buildPageMetadata } from '@/lib/metadata'
 import { JsonLdScript } from '@/components/seo/structured-data'
 import { buildBreadcrumbJsonLd, buildTechArticleJsonLd } from '@/lib/seo-jsonld'
@@ -34,12 +36,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   })
 }
 
-const GUIDE_ICONS: Record<string, typeof Code2> = {
-  'React Native': Smartphone,
-  'Next.js': Globe,
-  Flutter: Layers,
-  'Node.js': Terminal,
-  Python: Code2,
+const GUIDE_ICONS: Record<string, MarketingIcon> = {
+  'React Native': DeviceMobileIcon,
+  'Next.js': GlobeIcon,
+  Flutter: StackIcon,
+  'Node.js': TerminalWindowIcon,
+  Python: CodeIcon,
 }
 
 const BREADCRUMB_LINK_CLASS =
@@ -54,7 +56,7 @@ export default async function GuidePage({ params }: PageProps) {
   if (!guide) notFound()
 
   const path = guidePath(guide.slug)
-  const FrameworkIcon = GUIDE_ICONS[guide.framework] ?? Code2
+  const FrameworkIcon = GUIDE_ICONS[guide.framework] ?? CodeIcon
   const guideIndex = GUIDES.findIndex((g) => g.slug === guide.slug)
   const prevGuide = guideIndex > 0 ? GUIDES[guideIndex - 1] : null
   const nextGuide =

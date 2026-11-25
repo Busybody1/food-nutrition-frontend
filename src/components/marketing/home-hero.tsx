@@ -1,19 +1,18 @@
+import { Check } from 'lucide-react'
 import {
-  Activity,
-  Braces,
-  Check,
-  Database,
-  Scale,
-  ScanBarcode,
-  Search,
-  Sparkles,
-  UtensilsCrossed,
-  type LucideIcon,
-} from 'lucide-react'
+  BarcodeIcon,
+  BracketsCurlyIcon,
+  DatabaseIcon,
+  ForkKnifeIcon,
+  MagnifyingGlassIcon,
+  PulseIcon,
+  ScalesIcon,
+  SparkleIcon,
+} from '@phosphor-icons/react/ssr'
 import { TrackedCtaLink } from '@/components/analytics/tracked-cta-link'
 import { getPublicPageSeo } from '@/lib/public-page-seo'
 import { cn } from '@/lib/utils/cn'
-import { discToneClass, type DiscTone } from './marketing-shell'
+import { discToneClass, type DiscTone, type MarketingIcon } from './marketing-shell'
 import { ExampleResponseStack } from './example-foods'
 
 const HOME_SEO = getPublicPageSeo('/')
@@ -29,17 +28,17 @@ const ORBIT_RINGS = [
   { size: 1420, opacity: 0.45, visibility: 'hidden lg:block' },
 ] as const
 
-type OrbitMark = { icon: LucideIcon; ring: 2 | 3; angle: number; tone: DiscTone }
+type OrbitMark = { icon: MarketingIcon; ring: 2 | 3; angle: number; tone: DiscTone }
 
 const ORBIT_MARKS: OrbitMark[] = [
-  { icon: Search, ring: 2, angle: 200, tone: 'blue' },
-  { icon: ScanBarcode, ring: 2, angle: 340, tone: 'coral' },
-  { icon: Braces, ring: 2, angle: 110, tone: 'violet' },
-  { icon: Database, ring: 2, angle: 270, tone: 'green' },
-  { icon: Scale, ring: 3, angle: 235, tone: 'violet' },
-  { icon: Sparkles, ring: 3, angle: 5, tone: 'blue' },
-  { icon: UtensilsCrossed, ring: 3, angle: 150, tone: 'coral' },
-  { icon: Activity, ring: 3, angle: 60, tone: 'green' },
+  { icon: MagnifyingGlassIcon, ring: 2, angle: 200, tone: 'blue' },
+  { icon: BarcodeIcon, ring: 2, angle: 340, tone: 'coral' },
+  { icon: BracketsCurlyIcon, ring: 2, angle: 110, tone: 'violet' },
+  { icon: DatabaseIcon, ring: 2, angle: 270, tone: 'green' },
+  { icon: ScalesIcon, ring: 3, angle: 235, tone: 'violet' },
+  { icon: SparkleIcon, ring: 3, angle: 5, tone: 'blue' },
+  { icon: ForkKnifeIcon, ring: 3, angle: 150, tone: 'coral' },
+  { icon: PulseIcon, ring: 3, angle: 60, tone: 'green' },
 ]
 
 const ORBIT_SPIN_GROUPS = [
@@ -70,11 +69,11 @@ function OrbitBackdrop() {
         <div key={ring} className={cn('marketing-orbit-spin hidden lg:block', className)}>
           {ORBIT_MARKS.filter((mark) => mark.ring === ring).map((mark) => {
             const Icon = mark.icon
-            const toneText = discToneClass(mark.tone).split(' ')[1]
+            const toneText = discToneClass(mark.tone)
             return (
               <span key={mark.angle} className="marketing-orbit-mark" style={markPosition(mark)}>
                 <span className="marketing-orbit-face">
-                  <Icon className={cn('h-[18px] w-[18px]', toneText)} strokeWidth={1.9} />
+                  <Icon weight="fill" className={cn('h-5 w-5', toneText)} />
                 </span>
               </span>
             )

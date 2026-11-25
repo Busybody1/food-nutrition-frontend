@@ -1,18 +1,6 @@
 import Link from 'next/link'
-import {
-  ArrowRight,
-  BookOpen,
-  Code2,
-  Database,
-  Key,
-  LineChart,
-  Play,
-  Rss,
-  Salad,
-  ScanBarcode,
-  Sparkles,
-  Utensils,
-} from 'lucide-react'
+import { ArrowRight, BookOpen, Key, Play, Rss } from 'lucide-react'
+import { BarcodeIcon, BowlFoodIcon, ChartLineIcon, CodeIcon, DatabaseIcon, ForkKnifeIcon, SparkleIcon } from '@phosphor-icons/react/ssr'
 import type { BlogListItem } from '@/lib/api/blog'
 import { BlogPagination } from '@/components/blog/blog-pagination'
 import { BlogSearchForm } from '@/components/blog/blog-search-form'
@@ -36,7 +24,7 @@ function readingMinutes(excerpt?: string | null): number {
   return Math.max(3, Math.min(12, Math.round(words / 40) + 4))
 }
 
-const CARD_ICONS = [Code2, ScanBarcode, Database, Utensils, LineChart, Salad] as const
+const CARD_ICONS = [CodeIcon, BarcodeIcon, DatabaseIcon, ForkKnifeIcon, ChartLineIcon, BowlFoodIcon] as const
 
 function slugHash(slug: string): number {
   let hash = 0
@@ -98,8 +86,8 @@ function BlogSidebarInner({ headingAs: Heading = 'h2' }: { headingAs?: 'h2' | 'p
   return (
     <>
       <div className="blog-index-sidebar__card">
-        <div className="blog-index-sidebar__icon bg-mk-violet-soft text-mk-violet" aria-hidden>
-          <Sparkles className="h-[18px] w-[18px]" strokeWidth={1.9} />
+        <div className="blog-index-sidebar__icon text-mk-violet" aria-hidden>
+          <SparkleIcon weight="fill" className="h-7 w-7" />
         </div>
         <Heading className="blog-index-sidebar__title">Build with {FOOD_DATABASE_SIZE_LABEL}</Heading>
         <p className="blog-index-sidebar__text">

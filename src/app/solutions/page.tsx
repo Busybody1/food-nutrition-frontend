@@ -1,14 +1,8 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import {
-  ArrowRight,
-  Dumbbell,
-  HeartPulse,
-  ShoppingCart,
-  Sparkles,
-  UtensilsCrossed,
-  type LucideIcon,
-} from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
+import { BarbellIcon, ForkKnifeIcon, HeartbeatIcon, ShoppingCartIcon, SparkleIcon } from '@phosphor-icons/react/ssr'
+import type { MarketingIcon } from '@/components/marketing/marketing-shell'
 import { buildPageMetadata } from '@/lib/metadata'
 import { JsonLdScript } from '@/components/seo/structured-data'
 import { buildBreadcrumbJsonLd, buildWebPageJsonLd } from '@/lib/seo-jsonld'
@@ -41,12 +35,12 @@ export const metadata: Metadata = buildPageMetadata({
   path: '/solutions',
 })
 
-const SOLUTION_ICONS: Record<string, LucideIcon> = {
-  'fitness-apps': Dumbbell,
-  'meal-planning-apps': UtensilsCrossed,
-  healthcare: HeartPulse,
-  'grocery-retail': ShoppingCart,
-  'wellness-saas': Sparkles,
+const SOLUTION_ICONS: Record<string, MarketingIcon> = {
+  'fitness-apps': BarbellIcon,
+  'meal-planning-apps': ForkKnifeIcon,
+  healthcare: HeartbeatIcon,
+  'grocery-retail': ShoppingCartIcon,
+  'wellness-saas': SparkleIcon,
 }
 
 const CARD_PLACEMENT = [
@@ -105,7 +99,7 @@ export default function SolutionsIndexPage() {
         <div className="container-narrow">
           <div className="grid gap-4 md:gap-5 sm:grid-cols-2 lg:grid-cols-6">
             {SOLUTION_PAGES.map((page, index) => {
-              const Icon = SOLUTION_ICONS[page.slug] ?? Sparkles
+              const Icon = SOLUTION_ICONS[page.slug] ?? SparkleIcon
               return (
                 <Reveal
                   key={page.slug}
