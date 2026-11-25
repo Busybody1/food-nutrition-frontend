@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { McpBillingFaq, McpPricingCard, McpPricingLead } from '@/components/marketing/mcp-pricing-card'
-import { MarketingImageHero } from '@/components/marketing/marketing-image-hero'
 import { MarketingCtaBand, MarketingSectionHeader } from '@/components/marketing/marketing-shell'
+import { MarketingSheetHero } from '@/components/marketing/marketing-sheet'
 import { JsonLdScript } from '@/components/seo/structured-data'
 import { buildPageMetadata } from '@/lib/metadata'
 import { fetchPublicPlans } from '@/lib/pricing/fetch-plans'
@@ -73,16 +73,14 @@ export default async function McpPricingPage() {
   return (
     <div className="marketing-page">
       <JsonLdScript id="mcp-pricing-product" data={product} />
-      <MarketingImageHero compact centered waveTone="elevated" className="!min-h-0">
-        <h1 className="font-display text-4xl text-ink text-balance md:text-6xl">
-          {MCP_PRICING_H1}
-        </h1>
-        <p id="mcp-pricing-answer" className="aeo-answer mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-ink-muted">
-          <McpPricingLead text={DESCRIPTION} />
-        </p>
-      </MarketingImageHero>
+      <MarketingSheetHero
+        title={MCP_PRICING_H1}
+        lead={<McpPricingLead text={DESCRIPTION} />}
+        leadId="mcp-pricing-answer"
+        leadClassName="aeo-answer"
+      />
 
-      <section className="bg-surface-elevated pb-20 pt-6 md:pb-28 md:pt-8" aria-labelledby="mcp-choose-plan">
+      <section className="pb-14 pt-10 md:pb-20 md:pt-14" aria-labelledby="mcp-choose-plan">
         <div className="container-narrow">
           <h2 id="mcp-choose-plan" className="sr-only">
             Calorie MCP monthly and annual pricing
@@ -91,7 +89,7 @@ export default async function McpPricingPage() {
         </div>
       </section>
 
-      <section className="section-pad bg-white" id="faq" aria-labelledby="mcp-billing-faq">
+      <section className="pb-14 md:pb-20" id="faq" aria-labelledby="mcp-billing-faq">
         <div className="container-narrow">
           <MarketingSectionHeader id="mcp-billing-faq" title="Calorie MCP pricing questions" />
           <McpBillingFaq items={BILLING_FAQS} />
@@ -104,7 +102,7 @@ export default async function McpPricingPage() {
           <>
             ${monthly}/month, or ${annualMonthly}/month if you buy annual.
             {savings > 0 ? (
-              <span className="font-semibold text-red-600"> ${savings} USD Off.</span>
+              <span className="font-semibold text-red-700"> ${savings} USD Off.</span>
             ) : null}{' '}
             The key is shown once, in the dashboard.
           </>

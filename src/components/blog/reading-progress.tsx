@@ -35,10 +35,10 @@ export function ReadingProgress() {
   }, [])
 
   return (
-    <div aria-hidden className="pointer-events-none fixed inset-x-0 top-0 z-40 h-0.5">
+    <div aria-hidden className="pointer-events-none fixed inset-x-0 top-[var(--site-header-offset)] z-40 h-0.5">
       <div
         ref={barRef}
-        className="h-full w-full origin-left bg-gradient-to-r from-brand to-brand-strong"
+        className="h-full w-full origin-left bg-brand"
         style={{ transform: 'scaleX(0)' }}
       />
     </div>

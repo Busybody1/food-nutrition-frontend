@@ -48,15 +48,15 @@ function FooterLinkColumn({
   links: { href: string; label: string }[]
 }) {
   return (
-    <div className="min-w-0 md:col-span-1 lg:col-span-2">
-      <h3 className="text-xs font-semibold text-ink uppercase tracking-wider mb-4">{title}</h3>
-      <ul className="space-y-2.5">
+    <div className="min-w-0 lg:col-span-2">
+      <h3 className="mb-3.5 text-[13px] font-medium text-mk-ink">{title}</h3>
+      <ul className="space-y-1">
         {links.map(({ href, label }) => (
           <li key={href}>
             <Link
               href={href}
               prefetch={false}
-              className="inline-block rounded-sm text-sm text-ink-muted transition-colors duration-200 hover:text-brand-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2"
+              className="inline-flex min-h-8 items-center rounded-sm text-[13px] text-mk-muted transition-colors duration-200 hover:text-mk-ink"
             >
               {label}
             </Link>
@@ -69,55 +69,48 @@ function FooterLinkColumn({
 
 export function Footer() {
   return (
-    <footer className="relative overflow-hidden bg-surface-elevated border-t border-brand/10">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_50%_0%,rgba(10,197,215,0.08),transparent)]"
-      />
-      <div className="container-narrow relative py-14 md:py-16">
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-12 gap-10 md:gap-8">
-          <div className="col-span-2 md:col-span-4 lg:col-span-4">
-            <Link
-              href="/"
-              className="inline-flex items-center gap-2.5 mb-4 rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2"
-              {...navPrefetch}
-            >
-              <span className="relative block h-8 w-8 shrink-0">
-                <Image
-                  src="/logos/busybody-logo.png"
-                  alt={LOGO_ALT}
-                  fill
-                  sizes="32px"
-                  className="object-contain"
-                />
-              </span>
-              <span className="text-base font-semibold text-ink">{SITE_NAME}</span>
-            </Link>
-            <p className="text-ink-muted text-sm max-w-sm leading-relaxed mb-4">
-              Food calorie API with search, suggest, barcode lookup, and developer dashboards.
-              Powered by BusyBody FIT LTD.
-            </p>
-            <a
-              href={`mailto:${SUPPORT_EMAIL}`}
-              className="rounded-sm text-sm font-medium text-brand-strong underline decoration-brand/40 underline-offset-2 transition-colors duration-200 hover:decoration-brand-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2"
-            >
-              {SUPPORT_EMAIL}
-            </a>
-            <div className="mt-5">
-              <Link href="/auth/register" prefetch={false} className="btn-brand h-10 px-5">
-                Get API key
+    <footer className="border-t border-mk-hair bg-white">
+      <div>
+        <div className="container-narrow py-12 md:py-14">
+          <div className="grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-4 lg:grid-cols-12 lg:gap-8">
+            <div className="col-span-2 md:col-span-4 lg:col-span-4">
+              <Link
+                href="/"
+                className="mb-4 inline-flex items-center gap-2.5 rounded-sm"
+                {...navPrefetch}
+              >
+                <span className="relative block h-7 w-7 shrink-0">
+                  <Image
+                    src="/logos/busybody-logo.png"
+                    alt={LOGO_ALT}
+                    fill
+                    sizes="28px"
+                    className="object-contain"
+                  />
+                </span>
+                <span className="text-[15px] font-semibold tracking-[-0.01em] text-mk-ink">{SITE_NAME}</span>
               </Link>
+              <p className="mb-3 max-w-xs text-[13px] leading-relaxed text-mk-muted">
+                Food calorie API with search, suggest, barcode lookup, and developer dashboards.
+                Powered by BusyBody FIT LTD.
+              </p>
+              <a
+                href={`mailto:${SUPPORT_EMAIL}`}
+                className="rounded-sm text-[13px] font-medium text-mk-ink underline decoration-mk-line underline-offset-4 transition-colors duration-200 hover:decoration-mk-ink"
+              >
+                {SUPPORT_EMAIL}
+              </a>
             </div>
+
+            <FooterLinkColumn title="Product" links={productLinks} />
+            <FooterLinkColumn title="APIs" links={apiLinks} />
+            <FooterLinkColumn title="Solutions" links={solutionLinks} />
+            <FooterLinkColumn title="Legal" links={legalLinks} />
           </div>
 
-          <FooterLinkColumn title="Product" links={productLinks} />
-          <FooterLinkColumn title="APIs" links={apiLinks} />
-          <FooterLinkColumn title="Solutions" links={solutionLinks} />
-          <FooterLinkColumn title="Legal" links={legalLinks} />
-        </div>
-
-        <div className="mt-12 pt-8 border-t border-surface-border/60 flex flex-col sm:flex-row justify-between gap-3 text-xs text-ink-muted">
-          <p>© {new Date().getFullYear()} BusyBody FIT LTD. All rights reserved.</p>
+          <div className="mt-10 flex flex-col gap-3 border-t border-mk-hair pt-6 text-[13px] text-mk-muted sm:flex-row sm:items-center sm:justify-between">
+            <p>© {new Date().getFullYear()} BusyBody FIT LTD. All rights reserved.</p>
+          </div>
         </div>
       </div>
     </footer>

@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { MarketingHero } from '@/components/marketing/marketing-hero'
+import { MarketingSheetHero } from '@/components/marketing/marketing-sheet'
 import { MarketingCtaBand } from '@/components/marketing/marketing-shell'
 import { Reveal } from '@/components/marketing/reveal'
 import { buildPublicPageMetadata } from '@/lib/build-public-metadata'
@@ -12,20 +12,19 @@ export default function ApiStatusPage() {
   return (
     <div className="marketing-page">
       <PublicPageSchema path="/api-status" pageName="API Status" />
-      <MarketingHero
+      <MarketingSheetHero
         title="API status"
-        subtitle="Core API and search endpoints. Check here for maintenance windows and incidents."
-        compact
+        lead="Core API and search endpoints. Check here for maintenance windows and incidents."
       />
-      <section className="bg-white section-pad-sm">
+      <section className="marketing-canvas-pad">
         <div className="container-prose">
           <Reveal>
-            <div className="marketing-card card-hairline p-8 md:p-10 text-center">
-              <span className="marketing-status-pill">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" aria-hidden />
+            <div className="rounded-[20px] border border-mk-hair bg-white px-5 py-5 shadow-card md:px-6">
+              <p className="flex items-center gap-2.5 text-base font-semibold text-mk-ink">
+                <span className="h-2 w-2 shrink-0 rounded-full bg-mk-green" aria-hidden />
                 All systems operational
-              </span>
-              <p className="mt-6 text-sm text-ink-muted leading-relaxed max-w-xl mx-auto">
+              </p>
+              <p className="mt-2 text-[15px] leading-relaxed text-mk-muted">
                 Search, suggest, barcode lookup, and authentication services are running normally.
                 Subscribe to updates via your account dashboard or contact support for enterprise SLAs.
               </p>

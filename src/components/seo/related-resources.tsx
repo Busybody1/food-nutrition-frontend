@@ -19,15 +19,12 @@ export function RelatedResources({
   const headingId = headingIdFor(title)
   return (
     <section
-      className="section-pad-sm bg-white border-t border-surface-border/60"
+      className="marketing-canvas-pad"
       aria-labelledby={headingId}
     >
       <div className="container-prose">
         <Reveal>
-          <h2
-            id={headingId}
-            className="font-display text-3xl md:text-4xl tracking-tight text-ink mb-6"
-          >
+          <h2 id={headingId} className="marketing-h3 mb-6">
             {title}
           </h2>
           <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -36,10 +33,10 @@ export function RelatedResources({
                 <Link
                   href={link.href}
                   prefetch={false}
-                  className="marketing-card group flex h-full items-start gap-3 p-4 text-sm font-medium text-ink cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2"
+                  className="marketing-card group flex h-full items-start gap-3 p-4 text-[15px] font-medium text-mk-ink cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
                 >
                   <ArrowRight
-                    className="w-4 h-4 shrink-0 mt-0.5 text-brand-strong transition-transform duration-200 motion-safe:group-hover:translate-x-0.5"
+                    className="w-4 h-4 shrink-0 mt-1 text-mk-muted transition-transform duration-200 motion-safe:group-hover:translate-x-0.5"
                     aria-hidden
                   />
                   <span className="min-w-0">{link.label}</span>

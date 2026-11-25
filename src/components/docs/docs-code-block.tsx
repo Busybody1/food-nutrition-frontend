@@ -65,7 +65,7 @@ export function DocsCodeBlock({
       )}
       {}
       <pre
-        className="docs-code-pre focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand/60"
+        className="docs-code-pre focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand"
         tabIndex={0}
         role="region"
         aria-label={title || 'Code sample'}

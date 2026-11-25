@@ -17,6 +17,8 @@ import type { BlogListItem } from '@/lib/api/blog'
 import { BlogPagination } from '@/components/blog/blog-pagination'
 import { BlogSearchForm } from '@/components/blog/blog-search-form'
 import { Reveal } from '@/components/marketing/reveal'
+import { MarketingIconDisc, discToneAt } from '@/components/marketing/marketing-shell'
+import { MarketingSheetHero } from '@/components/marketing/marketing-sheet'
 import { getPublicPageSeo } from '@/lib/public-page-seo'
 import { FOOD_DATABASE_SIZE_LABEL } from '@/lib/site'
 
@@ -45,7 +47,7 @@ function slugHash(slug: string): number {
 }
 
 const FOCUS_RING =
-  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2'
+  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2'
 
 function BlogPostCard({
   post,
@@ -58,30 +60,18 @@ function BlogPostCard({
   const minutes = readingMinutes(post.excerpt)
   const hash = slugHash(post.slug)
   const Icon = CARD_ICONS[hash % CARD_ICONS.length]
-  const accented = !featured && hash % 4 === 3
 
   return (
     <Link
       href={`/blog/${post.slug}`}
       className={
         featured
-          ? `blog-post-card blog-post-card--featured group cursor-pointer motion-safe:hover:-translate-y-0.5 ${FOCUS_RING}`
-          : `blog-post-card group cursor-pointer motion-safe:hover:-translate-y-0.5 ${FOCUS_RING}`
+          ? `blog-post-card blog-post-card--featured group cursor-pointer ${FOCUS_RING}`
+          : `blog-post-card group cursor-pointer ${FOCUS_RING}`
       }
       prefetch={false}
     >
-      <span
-        className={
-          featured
-            ? 'mb-4 flex h-11 w-11 items-center justify-center rounded-brand bg-brand-muted text-brand-strong transition-transform duration-200 motion-safe:group-hover:scale-105'
-            : accented
-              ? 'mb-4 flex h-9 w-9 items-center justify-center rounded-lg bg-accent-orange/10 text-accent-orange transition-transform duration-200 motion-safe:group-hover:scale-105'
-              : 'mb-4 flex h-9 w-9 items-center justify-center rounded-lg bg-brand-muted text-brand-strong transition-transform duration-200 motion-safe:group-hover:scale-105'
-        }
-        aria-hidden
-      >
-        <Icon className={featured ? 'h-5 w-5' : 'h-4 w-4'} />
-      </span>
+      <MarketingIconDisc icon={Icon} tone={discToneAt(hash)} className="mb-4" />
       <h2 className={featured ? 'blog-post-card__title blog-post-card__title--featured' : 'blog-post-card__title'}>
         {post.title}
       </h2>
@@ -95,7 +85,7 @@ function BlogPostCard({
           Read article
           <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
         </span>
-        <div className="blog-post-card__meta text-ink-muted">
+        <div className="blog-post-card__meta">
           {published && <time dateTime={post.published_at ?? undefined}>{published}</time>}
           <span className="blog-post-card__read">{minutes} min read</span>
         </div>
@@ -107,15 +97,15 @@ function BlogPostCard({
 function BlogSidebarInner({ headingAs: Heading = 'h2' }: { headingAs?: 'h2' | 'p' }) {
   return (
     <>
-      <div className="blog-index-sidebar__card card-hairline">
-        <div className="blog-index-sidebar__icon" aria-hidden>
-          <Sparkles className="h-5 w-5 text-brand-strong" />
+      <div className="blog-index-sidebar__card">
+        <div className="blog-index-sidebar__icon bg-mk-violet-soft text-mk-violet" aria-hidden>
+          <Sparkles className="h-[18px] w-[18px]" strokeWidth={1.9} />
         </div>
         <Heading className="blog-index-sidebar__title">Build with {FOOD_DATABASE_SIZE_LABEL}</Heading>
         <p className="blog-index-sidebar__text">
           Free API key, no credit card. Search, barcode lookup, and macros per 100g in one REST API.
         </p>
-        <Link href="/auth/register" className="btn-brand mt-5 w-full" prefetch={false}>
+        <Link href="/auth/register" className="btn-brand w-full" prefetch={false}>
           Get your free API key
         </Link>
         <ul className="blog-index-sidebar__links">
@@ -141,7 +131,7 @@ function BlogSidebarInner({ headingAs: Heading = 'h2' }: { headingAs?: 'h2' | 'p
       </div>
 
       <div className="blog-index-sidebar__note">
-        <Key className="h-4 w-4 shrink-0 text-brand-strong" aria-hidden />
+        <Key className="mt-px h-4 w-4 shrink-0 text-mk-muted" aria-hidden />
         <p>1,000 free requests/month. Upgrade when you launch.</p>
       </div>
     </>
@@ -187,63 +177,51 @@ export function BlogIndex({
 
   return (
     <>
-      <header className="blog-index-hero pb-16 md:pb-20">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -top-24 right-[-6%] h-72 w-72 rounded-full bg-brand/10 blur-3xl"
-        />
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -bottom-28 right-[16%] h-56 w-56 rounded-full bg-accent-orange/10 blur-3xl"
-        />
-        <div className="container-narrow relative">
-          <div className="max-w-3xl">
-            <p className="marketing-hero-badge mb-5 animate-rise">Developer guides</p>
-            <h1 className="blog-index-hero__title md:text-5xl md:leading-[1.1] animate-rise stagger-2">
-              {BLOG_SEO.title}
-            </h1>
-            <p className="aeo-answer blog-index-hero__subtitle animate-rise stagger-3">
-              {BLOG_SEO.description}
-            </p>
-            <div className="blog-index-hero__actions animate-rise stagger-4">
-              <Link href="/auth/register" className="btn-brand" prefetch={false}>
-                Get API key free
-              </Link>
-              <Link href="/playground" className="btn-brand-outline" prefetch={false}>
-                Open playground
-              </Link>
-            </div>
-            {total > 0 && (
-              <p className="blog-index-hero__count text-ink-muted animate-rise stagger-5">
-                {total} {total === 1 ? 'article' : 'articles'}
-                {isSearch && query ? (
-                  <>
-                    <span className="blog-index-hero__dot" aria-hidden />
-                    matching &ldquo;{query}&rdquo;
-                  </>
-                ) : null}
+      <MarketingSheetHero
+        badge="Developer guides"
+        title={BLOG_SEO.title}
+        lead={BLOG_SEO.description}
+        leadClassName="aeo-answer"
+        actions={
+          <>
+            <Link href="/auth/register" className="btn-brand" prefetch={false}>
+              Get API key free
+            </Link>
+            <Link href="/playground" className="btn-brand-outline" prefetch={false}>
+              Open playground
+            </Link>
+          </>
+        }
+      >
+        {total > 0 && (
+          <p className="blog-index-hero__count">
+            {total} {total === 1 ? 'article' : 'articles'}
+            {isSearch && query ? (
+              <>
                 <span className="blog-index-hero__dot" aria-hidden />
-                <Link
-                  href="/blog/feed.xml"
-                  className={`blog-index-hero__rss rounded-sm ${FOCUS_RING}`}
-                  prefetch={false}
-                >
-                  RSS
-                </Link>
-              </p>
-            )}
-          </div>
-        </div>
-      </header>
+                matching &ldquo;{query}&rdquo;
+              </>
+            ) : null}
+            <span className="blog-index-hero__dot" aria-hidden />
+            <Link
+              href="/blog/feed.xml"
+              className={`blog-index-hero__rss rounded-sm ${FOCUS_RING}`}
+              prefetch={false}
+            >
+              RSS
+            </Link>
+          </p>
+        )}
+      </MarketingSheetHero>
 
-      <section className="blog-index-body py-16 md:py-24">
+      <section className="blog-index-body">
         <div className="container-narrow">
           {posts.length === 0 ? (
             <>
               <BlogSearchForm defaultQuery={query ?? ''} />
               <div className="blog-index-empty">
-                <div className="mx-auto max-w-md rounded-brand border border-dashed border-surface-border bg-surface-elevated/60 px-6 py-10">
-                  <p className="text-ink-muted">
+                <div className="mx-auto max-w-md rounded-[20px] border border-dashed border-mk-line bg-white px-6 py-10">
+                  <p className="marketing-body">
                     {isSearch
                       ? `No articles found for "${query}". Try a different keyword.`
                       : 'No articles published yet. Check back soon.'}
@@ -266,7 +244,7 @@ export function BlogIndex({
 
                 {featured && (
                   <Reveal className="mb-8 md:mb-10">
-                    <p className="marketing-section-label mb-4">Latest</p>
+                    <p className="mb-4 text-sm font-medium text-mk-muted">Latest</p>
                     <BlogPostCard post={featured} featured />
                   </Reveal>
                 )}
@@ -276,7 +254,7 @@ export function BlogIndex({
                 {gridPosts.length > 0 && (
                   <>
                     <Reveal>
-                      <p className="marketing-section-label mb-4 md:mb-5">
+                      <p className="mb-4 text-sm font-medium text-mk-muted md:mb-5">
                         {isSearch ? 'Search results' : featured ? 'More articles' : 'All articles'}
                       </p>
                     </Reveal>

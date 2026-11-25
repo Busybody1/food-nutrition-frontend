@@ -23,7 +23,6 @@ import {
 import type { FaqItem } from '@/lib/faq-data'
 import { FaqList } from '@/components/marketing/faq-section'
 import type { PricingPlan } from '@/lib/pricing/plan-display'
-import { cn } from '@/lib/utils/cn'
 
 type Interval = 'year' | 'month'
 
@@ -104,26 +103,26 @@ export function McpPricingCard({ plan }: { plan: PricingPlan | null }) {
   return (
     <div>
       {!checkoutOpen && (
-        <p className="mx-auto mb-6 max-w-2xl text-center text-sm text-ink-muted" role="status">
+        <p className="mx-auto mb-6 max-w-2xl text-center text-sm text-mk-muted" role="status">
           Checkout is closed on this environment until the MCP plan is active. Prices shown are the
           published plan: ${monthly}/month or ${annualMonthly}/month.
         </p>
       )}
       {chargeNote ? (
-        <p className="mx-auto mb-2 max-w-xl text-center text-sm text-ink" role="status">
+        <p className="mx-auto mb-2 max-w-xl text-center text-sm text-mk-ink" role="status">
           {chargeNote}
         </p>
       ) : null}
       <div className="mx-auto grid max-w-4xl items-stretch gap-5 pt-4 md:grid-cols-2">
-        <article className="flex h-full flex-col rounded-brand border border-surface-border/80 bg-white p-6 shadow-glass md:p-8">
-          <h2 className="font-display text-2xl text-ink">Monthly</h2>
-          <p className="mt-4 font-display text-5xl tabular-nums text-ink">
+        <article className="flex h-full flex-col rounded-[22px] border border-mk-hair bg-white p-6 shadow-card md:p-8">
+          <h2 className="text-xl font-semibold tracking-[-0.01em] text-mk-ink">Monthly</h2>
+          <p className="mt-4 text-5xl font-semibold tabular-nums tracking-[-0.035em] text-mk-ink">
             ${monthly}
-            <span className="text-lg text-ink-muted">/month</span>
+            <span className="text-lg font-medium tracking-normal text-mk-muted">/month</span>
           </p>
           <button
             type="button"
-            className="btn-brand-outline mt-6 h-12 w-full cursor-pointer text-base disabled:cursor-wait disabled:opacity-70"
+            className="btn-brand-outline mt-6 w-full disabled:cursor-wait"
             onClick={() => void start('month')}
             disabled={pending !== null || offerPending}
           >
@@ -137,28 +136,24 @@ export function McpPricingCard({ plan }: { plan: PricingPlan | null }) {
         </article>
 
         <article
-          className={cn(
-            'relative flex h-full flex-col rounded-brand border border-brand/40 bg-white p-6 shadow-glow md:p-8',
-            'before:pointer-events-none before:absolute before:inset-x-0 before:top-0 before:h-[3px]',
-            'before:rounded-t-brand before:bg-brand before:content-[""]'
-          )}
+          className="relative flex h-full flex-col rounded-[22px] border border-mk-hair bg-white p-6 shadow-card-strong md:p-8"
         >
-          <p className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2 rounded-pill bg-brand px-3 py-1 text-xs font-semibold text-ink">
+          <p className="absolute left-1/2 top-0 inline-flex h-6 -translate-x-1/2 -translate-y-1/2 items-center rounded-full bg-brand px-2.5 text-xs font-medium text-mk-ink">
             Recommended
           </p>
-          <h2 className="font-display text-2xl text-ink">Annual</h2>
+          <h2 className="text-xl font-semibold tracking-[-0.01em] text-mk-ink">Annual</h2>
           <div className="mt-4 flex flex-wrap items-end gap-x-3 gap-y-1">
-            <p className="font-display text-5xl tabular-nums text-ink">
+            <p className="text-5xl font-semibold tabular-nums tracking-[-0.035em] text-mk-ink">
               ${annualMonthly}
-              <span className="text-lg text-ink-muted">/month</span>
+              <span className="text-lg font-medium tracking-normal text-mk-muted">/month</span>
             </p>
             {savings > 0 ? (
-              <p className="pb-1.5 text-sm font-semibold text-red-600">${savings} USD Off</p>
+              <p className="pb-1.5 text-sm font-semibold text-red-700">${savings} USD Off</p>
             ) : null}
           </div>
           <button
             type="button"
-            className="btn-brand mt-6 h-12 w-full cursor-pointer text-base disabled:cursor-wait disabled:opacity-70"
+            className="btn-brand mt-6 w-full disabled:cursor-wait"
             onClick={() => void start('year')}
             disabled={pending !== null || offerPending}
           >
@@ -173,8 +168,8 @@ export function McpPricingCard({ plan }: { plan: PricingPlan | null }) {
       </div>
       <ul className="mx-auto mt-8 grid max-w-4xl gap-3 sm:grid-cols-2">
         {INCLUDED.map((item) => (
-          <li key={item} className="flex items-start gap-2.5 text-sm text-ink">
-            <Check className="mt-0.5 h-4 w-4 shrink-0 text-brand-strong" aria-hidden />
+          <li key={item} className="flex items-start gap-2.5 text-[15px] text-mk-ink">
+            <Check className="mt-1 h-4 w-4 shrink-0 text-mk-green" aria-hidden />
             <span>{item}</span>
           </li>
         ))}
@@ -184,13 +179,19 @@ export function McpPricingCard({ plan }: { plan: PricingPlan | null }) {
           {error}
         </p>
       ) : null}
-      <p className="mx-auto mt-8 max-w-xl text-center text-sm text-ink-muted">
+      <p className="mx-auto mt-8 max-w-xl text-center text-sm text-mk-muted">
         Building an app?{' '}
-        <Link href="/pricing" className="font-medium text-brand-strong underline underline-offset-2">
+        <Link
+          href="/pricing"
+          className="rounded-sm font-medium text-brand-strong underline underline-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
+        >
           API pricing
         </Link>{' '}
         is a separate product. Commercial products need a{' '}
-        <Link href="/commercial-license" className="font-medium text-brand-strong underline underline-offset-2">
+        <Link
+          href="/commercial-license"
+          className="rounded-sm font-medium text-brand-strong underline underline-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
+        >
           commercial license
         </Link>
         .

@@ -34,7 +34,7 @@ function markdownComponents(markAnswer: boolean): Components {
     h2: ({ children }) => <h2 id={headingId(children)}>{children}</h2>,
     h3: ({ children }) => <h3 id={headingId(children)}>{children}</h3>,
     pre: ({ children }) => (
-      <pre className="!border-white/10 !bg-[#0f172a] shadow-glass [&_code]:!text-slate-200">
+      <pre className="!border-white/10 !bg-[#0f172a] [&_code]:!text-slate-200">
         {children}
       </pre>
     ),

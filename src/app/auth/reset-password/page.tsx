@@ -3,15 +3,13 @@
 import { Suspense, useState } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { AuthShell } from '@/components/marketing/auth-shell'
 import { api } from '@/lib/api/client'
 import { ApiError } from '@/types/api'
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
 
 const linkClass =
-  'text-brand-strong underline decoration-brand/40 underline-offset-2 hover:decoration-brand-strong rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2'
+  'text-brand-strong underline decoration-brand/40 underline-offset-2 hover:decoration-brand-strong rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2'
 
 function ResetPasswordForm() {
   const router = useRouter()
@@ -76,17 +74,17 @@ function ResetPasswordForm() {
         {error && (
           <div
             role="alert"
-            className="bg-error-500/10 border border-error-500/30 text-error-500 px-4 py-3 rounded-card text-sm"
+            className="bg-error-500/10 border border-error-500/30 text-error-500 px-4 py-3 rounded-xl text-sm"
           >
             {error}
           </div>
         )}
         <div>
-          <label htmlFor="password" className="block text-sm font-medium text-ink-muted mb-1">
+          <label htmlFor="password" className="marketing-label">
             New password
           </label>
           <div className="relative">
-            <Input
+            <input
               id="password"
               name="password"
               type={showPassword ? 'text' : 'password'}
@@ -95,12 +93,12 @@ function ResetPasswordForm() {
               minLength={8}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="h-11 pr-10"
+              className="marketing-input pr-10"
               disabled={!token}
             />
             <button
               type="button"
-              className="absolute inset-y-0 right-0 pr-3 flex items-center rounded-r-brand cursor-pointer text-ink-muted hover:text-ink transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
+              className="absolute inset-y-0 right-0 pr-3 flex items-center rounded-r-xl cursor-pointer text-mk-muted hover:text-mk-ink transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
               onClick={() => setShowPassword(!showPassword)}
               aria-label={showPassword ? 'Hide password' : 'Show password'}
             >
@@ -109,10 +107,10 @@ function ResetPasswordForm() {
           </div>
         </div>
         <div>
-          <label htmlFor="confirmPassword" className="block text-sm font-medium text-ink-muted mb-1">
+          <label htmlFor="confirmPassword" className="marketing-label">
             Confirm password
           </label>
-          <Input
+          <input
             id="confirmPassword"
             name="confirmPassword"
             type={showPassword ? 'text' : 'password'}
@@ -121,24 +119,24 @@ function ResetPasswordForm() {
             minLength={8}
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-            className="h-11"
+            className="marketing-input"
             disabled={!token}
           />
         </div>
-        <Button
+        <button
           type="submit"
-          className="w-full h-11 font-semibold hover:shadow-glow-lg motion-safe:hover:-translate-y-px"
+          className="btn-brand w-full"
           disabled={isLoading || !token}
         >
           {isLoading ? (
             <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
               Saving…
             </>
           ) : (
             'Set new password'
           )}
-        </Button>
+        </button>
       </form>
     </AuthShell>
   )

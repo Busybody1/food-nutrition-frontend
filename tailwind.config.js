@@ -10,6 +10,7 @@ module.exports = {
       colors: {
         brand: {
           DEFAULT: '#0AC5D7',
+          hover: '#08B4C5',
 
           strong: '#067A88',
           soft: '#8FE8F0',
@@ -51,6 +52,25 @@ module.exports = {
         error: {
           500: '#EF4444',
           600: '#DC2626',
+        },
+        mk: {
+          canvas: '#F3F4F6',
+          ink: '#111111',
+          'ink-hover': '#2A2A2A',
+          body: '#5C6570',
+          muted: '#4B5563',
+          line: '#E6E7EB',
+          hair: '#ECEDEF',
+          stage: '#F7F8FB',
+          band: '#F9FAFB',
+          blue: '#3B82F6',
+          'blue-soft': '#E8F1FF',
+          green: '#178A56',
+          'green-soft': '#E7F8EF',
+          violet: '#7C5CD6',
+          'violet-soft': '#F3EEFF',
+          coral: '#E11D48',
+          'coral-soft': '#FDECEC',
         },
         dash: {
           canvas: '#F4F6F9',
@@ -97,13 +117,17 @@ module.exports = {
         sidebar: '1px 0 0 rgba(15, 23, 42, 0.06)',
         dash: '0 1px 2px rgba(16, 24, 40, 0.04)',
         'dash-pop': '0 16px 40px -12px rgba(16, 24, 40, 0.18), 0 2px 6px rgba(16, 24, 40, 0.05)',
+        sheet: '0 24px 60px rgba(17, 17, 17, 0.05)',
+        float: '0 16px 40px rgba(17, 17, 17, 0.08)',
+        card: '0 1px 2px rgba(17, 17, 17, 0.04), 0 8px 24px rgba(17, 17, 17, 0.04)',
+        'card-lift': '0 2px 4px rgba(17, 17, 17, 0.04), 0 16px 36px rgba(17, 17, 17, 0.07)',
+        'card-strong': '0 2px 6px rgba(17, 17, 17, 0.05), 0 24px 56px rgba(17, 17, 17, 0.12)',
       },
       animation: {
         'fade-in': 'fadeIn 0.6s ease-out',
         'slide-up': 'slideUp 0.6s ease-out',
-        float: 'float 8s ease-in-out infinite',
+        float: 'float 7s ease-in-out infinite',
         glow: 'glow 3s ease-in-out infinite alternate',
-        'ken-burns': 'kenBurns 24s ease-out forwards',
       },
       keyframes: {
         fadeIn: {
@@ -114,13 +138,9 @@ module.exports = {
           '0%': { opacity: '0', transform: 'translateY(24px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
         },
-        kenBurns: {
-          '0%': { transform: 'scale(1)' },
-          '100%': { transform: 'scale(1.06)' },
-        },
         float: {
           '0%, 100%': { transform: 'translateY(0)' },
-          '50%': { transform: 'translateY(-16px)' },
+          '50%': { transform: 'translateY(-6px)' },
         },
         glow: {
           '0%': { opacity: '0.5' },

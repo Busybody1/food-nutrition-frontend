@@ -13,8 +13,35 @@
     --ink: #1e1e1e;
     --ink-muted: #52525b;
     --radius: 12px;
-    /* Floating pill header: pt-4 (1rem) + h-16 (4rem) + pb-2 (0.5rem) = 5.5rem */
-    --site-header-offset: 5.5rem;
+    --mk-canvas: #f3f4f6;
+    --mk-ink: #111111;
+    --mk-body: #5c6570;
+    --mk-hair: #ecedef;
+    --mk-gutter: 0.75rem;
+    --mk-container-pad: 1rem;
+    --mk-sheet-max: 1400px;
+    --mk-sheet-radius: 20px;
+    /* Fixed header bar: h-16 (4rem), no outer padding once docked. */
+    --site-header-offset: 4rem;
+  }
+
+  @media (min-width: 640px) {
+    :root {
+      --mk-container-pad: 1.5rem;
+    }
+  }
+
+  @media (min-width: 768px) {
+    :root {
+      --mk-gutter: 1.25rem;
+      --mk-sheet-radius: 28px;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    :root {
+      --mk-container-pad: 2rem;
+    }
   }
 
   * {
@@ -22,8 +49,13 @@
   }
 
   html {
-    /* Keep in-page anchor targets clear of the fixed floating header */
-    scroll-padding-top: var(--site-header-offset);
+    /* Keep in-page anchor targets clear of the fixed header bar. */
+    scroll-padding-top: calc(var(--site-header-offset) + 1rem);
+  }
+
+  .site-layout--canvas :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+    outline: 2px solid var(--brand);
+    outline-offset: 2px;
   }
 
   body {
@@ -35,23 +67,27 @@
   .marketing-page {
     /* overflow-x: clip (not hidden) prevents horizontal scroll WITHOUT forcing
        overflow-y to `auto`, which would break position: sticky descendants
-       (e.g. the legal "on this page" rail). */
-    @apply bg-surface text-ink min-h-screen w-full max-w-[100vw] overflow-x-clip;
+       (e.g. the legal "on this page" rail). Transparent so the route canvas shows. */
+    @apply text-ink min-h-screen w-full max-w-[100vw] overflow-x-clip;
   }
 
-  /* API docs — prevent horizontal page scroll; code scrolls inside panels */
+  /* API docs: clip (not hidden) so the lg sticky sidebar keeps pinning under the header. */
+  .docs-sheet-wrap {
+    @apply border-t border-mk-hair;
+  }
+
+  .docs-sheet-wrap--top {
+    @apply border-t-0;
+    padding-top: var(--site-header-offset);
+  }
+
   .docs-layout {
-    @apply flex w-full min-w-0 max-w-full overflow-x-hidden;
+    @apply mx-auto flex w-full min-w-0 max-w-[var(--mk-sheet-max)] overflow-clip bg-white;
   }
 
   .docs-main {
-    @apply flex-1 min-w-0 max-w-full overflow-x-hidden px-4 sm:px-6 lg:px-8 xl:px-10
-      pt-[calc(var(--site-header-offset)+1.5rem)] sm:pt-[calc(var(--site-header-offset)+2rem)]
-      lg:pt-[calc(var(--site-header-offset)+2.5rem)] pb-24 lg:pb-10;
-  }
-
-  .docs-page .docs-main {
-    @apply pt-6 sm:pt-8 lg:pt-10;
+    @apply flex-1 min-w-0 max-w-full overflow-x-clip px-4 sm:px-6 lg:px-8 xl:px-10
+      pt-6 sm:pt-8 lg:pt-10 pb-24 lg:pb-10;
   }
 
   .docs-sidebar-backdrop {
@@ -86,7 +122,7 @@
   }
 
   .docs-sidebar-fab {
-    @apply lg:hidden fixed bottom-20 right-4 z-40 btn-brand shadow-glow-lg;
+    @apply lg:hidden fixed bottom-20 right-4 z-40 btn-brand shadow-float;
   }
 
   .docs-nav-chevron {
@@ -95,7 +131,7 @@
 
   .docs-nav-link {
     @apply flex items-center gap-2 rounded-lg px-2 py-2 text-sm text-ink-muted
-      hover:bg-surface-elevated hover:text-brand transition-colors;
+      hover:bg-mk-stage hover:text-mk-ink transition-colors;
   }
 
   .docs-step {
@@ -151,11 +187,11 @@
   }
 
   .blog-prose h2 {
-    @apply font-display text-2xl md:text-3xl text-ink mt-12 mb-4 tracking-tight scroll-mt-24;
+    @apply font-sans font-semibold text-2xl md:text-[1.75rem] leading-tight text-mk-ink mt-12 mb-4 tracking-[-0.02em] scroll-mt-24;
   }
 
   .blog-prose h3 {
-    @apply text-lg md:text-xl font-semibold text-ink mt-8 mb-3;
+    @apply text-lg md:text-xl font-semibold text-mk-ink tracking-[-0.01em] mt-8 mb-3;
   }
 
   .blog-prose p {
@@ -183,7 +219,7 @@
   }
 
   .blog-prose blockquote {
-    @apply my-6 border-l-4 border-brand/40 pl-4 italic text-ink-muted;
+    @apply my-6 border-l-2 border-mk-line pl-4 italic text-ink-muted;
   }
 
   .blog-prose :not(pre) > code {
@@ -191,7 +227,7 @@
   }
 
   .blog-prose pre {
-    @apply my-6 overflow-x-auto rounded-brand border border-surface-border/70 bg-surface-elevated p-4 text-[13px] leading-relaxed;
+    @apply my-6 overflow-x-auto rounded-2xl border border-mk-hair bg-mk-stage p-4 text-[13px] leading-relaxed;
   }
 
   .blog-prose pre code {
@@ -212,11 +248,11 @@
   }
 
   .blog-prose th {
-    @apply bg-surface-elevated font-semibold text-ink;
+    @apply bg-mk-stage font-semibold text-ink;
   }
 
   .blog-prose img {
-    @apply my-6 rounded-brand border border-surface-border/60;
+    @apply my-6 rounded-2xl border border-mk-hair;
   }
 
   .blog-prose hr {
@@ -224,52 +260,36 @@
   }
 
   /* Blog index */
-  .blog-index-hero {
-    @apply relative overflow-hidden border-b border-surface-border/60;
-    padding-top: calc(var(--site-header-offset) + 2.75rem);
-    padding-bottom: 2.5rem;
-    background:
-      radial-gradient(ellipse 60% 50% at 10% 0%, rgba(10, 197, 215, 0.14), transparent 55%),
-      linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
-  }
-
-  @media (min-width: 768px) {
-    .blog-index-hero {
-      padding-top: calc(var(--site-header-offset) + 3.75rem);
-      padding-bottom: 3.5rem;
-    }
-  }
-
   .blog-index-hero__inner {
-    @apply max-w-3xl;
+    @apply mx-auto max-w-3xl text-center;
   }
 
   .blog-index-hero__title {
-    @apply font-display text-4xl sm:text-5xl md:text-[3.25rem] text-ink tracking-tight leading-[1.08] text-balance;
+    @apply marketing-display;
   }
 
   .blog-index-hero__subtitle {
-    @apply mt-5 text-base md:text-lg text-ink-muted leading-relaxed max-w-2xl;
+    @apply marketing-lead mt-5;
   }
 
   .blog-index-hero__actions {
-    @apply mt-8 flex flex-col sm:flex-row gap-3;
+    @apply mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row;
   }
 
   .blog-index-hero__count {
-    @apply mt-6 flex flex-wrap items-center gap-2 text-sm text-ink-dim;
+    @apply mt-6 flex flex-wrap items-center justify-center gap-2 text-sm text-mk-muted;
   }
 
   .blog-index-hero__dot {
-    @apply h-1 w-1 rounded-full bg-ink-dim/40;
+    @apply h-1 w-1 rounded-full bg-mk-muted/40;
   }
 
   .blog-index-hero__rss {
-    @apply font-medium text-brand-strong hover:text-brand transition-colors;
+    @apply font-medium text-brand-strong hover:text-mk-ink transition-colors;
   }
 
   .blog-index-body {
-    @apply py-12 md:py-16 lg:py-20;
+    @apply py-10 md:py-14;
   }
 
   .blog-index-layout {
@@ -285,18 +305,12 @@
   }
 
   .blog-post-card {
-    @apply flex h-full flex-col rounded-brand border border-surface-border/80 bg-white p-5 md:p-6
-      shadow-glass transition-all duration-200 hover:border-brand/35 hover:shadow-glass-lg;
+    @apply flex h-full flex-col rounded-[20px] border border-mk-hair bg-white p-5 md:p-6
+      shadow-card transition-[box-shadow,transform] duration-200 hover:shadow-card-lift motion-safe:hover:-translate-y-0.5;
   }
 
   .blog-post-card--featured {
-    @apply relative overflow-hidden border-brand/25 bg-gradient-to-br from-white via-white to-brand-muted/30
-      p-6 md:p-8 shadow-glass-lg hover:border-brand/40;
-  }
-
-  .blog-post-card--featured::before {
-    content: '';
-    @apply pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-brand/80 via-brand to-brand-soft/80;
+    @apply p-6 md:p-8;
   }
 
   .blog-post-card__footer {
@@ -304,15 +318,15 @@
   }
 
   .blog-post-card__meta {
-    @apply flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-ink-dim;
+    @apply flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-mk-muted;
   }
 
   .blog-post-card__read {
-    @apply before:mr-3 before:inline-block before:h-1 before:w-1 before:rounded-full before:bg-ink-dim/30 before:align-middle;
+    @apply before:mr-3 before:inline-block before:h-1 before:w-1 before:rounded-full before:bg-mk-muted/40 before:align-middle;
   }
 
   .blog-post-card__title {
-    @apply text-lg font-semibold text-ink leading-snug group-hover:text-brand-strong transition-colors;
+    @apply text-lg font-semibold text-mk-ink leading-snug tracking-[-0.01em] group-hover:text-brand-strong transition-colors;
   }
 
   .blog-post-card__title--featured {
@@ -320,15 +334,15 @@
   }
 
   .blog-post-card__excerpt {
-    @apply mt-2.5 line-clamp-3 text-sm text-ink-muted leading-relaxed;
+    @apply mt-2.5 line-clamp-3 text-sm text-mk-muted leading-relaxed;
   }
 
   .blog-post-card__excerpt--featured {
-    @apply mt-3 line-clamp-4 text-base;
+    @apply mt-3 line-clamp-4 text-base text-mk-body;
   }
 
   .blog-post-card__cta {
-    @apply inline-flex items-center gap-1.5 text-sm font-semibold text-brand-strong;
+    @apply inline-flex items-center gap-1.5 text-sm font-medium text-mk-ink;
   }
 
   .blog-index-sidebar {
@@ -336,37 +350,37 @@
   }
 
   .blog-index-sidebar__card {
-    @apply rounded-brand border border-brand/20 bg-brand-muted/40 p-5 shadow-glass;
+    @apply rounded-[20px] border border-mk-hair bg-white p-5 shadow-card;
   }
 
   .blog-index-sidebar__icon {
-    @apply mb-4 flex h-10 w-10 items-center justify-center rounded-brand bg-white shadow-sm;
+    @apply mb-4 marketing-icon-disc;
   }
 
   .blog-index-sidebar__title {
-    @apply text-lg font-semibold text-ink leading-snug;
+    @apply text-base font-semibold text-mk-ink leading-snug;
   }
 
   .blog-index-sidebar__text {
-    @apply mt-2 text-sm text-ink-muted leading-relaxed;
+    @apply mt-2 text-sm text-mk-muted leading-relaxed;
   }
 
-  .blog-index-sidebar__card .site-header-cta {
+  .blog-index-sidebar__card .btn-brand {
     @apply mt-5 w-full;
   }
 
   .blog-index-sidebar__links {
-    @apply mt-5 space-y-2 border-t border-brand/15 pt-4;
+    @apply mt-5 space-y-1 border-t border-mk-hair pt-4;
   }
 
   .blog-index-sidebar__links a {
-    @apply flex items-center gap-2.5 rounded-lg px-2 py-2 text-sm font-medium text-ink-muted
-      transition-colors hover:bg-white/70 hover:text-brand-strong;
+    @apply flex min-h-10 items-center gap-2.5 rounded-lg px-2 py-2 text-sm font-medium text-mk-muted
+      transition-colors hover:bg-mk-stage hover:text-mk-ink;
   }
 
   .blog-index-sidebar__note {
-    @apply flex items-start gap-2.5 rounded-brand border border-surface-border/80 bg-surface-elevated
-      px-4 py-3 text-xs text-ink-muted leading-relaxed;
+    @apply flex items-start gap-2.5 rounded-2xl border border-mk-hair bg-white
+      px-4 py-3 text-xs text-mk-muted leading-relaxed;
   }
 
   .blog-search {
@@ -378,22 +392,20 @@
   }
 
   .blog-search__icon {
-    @apply pointer-events-none absolute left-3.5 text-ink-dim;
+    @apply pointer-events-none absolute left-3.5 text-mk-muted;
   }
 
   .blog-search__input {
-    @apply w-full rounded-brand border border-surface-border bg-white py-2.5 pl-10 pr-10 text-sm text-ink
-      placeholder:text-ink-dim focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand/40;
+    @apply marketing-input pl-10 pr-10;
   }
 
   .blog-search__clear {
-    @apply absolute right-2 inline-flex h-8 w-8 items-center justify-center rounded-lg text-ink-dim
-      hover:bg-surface-elevated hover:text-ink transition-colors;
+    @apply absolute right-1 inline-flex h-9 w-9 items-center justify-center rounded-lg text-mk-muted
+      hover:bg-mk-stage hover:text-mk-ink transition-colors;
   }
 
   .blog-search__submit {
-    @apply inline-flex h-[42px] shrink-0 items-center justify-center rounded-brand border border-surface-border
-      bg-white px-5 text-sm font-medium text-ink hover:border-brand/30 hover:bg-surface-elevated transition-colors;
+    @apply btn-brand-outline shrink-0;
   }
 
   .blog-index-empty {
@@ -401,11 +413,11 @@
   }
 
   .blog-pagination {
-    @apply mt-10 md:mt-12 pt-8 border-t border-surface-border/70;
+    @apply mt-10 md:mt-12 pt-8 border-t border-mk-line;
   }
 
   .blog-pagination__summary {
-    @apply text-sm text-ink-muted mb-4;
+    @apply text-sm text-mk-muted mb-4;
   }
 
   .blog-pagination__list {
@@ -413,151 +425,25 @@
   }
 
   .blog-pagination__control {
-    @apply inline-flex items-center gap-1 rounded-brand border border-surface-border bg-white px-3 py-2
-      text-sm font-medium text-ink hover:border-brand/30 hover:bg-surface-elevated transition-colors;
+    @apply inline-flex h-10 items-center gap-1 rounded-full border border-mk-line bg-white px-4
+      text-sm font-medium text-mk-ink hover:bg-mk-stage transition-colors;
   }
 
   .blog-pagination__control--disabled {
-    @apply opacity-40 pointer-events-none border-surface-border/60 bg-surface-elevated text-ink-dim;
+    @apply opacity-40 pointer-events-none;
   }
 
   .blog-pagination__page {
-    @apply inline-flex h-9 min-w-9 items-center justify-center rounded-brand border border-surface-border
-      bg-white px-2 text-sm font-medium text-ink hover:border-brand/30 hover:bg-surface-elevated transition-colors;
+    @apply inline-flex h-10 min-w-10 items-center justify-center rounded-full border border-mk-line
+      bg-white px-3 text-sm font-medium text-mk-ink hover:bg-mk-stage transition-colors;
   }
 
   .blog-pagination__page--active {
-    @apply border-brand/40 bg-brand-muted text-brand-strong pointer-events-none;
+    @apply border-brand bg-brand text-mk-ink pointer-events-none;
   }
 
   .blog-article-wrap {
-    padding-top: calc(var(--site-header-offset) + 2rem);
     @apply pb-16 md:pb-24;
-  }
-
-  @media (min-width: 768px) {
-    .blog-article-wrap {
-      padding-top: calc(var(--site-header-offset) + 2.75rem);
-    }
-  }
-
-  /* Background/overflow only — combine with .hero-pad or .hero-pad-compact for
-     vertical padding. Never combine hero-glow with section-pad/py-* (cascade bug). */
-  .hero-glow {
-    @apply relative overflow-hidden;
-    background:
-      radial-gradient(ellipse 70% 55% at 15% 20%, rgba(10, 197, 215, 0.2), transparent),
-      radial-gradient(ellipse 50% 40% at 85% 30%, rgba(10, 197, 215, 0.08), transparent),
-      linear-gradient(180deg, #f8fafc 0%, #ffffff 72%);
-  }
-
-  /* Full-hero vertical rhythm: clears the fixed floating header. */
-  .hero-pad {
-    @apply pb-20 md:pb-28;
-    padding-top: calc(var(--site-header-offset) + 2.5rem);
-  }
-
-  @media (min-width: 768px) {
-    .hero-pad {
-      padding-top: calc(var(--site-header-offset) + 4rem);
-    }
-  }
-
-  /* Compact hero rhythm (info pages: about/faq/contact/changelog/api-status). */
-  .hero-pad-compact {
-    @apply pb-16 md:pb-20;
-    padding-top: calc(var(--site-header-offset) + 1.5rem);
-  }
-
-  .hero-home {
-    @apply relative min-h-[580px] md:min-h-[640px] lg:min-h-[700px] overflow-hidden bg-surface-elevated;
-  }
-
-  .hero-home__image {
-    @apply object-cover object-[68%_center] lg:object-[right_center] motion-safe:animate-ken-burns;
-  }
-
-  .hero-home__overlay {
-    background:
-      linear-gradient(
-        180deg,
-        transparent 0%,
-        rgba(248, 250, 252, 0.06) 4.5rem,
-        rgba(248, 250, 252, 0.28) 8rem,
-        rgba(248, 250, 252, 0.5) 12rem
-      ),
-      linear-gradient(
-        90deg,
-        rgba(248, 250, 252, 0.94) 0%,
-        rgba(248, 250, 252, 0.94) 16%,
-        rgba(248, 250, 252, 0.88) 28%,
-        rgba(248, 250, 252, 0.72) 40%,
-        rgba(248, 250, 252, 0.35) 52%,
-        rgba(248, 250, 252, 0.12) 62%,
-        transparent 72%
-      );
-  }
-
-  @media (max-width: 1023px) {
-    .hero-home__overlay {
-      background:
-        linear-gradient(
-          180deg,
-          transparent 0%,
-          rgba(248, 250, 252, 0.08) 4.5rem,
-          rgba(248, 250, 252, 0.45) 10rem,
-          rgba(248, 250, 252, 0.88) 52%,
-          rgba(248, 250, 252, 0.4) 68%,
-          transparent 88%
-        );
-    }
-
-    .hero-home__image {
-      @apply object-[center_30%];
-    }
-  }
-
-  .hero-home__glow {
-    background: radial-gradient(
-      ellipse 50% 40% at 8% 30%,
-      rgba(10, 197, 215, 0.18),
-      transparent 65%
-    );
-  }
-
-  .hero-home--compact {
-    @apply min-h-[300px] md:min-h-[340px] lg:min-h-[380px];
-  }
-
-  .hero-home--center .hero-home__overlay {
-    background:
-      linear-gradient(
-        180deg,
-        transparent 0%,
-        rgba(248, 250, 252, 0.1) 4.5rem,
-        rgba(248, 250, 252, 0.55) 10rem,
-        rgba(248, 250, 252, 0.94) 48%,
-        rgba(248, 250, 252, 0.55) 68%,
-        transparent 92%
-      );
-  }
-
-  @media (min-width: 1024px) {
-    .hero-home--center .hero-home__overlay {
-      background:
-        linear-gradient(
-          180deg,
-          transparent 0%,
-          rgba(248, 250, 252, 0.12) 4.5rem,
-          rgba(248, 250, 252, 0.4) 9rem
-        ),
-        linear-gradient(
-          90deg,
-          rgba(248, 250, 252, 0.96) 0%,
-          rgba(248, 250, 252, 0.88) 50%,
-          rgba(248, 250, 252, 0.96) 100%
-        );
-    }
   }
 
   .site-layout {
@@ -569,137 +455,285 @@
     @apply flex-1 min-w-0 overflow-x-clip;
   }
 
+  .site-layout--canvas {
+    @apply bg-white;
+  }
+
   .site-header-shell {
-    @apply fixed inset-x-0 top-0 z-50 w-full px-4 sm:px-6 lg:px-8 pt-4 pb-2 pointer-events-none;
+    @apply fixed inset-x-0 top-0 z-50 w-full;
+    transition: padding 220ms ease;
   }
 
   .site-header-bar {
-    @apply pointer-events-auto mx-auto flex h-16 max-w-6xl items-center gap-3 rounded-full border border-white/70
-      bg-white/75 px-3 sm:px-5 lg:px-6 shadow-[0_4px_24px_rgba(15,23,42,0.07)] backdrop-blur-xl
-      transition-[background-color,box-shadow,border-color] duration-200;
+    @apply mx-auto w-full max-w-full bg-white;
+    box-shadow: inset 0 -1px 0 var(--mk-hair);
+    transition:
+      max-width 220ms ease,
+      border-radius 220ms ease,
+      box-shadow 220ms ease;
   }
 
-  .site-header-bar--hero {
-    @apply bg-white/55 border-white/60 shadow-[0_4px_28px_rgba(15,23,42,0.06)] backdrop-blur-2xl;
+  .site-header-inner {
+    @apply mx-auto flex h-16 w-full max-w-6xl items-center gap-3;
+    padding-inline: var(--mk-container-pad);
+  }
+
+  body:has([data-sheet-hero]) .site-header-shell[data-docked='false'] {
+    padding: var(--mk-gutter) var(--mk-gutter) 0;
+  }
+
+  body:has([data-sheet-hero]) .site-header-shell[data-docked='false'] .site-header-bar {
+    max-width: 72rem;
+    border-radius: 20px;
+    box-shadow:
+      0 0 0 1px var(--mk-hair),
+      0 12px 32px rgba(17, 17, 17, 0.06);
   }
 
   .site-header-nav-link {
-    @apply rounded-full px-4 py-2 text-sm font-medium text-ink-muted transition-colors
-      hover:text-ink hover:bg-surface-elevated/70;
+    @apply inline-flex h-10 items-center rounded-full px-3.5 text-sm font-medium text-mk-muted transition-colors
+      hover:text-mk-ink;
   }
 
   .site-header-nav-link--active {
-    @apply bg-surface-elevated text-ink shadow-sm;
+    @apply text-mk-ink;
+  }
+
+  .site-header-new {
+    @apply ml-1.5 inline-flex h-[18px] items-center rounded-full border border-mk-line bg-mk-stage px-1.5
+      text-[11px] font-medium leading-none text-mk-ink;
   }
 
   .site-header-dropdown {
-    @apply z-50 min-w-[260px] rounded-2xl border border-surface-border/60 bg-white p-2
-      shadow-[0_12px_40px_rgba(15,23,42,0.14)];
+    @apply z-50 min-w-[260px] rounded-[20px] border border-mk-hair bg-white p-2 shadow-float;
     animation: headerDropdownIn 0.15s ease-out;
   }
 
   @keyframes headerDropdownIn {
     from {
       opacity: 0;
-      transform: translateY(-4px) scale(0.98);
+      transform: translateY(-4px);
     }
     to {
       opacity: 1;
-      transform: translateY(0) scale(1);
+      transform: translateY(0);
     }
   }
 
   .site-header-dropdown-item {
     @apply flex cursor-pointer flex-col gap-0.5 rounded-xl px-3.5 py-2.5 outline-none
-      transition-colors data-[highlighted]:bg-surface-elevated;
+      transition-colors data-[highlighted]:bg-mk-stage;
   }
 
   .site-header-brand {
-    @apply flex min-w-0 shrink-0 items-center gap-3 py-0.5 pl-1.5 pr-2 sm:pl-2 sm:pr-3;
+    @apply flex min-w-0 shrink-0 items-center gap-2.5 rounded-full py-1 pr-2;
   }
 
   .site-header-logo-mark {
-    @apply relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white ring-1 ring-surface-border/50;
+    @apply relative flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white ring-1 ring-mk-hair;
   }
 
-  .site-header-cta {
-    @apply inline-flex h-9 cursor-pointer items-center justify-center rounded-full bg-brand px-5 text-sm font-medium text-ink
-      shadow-glow transition-all duration-200 hover:brightness-105
-      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2;
+  .site-header-icon-btn {
+    @apply hit-44 inline-flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-full text-mk-muted
+      transition-colors hover:bg-mk-stage hover:text-mk-ink;
+  }
+
+  .site-header-menu {
+    @apply pointer-events-auto mx-[var(--mk-gutter)] mt-2 max-h-[calc(100dvh-var(--site-header-offset)-1.5rem)]
+      overflow-y-auto rounded-[20px] border border-mk-hair bg-white p-2 shadow-float lg:hidden;
+  }
+
+  .site-header-menu-link {
+    @apply flex min-h-11 items-center rounded-xl px-4 text-[15px] font-medium text-mk-muted transition-colors
+      hover:bg-mk-stage hover:text-mk-ink;
+  }
+
+  .site-header-menu-link--active {
+    @apply bg-mk-stage text-mk-ink;
   }
 
   .glass-panel {
-    @apply bg-white border border-surface-border rounded-brand shadow-glass;
+    @apply rounded-[22px] border border-mk-hair bg-white shadow-card;
   }
 
   .card-dark,
   .marketing-card {
-    @apply bg-white border border-surface-border/80 rounded-brand p-5 text-ink shadow-glass
-      transition-all duration-200 hover:border-brand/30 hover:shadow-glass-lg
+    @apply rounded-[20px] border border-mk-hair bg-white p-5 text-ink shadow-card
+      transition-[box-shadow,transform] duration-200 hover:shadow-card-lift
       motion-safe:hover:-translate-y-0.5;
   }
 
-  /* Featured-card top hairline: add alongside .marketing-card / .glass-panel. */
-  .card-hairline {
-    @apply relative overflow-hidden;
-  }
-
-  .card-hairline::before {
-    content: '';
-    @apply pointer-events-none absolute inset-x-0 top-0 h-[3px]
-      bg-gradient-to-r from-brand/60 via-brand to-brand-soft;
-  }
-
   .marketing-hero-badge {
-    @apply inline-flex items-center rounded-pill border border-brand/25 bg-brand-muted px-4 py-1.5 text-xs font-medium text-brand-strong;
+    @apply inline-flex items-center gap-1.5 rounded-full border border-mk-line bg-white px-3 py-1 text-[13px]
+      font-medium text-mk-ink;
   }
 
   .marketing-section-label {
     @apply text-xs font-semibold uppercase tracking-widest text-brand-strong;
   }
 
-  .marketing-feature-card {
-    @apply marketing-card p-6 hover:border-brand/30 transition-all duration-200;
+  .site-layout--canvas .marketing-section-label {
+    @apply font-medium normal-case tracking-normal text-mk-muted;
+  }
+
+  .marketing-display {
+    @apply font-sans font-bold text-mk-ink text-balance;
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    line-height: 1.05;
+    letter-spacing: -0.035em;
+  }
+
+  .marketing-display-sm {
+    @apply font-sans font-bold text-mk-ink text-balance;
+    font-size: clamp(2.25rem, 4.4vw, 3.5rem);
+    line-height: 1.06;
+    letter-spacing: -0.035em;
+  }
+
+  .marketing-h2 {
+    @apply font-sans font-semibold text-mk-ink text-balance;
+    font-size: clamp(2rem, 4vw, 3rem);
+    line-height: 1.08;
+    letter-spacing: -0.03em;
+  }
+
+  .marketing-h3 {
+    @apply font-sans text-2xl font-semibold leading-tight tracking-[-0.02em] text-mk-ink md:text-[1.75rem];
+  }
+
+  .marketing-lead {
+    @apply mx-auto max-w-[34rem] text-base leading-relaxed text-mk-body;
+  }
+
+  .marketing-body {
+    @apply text-base leading-relaxed text-mk-body;
+  }
+
+  .marketing-sheet-pad {
+    @apply py-14 md:py-20;
+  }
+
+  .marketing-canvas-pad {
+    @apply py-14 md:py-20;
+  }
+
+  .marketing-sheet {
+    @apply relative w-full bg-white;
+  }
+
+  .marketing-band {
+    @apply bg-mk-band;
+  }
+
+  .marketing-band .marketing-callout,
+  .marketing-band .marketing-product-stage {
+    @apply bg-white;
+  }
+
+  .marketing-sheet--hero {
+    @apply overflow-hidden;
+    padding-top: var(--site-header-offset);
+  }
+
+  .marketing-float-card {
+    @apply relative rounded-2xl border border-mk-hair bg-white p-3.5 text-left shadow-float;
+  }
+
+  .marketing-float-stack > * + * {
+    margin-top: -0.5rem;
+  }
+
+  .marketing-icon-disc {
+    @apply flex h-9 w-9 shrink-0 items-center justify-center rounded-full;
+  }
+
+  .marketing-orbit-spin {
+    @apply absolute left-0 top-0 h-0 w-0;
+  }
+
+  .marketing-orbit-mark {
+    @apply absolute h-10 w-10 -translate-x-1/2 -translate-y-1/2;
+  }
+
+  .marketing-orbit-face {
+    @apply flex h-10 w-10 items-center justify-center rounded-full border border-mk-hair bg-white shadow-card;
+  }
+
+  .marketing-orbit-ring {
+    @apply pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-mk-line;
+  }
+
+  .marketing-preview-card {
+    @apply flex h-full flex-col overflow-hidden rounded-[22px] border border-mk-hair bg-white shadow-card
+      transition-[box-shadow,transform] duration-200 hover:shadow-card-lift motion-safe:hover:-translate-y-0.5;
+  }
+
+  .marketing-preview-stage {
+    @apply relative flex h-[140px] items-center justify-center overflow-hidden border-b border-mk-hair bg-mk-stage px-5;
+  }
+
+  .marketing-product-stage {
+    @apply relative overflow-hidden rounded-[22px] border border-mk-hair bg-mk-stage px-3 pt-3 sm:px-8 sm:pt-8 md:rounded-[28px] md:px-12 md:pt-12;
+  }
+
+  .marketing-product-stage--padded {
+    @apply pb-3 sm:pb-8 md:pb-12;
+  }
+
+  .marketing-product-frame {
+    @apply relative mx-auto w-full max-w-4xl overflow-hidden rounded-[18px] border border-mk-hair bg-white shadow-float;
+  }
+
+  .marketing-product-frame .glass-panel {
+    @apply max-w-none rounded-none border-0 shadow-none;
+  }
+
+  .marketing-input {
+    @apply h-10 w-full rounded-xl border border-mk-line bg-white px-3.5 text-[15px] text-mk-ink
+      placeholder:text-mk-muted/80 transition-[border-color,box-shadow] duration-150
+      focus:border-brand focus:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-0
+      disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .marketing-textarea {
+    @apply marketing-input h-auto min-h-[120px] py-2.5 leading-relaxed;
+  }
+
+  .marketing-label {
+    @apply mb-1.5 block text-sm font-medium text-mk-ink;
   }
 
   .marketing-feature-icon {
-    @apply flex h-11 w-11 items-center justify-center rounded-brand bg-brand-muted mb-4
-      group-hover:bg-brand/15 transition-colors;
+    @apply marketing-icon-disc mb-4 bg-mk-blue-soft text-mk-blue;
   }
 
   .marketing-cta-band {
-    @apply section-pad bg-surface-elevated relative overflow-hidden border-t border-brand/15;
-  }
-
-  .marketing-cta-band::before {
-    content: '';
-    @apply absolute inset-0 pointer-events-none;
-    background:
-      radial-gradient(ellipse 70% 55% at 50% 100%, rgba(10, 197, 215, 0.18), transparent),
-      radial-gradient(ellipse 45% 35% at 88% 0%, rgba(255, 140, 66, 0.08), transparent 70%);
+    @apply border-t border-brand/15 bg-[#F0FCFD] py-16 md:py-24;
   }
 
   .marketing-callout {
-    @apply rounded-brand border border-brand/20 bg-brand-muted/50 p-5 md:p-6;
+    @apply rounded-[20px] border border-mk-hair bg-mk-stage p-5 md:p-6;
   }
 
   .marketing-step-number {
-    @apply flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand text-ink text-sm font-semibold;
+    @apply flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand text-sm font-semibold text-mk-ink;
+  }
+
+  .marketing-faq-list {
+    @apply mx-auto max-w-3xl overflow-hidden rounded-[22px] border border-mk-hair bg-white;
   }
 
   .marketing-faq-item {
-    @apply marketing-card overflow-hidden;
+    @apply border-b border-mk-hair last:border-b-0;
   }
 
   .marketing-faq-trigger {
-    @apply w-full flex items-center justify-between text-left gap-4 py-1 font-medium text-ink
-      cursor-pointer hover:text-brand-strong transition-colors
-      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2 focus-visible:rounded-lg;
+    @apply w-full flex items-center justify-between text-left gap-4 font-medium text-mk-ink
+      cursor-pointer transition-colors;
   }
 
   .marketing-faq-summary {
-    @apply cursor-pointer rounded-lg focus-visible:outline-none focus-visible:ring-2
-      focus-visible:ring-brand/50 focus-visible:ring-offset-2;
+    @apply cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand;
     list-style: none;
   }
 
@@ -712,7 +746,7 @@
   }
 
   .marketing-code-window {
-    @apply rounded-brand overflow-hidden border border-surface-border bg-[#0f172a] shadow-glass;
+    @apply overflow-hidden rounded-2xl bg-[#0f172a] shadow-float ring-1 ring-black/5;
   }
 
   .marketing-code-window-header {
@@ -724,27 +758,35 @@
   }
 
   .marketing-status-pill {
-    @apply inline-flex items-center gap-2 rounded-pill bg-emerald-50 text-emerald-700 border border-emerald-200/80
-      px-4 py-2 text-sm font-medium;
+    @apply inline-flex items-center gap-2 rounded-full border border-mk-line bg-white px-4 py-2 text-sm font-medium text-mk-ink;
   }
 
   .btn-brand {
-    @apply inline-flex items-center justify-center h-11 px-6 rounded-brand text-ink font-semibold text-sm
-      bg-gradient-to-r from-brand to-primary-400 cursor-pointer
-      shadow-glow transition-[box-shadow,transform,opacity,background-color] duration-200
-      hover:shadow-glow-lg motion-safe:hover:-translate-y-px
-      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2;
+    @apply inline-flex h-10 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-full bg-brand px-4
+      text-sm font-medium text-mk-ink transition-[background-color,transform] duration-200
+      hover:bg-brand-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand
+      focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-60;
   }
 
   .btn-brand-outline {
-    @apply inline-flex items-center justify-center h-11 px-6 rounded-brand border border-surface-border text-ink
-      bg-white cursor-pointer transition-[background-color,border-color,box-shadow,transform] duration-200
-      hover:bg-surface-elevated hover:border-brand/30
-      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2;
+    @apply inline-flex h-10 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-full border border-mk-line
+      bg-white px-4 text-sm font-medium text-mk-ink transition-[background-color,border-color] duration-200
+      hover:border-[#D9DBE0] hover:bg-mk-stage focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand
+      focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-60;
   }
 
-  .text-gradient-brand {
-    @apply bg-gradient-to-r from-brand-strong via-brand to-brand-soft bg-clip-text text-transparent;
+  .hit-44 {
+    @apply relative;
+  }
+
+  .hit-44::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: max(100%, 44px);
+    height: max(100%, 44px);
+    transform: translate(-50%, -50%);
   }
 
   .section-pad {
@@ -1212,10 +1254,35 @@
 @keyframes fade-rise {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(8px);
   }
   to {
     opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes orbit-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes rise-in-place {
+  from {
+    transform: translateY(8px);
+  }
+  to {
     transform: translateY(0);
   }
 }
@@ -1234,7 +1301,7 @@
 @media (prefers-reduced-motion: no-preference) {
   [data-reveal]:not([data-revealed]) {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(8px);
   }
 
   [data-reveal][data-revealed] {
@@ -1246,8 +1313,36 @@
     animation: fade-rise 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
   }
 
+  .animate-rise-paint {
+    animation: rise-in-place 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
   .animate-menu-in {
     animation: menu-in 0.18s ease-out both;
+  }
+
+  .marketing-orbit-spin {
+    will-change: transform;
+  }
+
+  .marketing-orbit-spin--outer {
+    animation: orbit-spin 90s linear infinite;
+  }
+
+  .marketing-orbit-spin--outer .marketing-orbit-face {
+    animation: orbit-spin 90s linear infinite reverse;
+  }
+
+  .marketing-orbit-spin--far {
+    animation: orbit-spin 130s linear infinite reverse;
+  }
+
+  .marketing-orbit-spin--far .marketing-orbit-face {
+    animation: orbit-spin 130s linear infinite;
+  }
+
+  .animate-float-slow {
+    animation: float 7s ease-in-out infinite;
   }
 
   .stagger-1 {

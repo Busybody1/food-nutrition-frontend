@@ -16,8 +16,8 @@ export function McpTrialBar() {
   if (!visible) return null
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-30 border-t border-surface-border bg-white/95 p-3 backdrop-blur lg:hidden">
-      <Link href="/mcp/pricing" className="btn-brand h-12 w-full text-base">
+    <div className="fixed inset-x-0 bottom-0 z-30 border-t border-mk-hair bg-white p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] lg:hidden">
+      <Link href="/mcp/pricing" className="btn-brand hit-44 w-full">
         Start 7-day trial
       </Link>
     </div>

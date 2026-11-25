@@ -1,6 +1,5 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
 import {
   CheckCircle,
   Zap,
@@ -8,6 +7,7 @@ import {
   Star,
   Crown,
   Building2,
+  type LucideIcon,
 } from 'lucide-react'
 import type { PricingPlan } from '@/lib/pricing/plan-display'
 import {
@@ -18,31 +18,28 @@ import {
   isMcpPlan,
 } from '@/lib/pricing/plan-display'
 import { PricingMcpExclusionNote } from '@/components/marketing/pricing-mcp-note'
+import { MarketingIconDisc, type DiscTone } from '@/components/marketing/marketing-shell'
 import { cn } from '@/lib/utils/cn'
 
+const PLAN_ICON: Record<string, { icon: LucideIcon; tone: DiscTone }> = {
+  free: { icon: Shield, tone: 'green' },
+  basic: { icon: Zap, tone: 'blue' },
+  core: { icon: Star, tone: 'violet' },
+  plus: { icon: Crown, tone: 'coral' },
+  enterprise: { icon: Building2, tone: 'blue' },
+  custom: { icon: Building2, tone: 'blue' },
+}
+
 function PlanIcon({ name }: { name: string }) {
-  const iconClass = 'h-5 w-5 text-brand-strong'
-  switch (name.toLowerCase()) {
-    case 'free':
-      return <Shield className={iconClass} />
-    case 'basic':
-      return <Zap className={iconClass} />
-    case 'core':
-      return <Star className={iconClass} />
-    case 'plus':
-      return <Crown className={iconClass} />
-    case 'enterprise':
-    case 'custom':
-      return <Building2 className={iconClass} />
-    default:
-      return <Shield className={iconClass} />
-  }
+  const entry = PLAN_ICON[name.toLowerCase()] ?? PLAN_ICON.free
+  return <MarketingIconDisc icon={entry.icon} tone={entry.tone} />
 }
 
 export function PricingCard({
   plan,
   isCurrent,
   isPopular,
+  emphasized,
   dense,
   subscribeLabel,
   subscribeDisabled,
@@ -51,6 +48,7 @@ export function PricingCard({
   plan: PricingPlan
   isCurrent: boolean
   isPopular?: boolean
+  emphasized?: boolean
 
   dense?: boolean
   subscribeLabel?: string | null
@@ -73,73 +71,69 @@ export function PricingCard({
         ? 'Schedule a call'
         : subscribeLabel || 'Subscribe'
 
+  const highlighted = emphasized ?? (isPopular === true || isCurrent)
+
   return (
     <article
       className={cn(
-        'relative flex h-full w-full flex-col rounded-brand border bg-white transition-all duration-200',
+        'relative flex h-full w-full flex-col rounded-[22px] border border-mk-hair bg-white transition-[box-shadow,transform] duration-200',
         dense ? 'p-6 xl:p-5' : 'p-6',
-        isPopular
-          ?
-            'border-brand/50 bg-gradient-to-b from-brand-muted/40 via-white to-white shadow-glow hover:shadow-glow-lg motion-safe:hover:-translate-y-0.5 lg:-translate-y-1.5 motion-safe:lg:hover:-translate-y-2 before:pointer-events-none before:absolute before:inset-x-0 before:top-0 before:h-[3px] before:rounded-t-brand before:bg-gradient-to-r before:from-brand/60 before:via-brand before:to-brand-soft before:content-[""]'
-          : 'border-surface-border/80 shadow-glass hover:border-brand/30 hover:shadow-glass-lg motion-safe:hover:-translate-y-0.5'
+        highlighted
+          ? 'shadow-card-strong motion-safe:hover:-translate-y-0.5'
+          : 'shadow-card hover:shadow-card-lift motion-safe:hover:-translate-y-0.5'
       )}
     >
       {isPopular && (
         <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-          <span className="marketing-hero-badge shadow-sm whitespace-nowrap">Most popular</span>
+          <span className="inline-flex h-6 items-center whitespace-nowrap rounded-full bg-brand px-2.5 text-xs font-medium text-mk-ink">
+            Most popular
+          </span>
         </div>
       )}
 
-      <div className="flex items-center gap-2 mb-3">
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-brand bg-brand-muted">
-          <PlanIcon name={plan.name} />
-        </div>
-        <h3 className="text-lg font-semibold text-ink">{plan.name}</h3>
+      <div className="mb-3 flex items-center gap-2.5">
+        <PlanIcon name={plan.name} />
+        <h3 className="text-lg font-semibold tracking-[-0.01em] text-mk-ink">{plan.name}</h3>
       </div>
 
-      {}
       <div className="mb-3 flex min-h-6 items-center">
         {commercial && (
-          <span className="inline-flex items-center rounded-full bg-brand-muted px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-brand-strong">
+          <span className="inline-flex items-center rounded-full border border-mk-line bg-mk-stage px-2 py-0.5 text-xs font-medium text-mk-ink">
             Commercial
           </span>
         )}
       </div>
 
       <div className="mb-1 flex items-baseline gap-1">
-        <span className="font-display text-4xl leading-none tracking-tight text-ink tabular-nums">
+        <span className="text-4xl font-semibold leading-none tracking-[-0.03em] text-mk-ink tabular-nums">
           {amount}
         </span>
-        {suffix ? <span className="text-sm font-medium text-ink-muted">{suffix}</span> : null}
+        {suffix ? <span className="text-sm font-medium text-mk-muted">{suffix}</span> : null}
       </div>
-      <p className="text-sm text-ink-muted mb-5 min-h-[3.75rem] leading-snug">{plan.description}</p>
+      <p className="mb-5 min-h-[3.75rem] text-sm leading-snug text-mk-muted">{plan.description}</p>
 
-      <ul className="space-y-2 mb-6 flex-1">
+      <ul className="mb-6 flex-1 space-y-2">
         {checklist.map((item) => (
-          <li key={item} className="flex items-start gap-2 text-sm text-ink-muted">
-            <CheckCircle className="h-4 w-4 text-brand shrink-0 mt-0.5" aria-hidden />
+          <li key={item} className="flex items-start gap-2 text-sm text-mk-muted">
+            <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-mk-green" aria-hidden />
             <span>{item}</span>
           </li>
         ))}
       </ul>
 
       {!isMcpPlan(plan) && (
-        <PricingMcpExclusionNote className="mb-4 border-t border-surface-border/70 pt-4" />
+        <PricingMcpExclusionNote className="mb-4 border-t border-mk-hair pt-4" />
       )}
 
-      <Button
-        variant={isPopular ? 'default' : 'outline'}
-        className={cn(
-          'w-full cursor-pointer',
-          isPopular &&
-            'h-11 font-semibold bg-brand text-white shadow-glow hover:bg-brand-strong hover:text-white hover:shadow-glow-lg'
-        )}
+      <button
+        type="button"
+        className={cn(highlighted ? 'btn-brand' : 'btn-brand-outline', 'w-full')}
         onClick={onSelect}
         disabled={isCurrent || subscribeDisabled === true}
         aria-label={`${ctaLabel} — ${plan.name} plan`}
       >
         {ctaLabel}
-      </Button>
+      </button>
     </article>
   )
 }

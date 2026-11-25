@@ -5,8 +5,8 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { useState, useEffect, useMemo } from 'react'
 import { useAuth } from '@/lib/hooks/use-auth'
 import { SubscribeModal } from '@/components/stripe/SubscribeModal'
-import { MarketingImageHero } from '@/components/marketing/marketing-image-hero'
 import { MarketingTrustPills } from '@/components/marketing/marketing-shell'
+import { MarketingSheetHero } from '@/components/marketing/marketing-sheet'
 import { PricingCard } from '@/components/marketing/pricing-card'
 import { PricingEnterpriseBand } from '@/components/marketing/pricing-enterprise-band'
 import { PricingComparison } from '@/components/marketing/pricing-comparison'
@@ -55,6 +55,9 @@ export function PricingContent({ initialPlans, initialError }: PricingContentPro
     plan_id: number
     plan_name: string
   } | null>(null)
+
+  const hasCurrentPlan =
+    currentSubscription != null && plans.some((plan) => plan.id === currentSubscription.plan_id)
 
   const { selfServePlans, enterprisePlans } = useMemo(() => {
     const selfServe: PricingPlan[] = []
@@ -155,48 +158,45 @@ export function PricingContent({ initialPlans, initialError }: PricingContentPro
 
   return (
     <div className="marketing-page">
-      <MarketingImageHero compact centered waveTone="elevated">
-        <h1 className="font-display text-4xl md:text-5xl text-ink mb-4">
-          {PRICING_SEO.title}
-        </h1>
-        <p className="aeo-answer text-lg text-ink-muted mb-8 max-w-2xl mx-auto">
-          {PRICING_SEO.description}
-        </p>
-        <p className="mb-8 text-sm text-ink-muted">
+      <MarketingSheetHero
+        title={PRICING_SEO.title}
+        lead={PRICING_SEO.description}
+        leadClassName="aeo-answer"
+        actions={
+          <>
+            <TrackedCtaLink href="/auth/register" eventLabel="Get started free" className="btn-brand">
+              Get started free
+            </TrackedCtaLink>
+            <button
+              type="button"
+              className="btn-brand-outline"
+              onClick={() => setIsScheduleOpen(true)}
+              aria-haspopup="dialog"
+            >
+              Schedule a call
+            </button>
+          </>
+        }
+      >
+        <p className="mt-6 text-sm text-mk-muted">
           Using Claude Code or Cursor?{' '}
-          <Link href="/mcp/pricing" className="text-brand-strong underline">
+          <Link
+            href="/mcp/pricing"
+            className="rounded-sm font-medium text-brand-strong underline underline-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
+          >
             See the MCP plan
           </Link>
           .
         </p>
-        <div className="mb-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
-          <TrackedCtaLink
-            href="/auth/register"
-            eventLabel="Get started free"
-            className="btn-brand h-12 w-full px-8 text-base sm:w-auto"
-          >
-            Get started free
-          </TrackedCtaLink>
-          <button
-            type="button"
-            className="btn-brand-outline h-12 w-full px-8 text-base sm:w-auto"
-            onClick={() => setIsScheduleOpen(true)}
-            aria-haspopup="dialog"
-          >
-            Schedule a call
-          </button>
+        <div className="mt-5">
+          <MarketingTrustPills
+            items={['Live limits from your plan', 'Cancel anytime', 'Enterprise image + credits']}
+          />
         </div>
-        <MarketingTrustPills
-          items={['Live limits from your plan', 'Cancel anytime', 'Enterprise image + credits']}
-        />
-      </MarketingImageHero>
+      </MarketingSheetHero>
 
-      <section className="relative overflow-hidden bg-surface-elevated pt-10 md:pt-12 pb-20 md:pb-28">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute left-1/2 top-0 h-[420px] w-full max-w-[900px] -translate-x-1/2 bg-[radial-gradient(ellipse_at_center,rgba(10,197,215,0.12),transparent_65%)]"
-        />
-        <div className="container-narrow relative space-y-8">
+      <section className="pb-14 pt-10 md:pb-20 md:pt-14">
+        <div className="container-narrow space-y-8">
           {isLoading ? (
             <>
               <div
@@ -207,27 +207,27 @@ export function PricingContent({ initialPlans, initialError }: PricingContentPro
                 {Array.from({ length: 4 }).map((_, i) => (
                   <div
                     key={i}
-                    className="h-[420px] rounded-brand border border-surface-border bg-white animate-pulse"
+                    className="h-[420px] rounded-[22px] border border-mk-hair bg-white animate-pulse"
                   />
                 ))}
               </div>
-              <div className="h-48 rounded-brand border border-surface-border bg-white animate-pulse" />
+              <div className="h-48 rounded-[22px] border border-mk-hair bg-white animate-pulse" />
             </>
           ) : loadError ? (
             <div
               role="alert"
-              className="mx-auto max-w-md rounded-brand border border-error-500/30 bg-white px-5 py-4 text-center shadow-glass"
+              className="mx-auto max-w-md rounded-[20px] border border-error-500/30 bg-white px-5 py-4 text-center shadow-card"
             >
               <p className="text-sm text-error-600">{loadError}</p>
             </div>
           ) : plans.length === 0 ? (
-            <p className="text-sm text-ink-muted text-center">No plans available.</p>
+            <p className="text-sm text-mk-muted text-center">No plans available.</p>
           ) : (
             <>
               {selfServePlans.length > 0 && (
                 <div className="space-y-4">
                   {chargeNote ? (
-                    <p className="text-center text-sm text-ink" role="status">
+                    <p className="text-center text-sm text-mk-ink" role="status">
                       {chargeNote}
                     </p>
                   ) : null}
@@ -243,6 +243,11 @@ export function PricingContent({ initialPlans, initialError }: PricingContentPro
                           plan={plan}
                           isPopular={plan.is_recommended === true}
                           isCurrent={currentSubscription?.plan_id === plan.id}
+                          emphasized={
+                            hasCurrentPlan
+                              ? currentSubscription?.plan_id === plan.id
+                              : plan.is_recommended === true
+                          }
                           subscribeLabel={restSubscribeLabel({
                             paid,
                             trialDays,

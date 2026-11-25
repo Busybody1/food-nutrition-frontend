@@ -1,32 +1,67 @@
 import type { LucideIcon } from 'lucide-react'
 import { cn } from '@/lib/utils/cn'
 import { TrackedCtaLink } from '@/components/analytics/tracked-cta-link'
-import { CountUp } from '@/components/marketing/count-up'
+import { RevealGroup } from '@/components/marketing/reveal'
 
 export const marketingCardClass = 'marketing-card'
 
+export type DiscTone = 'blue' | 'green' | 'violet' | 'coral'
+
+const DISC_TONE_CLASS: Record<DiscTone, string> = {
+  blue: 'bg-mk-blue-soft text-mk-blue',
+  green: 'bg-mk-green-soft text-mk-green',
+  violet: 'bg-mk-violet-soft text-mk-violet',
+  coral: 'bg-mk-coral-soft text-mk-coral',
+}
+
+const DISC_TONE_ORDER: DiscTone[] = ['blue', 'green', 'violet', 'coral']
+
+export function discToneAt(index: number): DiscTone {
+  return DISC_TONE_ORDER[index % DISC_TONE_ORDER.length]
+}
+
+export function discToneClass(tone: DiscTone): string {
+  return DISC_TONE_CLASS[tone]
+}
+
+export function MarketingIconDisc({
+  icon: Icon,
+  tone = 'blue',
+  className,
+}: {
+  icon: LucideIcon
+  tone?: DiscTone
+  className?: string
+}) {
+  return (
+    <span className={cn('marketing-icon-disc', DISC_TONE_CLASS[tone], className)} aria-hidden>
+      <Icon className="h-[18px] w-[18px]" strokeWidth={1.9} />
+    </span>
+  )
+}
+
 export function MarketingSectionHeader({
-  label,
   title,
   description,
   className,
   id,
+  align = 'center',
 }: {
   label?: string
   title: React.ReactNode
   description?: React.ReactNode
   className?: string
-
   id?: string
+  align?: 'center' | 'left'
 }) {
+  const centered = align === 'center'
   return (
-    <div className={cn('text-center max-w-3xl mx-auto mb-12 md:mb-14', className)}>
-      {label && <p className="marketing-section-label mb-3">{label}</p>}
-      <h2 id={id} className="font-display text-3xl md:text-4xl tracking-tight text-ink text-balance">
+    <div className={cn('mb-10 md:mb-14', centered ? 'mx-auto max-w-3xl text-center' : 'max-w-2xl', className)}>
+      <h2 id={id} className="marketing-h2">
         {title}
       </h2>
       {description && (
-        <p className="mt-4 text-ink-muted text-base md:text-lg leading-relaxed">{description}</p>
+        <p className={cn('marketing-body mt-4', centered && 'mx-auto max-w-[38rem]')}>{description}</p>
       )}
     </div>
   )
@@ -34,10 +69,10 @@ export function MarketingSectionHeader({
 
 export function MarketingTrustPills({ items }: { items: string[] }) {
   return (
-    <ul className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm font-medium text-ink-muted">
+    <ul className="flex flex-wrap justify-center gap-x-5 gap-y-2 text-sm font-medium text-mk-muted">
       {items.map((item) => (
         <li key={item} className="flex items-center gap-2">
-          <span className="h-1.5 w-1.5 rounded-full bg-brand shrink-0" aria-hidden />
+          <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-mk-line" aria-hidden />
           {item}
         </li>
       ))}
@@ -45,23 +80,97 @@ export function MarketingTrustPills({ items }: { items: string[] }) {
   )
 }
 
+export type MarketingHighlightStat = { icon: LucideIcon; value: string; label: string }
+
+export function MarketingHighlightStats({
+  stats,
+  className,
+}: {
+  stats: readonly MarketingHighlightStat[]
+  className?: string
+}) {
+  return (
+    <ul
+      className={cn(
+        'mx-auto grid max-w-5xl grid-cols-2 gap-1 rounded-[24px] border border-mk-hair bg-white p-1.5 shadow-float md:grid-cols-4 md:gap-0 md:rounded-full md:p-2',
+        className
+      )}
+    >
+      {stats.map(({ icon, value, label }, index) => (
+        <li
+          key={label}
+          className={cn(
+            'flex min-w-0 flex-col items-center gap-2 rounded-[18px] px-2 py-4 text-center md:flex-row md:justify-center md:gap-3 md:rounded-none md:px-4 md:py-2 md:text-left',
+            index > 0 && 'md:border-l md:border-mk-hair'
+          )}
+        >
+          <MarketingIconDisc icon={icon} tone={discToneAt(index)} />
+          <span className="min-w-0">
+            <span className="block whitespace-nowrap text-[17px] font-semibold leading-tight tracking-[-0.02em] text-mk-ink tabular-nums">
+              {value}
+            </span>
+            <span className="block text-[13px] leading-snug text-mk-muted lg:whitespace-nowrap">{label}</span>
+          </span>
+        </li>
+      ))}
+    </ul>
+  )
+}
+
 export function MarketingFeatureCard({
-  icon: Icon,
+  icon,
   title,
   description,
+  tone = 'blue',
 }: {
   icon: LucideIcon
   title: string
   description: string
+  tone?: DiscTone
 }) {
   return (
-    <div className="marketing-feature-card group h-full">
-      <div className="marketing-feature-icon transition-all duration-200 motion-safe:group-hover:scale-105">
-        <Icon className="h-6 w-6 text-brand-strong" aria-hidden />
-      </div>
-      <h3 className="text-lg font-semibold text-ink mb-2">{title}</h3>
-      <p className="text-sm text-ink-muted leading-relaxed">{description}</p>
+    <div className="h-full">
+      <MarketingIconDisc icon={icon} tone={tone} />
+      <h3 className="mt-4 text-base font-semibold tracking-[-0.01em] text-mk-ink">{title}</h3>
+      <p className="mt-1.5 text-[15px] leading-relaxed text-mk-muted">{description}</p>
     </div>
+  )
+}
+
+export type MarketingFeatureItem = {
+  icon: LucideIcon
+  title: string
+  description: string
+}
+
+export function MarketingFeatureGrid({
+  items,
+  columns = 3,
+  className,
+}: {
+  items: readonly MarketingFeatureItem[]
+  columns?: 2 | 3
+  className?: string
+}) {
+  return (
+    <RevealGroup
+      className={cn(
+        'grid gap-x-10 gap-y-10 sm:grid-cols-2 md:gap-y-12',
+        columns === 3 && 'lg:grid-cols-3',
+        className
+      )}
+      itemClassName="h-full min-w-0"
+    >
+      {items.map((item, index) => (
+        <MarketingFeatureCard
+          key={item.title}
+          icon={item.icon}
+          title={item.title}
+          description={item.description}
+          tone={discToneAt(index)}
+        />
+      ))}
+    </RevealGroup>
   )
 }
 
@@ -87,49 +196,31 @@ export function MarketingCtaBand({
 }) {
   return (
     <section className="marketing-cta-band">
-      <div className="container-narrow relative z-10">
-        <div className="glass-panel card-hairline mx-auto max-w-3xl px-6 py-10 text-center shadow-glass-lg sm:px-10 md:px-14 md:py-14">
-          <h2 className="font-display text-3xl md:text-4xl tracking-tight text-ink mb-4 text-balance">
-            {title}
-          </h2>
-          <p className="text-ink-muted max-w-lg mx-auto mb-8 leading-relaxed">{description}</p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
-            <TrackedCtaLink
-              href={primaryHref}
-              eventLabel={primaryLabel}
-              className="btn-brand h-12 px-8 text-base w-full sm:w-auto"
-            >
-              {primaryLabel}
+      <div className="container-narrow text-center">
+        <h2 className="marketing-h2 mx-auto max-w-2xl">{title}</h2>
+        <p className="marketing-lead mt-4">{description}</p>
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+          <TrackedCtaLink href={primaryHref} eventLabel={primaryLabel} className="btn-brand">
+            {primaryLabel}
+          </TrackedCtaLink>
+          {secondaryHref && secondaryLabel && (
+            <TrackedCtaLink href={secondaryHref} eventLabel={secondaryLabel} className="btn-brand-outline">
+              {secondaryLabel}
             </TrackedCtaLink>
-            {secondaryHref && secondaryLabel && (
-              <TrackedCtaLink
-                href={secondaryHref}
-                eventLabel={secondaryLabel}
-                className="btn-brand-outline h-12 px-8 text-base w-full sm:w-auto"
-              >
-                {secondaryLabel}
-              </TrackedCtaLink>
-            )}
-          </div>
-          {footnote && <div className="mt-6 text-sm text-ink-muted">{footnote}</div>}
-          {children && <div className="mt-6">{children}</div>}
+          )}
         </div>
+        {footnote && <div className="mt-6 text-sm text-mk-muted">{footnote}</div>}
+        {children && <div className="mt-6">{children}</div>}
       </div>
     </section>
   )
 }
 
-const STAT_VALUE_CLASS =
-  'font-display text-3xl md:text-4xl tracking-tight whitespace-nowrap text-ink ' +
-  'supports-[background-clip:text]:bg-gradient-to-r supports-[background-clip:text]:from-brand-strong ' +
-  'supports-[background-clip:text]:via-brand supports-[background-clip:text]:to-brand-soft ' +
-  'supports-[background-clip:text]:bg-clip-text supports-[background-clip:text]:text-transparent'
-
 const STAT_GRID_CLASS: Record<number, string> = {
   1: 'grid-cols-1 max-w-xs mx-auto',
-  2: 'grid-cols-1 sm:grid-cols-2 max-w-2xl mx-auto sm:divide-x sm:divide-surface-border/70',
-  3: 'grid-cols-1 sm:grid-cols-3 sm:divide-x sm:divide-surface-border/70',
-  4: 'grid-cols-2 md:grid-cols-4 md:divide-x md:divide-surface-border/70',
+  2: 'grid-cols-2 max-w-xl mx-auto',
+  3: 'grid-cols-1 sm:grid-cols-3 max-w-3xl mx-auto',
+  4: 'grid-cols-2 md:grid-cols-4',
 }
 
 export function MarketingStatStrip({
@@ -139,29 +230,24 @@ export function MarketingStatStrip({
 }) {
   const gridClass = STAT_GRID_CLASS[stats.length] ?? STAT_GRID_CLASS[4]
   return (
-    <div className={cn('grid gap-y-6', gridClass)}>
-      {stats.map(({ value, label, icon: Icon }) => (
-        <div key={label} className="text-center px-4 md:px-6">
-          {Icon && <Icon className="h-7 w-7 text-brand mx-auto mb-3 opacity-90" aria-hidden />}
-          <div>
-            {/\d/.test(value) ? (
-              <CountUp value={value} className={STAT_VALUE_CLASS} />
-            ) : (
-              <span className={cn(STAT_VALUE_CLASS, 'tabular-nums')}>{value}</span>
-            )}
-          </div>
-          <div className="text-xs md:text-sm text-ink-muted mt-1">{label}</div>
+    <dl className={cn('grid gap-x-6 gap-y-8', gridClass)}>
+      {stats.map(({ value, label }) => (
+        <div key={label} className="flex flex-col-reverse items-center text-center">
+          <dt className="mt-1 text-sm text-mk-muted">{label}</dt>
+          <dd className="whitespace-nowrap text-3xl font-semibold tabular-nums tracking-[-0.03em] text-mk-ink md:text-[2.25rem]">
+            {value}
+          </dd>
         </div>
       ))}
-    </div>
+    </dl>
   )
 }
 
 export function MarketingPageLoading({ message = 'Loading...' }: { message?: string }) {
   return (
-    <div className="marketing-page min-h-[50vh] flex flex-col items-center justify-center gap-4">
+    <div className="marketing-page min-h-[50vh] flex flex-col items-center justify-center gap-4 pt-[var(--site-header-offset)]">
       <div className="marketing-spinner" role="status" aria-label={message} />
-      <p className="text-sm text-ink-muted">{message}</p>
+      <p className="text-sm text-mk-muted">{message}</p>
     </div>
   )
 }

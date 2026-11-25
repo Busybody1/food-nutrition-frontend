@@ -3,8 +3,6 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { AuthShell } from '@/components/marketing/auth-shell'
 import { useAuth } from '@/lib/hooks/use-auth'
 import { isDuplicateEmailMessage } from '@/lib/api/errors'
@@ -89,11 +87,11 @@ export default function RegisterPage() {
     }
   }
 
-  const labelClass = 'block text-sm font-medium text-ink-muted mb-1'
+  const labelClass = 'marketing-label'
   const linkClass =
-    'text-brand-strong underline decoration-brand/40 underline-offset-2 hover:decoration-brand-strong rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2'
+    'text-brand-strong underline decoration-brand/40 underline-offset-2 hover:decoration-brand-strong rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2'
   const toggleClass =
-    'absolute inset-y-0 right-0 pr-3 flex items-center rounded-r-brand cursor-pointer text-ink-muted hover:text-ink transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40'
+    'absolute inset-y-0 right-0 pr-3 flex items-center rounded-r-xl cursor-pointer text-mk-muted hover:text-mk-ink transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand'
 
   return (
     <AuthShell
@@ -111,11 +109,11 @@ export default function RegisterPage() {
         {error && (
           <div
             role="alert"
-            className="bg-error-500/10 border border-error-500/30 text-error-500 px-4 py-3 rounded-card text-sm"
+            className="bg-error-500/10 border border-error-500/30 text-error-500 px-4 py-3 rounded-xl text-sm"
           >
             <p>{error}</p>
             {isDuplicateEmailMessage(error) && (
-              <p className="mt-2 text-ink-muted">
+              <p className="mt-2 text-mk-muted">
                 Already have an account?{' '}
                 <Link href={loginHref} className={`${linkClass} font-medium`}>
                   Sign in
@@ -130,38 +128,38 @@ export default function RegisterPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-3">
             <div>
               <label htmlFor="firstName" className={labelClass}>First name</label>
-              <Input id="firstName" name="firstName" required value={formData.firstName} onChange={handleInputChange} className="h-11" />
+              <input id="firstName" name="firstName" required value={formData.firstName} onChange={handleInputChange} className="marketing-input" />
             </div>
             <div>
               <label htmlFor="lastName" className={labelClass}>Last name</label>
-              <Input id="lastName" name="lastName" required value={formData.lastName} onChange={handleInputChange} className="h-11" />
+              <input id="lastName" name="lastName" required value={formData.lastName} onChange={handleInputChange} className="marketing-input" />
             </div>
           </div>
 
           <div>
             <label htmlFor="email" className={labelClass}>Email</label>
-            <Input id="email" name="email" type="email" required value={formData.email} onChange={handleInputChange} className="h-11" />
+            <input id="email" name="email" type="email" required value={formData.email} onChange={handleInputChange} className="marketing-input" />
           </div>
 
           <div>
-            <label htmlFor="companyName" className="block text-sm font-normal text-ink-muted mb-1">Company (optional)</label>
-            <Input id="companyName" name="companyName" value={formData.companyName} onChange={handleInputChange} className="h-11" />
+            <label htmlFor="companyName" className="marketing-label font-normal text-mk-muted">Company (optional)</label>
+            <input id="companyName" name="companyName" value={formData.companyName} onChange={handleInputChange} className="marketing-input" />
           </div>
         </div>
 
         {}
-        <div className="space-y-4 border-t border-surface-border/70 pt-5">
+        <div className="space-y-4 border-t border-mk-hair pt-5">
           <div>
             <label htmlFor="password" className={labelClass}>Password</label>
             <div className="relative">
-              <Input
+              <input
                 id="password"
                 name="password"
                 type={showPassword ? 'text' : 'password'}
                 required
                 value={formData.password}
                 onChange={handleInputChange}
-                className="h-11 pr-10"
+                className="marketing-input pr-10"
               />
               <button
                 type="button"
@@ -172,20 +170,20 @@ export default function RegisterPage() {
                 {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
             </div>
-            <p className="text-xs text-ink-muted mt-1">At least 8 characters</p>
+            <p className="mt-1.5 text-xs text-mk-muted">At least 8 characters</p>
           </div>
 
           <div>
             <label htmlFor="confirmPassword" className={labelClass}>Confirm password</label>
             <div className="relative">
-              <Input
+              <input
                 id="confirmPassword"
                 name="confirmPassword"
                 type={showConfirmPassword ? 'text' : 'password'}
                 required
                 value={formData.confirmPassword}
                 onChange={handleInputChange}
-                className="h-11 pr-10"
+                className="marketing-input pr-10"
               />
               <button
                 type="button"
@@ -198,12 +196,12 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          <label className="flex items-start gap-2 text-sm text-ink-muted cursor-pointer">
+          <label className="flex items-start gap-2 text-sm text-mk-muted cursor-pointer">
             <input
               type="checkbox"
               checked={agreedToTerms}
               onChange={(e) => setAgreedToTerms(e.target.checked)}
-              className="mt-1 rounded border-surface-border accent-brand cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-1"
+              className="mt-1 rounded border-mk-line accent-mk-ink cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-1"
             />
             <span>
               I agree to the <Link href="/terms" className={linkClass}>Terms</Link> and{' '}
@@ -212,20 +210,20 @@ export default function RegisterPage() {
           </label>
         </div>
 
-        <Button
+        <button
           type="submit"
-          className="w-full h-11 font-semibold hover:shadow-glow-lg motion-safe:hover:-translate-y-px"
+          className="btn-brand w-full"
           disabled={isLoading}
         >
           {isLoading ? (
             <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
               Creating account…
             </>
           ) : (
             'Create account'
           )}
-        </Button>
+        </button>
       </form>
     </AuthShell>
   )

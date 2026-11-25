@@ -3,8 +3,6 @@
 import { Suspense, useCallback, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { AuthShell } from '@/components/marketing/auth-shell'
 import { api } from '@/lib/api/client'
 import { safeNextPath } from '@/lib/mcp/catalog'
@@ -107,9 +105,9 @@ function VerifyEmailForm() {
     }
   }
 
-  const labelClass = 'block text-sm font-medium text-ink-muted mb-1'
+  const labelClass = 'marketing-label'
   const linkClass =
-    'text-brand-strong underline decoration-brand/40 underline-offset-2 hover:decoration-brand-strong rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2'
+    'text-brand-strong underline decoration-brand/40 underline-offset-2 hover:decoration-brand-strong rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2'
 
   return (
     <AuthShell
@@ -119,7 +117,7 @@ function VerifyEmailForm() {
           Enter the 6-digit code we sent
           {email ? (
             <>
-              {' '}to <span className="font-medium text-ink">{email}</span>
+              {' '}to <span className="font-medium text-mk-ink">{email}</span>
             </>
           ) : (
             ' to your inbox'
@@ -132,7 +130,7 @@ function VerifyEmailForm() {
         {error && (
           <div
             role="alert"
-            className="bg-error-500/10 border border-error-500/30 text-error-500 px-4 py-3 rounded-card text-sm"
+            className="bg-error-500/10 border border-error-500/30 text-error-500 px-4 py-3 rounded-xl text-sm"
           >
             {error}
           </div>
@@ -141,9 +139,9 @@ function VerifyEmailForm() {
         {notice && (
           <div
             role="status"
-            className="flex items-start gap-2 bg-brand/10 border border-brand/30 text-ink px-4 py-3 rounded-card text-sm"
+            className="flex items-start gap-2 bg-mk-green-soft border border-mk-green/20 text-mk-ink px-4 py-3 rounded-xl text-sm"
           >
-            <CheckCircle2 className="h-4 w-4 mt-0.5 shrink-0 text-brand-strong" />
+            <CheckCircle2 className="h-4 w-4 mt-0.5 shrink-0 text-mk-green" />
             <span>{notice}</span>
           </div>
         )}
@@ -151,7 +149,7 @@ function VerifyEmailForm() {
         {}
         <div>
           <label htmlFor="email" className={labelClass}>Email</label>
-          <Input
+          <input
             id="email"
             name="email"
             type="email"
@@ -162,13 +160,13 @@ function VerifyEmailForm() {
               setEmail(e.target.value)
               setError('')
             }}
-            className="h-11"
+            className="marketing-input"
           />
         </div>
 
         <div>
           <label htmlFor="code" className={labelClass}>Verification code</label>
-          <Input
+          <input
             ref={inputRef}
             id="code"
             name="code"
@@ -181,39 +179,38 @@ function VerifyEmailForm() {
             value={code}
             onChange={(e) => handleCodeChange(e.target.value)}
             placeholder="000000"
-            className="h-14 text-center text-2xl font-mono tracking-[0.5em]"
+            className="marketing-input h-14 text-center font-mono text-2xl tracking-[0.5em]"
           />
-          <p className="text-xs text-ink-muted mt-1">Check your inbox (and spam) for the code.</p>
+          <p className="mt-1.5 text-xs text-mk-muted">Check your inbox (and spam) for the code.</p>
         </div>
 
-        <Button
+        <button
           type="submit"
-          className="w-full h-11 font-semibold hover:shadow-glow-lg motion-safe:hover:-translate-y-px"
+          className="btn-brand w-full"
           disabled={isSubmitting || code.length !== 6}
         >
           {isSubmitting ? (
             <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
               Verifying…
             </>
           ) : (
             'Verify email'
           )}
-        </Button>
+        </button>
       </form>
 
-      <div className="mt-6 border-t border-surface-border/70 pt-5 text-center">
-        <p className="text-sm text-ink-muted">Didn&apos;t get a code?</p>
-        <Button
+      <div className="mt-6 border-t border-mk-hair pt-5 text-center">
+        <p className="text-sm text-mk-muted">Didn&apos;t get a code?</p>
+        <button
           type="button"
-          variant="outline"
           onClick={handleResend}
           disabled={isResending || cooldown > 0}
-          className="mt-3 w-full"
+          className="btn-brand-outline mt-3 w-full"
         >
           {isResending ? (
             <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
               Sending…
             </>
           ) : cooldown > 0 ? (
@@ -221,8 +218,8 @@ function VerifyEmailForm() {
           ) : (
             'Resend code'
           )}
-        </Button>
-        <p className="mt-4 text-sm text-ink-muted">
+        </button>
+        <p className="mt-4 text-sm text-mk-muted">
           Wrong account?{' '}
           <Link
             href={nextPath ? `/auth/login?next=${encodeURIComponent(nextPath)}` : '/auth/login'}

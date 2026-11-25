@@ -3,6 +3,9 @@ import { FaqList } from '@/components/marketing/faq-section'
 import type { DocsBlock } from '@/lib/docs/types'
 import type { FaqItem } from '@/lib/faq-data'
 
+export const DOCS_H2_CLASS =
+  'font-sans text-2xl md:text-[1.75rem] font-semibold leading-tight tracking-[-0.02em] text-mk-ink'
+
 export function DocsBlockRenderer({ blocks }: { blocks: DocsBlock[] }) {
   const answerIndex = blocks.findIndex((block) => block.kind === 'p')
   return (
@@ -27,7 +30,7 @@ export function DocsBlockRenderer({ blocks }: { blocks: DocsBlock[] }) {
               <h2
                 key={i}
                 id={block.id}
-                className="font-display text-2xl md:text-3xl tracking-tight text-ink mt-10 mb-4 scroll-mt-24"
+                className={`${DOCS_H2_CLASS} mt-10 mb-4 scroll-mt-24`}
               >
                 {block.text}
               </h2>
@@ -37,7 +40,7 @@ export function DocsBlockRenderer({ blocks }: { blocks: DocsBlock[] }) {
               <h3
                 key={i}
                 id={block.id}
-                className="text-xl font-semibold text-ink mt-8 mb-3 scroll-mt-24"
+                className="text-xl font-semibold tracking-[-0.01em] text-mk-ink mt-8 mb-3 scroll-mt-24"
               >
                 {block.text}
               </h3>
@@ -81,8 +84,8 @@ export function DocsBlockRenderer({ blocks }: { blocks: DocsBlock[] }) {
 export function DocsFaqBlock({ faqs }: { faqs: readonly FaqItem[] }) {
   if (faqs.length === 0) return null
   return (
-    <section className="mt-12 border-t border-surface-border/60 pt-8" aria-label="Section FAQ">
-      <h2 className="font-display text-2xl md:text-3xl tracking-tight text-ink mb-6">
+    <section className="mt-12 border-t border-mk-hair pt-8" aria-label="Section FAQ">
+      <h2 className={`${DOCS_H2_CLASS} mb-6`}>
         Frequently asked questions
       </h2>
       <div className="max-w-3xl [&>div]:mx-0 [&>div]:max-w-none">

@@ -16,10 +16,10 @@ export function CalendlyInlineEmbed({
 
   return (
     <div className={cn('w-full', className)}>
-      <div className="relative w-full overflow-hidden rounded-brand bg-white">
+      <div className="relative w-full overflow-hidden rounded-xl border border-mk-hair bg-white">
         {!isLoaded && (
           <div
-            className="absolute inset-0 animate-pulse bg-surface-elevated"
+            className="absolute inset-0 animate-pulse bg-mk-stage"
             aria-hidden
           />
         )}
@@ -31,7 +31,7 @@ export function CalendlyInlineEmbed({
           onLoad={() => setIsLoaded(true)}
         />
       </div>
-      <p className="mt-3 text-center text-xs text-ink-muted">
+      <p className="mt-3 text-center text-xs text-mk-muted">
         Having trouble loading the calendar?{' '}
         <a
           href={CALENDLY_ENTERPRISE_URL}

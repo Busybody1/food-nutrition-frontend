@@ -18,23 +18,16 @@ export function MarketingSeoSection({
     <section
       id={id}
       className={cn(
-        'section-pad bg-white border-t border-surface-border/60',
+        'marketing-canvas-pad',
         className
       )}
       aria-labelledby={`${id}-heading`}
     >
       <div className="container-prose">
-        <h2
-          id={`${id}-heading`}
-          className="font-display text-3xl md:text-4xl tracking-tight text-ink mb-3"
-        >
+        <h2 id={`${id}-heading`} className="marketing-h3 mb-6">
           {title}
         </h2>
-        <div
-          className="h-1 w-12 rounded-full bg-gradient-to-r from-brand to-brand-soft mb-6"
-          aria-hidden
-        />
-        <div className="space-y-4 text-ink-muted leading-relaxed text-base">{children}</div>
+        <div className="marketing-body space-y-4">{children}</div>
       </div>
     </section>
   )
@@ -51,7 +44,7 @@ export function SeoInlineLink({
     <Link
       href={href}
       prefetch={false}
-      className="text-brand-strong font-medium underline decoration-brand/40 underline-offset-2 transition-colors duration-200 hover:decoration-brand-strong rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2"
+      className="text-brand-strong font-medium underline decoration-brand/40 underline-offset-2 transition-colors duration-200 hover:decoration-brand-strong rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
     >
       {children}
     </Link>

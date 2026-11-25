@@ -7,7 +7,8 @@ import { JsonLdScript } from '@/components/seo/structured-data'
 import { buildBreadcrumbJsonLd, buildTechArticleJsonLd } from '@/lib/seo-jsonld'
 import { buildFaqPageJsonLd } from '@/lib/faq-data'
 import { DocsShell } from '@/components/docs/docs-shell'
-import { DocsBlockRenderer, DocsFaqBlock } from '@/components/docs/docs-blocks'
+import { DOCS_H2_CLASS, DocsBlockRenderer, DocsFaqBlock } from '@/components/docs/docs-blocks'
+import { MarketingIconDisc } from '@/components/marketing/marketing-shell'
 import { DocsCta } from '@/components/docs/docs-cta'
 import { DocsToc } from '@/components/docs/docs-toc'
 import { GUIDES, getGuide, guidePath } from '@/lib/docs/guides-data'
@@ -42,10 +43,10 @@ const GUIDE_ICONS: Record<string, typeof Code2> = {
 }
 
 const BREADCRUMB_LINK_CLASS =
-  'rounded text-brand-strong underline decoration-brand/40 underline-offset-2 hover:decoration-brand-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50'
+  'rounded text-brand-strong underline decoration-brand/40 underline-offset-2 hover:decoration-brand-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand'
 
 const PAGINATION_CARD_CLASS =
-  'marketing-card group flex h-full items-center p-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2'
+  'marketing-card group flex h-full items-center p-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2'
 
 export default async function GuidePage({ params }: PageProps) {
   const { slug } = await params
@@ -89,12 +90,8 @@ export default async function GuidePage({ params }: PageProps) {
 
       <DocsShell>
         <article>
-          <div className="relative mb-8 overflow-hidden rounded-brand border border-brand/10 bg-gradient-to-br from-brand-muted/60 via-white to-white p-5 sm:p-6 md:p-8">
-            <div
-              className="pointer-events-none absolute -right-20 -top-24 h-56 w-56 rounded-full bg-brand/10 blur-3xl"
-              aria-hidden
-            />
-            <nav aria-label="Breadcrumb" className="relative mb-5 text-sm text-ink-muted">
+          <div className="mb-8 border-b border-mk-hair pb-6 md:pb-8">
+            <nav aria-label="Breadcrumb" className="mb-4 text-sm text-mk-muted">
               <ol className="flex flex-wrap items-center gap-1">
                 <li>
                   <Link href="/docs" className={BREADCRUMB_LINK_CLASS}>
@@ -112,23 +109,9 @@ export default async function GuidePage({ params }: PageProps) {
               </ol>
             </nav>
 
-            <header className="relative">
-              <div className="mb-3 flex items-center gap-2.5">
-                <span
-                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-brand bg-brand-muted"
-                  aria-hidden
-                >
-                  <FrameworkIcon className="h-4 w-4 text-brand-strong" />
-                </span>
-                <p className="marketing-section-label">{guide.framework} guide</p>
-              </div>
-              <h1 className="font-display text-3xl md:text-4xl tracking-tight text-ink mb-3">
-                {guide.title}
-              </h1>
-              <div
-                className="h-1 w-16 rounded-full bg-gradient-to-r from-brand to-brand-strong"
-                aria-hidden
-              />
+            <header>
+              <MarketingIconDisc icon={FrameworkIcon} tone="violet" className="mb-4" />
+              <h1 className="font-sans text-3xl md:text-[2.5rem] font-bold leading-[1.1] tracking-[-0.03em] text-mk-ink text-balance">{guide.title}</h1>
             </header>
           </div>
 
@@ -147,16 +130,14 @@ export default async function GuidePage({ params }: PageProps) {
 
         {guide.related.length > 0 && (
           <section aria-label="Related resources" className="mt-12">
-            <h2 className="font-display text-2xl md:text-3xl tracking-tight text-ink mb-4">
-              Related resources
-            </h2>
+            <h2 className={`${DOCS_H2_CLASS} mb-4`}>Related resources</h2>
             <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {guide.related.map((link) => (
                 <li key={link.href} className="min-w-0">
                   <Link
                     href={link.href}
                     prefetch={false}
-                    className="marketing-card group flex h-full items-center gap-2.5 p-4 text-sm font-medium text-brand-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2"
+                    className="marketing-card group flex h-full items-center gap-2.5 p-4 text-sm font-medium text-mk-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
                   >
                     <ArrowRight
                       className="w-4 h-4 shrink-0 transition-transform duration-200 group-hover:translate-x-0.5"
@@ -174,7 +155,7 @@ export default async function GuidePage({ params }: PageProps) {
           <nav aria-label="Guides pagination" className="mt-8 grid gap-3 sm:grid-cols-2">
             {prevGuide && (
               <Link href={guidePath(prevGuide.slug)} className={PAGINATION_CARD_CLASS}>
-                <span className="inline-flex items-center gap-2 text-sm font-medium text-brand-strong">
+                <span className="inline-flex items-center gap-2 text-sm font-medium text-mk-ink">
                   <ArrowLeft
                     className="w-4 h-4 shrink-0 transition-transform duration-200 group-hover:-translate-x-0.5"
                     aria-hidden
@@ -192,7 +173,7 @@ export default async function GuidePage({ params }: PageProps) {
                     : `${PAGINATION_CARD_CLASS} justify-end text-right sm:col-start-2`
                 }
               >
-                <span className="inline-flex items-center gap-2 text-sm font-medium text-brand-strong">
+                <span className="inline-flex items-center gap-2 text-sm font-medium text-mk-ink">
                   {nextGuide.title}
                   <ArrowRight
                     className="w-4 h-4 shrink-0 transition-transform duration-200 group-hover:translate-x-0.5"

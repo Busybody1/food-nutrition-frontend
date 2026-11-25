@@ -22,10 +22,7 @@ export default function PricingLayout({ children }: { children: React.ReactNode 
       />
       {children}
       <PricingSeoContent />
-      {}
-      <div className="bg-surface-elevated">
-        <FaqSection items={PRICING_FAQS} />
-      </div>
+      <FaqSection items={PRICING_FAQS} />
       <MarketingCtaBand
         title="Ready to integrate?"
         description="Create an account, generate an API key, and start searching in minutes."

@@ -87,7 +87,7 @@ export function FaqSeoIntro() {
   return (
     <MarketingSeoSection
       title="Common questions about our nutrition & food API"
-      className="section-pad-sm border-t-0"
+      className="section-pad-sm"
       id="faq-seo-intro"
     >
       <p>

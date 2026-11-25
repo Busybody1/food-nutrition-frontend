@@ -6,7 +6,7 @@ import { buildPageMetadata } from '@/lib/metadata'
 import { JsonLdScript } from '@/components/seo/structured-data'
 import { buildBreadcrumbJsonLd, buildWebPageJsonLd } from '@/lib/seo-jsonld'
 import { buildFaqPageJsonLd } from '@/lib/faq-data'
-import { MarketingImageHero } from '@/components/marketing/marketing-image-hero'
+import { MarketingSheet, MarketingSheetHero } from '@/components/marketing/marketing-sheet'
 import {
   MarketingCtaBand,
   MarketingSectionHeader,
@@ -74,80 +74,69 @@ export default function CompareHubPage() {
       />
       <JsonLdScript id="faq-compare-hub" data={buildFaqPageJsonLd(HUB_FAQS)} />
 
-      <MarketingImageHero compact centered waveTone="white">
-        <p className="marketing-hero-badge mb-4 inline-flex">Compare</p>
-        <h1 className="font-display text-4xl md:text-5xl text-ink mb-4 text-balance">
-          {COMPARE_H1}
-        </h1>
-        <p className="aeo-answer text-lg text-ink-muted leading-relaxed max-w-2xl mx-auto">
-          {DESCRIPTION}
-        </p>
-        {}
-        <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-          <TrackedCtaLink
-            href="/playground"
-            eventLabel="Open the playground"
-            className="btn-brand w-full sm:w-auto"
-          >
-            Open the playground
-          </TrackedCtaLink>
-          <TrackedCtaLink
-            href="/auth/register"
-            eventLabel="Get a free API key"
-            className="btn-brand-outline w-full sm:w-auto"
-          >
-            Get a free API key
-          </TrackedCtaLink>
-        </div>
-      </MarketingImageHero>
+      <MarketingSheetHero
+        badge="Compare"
+        title={COMPARE_H1}
+        lead={DESCRIPTION}
+        leadClassName="aeo-answer"
+        actions={
+          <>
+            <TrackedCtaLink href="/playground" eventLabel="Open the playground" className="btn-brand">
+              Open the playground
+            </TrackedCtaLink>
+            <TrackedCtaLink href="/auth/register" eventLabel="Get a free API key" className="btn-brand-outline">
+              Get a free API key
+            </TrackedCtaLink>
+          </>
+        }
+      />
 
-      <section className="section-pad-sm bg-white" aria-label="Provider overview">
+      <MarketingSheet aria-label="Provider overview">
         <div className="container-narrow">
           <Reveal>
-            <div className="overflow-x-auto rounded-brand border border-surface-border bg-white shadow-glass">
+            <div className="overflow-x-auto rounded-[22px] border border-mk-hair bg-white shadow-card">
               <table className="w-full min-w-[640px] text-sm">
                 <thead>
-                  <tr className="bg-brand-muted/50 text-left">
-                    <th scope="col" className="px-4 py-3 font-semibold text-ink">Provider</th>
-                    <th scope="col" className="px-4 py-3 font-semibold text-ink">Primary focus</th>
-                    <th scope="col" className="px-4 py-3 font-semibold text-ink">Best for</th>
+                  <tr className="bg-mk-stage text-left">
+                    <th scope="col" className="px-5 py-3.5 font-semibold text-mk-ink">Provider</th>
+                    <th scope="col" className="px-5 py-3.5 font-semibold text-mk-ink">Primary focus</th>
+                    <th scope="col" className="px-5 py-3.5 font-semibold text-mk-ink">Best for</th>
                   </tr>
                 </thead>
                 <tbody>
                   {COMPARE_HUB_ROWS.map((row) => (
                     <tr
                       key={row.provider}
-                      className="border-t border-surface-border align-top odd:bg-surface-elevated/50 hover:bg-brand-muted/30 transition-colors duration-150"
+                      className="border-t border-mk-hair align-top transition-colors duration-150 hover:bg-mk-stage/60"
                     >
-                      <th scope="row" className="px-4 py-3 font-medium text-ink text-left whitespace-nowrap">
+                      <th scope="row" className="px-5 py-3.5 text-left font-medium text-mk-ink whitespace-nowrap">
                         <Link
                           href={row.href}
                           prefetch={false}
-                          className="rounded-sm text-brand-strong underline decoration-brand/40 underline-offset-2 hover:decoration-brand-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2"
+                          className="rounded-sm text-brand-strong underline decoration-brand/40 underline-offset-2 hover:decoration-brand-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
                         >
                           {row.provider}
                         </Link>
                       </th>
-                      <td className="px-4 py-3 text-ink-muted">{row.focus}</td>
-                      <td className="px-4 py-3 text-ink-muted">{row.bestFor}</td>
+                      <td className="px-5 py-3.5 text-mk-muted">{row.focus}</td>
+                      <td className="px-5 py-3.5 text-mk-muted">{row.bestFor}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
-            <p className="mt-4 text-center text-xs text-ink-muted">
+            <p className="mt-4 text-center text-xs text-mk-muted">
               Summaries reviewed as of July 2026; verify against each provider&apos;s current
               documentation before deciding.
             </p>
           </Reveal>
         </div>
-      </section>
+      </MarketingSheet>
 
-      <section className="section-pad bg-surface-elevated">
+      <section className="marketing-canvas-pad">
         <div className="container-narrow">
           <Reveal>
             <MarketingSectionHeader
-              label="Deep dives"
               title="Detailed comparisons"
               description={`Feature matrices, honest fit guidance, and migration notes for each ${SITE_NAME} alternative page.`}
             />
@@ -157,13 +146,13 @@ export default function CompareHubPage() {
               <Link
                 key={page.slug}
                 href={comparisonPath(page.slug)}
-                className={`${marketingCardClass} group flex h-full cursor-pointer flex-col p-6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2`}
+                className={`${marketingCardClass} group flex h-full cursor-pointer flex-col p-6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2`}
               >
-                <h3 className="text-lg font-semibold text-ink mb-1 transition-colors duration-200 group-hover:text-brand-strong">
+                <h3 className="mb-1.5 text-lg font-semibold tracking-[-0.01em] text-mk-ink">
                   {SITE_NAME} vs {page.competitor}
                 </h3>
-                <p className="text-sm text-ink-muted leading-relaxed">{page.summary}</p>
-                <span className="mt-auto inline-flex items-center gap-1 pt-3 text-sm font-medium text-brand-strong">
+                <p className="text-[15px] leading-relaxed text-mk-muted">{page.summary}</p>
+                <span className="mt-auto inline-flex items-center gap-1 pt-4 text-sm font-medium text-mk-ink">
                   Read comparison{' '}
                   <ArrowRight
                     className="w-4 h-4 transition-transform duration-200 motion-safe:group-hover:translate-x-0.5"
@@ -176,7 +165,7 @@ export default function CompareHubPage() {
         </div>
       </section>
 
-      <section className="section-pad bg-white" aria-label="Frequently asked questions">
+      <MarketingSheet aria-label="Frequently asked questions">
         <div className="container-narrow">
           <Reveal>
             <MarketingSectionHeader title="Choosing a nutrition API: common questions" />
@@ -185,7 +174,7 @@ export default function CompareHubPage() {
             <FaqList items={HUB_FAQS} />
           </Reveal>
         </div>
-      </section>
+      </MarketingSheet>
 
       <MarketingCtaBand
         title="Shortlisted us? Verify with real data"

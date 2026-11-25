@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { ReactNode } from 'react'
 import { cn } from '@/lib/utils/cn'
-import { MarketingHero } from './marketing-hero'
+import { MarketingSheet, MarketingSheetHero } from './marketing-sheet'
 import { LegalToc } from './legal-toc'
 import { LegalMobileNav } from './legal-mobile-nav'
 import { BackToTop } from './back-to-top'
@@ -28,7 +28,7 @@ function renderInventoryItem(item: string): ReactNode {
   const qualifier = parenIndex === -1 ? '' : lead.slice(parenIndex)
   return (
     <>
-      <code className="rounded border border-surface-border/70 bg-surface-elevated px-1.5 py-0.5 font-mono text-[13px] text-ink">
+      <code className="rounded-md border border-mk-hair bg-mk-stage px-1.5 py-0.5 font-mono text-[13px] text-mk-ink">
         {token}
       </code>
       {qualifier}
@@ -46,14 +46,14 @@ export function LegalDocumentBody({
   codeListLeads?: boolean
 }) {
   return (
-    <div className="legal-document divide-y divide-surface-border/60">
+    <div className="legal-document divide-y divide-mk-hair">
       {sections.map((section) => (
         <section
           key={section.id ?? section.title}
           id={section.id}
-          className="scroll-mt-24 py-8 first:pt-0 last:pb-0"
+          className="scroll-mt-4 py-8 first:pt-0 last:pb-0"
         >
-          <h2 className="font-display text-xl md:text-2xl tracking-tight text-ink mb-4">
+          <h2 className="mb-4 text-xl font-semibold tracking-[-0.02em] text-mk-ink md:text-2xl">
             {section.title}
           </h2>
           <div className="space-y-3">
@@ -65,8 +65,8 @@ export function LegalDocumentBody({
                     className={cn(
                       'text-[15px] md:text-base leading-relaxed',
                       SUBCLAUSE_PATTERN.test(block.text)
-                        ? 'pt-3 font-semibold text-ink'
-                        : 'text-ink-muted'
+                        ? 'pt-3 font-semibold text-mk-ink'
+                        : 'text-mk-muted'
                     )}
                   >
                     {block.text}
@@ -76,7 +76,7 @@ export function LegalDocumentBody({
               return (
                 <ul
                   key={i}
-                  className="list-disc pl-4 sm:pl-5 space-y-2 text-[15px] md:text-base text-ink-muted leading-relaxed"
+                  className="list-disc pl-4 sm:pl-5 space-y-2 text-[15px] md:text-base text-mk-muted leading-relaxed"
                 >
                   {block.items.map((item) => (
                     <li key={item} className="break-words">
@@ -104,7 +104,7 @@ type LegalPath = (typeof LEGAL_NAV)[number]['href']
 
 const CROSS_LINK_CLASS =
   'text-brand-strong underline decoration-brand/40 underline-offset-2 hover:decoration-brand-strong ' +
-  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2 rounded-sm'
+  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 rounded-sm'
 
 export function LegalPageShell({
   title,
@@ -130,16 +130,12 @@ export function LegalPageShell({
 
   return (
     <div className="marketing-page">
-      <MarketingHero
-        title={title}
-        subtitle={tagline}
-        compact
+      <MarketingSheetHero
         badge={`Food Database API · Effective ${effectiveDate}`}
+        title={title}
+        lead={tagline}
       >
-        <nav
-          aria-label="Legal pages"
-          className="flex flex-wrap items-center justify-center gap-2"
-        >
+        <nav aria-label="Legal pages" className="mt-8 flex flex-wrap items-center justify-center gap-2">
           {LEGAL_NAV.map((item) => {
             const active = item.href === path
             return (
@@ -148,11 +144,11 @@ export function LegalPageShell({
                 href={item.href}
                 aria-current={active ? 'page' : undefined}
                 className={cn(
-                  'inline-flex h-9 cursor-pointer items-center rounded-pill border px-4 text-sm font-medium transition-colors duration-200',
-                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2',
+                  'inline-flex h-9 cursor-pointer items-center rounded-full border px-4 text-sm font-medium transition-colors duration-200',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2',
                   active
-                    ? 'border-brand/40 bg-brand-muted text-brand-strong'
-                    : 'border-surface-border/80 bg-white/70 text-ink-muted hover:border-brand/30 hover:text-brand-strong'
+                    ? 'border-brand bg-brand text-mk-ink'
+                    : 'border-mk-line bg-white text-mk-muted hover:bg-mk-stage hover:text-mk-ink'
                 )}
               >
                 {item.label}
@@ -160,9 +156,9 @@ export function LegalPageShell({
             )
           })}
         </nav>
-      </MarketingHero>
+      </MarketingSheetHero>
 
-      <section className="pt-8 md:pt-12 pb-20 md:pb-28">
+      <MarketingSheet aria-label={title}>
         <div className="container-narrow">
           <div className="lg:grid lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-10 xl:grid-cols-[16rem_minmax(0,1fr)] xl:gap-14">
             <div className="hidden lg:block">
@@ -172,16 +168,16 @@ export function LegalPageShell({
               />
             </div>
             <div className="min-w-0">
-              <article className="glass-panel card-hairline mx-auto w-full max-w-3xl p-6 md:p-10 lg:mx-0">
+              <article className="mx-auto w-full max-w-3xl lg:mx-0">
                 <LegalDocumentBody sections={sections} codeListLeads={codeListLeads} />
               </article>
-              <div className="mx-auto max-w-3xl lg:mx-0">
+              <div className="mx-auto mt-10 max-w-3xl border-t border-mk-hair pt-6 lg:mx-0">
                 {footerNote && (
-                  <p className="mt-6 text-center text-sm text-ink-muted leading-relaxed">
+                  <p className="mb-4 text-center text-sm leading-relaxed text-mk-muted">
                     {footerNote}
                   </p>
                 )}
-                <p className="mt-4 text-center text-sm text-ink-muted">
+                <p className="text-center text-sm text-mk-muted">
                   See also{' '}
                   <Link href="/privacy" className={CROSS_LINK_CLASS}>
                     Privacy Policy
@@ -204,7 +200,7 @@ export function LegalPageShell({
             </div>
           </div>
         </div>
-      </section>
+      </MarketingSheet>
 
       <LegalMobileNav items={tocItems} />
       <BackToTop />

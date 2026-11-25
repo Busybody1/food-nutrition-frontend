@@ -16,14 +16,19 @@ import {
   Zap,
   type LucideIcon,
 } from 'lucide-react'
-import { MarketingImageHero } from '@/components/marketing/marketing-image-hero'
 import {
   MarketingCtaBand,
-  MarketingFeatureCard,
+  MarketingFeatureGrid,
   MarketingSectionHeader,
 } from '@/components/marketing/marketing-shell'
+import {
+  MarketingSheet,
+  MarketingSheetHero,
+  MarketingSplit,
+  MarketingSplitCopy,
+} from '@/components/marketing/marketing-sheet'
 import { FaqList } from '@/components/marketing/faq-section'
-import { Reveal, RevealGroup } from '@/components/marketing/reveal'
+import { Reveal } from '@/components/marketing/reveal'
 import { TrackedCtaLink } from '@/components/analytics/tracked-cta-link'
 import { JsonLdScript } from '@/components/seo/structured-data'
 import { buildBreadcrumbJsonLd, buildWebPageJsonLd } from '@/lib/seo-jsonld'
@@ -66,104 +71,113 @@ export function SolutionPageView({ page }: { page: SolutionPage }) {
       />
       <JsonLdScript id={`faq-solution-${page.slug}`} data={buildFaqPageJsonLd(page.faqs)} />
 
-      <MarketingImageHero compact centered waveTone="elevated">
-        <p className="marketing-hero-badge mb-4 inline-flex">{page.heroBadge}</p>
-        <h1 className="font-display text-4xl md:text-5xl text-ink mb-4 text-balance">{page.h1}</h1>
-        <p className="aeo-answer text-lg text-ink-muted leading-relaxed max-w-2xl mx-auto">{page.intro[0]}</p>
-        <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
-          <TrackedCtaLink
-            href="/auth/register"
-            eventLabel="Get started free"
-            className="btn-brand h-12 px-8 text-base w-full sm:w-auto"
-          >
-            Get started free
-          </TrackedCtaLink>
-          <TrackedCtaLink
-            href="/docs/guides"
-            eventLabel="Browse integration guides"
-            className="btn-brand-outline h-12 px-8 text-base w-full sm:w-auto"
-          >
-            Browse integration guides
-          </TrackedCtaLink>
-        </div>
-      </MarketingImageHero>
+      <MarketingSheetHero
+        badge={page.heroBadge}
+        title={page.h1}
+        lead={page.intro[0]}
+        leadClassName="aeo-answer"
+        actions={
+          <>
+            <TrackedCtaLink href="/auth/register" eventLabel="Get started free" className="btn-brand">
+              Get started free
+            </TrackedCtaLink>
+            <TrackedCtaLink
+              href="/docs/guides"
+              eventLabel="Browse integration guides"
+              className="btn-brand-outline"
+            >
+              Browse integration guides
+            </TrackedCtaLink>
+          </>
+        }
+      />
 
-      <section className="section-pad-sm bg-surface-elevated">
-        <Reveal className="container-prose space-y-4 text-ink-muted leading-relaxed">
-          {page.intro.slice(1).map((paragraph) => (
-            <p key={paragraph.slice(0, 40)}>{paragraph}</p>
-          ))}
-        </Reveal>
-      </section>
+      {page.intro.length > 1 && (
+        <section className="marketing-canvas-pad">
+          <Reveal className="container-prose marketing-body space-y-4">
+            {page.intro.slice(1).map((paragraph) => (
+              <p key={paragraph.slice(0, 40)}>{paragraph}</p>
+            ))}
+          </Reveal>
+        </section>
+      )}
 
-      <section className="section-pad bg-white">
+      <MarketingSheet aria-labelledby={`solution-pain-${page.slug}`}>
         <div className="container-narrow">
           <Reveal>
-            <MarketingSectionHeader label="Why teams choose us" title="Built for your product's hardest problems" />
-          </Reveal>
-          <RevealGroup className="grid gap-4 md:gap-5 md:grid-cols-3" itemClassName="h-full min-w-0">
-            {page.painPoints.map((point, index) => (
-              <MarketingFeatureCard
-                key={point.title}
-                icon={painPointIcons[index] ?? DEFAULT_PAIN_POINT_ICONS[index % DEFAULT_PAIN_POINT_ICONS.length]}
-                title={point.title}
-                description={point.description}
-              />
-            ))}
-          </RevealGroup>
-        </div>
-      </section>
-
-      <section className="section-pad bg-surface-elevated">
-        <div className="container-prose">
-          <Reveal>
             <MarketingSectionHeader
-              label="How it maps"
-              title="Product needs → API endpoints"
-              description="Each need in your roadmap maps to a documented endpoint you can try in the playground today."
+              id={`solution-pain-${page.slug}`}
+              title="Built for your product's hardest problems"
             />
           </Reveal>
-          <Reveal delay={120}>
-            <div className="overflow-x-auto rounded-brand border border-surface-border bg-white shadow-glass">
-              <table className="w-full min-w-[560px] text-sm">
-                <thead>
-                  <tr className="bg-brand-muted/50 text-left">
-                    <th scope="col" className="px-4 py-3 font-semibold text-ink">Product need</th>
-                    <th scope="col" className="px-4 py-3 font-semibold text-ink">Endpoint</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {page.endpointMap.map((row) => (
-                    <tr
-                      key={row.need}
-                      className="border-t border-surface-border odd:bg-surface-elevated/50 hover:bg-brand-muted/30 transition-colors duration-200"
-                    >
-                      <th scope="row" className="px-4 py-3 font-medium text-ink text-left">
-                        {row.need}
-                      </th>
-                      <td className="px-4 py-3">
-                        <Link
-                          href={row.href}
-                          prefetch={false}
-                          className="inline-flex rounded cursor-pointer hover:underline decoration-brand/40 underline-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2"
-                        >
-                          <code className="whitespace-nowrap rounded bg-brand-muted/60 px-1.5 py-0.5 font-mono text-[13px] text-brand-strong">
-                            {row.endpoint}
-                          </code>
-                        </Link>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </Reveal>
+          <MarketingFeatureGrid
+            items={page.painPoints.map((point, index) => ({
+              icon:
+                painPointIcons[index] ??
+                DEFAULT_PAIN_POINT_ICONS[index % DEFAULT_PAIN_POINT_ICONS.length],
+              title: point.title,
+              description: point.description,
+            }))}
+          />
         </div>
-      </section>
+      </MarketingSheet>
+
+      <MarketingSheet aria-labelledby={`solution-map-${page.slug}`}>
+        <div className="container-narrow">
+          <MarketingSplit
+            copy={
+              <Reveal>
+                <MarketingSplitCopy
+                  titleId={`solution-map-${page.slug}`}
+                  title="Product needs → API endpoints"
+                  description="Each need in your roadmap maps to a documented endpoint you can try in the playground today."
+                />
+              </Reveal>
+            }
+            aside={
+              <Reveal delay={120}>
+                <div className="overflow-x-auto rounded-[22px] border border-mk-hair bg-white shadow-card">
+                  <table className="w-full min-w-[520px] text-sm">
+                    <thead>
+                      <tr className="bg-mk-stage text-left">
+                        <th scope="col" className="px-5 py-3.5 font-semibold text-mk-ink">Product need</th>
+                        <th scope="col" className="px-5 py-3.5 font-semibold text-mk-ink">Endpoint</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {page.endpointMap.map((row) => (
+                        <tr
+                          key={row.need}
+                          className="border-t border-mk-hair transition-colors duration-200 hover:bg-mk-stage/60"
+                        >
+                          <th scope="row" className="px-5 py-3.5 text-left font-medium text-mk-ink">
+                            {row.need}
+                          </th>
+                          <td className="px-5 py-3.5">
+                            <Link
+                              href={row.href}
+                              prefetch={false}
+                              className="inline-flex cursor-pointer rounded decoration-mk-line underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
+                            >
+                              <code className="whitespace-nowrap rounded-md border border-mk-hair bg-mk-stage px-1.5 py-0.5 font-mono text-[13px] text-mk-ink">
+                                {row.endpoint}
+                              </code>
+                            </Link>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </Reveal>
+            }
+          />
+        </div>
+      </MarketingSheet>
 
       <RelatedResources links={page.related} />
 
-      <section className="section-pad bg-surface-elevated" aria-labelledby="solution-faq-heading">
+      <section className="marketing-canvas-pad" aria-labelledby="solution-faq-heading">
         <div className="container-narrow">
           <Reveal>
             <MarketingSectionHeader

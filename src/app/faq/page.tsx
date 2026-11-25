@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { FaqList } from '@/components/marketing/faq-section'
 import { ALL_FAQ_ITEMS, FAQ_GROUPS, buildFaqPageJsonLd } from '@/lib/faq-data'
 import { JsonLdScript } from '@/components/seo/structured-data'
-import { MarketingImageHero } from '@/components/marketing/marketing-image-hero'
+import { MarketingSheetHero } from '@/components/marketing/marketing-sheet'
 import { MarketingCtaBand } from '@/components/marketing/marketing-shell'
 import { Reveal } from '@/components/marketing/reveal'
 import { buildPublicPageMetadata } from '@/lib/build-public-metadata'
@@ -15,33 +15,22 @@ export const metadata: Metadata = buildPublicPageMetadata('/faq')
 const FAQ_SEO = getPublicPageSeo('/faq')
 
 const FAQ_NAV_LINK_CLASS =
-  'inline-flex items-center rounded-pill px-3.5 py-1.5 text-sm font-medium text-ink-muted ' +
-  'cursor-pointer transition-colors duration-200 hover:bg-brand-muted hover:text-brand-strong ' +
-  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2'
+  'inline-flex h-9 items-center rounded-full px-3.5 text-sm font-medium text-mk-muted ' +
+  'cursor-pointer transition-colors duration-200 hover:bg-mk-stage hover:text-mk-ink ' +
+  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2'
 
 export default function FaqPage() {
   return (
     <div className="marketing-page">
       <PublicPageSchema path="/faq" pageName={FAQ_SEO.title ?? 'Nutrition API FAQ'} speakable />
-      <MarketingImageHero compact centered waveTone="white">
-        <h1 className="font-display text-4xl md:text-5xl tracking-tight text-ink mb-4 text-balance">
-          {FAQ_SEO.title}
-        </h1>
-        <p className="aeo-answer text-lg text-ink-muted leading-relaxed max-w-xl mx-auto">
-          {FAQ_SEO.description}
-        </p>
-      </MarketingImageHero>
-      <section
-        className="bg-white section-pad pt-8 md:pt-10"
-        id="faq"
-        aria-label="Frequently asked questions"
-      >
+      <MarketingSheetHero title={FAQ_SEO.title} lead={FAQ_SEO.description} leadClassName="aeo-answer" />
+      <section className="pb-14 pt-8 md:pb-20 md:pt-10" id="faq" aria-label="Frequently asked questions">
         <div className="container-prose">
           <nav
             aria-label="FAQ topics"
-            className="sticky top-[calc(var(--site-header-offset)+0.5rem)] z-20 mb-10 md:mb-12 flex justify-center animate-rise stagger-2"
+            className="sticky top-[calc(var(--site-header-offset)+0.75rem)] z-20 mb-10 md:mb-12 flex justify-center animate-rise stagger-2"
           >
-            <div className="flex flex-wrap justify-center gap-1.5 rounded-brand border border-surface-border/70 bg-white/85 px-2 py-1.5 shadow-glass backdrop-blur-md">
+            <div className="flex flex-wrap justify-center gap-1 rounded-[20px] border border-mk-hair bg-white p-1 shadow-card">
               {FAQ_GROUPS.map((group) => (
                 <a key={group.id} href={`#${group.id}`} className={FAQ_NAV_LINK_CLASS}>
                   {group.title}
@@ -56,7 +45,7 @@ export default function FaqPage() {
                   id={group.id}
                   className="scroll-mt-[calc(var(--site-header-offset)+4.5rem)]"
                 >
-                  <h2 className="font-display text-3xl md:text-4xl tracking-tight text-ink mb-6">
+                  <h2 className="marketing-h3 mb-6">
                     {group.title}
                   </h2>
                   <FaqList items={group.items} openFirst={group.id === 'general'} />

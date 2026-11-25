@@ -17,7 +17,7 @@ import { cn } from '@/lib/utils/cn'
 const API_BASE = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '') || 'http://localhost:8000'
 
 const INLINE_LINK_CLASS =
-  'text-brand-strong underline decoration-brand/40 underline-offset-2 hover:decoration-brand-strong rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2'
+  'text-brand-strong underline decoration-brand/40 underline-offset-2 hover:decoration-brand-strong rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2'
 
 export function ApiPlaygroundPage() {
   const [activeId, setActiveId] = useState(PLAYGROUND_ENDPOINTS[0].id)
@@ -104,69 +104,73 @@ export function ApiPlaygroundPage() {
   }
 
   return (
-    <div className="docs-layout bg-white">
-      <aside className="hidden lg:block w-64 shrink-0 border-r border-surface-border/80 bg-white sticky top-[var(--site-header-offset)] h-[calc(100vh-var(--site-header-offset))] overflow-y-auto">
-        <div className="px-5 pb-6 pt-10 space-y-4">
-          <div>
-            <p className="marketing-section-label">Endpoints</p>
-            <p className="text-sm text-ink-muted mt-1">Public demo routes (no API key)</p>
+    <div className="docs-sheet-wrap">
+      <div className="docs-layout">
+        <aside className="hidden lg:flex lg:flex-col w-64 shrink-0 border-r border-mk-hair bg-white sticky top-[var(--site-header-offset)] h-[calc(100vh-var(--site-header-offset))]">
+          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 pb-4 pt-10 space-y-4">
+            <div>
+              <p className="marketing-section-label">Endpoints</p>
+              <p className="text-sm text-ink-muted mt-1">Public demo routes (no API key)</p>
+            </div>
+            <EndpointNav activeId={activeId} onSelect={setActiveId} />
           </div>
-          <EndpointNav activeId={activeId} onSelect={setActiveId} />
-          <RateLimitCallout />
-        </div>
-      </aside>
+          <div className="shrink-0 border-t border-mk-hair p-4">
+            <RateLimitCallout />
+          </div>
+        </aside>
 
-      <main className="docs-main min-w-0 pt-6 sm:pt-8 lg:pt-10 pb-16 lg:pb-20">
-        <div className="lg:hidden mb-6 max-w-4xl">
-          <label htmlFor="playground-endpoint" className="text-sm font-medium text-ink mb-2 block">
-            Endpoint
-          </label>
-          <select
-            id="playground-endpoint"
-            className="w-full h-10 rounded-brand border border-surface-border bg-white px-3 text-sm text-ink cursor-pointer focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand/40"
-            value={activeId}
-            onChange={(event) => setActiveId(event.target.value)}
-          >
-            {PLAYGROUND_ENDPOINTS.map((endpoint) => (
-              <option key={endpoint.id} value={endpoint.id}>
-                {endpoint.name}
-              </option>
-            ))}
-          </select>
-        </div>
+        <main className="docs-main min-w-0 pt-6 sm:pt-8 lg:pt-10 pb-16 lg:pb-20">
+          <div className="lg:hidden mb-6 max-w-4xl">
+            <label htmlFor="playground-endpoint" className="text-sm font-medium text-ink mb-2 block">
+              Endpoint
+            </label>
+            <select
+              id="playground-endpoint"
+              className="w-full h-10 rounded-brand border border-surface-border bg-white px-3 text-sm text-ink cursor-pointer focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand/40"
+              value={activeId}
+              onChange={(event) => setActiveId(event.target.value)}
+            >
+              {PLAYGROUND_ENDPOINTS.map((endpoint) => (
+                <option key={endpoint.id} value={endpoint.id}>
+                  {endpoint.name}
+                </option>
+              ))}
+            </select>
+          </div>
 
-        <EndpointPanel
-          key={activeEndpoint.id}
-          endpoint={activeEndpoint}
-          values={values}
-          onChange={setParamValue}
-          body={body}
-          onBodyChange={setBody}
-          requestUrl={requestUrl}
-          loading={loading}
-          onRun={runRequest}
-          error={error}
-          statusCode={statusCode}
-          result={result}
-        />
+          <EndpointPanel
+            key={activeEndpoint.id}
+            endpoint={activeEndpoint}
+            values={values}
+            onChange={setParamValue}
+            body={body}
+            onBodyChange={setBody}
+            requestUrl={requestUrl}
+            loading={loading}
+            onRun={runRequest}
+            error={error}
+            statusCode={statusCode}
+            result={result}
+          />
 
-        {}
-        <RateLimitCallout className="lg:hidden mt-8 max-w-4xl" />
+          {}
+          <RateLimitCallout className="lg:hidden mt-8 max-w-4xl" />
 
-        <div className="marketing-callout mt-10 max-w-4xl">
-          <p className="text-sm text-ink-muted leading-relaxed">
-            Need higher limits and authenticated endpoints?{' '}
-            <Link href="/auth/register" className={cn(INLINE_LINK_CLASS, 'font-medium')}>
-              Create a free account
-            </Link>{' '}
-            or read the{' '}
-            <Link href="/docs" className={cn(INLINE_LINK_CLASS, 'font-medium')}>
-              full API reference
-            </Link>
-            .
-          </p>
-        </div>
-      </main>
+          <div className="marketing-callout mt-10 max-w-4xl">
+            <p className="text-sm text-ink-muted leading-relaxed">
+              Need higher limits and authenticated endpoints?{' '}
+              <Link href="/auth/register" className={cn(INLINE_LINK_CLASS, 'font-medium')}>
+                Create a free account
+              </Link>{' '}
+              or read the{' '}
+              <Link href="/docs" className={cn(INLINE_LINK_CLASS, 'font-medium')}>
+                full API reference
+              </Link>
+              .
+            </p>
+          </div>
+        </main>
+      </div>
     </div>
   )
 }
@@ -182,7 +186,7 @@ function EndpointNav({ activeId, onSelect }: { activeId: string; onSelect: (id: 
             aria-current={activeId === endpoint.id ? 'true' : undefined}
             className={cn(
               'w-full text-left rounded-brand px-3 py-2 text-sm transition-colors duration-150 cursor-pointer',
-              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-1',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-1',
               activeId === endpoint.id
                 ? 'bg-brand/10 text-brand-strong font-medium'
                 : 'text-ink-muted hover:bg-surface-elevated hover:text-ink'
@@ -255,7 +259,7 @@ function EndpointPanel({
     <div className="space-y-6 max-w-4xl motion-safe:animate-[fade-rise_0.3s_ease-out]">
       <div>
         <p className="marketing-section-label mb-2">Playground</p>
-        <h2 className="font-display text-2xl md:text-3xl text-ink tracking-tight">{endpoint.name}</h2>
+        <h2 className="font-sans text-2xl md:text-[1.75rem] font-semibold leading-tight tracking-[-0.02em] text-mk-ink">{endpoint.name}</h2>
         <p className="text-ink-muted leading-relaxed mt-2 max-w-2xl">{endpoint.description}</p>
       </div>
 

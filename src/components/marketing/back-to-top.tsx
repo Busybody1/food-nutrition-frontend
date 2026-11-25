@@ -28,10 +28,10 @@ export function BackToTop({ threshold = 500 }: { threshold?: number }) {
       aria-label="Back to top"
       tabIndex={visible ? 0 : -1}
       className={cn(
-        'fixed bottom-6 right-6 z-40 inline-flex h-11 w-11 items-center justify-center rounded-full',
-        'border border-brand/30 bg-surface-elevated/90 text-brand-strong shadow-lg backdrop-blur',
-        'transition-all duration-200 hover:border-brand/50 hover:bg-brand-muted',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2',
+        'fixed bottom-6 right-4 z-40 inline-flex h-11 w-11 items-center justify-center rounded-full',
+        'border border-mk-line bg-white text-mk-ink shadow-float',
+        'transition-all duration-200 hover:bg-mk-stage',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2',
         visible ? 'opacity-100 translate-y-0' : 'pointer-events-none translate-y-3 opacity-0'
       )}
     >

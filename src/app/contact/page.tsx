@@ -3,10 +3,8 @@
 import { Suspense, useState } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { MarketingImageHero } from '@/components/marketing/marketing-image-hero'
-import { marketingCardClass, MarketingPageLoading } from '@/components/marketing/marketing-shell'
+import { MarketingIconDisc, MarketingPageLoading } from '@/components/marketing/marketing-shell'
+import { MarketingSheet, MarketingSheetHero } from '@/components/marketing/marketing-sheet'
 import { Reveal, RevealGroup } from '@/components/marketing/reveal'
 import { getPublicPageSeo } from '@/lib/public-page-seo'
 import { SUPPORT_EMAIL } from '@/lib/site'
@@ -26,7 +24,7 @@ import {
 } from 'lucide-react'
 
 const inlineLinkClass =
-  'text-brand-strong underline decoration-brand/40 underline-offset-2 transition-colors duration-200 hover:decoration-brand-strong rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2'
+  'text-brand-strong underline decoration-brand/40 underline-offset-2 transition-colors duration-200 hover:decoration-brand-strong rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2'
 
 function ContactPageContent() {
   const searchParams = useSearchParams()
@@ -109,42 +107,42 @@ function ContactPageContent() {
     }
   }
 
-  const labelClass = 'block text-sm font-medium text-ink mb-1.5'
-  const fieldBaseClass =
-    'w-full border border-surface-border bg-white text-ink rounded-brand px-3 transition-[border-color,box-shadow] duration-200 focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand/40'
-  const inputClass = `${fieldBaseClass} h-11`
+  const labelClass = 'marketing-label'
+  const inputClass = 'marketing-input'
+  const panelHeadingClass = 'mb-2 text-xl font-semibold tracking-[-0.02em] text-mk-ink'
 
   return (
     <div className="marketing-page">
-      <MarketingImageHero compact centered waveTone="elevated">
-        <p className="marketing-hero-badge mb-6 inline-flex items-center gap-2">
-          {showScheduler ? (
-            <Calendar className="h-4 w-4" aria-hidden />
-          ) : (
-            <MessageSquare className="h-4 w-4" aria-hidden />
-          )}
-          {showScheduler ? 'Enterprise' : 'Get in touch'}
-        </p>
-        <h1 className="font-display text-4xl md:text-5xl tracking-tight text-ink mb-4 text-balance">
-          {CONTACT_SEO.title}
-        </h1>
-        <p className="aeo-answer text-lg text-ink-muted leading-relaxed max-w-xl mx-auto">
-          {showScheduler
+      <MarketingSheetHero
+        badge={
+          <>
+            {showScheduler ? (
+              <Calendar className="h-3.5 w-3.5" aria-hidden />
+            ) : (
+              <MessageSquare className="h-3.5 w-3.5" aria-hidden />
+            )}
+            {showScheduler ? 'Enterprise' : 'Get in touch'}
+          </>
+        }
+        title={CONTACT_SEO.title}
+        lead={
+          showScheduler
             ? 'Schedule an enterprise call for custom volume and image-to-calorie access. We respond within one business day.'
-            : CONTACT_SEO.description}
-        </p>
-      </MarketingImageHero>
+            : CONTACT_SEO.description
+        }
+        leadClassName="aeo-answer"
+      />
 
-      <section className="section-pad bg-surface-elevated">
+      <MarketingSheet>
         <div className="container-narrow">
-          <div className="grid lg:grid-cols-12 gap-8 lg:gap-10">
+          <div className="grid gap-10 lg:grid-cols-12 lg:gap-14">
             <Reveal className="lg:col-span-8 lg:order-2 min-w-0">
               <div id="schedule-call">
               {showScheduler && (
-                <div className="glass-panel mb-6 p-6 md:p-8 transition-[border-color,box-shadow] duration-200">
+                <div className="glass-panel mb-6 p-5 sm:p-6 md:p-8">
                   <div className="mb-4">
-                    <h2 className="font-display text-2xl text-ink mb-2">Schedule a call</h2>
-                    <p className="text-sm text-ink-muted">
+                    <h2 className={panelHeadingClass}>Schedule a call</h2>
+                    <p className="text-sm text-mk-muted">
                       Choose a 30-minute slot. Prefer email? Use the form below or write{' '}
                       <a href={`mailto:${SUPPORT_EMAIL}`} className={inlineLinkClass}>
                         {SUPPORT_EMAIL}
@@ -156,15 +154,12 @@ function ContactPageContent() {
                 </div>
               )}
 
-              <div
-                id="contact-form"
-                className="glass-panel p-6 md:p-8 transition-[border-color,box-shadow] duration-200 focus-within:border-brand/40 focus-within:shadow-glow"
-              >
+              <div id="contact-form" className="glass-panel p-5 sm:p-6 md:p-8">
                 <div className="mb-6">
-                  <h2 className="font-display text-2xl text-ink mb-2">
+                  <h2 className={panelHeadingClass}>
                     {showScheduler ? 'Or send a message' : 'Send a message'}
                   </h2>
-                  <p className="text-sm text-ink-muted">
+                  <p className="text-sm text-mk-muted">
                     Fill out the form and we&apos;ll get back to you. You can also email{' '}
                     <a href={`mailto:${SUPPORT_EMAIL}`} className={inlineLinkClass}>
                       {SUPPORT_EMAIL}
@@ -174,21 +169,24 @@ function ContactPageContent() {
                 </div>
 
                 {isSubmitted ? (
-                  <div className="text-center py-12 rounded-brand bg-surface-elevated/60 border border-surface-border/60">
-                    <CheckCircle className="h-12 w-12 text-brand-strong mx-auto mb-4" aria-hidden />
-                    <h3 className="text-xl font-semibold text-ink mb-2">Message sent</h3>
-                    <p className="text-ink-muted mb-6 max-w-sm mx-auto">
+                  <div className="rounded-2xl border border-mk-hair bg-mk-stage px-4 py-12 text-center">
+                    <span className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-mk-green-soft text-mk-green">
+                      <CheckCircle className="h-6 w-6" aria-hidden />
+                    </span>
+                    <h3 className="mb-2 text-xl font-semibold text-mk-ink">Message sent</h3>
+                    <p className="marketing-body mx-auto mb-6 max-w-sm">
                       Thanks for reaching out. We&apos;ll reply within one business day.
                     </p>
-                    <Button
-                      variant="outline"
+                    <button
+                      type="button"
+                      className="btn-brand-outline"
                       onClick={() => {
                         setIsSubmitted(false)
                         setSubmitError(null)
                       }}
                     >
                       Send another message
-                    </Button>
+                    </button>
                   </div>
                 ) : (
                   <form onSubmit={handleSubmit} className="space-y-5">
@@ -206,7 +204,7 @@ function ContactPageContent() {
                     </div>
                     {submitError && (
                       <p
-                        className="rounded-brand border border-red-200/80 bg-red-50 px-4 py-3 text-sm text-red-800"
+                        className="rounded-xl border border-red-200/80 bg-red-50 px-4 py-3 text-sm text-red-800"
                         role="alert"
                       >
                         {submitError}
@@ -217,7 +215,7 @@ function ContactPageContent() {
                         <label htmlFor="name" className={labelClass}>
                           Full name *
                         </label>
-                        <Input
+                        <input
                           id="name"
                           name="name"
                           required
@@ -231,7 +229,7 @@ function ContactPageContent() {
                         <label htmlFor="email" className={labelClass}>
                           Work email *
                         </label>
-                        <Input
+                        <input
                           id="email"
                           name="email"
                           type="email"
@@ -248,7 +246,7 @@ function ContactPageContent() {
                         <label htmlFor="company" className={labelClass}>
                           Company
                         </label>
-                        <Input
+                        <input
                           id="company"
                           name="company"
                           autoComplete="organization"
@@ -266,7 +264,7 @@ function ContactPageContent() {
                           name="inquiryType"
                           value={formData.inquiryType}
                           onChange={handleInputChange}
-                          className={`${fieldBaseClass} h-11 cursor-pointer`}
+                          className={`${inputClass} cursor-pointer`}
                         >
                           <option value="general">General</option>
                           <option value="technical">Technical support</option>
@@ -279,7 +277,7 @@ function ContactPageContent() {
                       <label htmlFor="subject" className={labelClass}>
                         Subject *
                       </label>
-                      <Input
+                      <input
                         id="subject"
                         name="subject"
                         required
@@ -300,19 +298,15 @@ function ContactPageContent() {
                         value={formData.message}
                         onChange={handleInputChange}
                         placeholder="Tell us about your use case, expected API volume, and timeline."
-                        className={`${fieldBaseClass} min-h-[140px] py-3 resize-y`}
+                        className="marketing-textarea min-h-[140px] resize-y"
                       />
                     </div>
-                    <button
-                      type="submit"
-                      className="btn-brand h-12 w-full text-base disabled:pointer-events-none disabled:opacity-60"
-                      disabled={isSubmitting}
-                    >
+                    <button type="submit" className="btn-brand w-full" disabled={isSubmitting}>
                       {isSubmitting ? (
                         'Sending…'
                       ) : (
                         <>
-                          <Send className="mr-2 h-4 w-4" aria-hidden />
+                          <Send className="h-4 w-4" aria-hidden />
                           Send message
                         </>
                       )}
@@ -321,7 +315,7 @@ function ContactPageContent() {
                 )}
               </div>
 
-              <p className="text-center text-sm text-ink-muted mt-6">
+              <p className="mt-6 text-center text-sm text-mk-muted">
                 See also our{' '}
                 <Link href="/faq" className={inlineLinkClass}>
                   FAQ
@@ -337,71 +331,63 @@ function ContactPageContent() {
 
             <RevealGroup
               as="aside"
-              className="lg:col-span-4 lg:order-1 space-y-4"
+              className="lg:col-span-4 lg:order-1 space-y-2"
               itemClassName="min-w-0"
               delay={80}
             >
-              <div className={`${marketingCardClass} p-6`}>
-                <div className="flex h-10 w-10 items-center justify-center rounded-brand bg-brand-muted mb-4">
-                  <Mail className="h-5 w-5 text-brand-strong" aria-hidden />
-                </div>
-                <h2 className="text-lg font-semibold text-ink mb-1">Email us</h2>
-                <p className="text-sm text-ink-muted mb-4">
+              <div className="py-4">
+                <MarketingIconDisc icon={Mail} tone="blue" />
+                <h2 className="mt-4 text-base font-semibold tracking-[-0.01em] text-mk-ink">Email us</h2>
+                <p className="mt-1 text-[15px] text-mk-muted">
                   Technical support, billing, and partnerships
                 </p>
                 <a
                   href={`mailto:${SUPPORT_EMAIL}`}
-                  className={`${inlineLinkClass} font-medium break-all`}
+                  className={`${inlineLinkClass} mt-2 inline-block text-[15px] font-medium break-all`}
                 >
                   {SUPPORT_EMAIL}
                 </a>
               </div>
 
-              <div
-                className={`${marketingCardClass} card-hairline p-6 border-brand/25 bg-brand-muted/20`}
-              >
-                <div className="flex h-10 w-10 items-center justify-center rounded-brand bg-brand/15 mb-4">
-                  <Building2 className="h-5 w-5 text-brand-strong" aria-hidden />
-                </div>
-                <h2 className="text-lg font-semibold text-ink mb-1">Enterprise</h2>
-                <p className="text-sm text-ink-muted mb-3">
+              <div className="relative -mx-3 rounded-2xl px-3 py-4 transition-colors duration-200 hover:bg-mk-stage">
+                <MarketingIconDisc icon={Building2} tone="violet" />
+                <h2 className="mt-4 text-base font-semibold tracking-[-0.01em] text-mk-ink">Enterprise</h2>
+                <p className="mt-1 text-[15px] leading-relaxed text-mk-muted">
                   Custom quotas, image-to-calorie API, credits-based usage, SLAs, white-label, and
                   on-premise options for large teams.
                 </p>
-                <p className="text-xs text-ink-muted">
+                <p className="mt-2 text-xs text-mk-muted">
                   Schedule a 30-minute call or email us with your expected volume.
                 </p>
                 <button
                   type="button"
                   onClick={handleEnterpriseSelect}
                   aria-label="Schedule an Enterprise call"
-                  className="absolute inset-0 z-10 cursor-pointer rounded-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-inset"
+                  className="absolute inset-0 z-10 cursor-pointer rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-inset"
                 />
               </div>
 
-              <div className={`${marketingCardClass} p-6`}>
-                <div className="flex h-10 w-10 items-center justify-center rounded-brand bg-surface-elevated mb-4">
-                  <Clock className="h-5 w-5 text-brand-strong" aria-hidden />
-                </div>
-                <h2 className="text-lg font-semibold text-ink mb-1">Response time</h2>
-                <p className="text-sm text-ink-muted">
+              <div className="py-4">
+                <MarketingIconDisc icon={Clock} tone="green" />
+                <h2 className="mt-4 text-base font-semibold tracking-[-0.01em] text-mk-ink">Response time</h2>
+                <p className="mt-1 text-[15px] text-mk-muted">
                   Most messages receive a reply within 24 hours on business days.
                 </p>
               </div>
 
               <Link
                 href="/docs"
-                className={`${marketingCardClass} p-6 flex items-center gap-3 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2`}
+                className="group flex min-h-11 items-center gap-3 border-t border-mk-hair pt-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
               >
-                <BookOpen className="h-5 w-5 text-brand-strong shrink-0" aria-hidden />
-                <span className="text-sm font-medium text-ink transition-colors duration-200 group-hover:text-brand-strong">
+                <BookOpen className="h-4 w-4 shrink-0 text-mk-muted" aria-hidden />
+                <span className="text-[15px] font-medium text-mk-ink transition-colors duration-200 group-hover:text-brand-strong">
                   Read API documentation
                 </span>
               </Link>
             </RevealGroup>
           </div>
         </div>
-      </section>
+      </MarketingSheet>
     </div>
   )
 }

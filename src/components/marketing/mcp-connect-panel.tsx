@@ -14,6 +14,33 @@ import {
 
 type TabId = 'claude' | 'claude-code' | 'cursor' | 'other'
 
+type PanelAppearance = 'default' | 'marketing'
+
+const PANEL_CLASSES: Record<
+  PanelAppearance,
+  { tabList: string; tabSelected: string; tab: string; copyButton: string; copyIcon: string; note: string }
+> = {
+  default: {
+    tabList: 'mb-4 flex gap-1 overflow-x-auto rounded-brand border border-surface-border bg-white p-1',
+    tabSelected:
+      'h-10 shrink-0 rounded-brand bg-brand px-4 text-sm font-medium text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50',
+    tab: 'h-10 shrink-0 rounded-brand px-4 text-sm font-medium text-ink-muted hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50',
+    copyButton: 'btn-brand h-10 px-4',
+    copyIcon: 'mr-2 h-4 w-4',
+    note: 'text-sm text-ink-muted',
+  },
+  marketing: {
+    tabList:
+      'mb-4 flex max-w-full gap-1 overflow-x-auto rounded-full border border-mk-line bg-white p-1 sm:inline-flex',
+    tabSelected:
+      'h-10 shrink-0 cursor-pointer rounded-full bg-brand px-4 text-sm font-medium text-mk-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand',
+    tab: 'h-10 shrink-0 cursor-pointer rounded-full px-4 text-sm font-medium text-mk-muted transition-colors hover:text-mk-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand',
+    copyButton: 'btn-brand',
+    copyIcon: 'h-4 w-4',
+    note: 'text-sm text-mk-muted',
+  },
+}
+
 const TABS: { id: TabId; label: string }[] = [
   { id: 'claude', label: 'Claude' },
   { id: 'claude-code', label: 'Claude Code' },
@@ -44,10 +71,13 @@ function snippetFor(tab: TabId, apiKey?: string): { title: string; code: string 
 export function McpConnectPanel({
   apiKey,
   initialTab = 'claude',
+  appearance = 'default',
 }: {
   apiKey?: string
   initialTab?: TabId
+  appearance?: PanelAppearance
 }) {
+  const classes = PANEL_CLASSES[appearance]
   const [tab, setTab] = useState<TabId>(initialTab)
   const [copied, setCopied] = useState(false)
   const snippet = snippetFor(tab, apiKey)
@@ -64,7 +94,7 @@ export function McpConnectPanel({
 
   return (
     <div>
-      <div className="mb-4 flex gap-1 overflow-x-auto rounded-brand border border-surface-border bg-white p-1" role="tablist" aria-label="MCP clients">
+      <div className={classes.tabList} role="tablist" aria-label="MCP clients">
         {TABS.map((item) => {
           const selected = tab === item.id
           return (
@@ -73,11 +103,7 @@ export function McpConnectPanel({
               type="button"
               role="tab"
               aria-selected={selected}
-              className={
-                selected
-                  ? 'h-10 shrink-0 rounded-brand bg-brand px-4 text-sm font-medium text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50'
-                  : 'h-10 shrink-0 rounded-brand px-4 text-sm font-medium text-ink-muted hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50'
-              }
+              className={selected ? classes.tabSelected : classes.tab}
               onClick={() => {
                 setTab(item.id)
                 setCopied(false)
@@ -90,11 +116,11 @@ export function McpConnectPanel({
       </div>
       <CapabilityCodeWindow title={snippet.title} code={snippet.code} />
       <div className="mt-3 flex flex-wrap items-center gap-3">
-        <button type="button" className="btn-brand h-10 px-4" onClick={() => void copy()}>
-          {copied ? <Check className="mr-2 h-4 w-4" aria-hidden /> : <Copy className="mr-2 h-4 w-4" aria-hidden />}
+        <button type="button" className={classes.copyButton} onClick={() => void copy()}>
+          {copied ? <Check className={classes.copyIcon} aria-hidden /> : <Copy className={classes.copyIcon} aria-hidden />}
           {copied ? 'Copied' : 'Copy config'}
         </button>
-        <p className="text-sm text-ink-muted">
+        <p className={classes.note}>
           {tab === 'claude'
             ? mcpOauthConnectEnabled()
               ? 'These apps sign in through the browser. The API key stays in Claude Code and Cursor.'

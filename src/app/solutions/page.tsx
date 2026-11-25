@@ -12,8 +12,15 @@ import {
 import { buildPageMetadata } from '@/lib/metadata'
 import { JsonLdScript } from '@/components/seo/structured-data'
 import { buildBreadcrumbJsonLd, buildWebPageJsonLd } from '@/lib/seo-jsonld'
-import { MarketingImageHero } from '@/components/marketing/marketing-image-hero'
-import { MarketingCtaBand, marketingCardClass } from '@/components/marketing/marketing-shell'
+import {
+  MarketingCtaBand,
+  MarketingIconDisc,
+  discToneAt,
+  marketingCardClass,
+} from '@/components/marketing/marketing-shell'
+import { MarketingSheetHero } from '@/components/marketing/marketing-sheet'
+import { MarketingProductFrame } from '@/components/marketing/marketing-cards'
+import { ExampleFoodCollage } from '@/components/marketing/example-foods'
 import { Reveal } from '@/components/marketing/reveal'
 import { TrackedCtaLink } from '@/components/analytics/tracked-cta-link'
 import { SOLUTION_PAGES, solutionPath } from '@/lib/solutions-data'
@@ -70,31 +77,31 @@ export default function SolutionsIndexPage() {
         ])}
       />
 
-      <MarketingImageHero compact centered waveTone="white">
-        <p className="marketing-hero-badge mb-4 inline-flex">Solutions</p>
-        <h1 className="font-display text-4xl md:text-5xl text-ink mb-4 text-balance">
-          {SOLUTIONS_H1}
-        </h1>
-        <p className="aeo-answer text-lg text-ink-muted leading-relaxed max-w-2xl mx-auto">{DESCRIPTION}</p>
-        <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
-          <TrackedCtaLink
-            href="/contact"
-            eventLabel="Talk to us"
-            className="btn-brand h-12 px-8 text-base w-full sm:w-auto"
-          >
-            Talk to us
-          </TrackedCtaLink>
-          <TrackedCtaLink
-            href="/docs"
-            eventLabel="Read the docs"
-            className="btn-brand-outline h-12 px-8 text-base w-full sm:w-auto"
-          >
-            Read the docs
-          </TrackedCtaLink>
-        </div>
-      </MarketingImageHero>
+      <MarketingSheetHero
+        badge="Solutions"
+        title={SOLUTIONS_H1}
+        lead={DESCRIPTION}
+        leadClassName="aeo-answer"
+        actions={
+          <>
+            <TrackedCtaLink href="/contact" eventLabel="Talk to us" className="btn-brand">
+              Talk to us
+            </TrackedCtaLink>
+            <TrackedCtaLink href="/docs" eventLabel="Read the docs" className="btn-brand-outline">
+              Read the docs
+            </TrackedCtaLink>
+          </>
+        }
+        showcase={
+          <div className="container-narrow hidden md:block">
+            <MarketingProductFrame cropped className="rounded-b-none border-b-0">
+              <ExampleFoodCollage />
+            </MarketingProductFrame>
+          </div>
+        }
+      />
 
-      <section className="bg-white pt-12 md:pt-16 pb-20 md:pb-28">
+      <section className="marketing-canvas-pad">
         <div className="container-narrow">
           <div className="grid gap-4 md:gap-5 sm:grid-cols-2 lg:grid-cols-6">
             {SOLUTION_PAGES.map((page, index) => {
@@ -107,17 +114,15 @@ export default function SolutionsIndexPage() {
                 >
                   <Link
                     href={solutionPath(page.slug)}
-                    className={`${marketingCardClass} group flex h-full flex-col p-6 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2`}
+                    className={`${marketingCardClass} group flex h-full flex-col p-6 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2`}
                   >
-                    <span className="marketing-feature-icon transition-all duration-200 motion-safe:group-hover:scale-105">
-                      <Icon className="h-6 w-6 text-brand-strong" aria-hidden />
-                    </span>
-                    <p className="marketing-section-label mb-2">{page.heroBadge}</p>
-                    <h2 className="text-lg font-semibold text-ink mb-2 transition-colors duration-200 group-hover:text-brand-strong">
+                    <MarketingIconDisc icon={Icon} tone={discToneAt(index)} className="mb-4" />
+                    <p className="mb-1.5 text-xs font-medium text-mk-muted">{page.heroBadge}</p>
+                    <h2 className="mb-2 text-lg font-semibold tracking-[-0.01em] text-mk-ink">
                       {page.h1}
                     </h2>
-                    <p className="text-sm text-ink-muted leading-relaxed">{page.summary}</p>
-                    <span className="mt-auto pt-4 inline-flex items-center gap-1 text-sm font-medium text-brand-strong">
+                    <p className="text-[15px] leading-relaxed text-mk-muted">{page.summary}</p>
+                    <span className="mt-auto inline-flex items-center gap-1 pt-4 text-sm font-medium text-mk-ink">
                       Explore
                       <ArrowRight
                         className="w-4 h-4 transition-transform duration-200 motion-safe:group-hover:translate-x-0.5"

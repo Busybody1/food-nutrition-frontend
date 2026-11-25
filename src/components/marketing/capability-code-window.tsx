@@ -29,7 +29,7 @@ export function CapabilityCodeWindow({ title, code }: { title: string; code: str
           type="button"
           onClick={handleCopy}
           aria-label="Copy code"
-          className="inline-flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-md text-slate-300 transition-colors duration-200 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2 focus-visible:ring-offset-[#1e293b]"
+          className="inline-flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-md text-slate-300 transition-colors duration-200 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-[#1e293b]"
         >
           {copied ? (
             <Check className="h-4 w-4" aria-hidden />

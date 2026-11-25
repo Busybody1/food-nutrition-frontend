@@ -43,10 +43,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 const BREADCRUMB_LINK_CLASS =
-  'rounded text-brand-strong underline decoration-brand/40 underline-offset-2 hover:decoration-brand-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50'
+  'rounded text-brand-strong underline decoration-brand/40 underline-offset-2 hover:decoration-brand-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand'
 
 const PAGINATION_CARD_CLASS =
-  'marketing-card group flex h-full items-center p-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2'
+  'marketing-card group flex h-full items-center p-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2'
 
 export default async function DocsSectionPage({ params }: PageProps) {
   const { section } = await params
@@ -89,12 +89,8 @@ export default async function DocsSectionPage({ params }: PageProps) {
 
       <DocsShell>
         <article>
-          <div className="relative mb-8 overflow-hidden rounded-brand border border-brand/10 bg-gradient-to-br from-brand-muted/60 via-white to-white p-5 sm:p-6 md:p-8">
-            <div
-              className="pointer-events-none absolute -right-20 -top-24 h-56 w-56 rounded-full bg-brand/10 blur-3xl"
-              aria-hidden
-            />
-            <nav aria-label="Breadcrumb" className="relative mb-5 text-sm text-ink-muted">
+          <div className="mb-8 border-b border-mk-hair pb-6 md:pb-8">
+            <nav aria-label="Breadcrumb" className="mb-4 text-sm text-mk-muted">
               <ol className="flex flex-wrap items-center gap-1">
                 <li>
                   <Link href="/docs" className={BREADCRUMB_LINK_CLASS}>
@@ -106,17 +102,8 @@ export default async function DocsSectionPage({ params }: PageProps) {
               </ol>
             </nav>
 
-            <header className="relative">
-              <p className="marketing-section-label mb-2 block">
-                {meta.group === 'Endpoints' ? 'API Reference' : meta.group}
-              </p>
-              <h1 className="font-display text-3xl md:text-4xl tracking-tight text-ink mb-3">
-                {meta.title}
-              </h1>
-              <div
-                className="h-1 w-16 rounded-full bg-gradient-to-r from-brand to-brand-strong"
-                aria-hidden
-              />
+            <header>
+              <h1 className="font-sans text-3xl md:text-[2.5rem] font-bold leading-[1.1] tracking-[-0.03em] text-mk-ink text-balance">{meta.title}</h1>
             </header>
           </div>
 
@@ -136,7 +123,7 @@ export default async function DocsSectionPage({ params }: PageProps) {
         <nav aria-label="Documentation pagination" className="mt-8 grid gap-3 sm:grid-cols-2">
           {prev ? (
             <Link href={docsSectionPath(prev.slug)} className={PAGINATION_CARD_CLASS}>
-              <span className="inline-flex items-center gap-2 text-sm font-medium text-brand-strong">
+              <span className="inline-flex items-center gap-2 text-sm font-medium text-mk-ink">
                 <ArrowLeft
                   className="w-4 h-4 shrink-0 transition-transform duration-200 group-hover:-translate-x-0.5"
                   aria-hidden
@@ -146,7 +133,7 @@ export default async function DocsSectionPage({ params }: PageProps) {
             </Link>
           ) : (
             <Link href="/docs" className={PAGINATION_CARD_CLASS}>
-              <span className="inline-flex items-center gap-2 text-sm font-medium text-brand-strong">
+              <span className="inline-flex items-center gap-2 text-sm font-medium text-mk-ink">
                 <ArrowLeft
                   className="w-4 h-4 shrink-0 transition-transform duration-200 group-hover:-translate-x-0.5"
                   aria-hidden
@@ -160,7 +147,7 @@ export default async function DocsSectionPage({ params }: PageProps) {
               href={docsSectionPath(next.slug)}
               className={`${PAGINATION_CARD_CLASS} justify-end text-right`}
             >
-              <span className="inline-flex items-center gap-2 text-sm font-medium text-brand-strong">
+              <span className="inline-flex items-center gap-2 text-sm font-medium text-mk-ink">
                 {next.title}
                 <ArrowRight
                   className="w-4 h-4 shrink-0 transition-transform duration-200 group-hover:translate-x-0.5"

@@ -94,27 +94,23 @@ export function DocsSidebar({ groups }: { groups: DocsNavGroup[] }) {
           <div key={group.title}>
             <div className="flex items-center gap-2 mb-2">
               <Icon className="h-4 w-4 text-ink-muted shrink-0" aria-hidden />
-              <p className="text-xs font-semibold uppercase tracking-widest text-ink-muted">
-                {group.title}
-              </p>
+              <p className="text-xs font-medium text-mk-muted">{group.title}</p>
             </div>
-            <ul className="space-y-0.5 border-l border-surface-border pl-3 ml-1">
+            <ul className="space-y-0.5 border-l border-mk-hair pl-3 ml-1">
               {group.items.map((item) => {
                 const active = isActive(item.href)
                 return (
                   <li
                     key={item.href}
-                    className={active ? '-ml-[13px] border-l-2 border-brand pl-[11px]' : ''}
+                    className={active ? '-ml-[13px] border-l-2 border-mk-ink pl-[11px]' : ''}
                   >
                     <Link
                       href={item.href}
                       prefetch={false}
                       onClick={() => setSidebarOpen(false)}
                       aria-current={active ? 'page' : undefined}
-                      className={`docs-nav-link focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 ${
-                        active
-                          ? 'bg-brand-muted font-semibold text-brand-strong hover:bg-brand-muted'
-                          : ''
+                      className={`docs-nav-link focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand ${
+                        active ? 'bg-mk-stage font-semibold text-mk-ink hover:bg-mk-stage' : ''
                       }`}
                     >
                       <span className="min-w-0">{item.name}</span>
@@ -165,15 +161,13 @@ export function DocsSidebar({ groups }: { groups: DocsNavGroup[] }) {
       >
         <div className="docs-sidebar__header">
           <div className="min-w-0">
-            <p className="text-xs font-semibold uppercase tracking-widest text-brand-strong">
-              {SITE_NAME}
-            </p>
-            <p className="text-sm font-semibold text-ink truncate">Documentation</p>
+            <p className="text-xs font-medium text-mk-muted">{SITE_NAME}</p>
+            <p className="text-sm font-semibold text-mk-ink truncate">Documentation</p>
           </div>
           <button
             ref={closeButtonRef}
             type="button"
-            className="docs-sidebar__close focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2"
+            className="docs-sidebar__close focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
             onClick={() => setSidebarOpen(false)}
             aria-label="Close docs menu"
           >
@@ -184,7 +178,7 @@ export function DocsSidebar({ groups }: { groups: DocsNavGroup[] }) {
         <div className="docs-sidebar__scroll">
           <label className="relative block mb-6">
             <Search
-              className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-ink-dim"
+              className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-mk-muted"
               aria-hidden
             />
             <input
@@ -193,7 +187,7 @@ export function DocsSidebar({ groups }: { groups: DocsNavGroup[] }) {
               aria-label="Search docs"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full h-10 pl-9 pr-3 text-sm rounded-brand border border-surface-border bg-white text-ink placeholder:text-ink-dim focus:outline-none focus:ring-2 focus:ring-brand/30"
+              className="marketing-input pl-9 pr-3 text-sm"
             />
           </label>
           <p className="sr-only" role="status" aria-live="polite">

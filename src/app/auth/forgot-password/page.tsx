@@ -2,8 +2,6 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { AuthShell } from '@/components/marketing/auth-shell'
 import { api } from '@/lib/api/client'
 import { ApiError } from '@/types/api'
@@ -13,7 +11,7 @@ const GENERIC_SENT =
   'If an account exists for that email, a password reset link has been sent.'
 
 const linkClass =
-  'text-brand-strong underline decoration-brand/40 underline-offset-2 hover:decoration-brand-strong rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2'
+  'text-brand-strong underline decoration-brand/40 underline-offset-2 hover:decoration-brand-strong rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2'
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('')
@@ -55,7 +53,7 @@ export default function ForgotPasswordPage() {
     >
       {sent ? (
         <div className="space-y-4">
-          <p className="text-sm text-ink-muted">{GENERIC_SENT}</p>
+          <p className="text-sm text-mk-muted">{GENERIC_SENT}</p>
           <Link href="/auth/login" className="btn-brand-outline w-full">
             Back to sign in
           </Link>
@@ -65,16 +63,16 @@ export default function ForgotPasswordPage() {
           {error && (
             <div
               role="alert"
-              className="bg-error-500/10 border border-error-500/30 text-error-500 px-4 py-3 rounded-card text-sm"
+              className="bg-error-500/10 border border-error-500/30 text-error-500 px-4 py-3 rounded-xl text-sm"
             >
               {error}
             </div>
           )}
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-ink-muted mb-1">
+            <label htmlFor="email" className="marketing-label">
               Email
             </label>
-            <Input
+            <input
               id="email"
               name="email"
               type="email"
@@ -82,23 +80,23 @@ export default function ForgotPasswordPage() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="h-11"
+              className="marketing-input"
             />
           </div>
-          <Button
+          <button
             type="submit"
-            className="w-full h-11 font-semibold hover:shadow-glow-lg motion-safe:hover:-translate-y-px"
+            className="btn-brand w-full"
             disabled={isLoading}
           >
             {isLoading ? (
               <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
                 Sending…
               </>
             ) : (
               'Send reset link'
             )}
-          </Button>
+          </button>
         </form>
       )}
     </AuthShell>

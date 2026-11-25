@@ -1,26 +1,49 @@
 import { MarketingStatStrip } from '@/components/marketing/marketing-shell'
 import { Reveal } from '@/components/marketing/reveal'
 import { FOOD_DATABASE_SIZE_LABEL } from '@/lib/site'
+import { cn } from '@/lib/utils/cn'
 
-export function StatsBand() {
+type PlatformStatKey = 'size' | 'barcode' | 'latency' | 'uptime' | 'free'
+
+function platformStats(): { key: PlatformStatKey; value: string; label: string }[] {
   const uptime = process.env.NEXT_PUBLIC_STAT_UPTIME?.trim()
   const latency = process.env.NEXT_PUBLIC_STAT_LATENCY?.trim()
 
-  const stats = [
-    { value: FOOD_DATABASE_SIZE_LABEL, label: 'foods in database' },
-    { value: 'UPC + EAN', label: 'barcode lookup with fallback' },
-    ...(latency ? [{ value: latency, label: 'median response time' }] : []),
-    ...(uptime ? [{ value: uptime, label: 'uptime' }] : []),
-    { value: 'Free', label: 'developer tier, no card required' },
+  return [
+    { key: 'size' as const, value: FOOD_DATABASE_SIZE_LABEL, label: 'foods in database' },
+    { key: 'barcode' as const, value: 'UPC + EAN', label: 'barcode lookup with fallback' },
+    ...(latency ? [{ key: 'latency' as const, value: latency, label: 'median response time' }] : []),
+    ...(uptime ? [{ key: 'uptime' as const, value: uptime, label: 'uptime' }] : []),
+    { key: 'free' as const, value: 'Free', label: 'developer tier, no card required' },
   ].slice(0, 4)
+}
+
+export function StatsBand({
+  only,
+  variant = 'section',
+}: {
+  only?: PlatformStatKey[]
+  variant?: 'section' | 'inline'
+}) {
+  const stats = platformStats()
+    .filter((stat) => !only || only.includes(stat.key))
+    .map(({ value, label }) => ({ value, label }))
+
+  if (stats.length === 0) return null
+
+  if (variant === 'inline') {
+    return (
+      <div className="mt-10 border-t border-mk-hair pt-8 md:mt-12" aria-label="Platform stats">
+        <MarketingStatStrip stats={stats} />
+      </div>
+    )
+  }
 
   return (
-    <section className="section-pad-sm bg-white" aria-label="Platform stats">
+    <section className={cn('marketing-canvas-pad')} aria-label="Platform stats">
       <div className="container-narrow">
         <Reveal>
-          <div className="rounded-brand border border-brand/15 bg-brand-muted/40 px-4 py-8 sm:px-6 md:px-8 md:py-10">
-            <MarketingStatStrip stats={stats} />
-          </div>
+          <MarketingStatStrip stats={stats} />
         </Reveal>
       </div>
     </section>

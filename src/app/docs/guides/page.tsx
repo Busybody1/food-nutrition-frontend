@@ -7,6 +7,7 @@ import { buildBreadcrumbJsonLd, buildWebPageJsonLd } from '@/lib/seo-jsonld'
 import { DocsShell } from '@/components/docs/docs-shell'
 import { DocsCta } from '@/components/docs/docs-cta'
 import { Reveal } from '@/components/marketing/reveal'
+import { MarketingIconDisc, discToneAt } from '@/components/marketing/marketing-shell'
 import { GUIDES, guidePath } from '@/lib/docs/guides-data'
 
 const DESCRIPTION =
@@ -34,10 +35,10 @@ const GUIDE_ICONS: Record<string, typeof Code2> = {
 }
 
 const CARD_LINK_CLASS =
-  'marketing-card group flex h-full min-w-0 flex-col focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2'
+  'marketing-card group flex h-full min-w-0 flex-col focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2'
 
 const BREADCRUMB_LINK_CLASS =
-  'rounded text-brand-strong underline decoration-brand/40 underline-offset-2 hover:decoration-brand-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50'
+  'rounded text-brand-strong underline decoration-brand/40 underline-offset-2 hover:decoration-brand-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand'
 
 export default function GuidesIndexPage() {
   return (
@@ -60,12 +61,8 @@ export default function GuidesIndexPage() {
       />
 
       <DocsShell>
-        <div className="relative mb-8 overflow-hidden rounded-brand border border-brand/10 bg-gradient-to-br from-brand-muted/60 via-white to-white p-5 sm:p-6 md:p-8">
-          <div
-            className="pointer-events-none absolute -right-20 -top-24 h-56 w-56 rounded-full bg-brand/10 blur-3xl"
-            aria-hidden
-          />
-          <nav aria-label="Breadcrumb" className="relative mb-5 text-sm text-ink-muted">
+        <div className="mb-8 border-b border-mk-hair pb-6 md:pb-8">
+          <nav aria-label="Breadcrumb" className="mb-4 text-sm text-mk-muted">
             <ol className="flex flex-wrap items-center gap-1">
               <li>
                 <Link href="/docs" className={BREADCRUMB_LINK_CLASS}>
@@ -77,17 +74,10 @@ export default function GuidesIndexPage() {
             </ol>
           </nav>
 
-          <header className="relative">
-            <div
-              className="mb-4 flex h-11 w-11 items-center justify-center rounded-brand bg-brand-muted"
-              aria-hidden
-            >
-              <GraduationCap className="h-5 w-5 text-brand-strong" />
-            </div>
-            <h1 className="font-display text-3xl md:text-4xl tracking-tight text-ink mb-3">
-              Integration Guides
-            </h1>
-            <p className="text-ink-muted leading-relaxed max-w-3xl">
+          <header>
+            <MarketingIconDisc icon={GraduationCap} tone="violet" className="mb-4" />
+            <h1 className="font-sans text-3xl md:text-[2.5rem] font-bold leading-[1.1] tracking-[-0.03em] text-mk-ink text-balance mb-3">Integration Guides</h1>
+            <p className="text-mk-body leading-relaxed max-w-3xl">
               Working code for common nutrition features, one framework at a time. Every guide uses
               real endpoints and keeps your API key server-side.
             </p>
@@ -106,22 +96,17 @@ export default function GuidesIndexPage() {
               >
                 <Link
                   href={guidePath(guide.slug)}
-                  className={featured ? `${CARD_LINK_CLASS} card-hairline p-6` : CARD_LINK_CLASS}
+                  className={featured ? `${CARD_LINK_CLASS} p-6` : CARD_LINK_CLASS}
                 >
                   <div className="mb-3 flex items-center gap-2.5">
-                    <span
-                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-brand bg-brand-muted transition-colors duration-200 group-hover:bg-brand/15"
-                      aria-hidden
-                    >
-                      <Icon className="h-4 w-4 text-brand-strong" />
-                    </span>
+                    <MarketingIconDisc icon={Icon} tone={discToneAt(index)} />
                     <p className="marketing-section-label">{guide.framework}</p>
                   </div>
-                  <h2 className="text-xl font-semibold text-ink mb-2 group-hover:text-brand-strong transition-colors duration-200">
+                  <h2 className="text-xl font-semibold tracking-[-0.01em] text-mk-ink mb-2 group-hover:text-brand-strong transition-colors duration-200">
                     {guide.title}
                   </h2>
-                  <p className="text-sm text-ink-muted leading-relaxed">{guide.summary}</p>
-                  <span className="mt-auto pt-4 inline-flex items-center gap-1 text-sm font-medium text-brand-strong">
+                  <p className="text-sm text-mk-muted leading-relaxed">{guide.summary}</p>
+                  <span className="mt-auto pt-4 inline-flex items-center gap-1 text-sm font-medium text-mk-ink">
                     Read guide{' '}
                     <ArrowRight
                       className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5"

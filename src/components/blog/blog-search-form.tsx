@@ -50,7 +50,7 @@ export function BlogSearchForm({
       </label>
       <div className="blog-search__field">
         {isPending ? (
-          <Loader2 className="blog-search__icon h-4 w-4 animate-spin text-brand-strong" aria-hidden />
+          <Loader2 className="blog-search__icon h-4 w-4 animate-spin" aria-hidden />
         ) : (
           <Search className="blog-search__icon h-4 w-4" aria-hidden />
         )}
@@ -61,7 +61,7 @@ export function BlogSearchForm({
           value={value}
           onChange={(e) => setValue(e.target.value)}
           placeholder="Search by title, topic, or keyword…"
-          className="blog-search__input h-11 [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-cancel-button]:appearance-none"
+          className="blog-search__input [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-cancel-button]:appearance-none"
           autoComplete="off"
           maxLength={100}
         />
@@ -69,7 +69,7 @@ export function BlogSearchForm({
           <button
             type="button"
             onClick={clearSearch}
-            className="blog-search__clear cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50"
+            className="blog-search__clear cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
             aria-label="Clear search"
           >
             <X className="h-4 w-4" aria-hidden />
@@ -79,7 +79,7 @@ export function BlogSearchForm({
       <button
         type="submit"
         disabled={isPending}
-        className="blog-search__submit h-11 cursor-pointer border-brand/30 px-6 font-semibold text-brand-strong transition-all duration-200 hover:border-brand/50 hover:bg-brand-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-60"
+        className="blog-search__submit"
       >
         Search
       </button>

@@ -3,8 +3,6 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { AuthShell } from '@/components/marketing/auth-shell'
 import { useAuth } from '@/lib/hooks/use-auth'
 import { getPostLoginPath } from '@/lib/auth/post-login-path'
@@ -48,9 +46,9 @@ export default function LoginPage() {
     }
   }
 
-  const labelClass = 'block text-sm font-medium text-ink-muted mb-1'
+  const labelClass = 'marketing-label'
   const linkClass =
-    'text-brand-strong underline decoration-brand/40 underline-offset-2 hover:decoration-brand-strong rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2'
+    'text-brand-strong underline decoration-brand/40 underline-offset-2 hover:decoration-brand-strong rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2'
 
   return (
     <AuthShell
@@ -68,7 +66,7 @@ export default function LoginPage() {
         {error && (
           <div
             role="alert"
-            className="bg-error-500/10 border border-error-500/30 text-error-500 px-4 py-3 rounded-card text-sm"
+            className="bg-error-500/10 border border-error-500/30 text-error-500 px-4 py-3 rounded-xl text-sm"
           >
             {error}
           </div>
@@ -76,7 +74,7 @@ export default function LoginPage() {
 
         <div>
           <label htmlFor="email" className={labelClass}>Email</label>
-          <Input
+          <input
             id="email"
             name="email"
             type="email"
@@ -84,14 +82,14 @@ export default function LoginPage() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="h-11"
+            className="marketing-input"
           />
         </div>
 
         <div>
           <label htmlFor="password" className={labelClass}>Password</label>
           <div className="relative">
-            <Input
+            <input
               id="password"
               name="password"
               type={showPassword ? 'text' : 'password'}
@@ -99,11 +97,11 @@ export default function LoginPage() {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="h-11 pr-10"
+              className="marketing-input pr-10"
             />
             <button
               type="button"
-              className="absolute inset-y-0 right-0 pr-3 flex items-center rounded-r-brand cursor-pointer text-ink-muted hover:text-ink transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
+              className="absolute inset-y-0 right-0 pr-3 flex items-center rounded-r-xl cursor-pointer text-mk-muted hover:text-mk-ink transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
               onClick={() => setShowPassword(!showPassword)}
               aria-label={showPassword ? 'Hide password' : 'Show password'}
             >
@@ -117,24 +115,24 @@ export default function LoginPage() {
           </div>
         </div>
 
-        <Button
+        <button
           type="submit"
-          className="w-full h-11 font-semibold hover:shadow-glow-lg motion-safe:hover:-translate-y-px"
+          className="btn-brand w-full"
           disabled={isLoading}
         >
           {isLoading ? (
             <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
               Signing in…
             </>
           ) : (
             'Sign in'
           )}
-        </Button>
+        </button>
       </form>
 
-      <div className="mt-6 border-t border-surface-border/70 pt-5 text-center">
-        <p className="text-sm text-ink-muted">No account?</p>
+      <div className="mt-6 border-t border-mk-hair pt-5 text-center">
+        <p className="text-sm text-mk-muted">No account?</p>
         <Link href="/auth/register" className="btn-brand-outline mt-3 w-full">
           Sign up free
         </Link>

@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 export type DocsTocItem = { id: string; text: string }
 
 const TOC_LINK_BASE =
-  '-ml-px block rounded-r-lg border-l-2 py-1.5 pl-3 pr-2 transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50'
+  '-ml-px block rounded-r-lg border-l-2 py-1.5 pl-3 pr-2 transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand'
 
 export function DocsToc({ items }: { items: DocsTocItem[] }) {
   const [activeId, setActiveId] = useState<string | null>(null)
@@ -33,7 +33,7 @@ export function DocsToc({ items }: { items: DocsTocItem[] }) {
 
   return (
     <nav aria-label="On this page" className="text-sm">
-      <ul className="space-y-0.5 border-l border-surface-border">
+      <ul className="space-y-0.5 border-l border-mk-hair">
         {items.map((item) => {
           const active = activeId === item.id
           return (
@@ -43,8 +43,8 @@ export function DocsToc({ items }: { items: DocsTocItem[] }) {
                 aria-current={active ? 'true' : undefined}
                 className={
                   active
-                    ? `${TOC_LINK_BASE} border-brand bg-brand-muted/50 font-medium text-brand-strong`
-                    : `${TOC_LINK_BASE} border-transparent text-ink-muted hover:border-brand/40 hover:text-ink`
+                    ? `${TOC_LINK_BASE} border-mk-ink bg-mk-stage font-medium text-mk-ink`
+                    : `${TOC_LINK_BASE} border-transparent text-mk-muted hover:border-mk-line hover:text-mk-ink`
                 }
               >
                 {item.text}

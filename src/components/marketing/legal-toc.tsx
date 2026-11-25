@@ -56,7 +56,7 @@ export function LegalToc({
 
   return (
     <nav aria-label="On this page" className={className}>
-      <ul className="space-y-0.5 border-l border-surface-border/80">
+      <ul className="space-y-0.5 border-l border-mk-hair">
         {items.map((item) => {
           const active = activeId === item.id
           return (
@@ -70,10 +70,10 @@ export function LegalToc({
                 aria-current={active ? 'true' : undefined}
                 className={cn(
                   '-ml-px block cursor-pointer rounded-r border-l-2 py-1.5 pl-4 pr-2 text-sm leading-snug transition-colors duration-200',
-                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2',
                   active
-                    ? 'border-brand text-brand-strong'
-                    : 'border-transparent text-ink-muted hover:border-brand/30 hover:text-brand-strong'
+                    ? 'border-mk-ink font-medium text-mk-ink'
+                    : 'border-transparent text-mk-muted hover:border-mk-line hover:text-mk-ink'
                 )}
               >
                 {item.title}

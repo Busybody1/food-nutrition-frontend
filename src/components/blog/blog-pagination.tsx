@@ -4,7 +4,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react'
 const MAX_VISIBLE_PAGES = 5
 
 const FOCUS_RING =
-  'cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2'
+  'cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2'
 
 function buildBlogPageUrl(page: number, query?: string): string {
   const params = new URLSearchParams()
@@ -30,7 +30,7 @@ function pageRange(current: number, totalPages: number): number[] {
 
 function Ellipsis() {
   return (
-    <span className="inline-flex h-9 min-w-6 items-center justify-center px-1 text-sm text-ink-muted" aria-hidden>
+    <span className="inline-flex h-9 min-w-6 items-center justify-center px-1 text-sm text-mk-muted" aria-hidden>
       …
     </span>
   )
