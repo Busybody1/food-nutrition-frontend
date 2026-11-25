@@ -14,6 +14,7 @@ import {
   MarketingFeatureGrid,
   MarketingSectionHeader,
   MarketingStatStrip,
+  discToneAt,
 } from '@/components/marketing/marketing-shell'
 import { MarketingSheet, MarketingSheetHero, MarketingSplit } from '@/components/marketing/marketing-sheet'
 import { FaqList } from '@/components/marketing/faq-section'
@@ -91,6 +92,7 @@ export function CapabilityPageView({
       <JsonLdScript id={`faq-${page.slug}`} data={buildFaqPageJsonLd(page.faqs)} />
 
       <MarketingSheetHero
+        marks={page.features.slice(0, 4).map((feature, index) => ({ icon: FEATURE_ICONS[feature.icon], tone: discToneAt(index) }))}
         badge={page.heroBadge}
         title={page.h1}
         lead={page.heroCopy[0]}

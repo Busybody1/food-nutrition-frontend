@@ -16,6 +16,8 @@ import {
 } from '@/lib/mcp/catalog'
 import { buildMcpPricingJsonLd } from '@/lib/mcp/landing-jsonld'
 import { ORGANIZATION_ID, SITE_NAME, SITE_URL, absoluteUrl } from '@/lib/site'
+import { CalendarCheckIcon, ForkKnifeIcon, SparkleIcon, TargetIcon } from '@phosphor-icons/react/ssr'
+import type { HeroMark } from '@/components/marketing/hero-backdrop'
 
 const DESCRIPTION = mcpPricingLead()
 
@@ -42,6 +44,13 @@ export const metadata: Metadata = buildPageMetadata({
   path: '/mcp/pricing',
   hasDedicatedOgImage: true,
 })
+
+const MCP_PRICING_MARKS: HeroMark[] = [
+  { icon: SparkleIcon, tone: 'blue' },
+  { icon: CalendarCheckIcon, tone: 'coral' },
+  { icon: ForkKnifeIcon, tone: 'violet' },
+  { icon: TargetIcon, tone: 'green' },
+]
 
 export default async function McpPricingPage() {
   let plan = null
@@ -74,6 +83,7 @@ export default async function McpPricingPage() {
     <div className="marketing-page">
       <JsonLdScript id="mcp-pricing-product" data={product} />
       <MarketingSheetHero
+        marks={MCP_PRICING_MARKS}
         title={MCP_PRICING_H1}
         lead={<McpPricingLead text={DESCRIPTION} />}
         leadId="mcp-pricing-answer"

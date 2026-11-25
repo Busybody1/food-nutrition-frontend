@@ -131,6 +131,7 @@ export function LegalPageShell({
   return (
     <div className="marketing-page">
       <MarketingSheetHero
+        marks={[]}
         badge={`Food Database API · Effective ${effectiveDate}`}
         title={title}
         lead={tagline}

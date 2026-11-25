@@ -5,6 +5,7 @@ import {
   MarketingCtaBand,
   MarketingFeatureGrid,
   MarketingSectionHeader,
+  discToneAt,
 } from '@/components/marketing/marketing-shell'
 import {
   MarketingSheet,
@@ -57,6 +58,9 @@ export function SolutionPageView({ page }: { page: SolutionPage }) {
       <JsonLdScript id={`faq-solution-${page.slug}`} data={buildFaqPageJsonLd(page.faqs)} />
 
       <MarketingSheetHero
+        marks={Array.from(new Set([...painPointIcons, DatabaseIcon, LightningIcon, ScalesIcon]))
+          .slice(0, 4)
+          .map((icon, index) => ({ icon, tone: discToneAt(index) }))}
         badge={page.heroBadge}
         title={page.h1}
         lead={page.intro[0]}

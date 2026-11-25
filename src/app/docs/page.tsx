@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { AlertCircle, ArrowRight, Database, FlaskConical, Key, Zap } from 'lucide-react'
-import { BarcodeIcon, CodeIcon, DatabaseIcon, DeviceMobileIcon, FileTextIcon, GaugeIcon, GlobeIcon, KeyIcon, LightningIcon, MagnifyingGlassIcon, StackIcon, TerminalWindowIcon, WarningIcon } from '@phosphor-icons/react/ssr'
+import { BarcodeIcon, BookOpenIcon, CodeIcon, DatabaseIcon, DeviceMobileIcon, FileTextIcon, GaugeIcon, GlobeIcon, KeyIcon, LightningIcon, MagnifyingGlassIcon, StackIcon, TerminalWindowIcon, WarningIcon } from '@phosphor-icons/react/ssr'
 import type { MarketingIcon } from '@/components/marketing/marketing-shell'
 import { FOOD_DATABASE_SIZE_LABEL } from '@/lib/site'
 import { API_CONFIG } from '@/lib/config/api'
@@ -19,6 +19,7 @@ import { DocsLanguageTabs } from '@/components/docs/docs-language-tabs'
 import { DOCS_H2_CLASS } from '@/components/docs/docs-blocks'
 import { DOCS_SECTIONS, docsSectionPath } from '@/lib/docs/registry'
 import { GUIDES, guidePath } from '@/lib/docs/guides-data'
+import type { HeroMark } from '@/components/marketing/hero-backdrop'
 
 export const metadata: Metadata = buildPublicPageMetadata('/docs')
 
@@ -84,6 +85,13 @@ const SECTION_CARD_IDS: Record<string, string> = {
   authentication: 'api-keys',
 }
 
+const DOCS_HERO_MARKS: HeroMark[] = [
+  { icon: BookOpenIcon, tone: 'blue' },
+  { icon: KeyIcon, tone: 'coral' },
+  { icon: CodeIcon, tone: 'violet' },
+  { icon: TerminalWindowIcon, tone: 'green' },
+]
+
 const SECTION_ICONS: Record<string, MarketingIcon> = {
   authentication: KeyIcon,
   'food-search': MagnifyingGlassIcon,
@@ -124,6 +132,7 @@ export default function DocsPage() {
       <StructuredData type="api" />
 
       <MarketingSheetHero
+        marks={DOCS_HERO_MARKS}
         badge="Documentation"
         title={DOCS_SEO.title}
         lead={DOCS_SEO.description}

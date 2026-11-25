@@ -20,8 +20,17 @@ import { isContactSalesPlan, isEnterprisePlan, type PricingPlan } from '@/lib/pr
 import { isRestPaidPlan, restSubscribeLabel, restTrialChargeNote } from '@/lib/billing/trial-offer'
 import { useTrialOffer } from '@/lib/billing/use-trial-offer'
 import { cn } from '@/lib/utils/cn'
+import { BuildingsIcon, CrownIcon, LightningIcon, StarIcon } from '@phosphor-icons/react/ssr'
+import type { HeroMark } from '@/components/marketing/hero-backdrop'
 
 const PRICING_SEO = getPublicPageSeo('/pricing')
+
+const PRICING_HERO_MARKS: HeroMark[] = [
+  { icon: LightningIcon, tone: 'blue' },
+  { icon: CrownIcon, tone: 'coral' },
+  { icon: StarIcon, tone: 'violet' },
+  { icon: BuildingsIcon, tone: 'green' },
+]
 
 type PricingContentProps = {
 
@@ -159,6 +168,7 @@ export function PricingContent({ initialPlans, initialError }: PricingContentPro
   return (
     <div className="marketing-page">
       <MarketingSheetHero
+        marks={PRICING_HERO_MARKS}
         title={PRICING_SEO.title}
         lead={PRICING_SEO.description}
         leadClassName="aeo-answer"

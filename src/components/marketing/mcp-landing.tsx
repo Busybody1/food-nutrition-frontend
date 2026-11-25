@@ -36,6 +36,7 @@ import {
   mcpEndpoint,
 } from '@/lib/mcp/catalog'
 import { FOOD_DATABASE_SIZE_LABEL } from '@/lib/site'
+import type { HeroMark } from '@/components/marketing/hero-backdrop'
 
 const USES: { icon: MarketingIcon; title: string; description: string }[] = [
   { icon: MagnifyingGlassIcon, title: MCP_FEATURE_TITLES[0], description: 'Name a food. Get calories and a food_id.' },
@@ -44,6 +45,13 @@ const USES: { icon: MarketingIcon; title: string; description: string }[] = [
   { icon: ForkKnifeIcon, title: MCP_FEATURE_TITLES[3], description: 'Total the ingredients, then split per serving.' },
   { icon: BarcodeIcon, title: MCP_FEATURE_TITLES[4], description: 'UPC or EAN. A fallback if the catalog misses.' },
   { icon: TargetIcon, title: MCP_FEATURE_TITLES[5], description: 'Calories from age, weight, and goal.' },
+]
+
+const MCP_HERO_MARKS: HeroMark[] = [
+  { icon: MagnifyingGlassIcon, tone: 'blue' },
+  { icon: CameraIcon, tone: 'coral' },
+  { icon: ScalesIcon, tone: 'violet' },
+  { icon: TargetIcon, tone: 'green' },
 ]
 
 export function McpLanding() {
@@ -55,6 +63,7 @@ export function McpLanding() {
   return (
     <div className="marketing-page pb-24 lg:pb-0">
       <MarketingSheetHero
+        marks={MCP_HERO_MARKS}
         badge="Calorie MCP"
         title={MCP_LANDING_H1}
         lead={mcpLandingLead(FOOD_DATABASE_SIZE_LABEL)}

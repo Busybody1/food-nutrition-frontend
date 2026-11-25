@@ -659,6 +659,15 @@
     @apply flex h-10 w-10 items-center justify-center rounded-full border border-mk-hair bg-white shadow-card;
   }
 
+  .hero-orbit-flat {
+    @apply absolute left-0 top-0 h-0 w-0;
+    transform: scaleY(0.42);
+  }
+
+  .hero-orbit-face {
+    transform: scaleY(2.381);
+  }
+
   .marketing-orbit-ring {
     @apply pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-mk-line;
   }
@@ -1278,6 +1287,15 @@
   }
 }
 
+@keyframes orbit-counter-flat {
+  from {
+    transform: rotate(0deg) scaleY(2.381);
+  }
+  to {
+    transform: rotate(-360deg) scaleY(2.381);
+  }
+}
+
 @keyframes rise-in-place {
   from {
     transform: translateY(8px);
@@ -1331,6 +1349,14 @@
 
   .marketing-orbit-spin--outer .marketing-orbit-face {
     animation: orbit-spin 90s linear infinite reverse;
+  }
+
+  .marketing-orbit-spin--flat {
+    animation: orbit-spin 110s linear infinite;
+  }
+
+  .marketing-orbit-spin--flat .hero-orbit-face {
+    animation: orbit-counter-flat 110s linear infinite;
   }
 
   .marketing-orbit-spin--far {

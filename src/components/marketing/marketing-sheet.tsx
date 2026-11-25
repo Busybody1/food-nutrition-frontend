@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { cn } from '@/lib/utils/cn'
+import { HeroBackdrop, type HeroMark } from '@/components/marketing/hero-backdrop'
 
 type SectionAria = {
   id?: string
@@ -52,6 +53,7 @@ export function MarketingSheetHero({
   children,
   showcase,
   size = 'inner',
+  marks,
   className,
 }: {
   badge?: ReactNode
@@ -63,6 +65,7 @@ export function MarketingSheetHero({
   children?: ReactNode
   showcase?: ReactNode
   size?: 'home' | 'inner'
+  marks?: readonly HeroMark[]
   className?: string
 }) {
   return (
@@ -74,6 +77,7 @@ export function MarketingSheetHero({
             showcase ? 'pb-10 pt-12 md:pb-14 md:pt-16' : 'pb-14 pt-12 md:pb-20 md:pt-16'
           )}
         >
+          {size === 'inner' && <HeroBackdrop marks={marks} />}
           {badge && <p className="marketing-hero-badge mb-5 animate-rise stagger-1">{badge}</p>}
           <h1
             className={cn(
@@ -95,7 +99,7 @@ export function MarketingSheetHero({
           )}
           {children && <div className="animate-rise stagger-5">{children}</div>}
         </div>
-        {showcase}
+        {showcase && <div className="relative z-20">{showcase}</div>}
       </div>
     </section>
   )
