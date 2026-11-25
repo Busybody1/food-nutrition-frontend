@@ -61,7 +61,7 @@ export function TeamSharingPanel({ userId }: { userId: number }) {
 
   if (!loaded || !team) return null
 
-  const noSeats = team.plan_team_seat_limit <= 0
+  const noSeats = team.effective_seat_limit <= 0
   const switchDisabled = busy || (noSeats && !team.team_sharing_enabled)
 
   const update = async (
@@ -106,15 +106,15 @@ export function TeamSharingPanel({ userId }: { userId: number }) {
       const parsed = Number(raw)
       if (!Number.isInteger(parsed) || parsed < OVERRIDE_MIN || parsed > OVERRIDE_MAX) {
         setSuccess('')
-        setError(`Override must be a whole number from ${OVERRIDE_MIN} to ${OVERRIDE_MAX}, or empty to clear it.`)
+        setError(`Staff seat cap must be a whole number from ${OVERRIDE_MIN} to ${OVERRIDE_MAX}, or empty to clear it.`)
         return
       }
       value = parsed
     }
     void update({ seat_limit_override: value }, (next) =>
       next.seat_limit_override == null
-        ? 'Seat override cleared.'
-        : `Seat override set to ${next.seat_limit_override}.`
+        ? 'Staff seat cap cleared.'
+        : `Staff seat cap set to ${next.seat_limit_override}.`
     )
   }
 
@@ -127,7 +127,7 @@ export function TeamSharingPanel({ userId }: { userId: number }) {
         title="Team sharing"
         icon={Users}
         actions={
-          <InfoHint text="Two gates are required: the plan must include team seats and this switch must be on. Turning it off ends every membership, revokes members' API keys and cancels pending invites." />
+          <InfoHint text="Two gates are required: the account needs at least one seat, from its plan or a staff seat cap, and this switch must be on. Turning it off ends every membership, revokes members' API keys and cancels pending invites." />
         }
       />
       <AdminPanelBody className="space-y-5">
@@ -140,7 +140,7 @@ export function TeamSharingPanel({ userId }: { userId: number }) {
               {team.team_sharing_enabled ? 'On for this account' : 'Off for this account'}
             </p>
             {noSeats && (
-              <p className="mt-0.5 text-xs text-dash-muted">This plan does not include team seats.</p>
+              <p className="mt-0.5 text-xs text-dash-muted">This plan has no team seats. Set a staff seat cap below to turn it on.</p>
             )}
           </div>
           <Switch
@@ -160,7 +160,7 @@ export function TeamSharingPanel({ userId }: { userId: number }) {
             { label: 'Role', value: roleLabel(team) },
             { label: 'Plan seat cap', value: String(team.plan_team_seat_limit) },
             {
-              label: 'Override',
+              label: 'Staff seat cap',
               value: team.seat_limit_override == null ? 'None' : String(team.seat_limit_override),
             },
             { label: 'Effective cap', value: String(team.effective_seat_limit) },
@@ -172,9 +172,9 @@ export function TeamSharingPanel({ userId }: { userId: number }) {
           <div>
             <div className="flex items-center gap-1.5">
               <label htmlFor="team-seat-override" className="dashboard-field-label mb-0">
-                Seat override
+                Staff seat cap
               </label>
-              <InfoHint text="Raises the seat cap for this account only. It applies while the account is on an Enterprise or Custom plan and can only raise the cap. Leave empty to use the plan cap." />
+              <InfoHint text="Sets the seat cap for this account only, on any plan. The account gets whichever is higher, this number or the plan's seats. Leave empty to use the plan's seats." />
             </div>
             <div className="mt-1.5 flex flex-wrap items-center gap-2">
               <Input

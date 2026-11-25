@@ -16,6 +16,8 @@ import { Button } from '@/components/ui/button'
 import { Lock } from 'lucide-react'
 import { useAuth } from '@/lib/hooks/use-auth'
 import { useTeam } from '@/contexts/TeamContext'
+import { useImageCalorie } from '@/contexts/ImageCalorieContext'
+import { IMAGE_CALORIE_PATH } from '@/lib/dashboard/image-calorie'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import {
@@ -50,6 +52,7 @@ export default function ApiKeysPage() {
 function ApiKeysScreen() {
   const { isAuthenticated, loading, user } = useAuth()
   const { role: teamRole } = useTeam()
+  const { access: photoAccess } = useImageCalorie()
   const router = useRouter()
   const searchParams = useSearchParams()
   const [apiKeys, setApiKeys] = useState<ApiKeyRecord[]>([])
@@ -228,9 +231,18 @@ function ApiKeysScreen() {
             {mcpAccount ? (
               <ProductGate
                 title="REST API is a separate subscription"
-                body="This account is on the MCP plan. REST search, foods, calc, and vision return 403. Keys on the MCP tab do not call the REST API."
+                body={
+                  photoAccess.available && photoAccess.meter === 'mcp'
+                    ? 'This account is on the MCP plan. REST search, foods, and calc return 403. Photo analysis is open for this account: your MCP key works on the photo endpoint.'
+                    : 'This account is on the MCP plan. REST search, foods, calc, and vision return 403. Keys on the MCP tab do not call the REST API.'
+                }
                 href="/pricing"
                 label="View REST plans"
+                secondary={
+                  photoAccess.available && photoAccess.meter === 'mcp'
+                    ? { href: IMAGE_CALORIE_PATH, label: 'Image to calories' }
+                    : undefined
+                }
               />
             ) : (
               keyList('rest')
@@ -261,20 +273,29 @@ function ProductGate({
   body,
   href,
   label,
+  secondary,
 }: {
   title: string
   body: string
   href: string
   label: string
+  secondary?: { href: string; label: string }
 }) {
   return (
     <DashboardPanel>
       <DashboardPanelHeader title={title} icon={Lock} />
       <DashboardPanelBody>
         <p className="max-w-2xl text-[13px] leading-5 text-dash-muted">{body}</p>
-        <Button asChild size="sm" className="mt-4 h-9">
-          <Link href={href}>{label}</Link>
-        </Button>
+        <div className="mt-4 flex flex-wrap gap-2">
+          <Button asChild size="sm" className="h-9">
+            <Link href={href}>{label}</Link>
+          </Button>
+          {secondary && (
+            <Button asChild variant="outline" size="sm" className="h-9">
+              <Link href={secondary.href}>{secondary.label}</Link>
+            </Button>
+          )}
+        </div>
       </DashboardPanelBody>
     </DashboardPanel>
   )

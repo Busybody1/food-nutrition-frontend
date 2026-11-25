@@ -4,6 +4,7 @@ import { ApiResponse, PaginatedResponse, ApiError, ApiErrorDetails } from '@/typ
 import { getUserFacingApiMessage } from '@/lib/api/errors';
 import { normalizePaginatedResponse, unwrapSuccessPayload } from '@/lib/api/paginated';
 import { createTeamApi } from '@/lib/api/team';
+import { createImageCalorieApi } from '@/lib/api/image-calorie';
 
 interface RegisterData {
   email: string;
@@ -438,6 +439,8 @@ export const api = {
   },
 
   team: createTeamApi(apiClient),
+
+  imageCalorie: createImageCalorieApi(apiClient),
 
   usage: {
     getUsageData: (timeRange: string) =>
