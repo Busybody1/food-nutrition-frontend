@@ -859,7 +859,7 @@ export default function AdminEmailsPage() {
             <AdminPanelHeader title="Feedback request" icon={MessageSquareText} />
             <AdminPanelBody>
               <p className="max-w-3xl text-[13px] leading-5 text-dash-muted">
-                Sends the standard plain-text feedback request (reply-to Resend Receiving inbox). Same
+                Sends the branded feedback request (reply-to Resend Receiving inbox). Same
                 action as on the user detail page. The recipient must already exist in the user list.
               </p>
             </AdminPanelBody>

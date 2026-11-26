@@ -863,7 +863,7 @@ export default function UserManagement() {
           {feedbackTarget && (
             <div className="space-y-3 text-[13px] leading-5 text-dash-muted">
               <p>
-                Send a plain-text email to{' '}
+                Send a branded email to{' '}
                 <span className="font-medium text-dash-ink">{feedbackTarget.email}</span> asking for
                 feedback on the Food Nutrition API.
               </p>

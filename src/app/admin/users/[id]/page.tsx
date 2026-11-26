@@ -1061,7 +1061,7 @@ export default function AdminUserDetailPage() {
           <DialogHeader>
             <DialogTitle>Send feedback request</DialogTitle>
             <DialogDescription>
-              Send a plain-text email to{' '}
+              Send a branded email to{' '}
               <span className="font-medium text-dash-ink">{user.email}</span> asking for feedback
               on the Food Nutrition API. They reply directly to that email.
             </DialogDescription>
