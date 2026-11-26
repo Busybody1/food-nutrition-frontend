@@ -6,7 +6,7 @@ import {
   SERVER_REGION,
 } from '@/lib/site'
 
-export const PRIVACY_EFFECTIVE_DATE = 'May 22, 2026'
+export const PRIVACY_EFFECTIVE_DATE = 'November 26, 2026'
 
 export const privacySections: LegalSection[] = [
   {
@@ -57,7 +57,7 @@ export const privacySections: LegalSection[] = [
       { type: 'p', text: '2.3 Food Data Queries' },
       {
         type: 'p',
-        text: 'We collect and may retain information about the food items, nutrients, and database queries you submit through the API. This data is used to improve our database accuracy, identify popular queries, and enhance service performance. Query data is anonymized where possible and not linked to individual users unless required for abuse prevention.',
+        text: 'For each API call we record the request path, so any catalog ID or barcode you send in the path is part of that record. We do not store the text of search queries. It is used to run the search and may appear briefly in a results cache that expires within minutes and in hosting logs kept for no more than a week. Each month we also record the catalog IDs of foods returned to your account, which we use to apply plan limits. If a barcode is not in our catalog, our servers look it up on Open Food Facts and send only the barcode digits, with no information about you or your users.',
       },
     ],
   },
@@ -152,7 +152,7 @@ export const privacySections: LegalSection[] = [
         type: 'ul',
         items: [
           'API key and account data: retained for the duration of your account plus 90 days after deletion',
-          'Request logs: retained for up to 12 months for security and debugging purposes',
+          'Request logs, including the monthly record of foods returned to your account: used for billing, security and debugging, and deleted automatically after 12 months',
           'Billing records: retained for 7 years as required by applicable financial regulations',
           'Support communications: retained for 3 years',
         ],
@@ -230,6 +230,10 @@ export const privacySections: LegalSection[] = [
       {
         type: 'p',
         text: `The Food Database API and developer portal are not directed to individuals under the age of 18. We do not knowingly collect personal information from minors. If you become aware that a child has provided us with personal information without parental consent, please contact us immediately at ${PRIVACY_EMAIL} and we will take steps to delete such information.`,
+      },
+      {
+        type: 'p',
+        text: 'This applies to the people who hold accounts with us. A business may use the API in an app used by people under 18, as long as it does not send us those users\' personal information, such as names, contact details, device identifiers or IP addresses, in API requests. Each business is responsible for the notices and consents its own users need.',
       },
     ],
   },
