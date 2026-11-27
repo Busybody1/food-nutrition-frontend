@@ -88,7 +88,7 @@ export const CAPABILITY_PAGES: CapabilityPage[] = [
         icon: 'chart',
         title: 'Calorie estimation building blocks',
         description:
-          'No photo model. You resolve foods, scale per-100g values by grams, and estimate a meal. Suitable as a calorie estimation API for recipes you already parsed.',
+          'Self-serve plans have no photo model. You resolve foods, scale per-100g values by grams, and estimate a meal. A commercial photo API is on Enterprise, and the personal Calorie MCP plan has a photo tool.',
       },
       {
         icon: 'shield',
@@ -124,7 +124,7 @@ export const CAPABILITY_PAGES: CapabilityPage[] = [
         title: 'API for food calories and calorie estimation',
         paragraphs: [
           'An API for food calories should expose energy as a named field, not as USDA nutrient number 1008 buried in an array. Calorie API returns calories alongside protein_g, carbohydrates_g, and fat_g per 100 g so portion scaling is one multiplication. Micronutrients, when present, arrive in a structured nutrients array.',
-          'Calorie estimation is not the same as labeled barcode data. Estimation means you matched a food (or several recipe lines) and scaled a baseline. Photo models estimate from pixels; this nutrition API does not. If you already have ingredient names and grams, resolve each ingredient once, cache the IDs, and aggregate. That pattern is the calorie estimation API most meal-planning backends actually need.',
+          'Calorie estimation is not the same as labeled barcode data. Estimation means you matched a food (or several recipe lines) and scaled a baseline. Photo models estimate from pixels; the self-serve plans of this nutrition API do not, and image-to-calorie is an Enterprise feature. If you already have ingredient names and grams, resolve each ingredient once, cache the IDs, and aggregate. That pattern is the calorie estimation API most meal-planning backends actually need.',
           'Use verified_only when estimates feed coaching or targets. Manufacturer labels can be incomplete. Verified foods keep the four macros populated so a missing carb field cannot silently under-count a meal.',
         ],
       },
@@ -168,7 +168,7 @@ export const CAPABILITY_PAGES: CapabilityPage[] = [
       },
       {
         q: 'Do you offer an API for food calories and calorie estimation from photos?',
-        a: 'Calories are named fields on each food, which is the API for food calories most trackers need. There is no photo endpoint. Calorie estimation here means resolving foods and scaling per-100g values by grams, including recipe lines you already parsed.',
+        a: 'Calories are named fields on each food, which is the API for food calories most trackers need. Self-serve plans have no photo endpoint. Image-to-calorie is on Enterprise, and the personal Calorie MCP plan includes a food photo tool for Claude Code and Cursor. Calorie estimation here means resolving foods and scaling per-100g values by grams, including recipe lines you already parsed.',
       },
       {
         q: 'How does the barcode food API behave on a miss?',

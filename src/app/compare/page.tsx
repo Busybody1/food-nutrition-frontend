@@ -23,7 +23,7 @@ import {
 
 const COMPARE_H1 = 'Nutrition API comparison'
 const DESCRIPTION =
-  'Nutrition API comparison of Calorie API, Nutritionix, Edamam, USDA, Spoonacular, FatSecret, and Open Food Facts. Notes reviewed in July 2026.'
+  'Nutrition API comparison of Calorie API, Nutritionix, Edamam, USDA, Spoonacular, FatSecret, and Open Food Facts. Notes reviewed on 27 November 2026.'
 
 const HUB_FAQS = [
   {
@@ -126,7 +126,7 @@ export default function CompareHubPage() {
               </table>
             </div>
             <p className="mt-4 text-center text-xs text-mk-muted">
-              Summaries reviewed as of July 2026; verify against each provider&apos;s current
+              Summaries reviewed on 27 November 2026; verify against each provider&apos;s current
               documentation before deciding.
             </p>
           </Reveal>

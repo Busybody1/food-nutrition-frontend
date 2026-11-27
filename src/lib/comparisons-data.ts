@@ -53,7 +53,7 @@ export const COMPARISON_PAGES: ComparisonPage[] = [
       'food database API alternative',
     ],
     intro: [
-      `A Nutritionix alternative for REST food search is ${SITE_NAME}: verified macros per 100 g, barcode lookup, and ${FREE_TIER_LABEL}. Notes on this page were reviewed in July 2026. Nutritionix is known for natural-language food parsing and restaurant-chain coverage.`,
+      `A Nutritionix alternative for REST food search is ${SITE_NAME}: verified macros per 100 g, barcode lookup, and ${FREE_TIER_LABEL}. Notes on this page were reviewed on 27 November 2026. Nutritionix is known for natural-language food parsing and restaurant-chain coverage.`,
       'Which is right depends on what your product actually does with food data. This page lays out the differences honestly so you can decide quickly.',
     ],
     matrix: [
@@ -75,17 +75,17 @@ export const COMPARISON_PAGES: ComparisonPage[] = [
       {
         dimension: 'Commercial licensing',
         us: 'Explicit self-serve: Plus/Enterprise plan + one request header',
-        them: 'Tiered API plans; licensing terms scale with usage',
+        them: 'Plans priced by monthly active users and billed annually',
       },
       {
         dimension: 'Getting started',
         us: 'Free tier, no credit card; public playground without signup',
-        them: 'Free tier available for development',
+        them: 'No public free tier; a free business trial for up to 2 monthly active users',
       },
       {
         dimension: 'Pricing',
         us: `${FREE_TIER_LABEL}, then ${ENTRY_PLAN_LABEL} - flat monthly, no per-request metering`,
-        them: 'Tiered plans; free development tier, paid tiers scale with usage',
+        them: 'Starter $499 a month (up to 200 monthly active users), MVP $999 (up to 1,000), Unicorn from $1,850; billed annually',
       },
     ],
     whenTheyFit: [
@@ -124,8 +124,8 @@ export const COMPARISON_PAGES: ComparisonPage[] = [
       { label: 'API documentation', href: '/docs' },
     ],
     summary: 'REST-first verified food data vs Nutritionix’s NLP parsing and restaurant focus.',
-    asOf: 'July 2026',
-    dateModified: '2026-07-03',
+    asOf: '27 November 2026',
+    dateModified: '2026-11-27',
   },
   {
     slug: 'edamam-alternative',
@@ -141,7 +141,7 @@ export const COMPARISON_PAGES: ComparisonPage[] = [
       'food API alternative',
     ],
     intro: [
-      `An Edamam alternative for food-level data is ${SITE_NAME}: search, barcode lookup, and macros per 100 g, with ${FREE_TIER_LABEL}. Notes were reviewed in July 2026. Edamam is known for recipe-level analysis, which is a different job.`,
+      `An Edamam alternative for food-level data is ${SITE_NAME}: search, barcode lookup, and macros per 100 g, with ${FREE_TIER_LABEL}. Notes were reviewed on 27 November 2026. Edamam is known for recipe-level analysis, which is a different job.`,
       'If your product needs recipe ingestion as a service, Edamam earns its place. If it logs foods, scans barcodes, or computes its own plans, food-level data with predictable licensing is usually the simpler foundation.',
     ],
     matrix: [
@@ -163,7 +163,7 @@ export const COMPARISON_PAGES: ComparisonPage[] = [
       {
         dimension: 'Pricing model',
         us: 'Flat monthly plans with per-minute limits and monthly quotas',
-        them: 'Tiered plans; heavier usage typically moves to per-call pricing',
+        them: 'Prepaid monthly plans per product; the Food Database API starts at $14 a month for 100,000 calls',
       },
       {
         dimension: 'Data normalization',
@@ -173,7 +173,7 @@ export const COMPARISON_PAGES: ComparisonPage[] = [
       {
         dimension: 'Pricing',
         us: `${FREE_TIER_LABEL}, then ${ENTRY_PLAN_LABEL} - flat monthly, no per-request metering`,
-        them: 'Free developer tier with low limits; paid plans priced per tier and service',
+        them: 'Food Database: $14, $69, or $299 a month for 100,000, 750,000, or 5,000,000 calls, with a 30-day trial on the $14 plan; Nutrition Analysis from $29 a month',
       },
     ],
     whenTheyFit: [
@@ -211,8 +211,8 @@ export const COMPARISON_PAGES: ComparisonPage[] = [
       { label: 'Solutions for meal planning apps', href: '/solutions/meal-planning-apps' },
     ],
     summary: 'Food-level data and flat pricing vs Edamam’s recipe-analysis services.',
-    asOf: 'July 2026',
-    dateModified: '2026-07-03',
+    asOf: '27 November 2026',
+    dateModified: '2026-11-27',
   },
   {
     slug: 'usda-fooddata-central-alternative',
@@ -228,7 +228,7 @@ export const COMPARISON_PAGES: ComparisonPage[] = [
       'FDC API production',
     ],
     intro: [
-      `A USDA FoodData Central alternative is what a commercial app adds when it needs barcode lookup and autocomplete. ${SITE_NAME} is that REST API, with ${FREE_TIER_LABEL}. USDA FoodData Central remains free reference data for US generic foods. Notes were reviewed in July 2026.`,
+      `A USDA FoodData Central alternative is what a commercial app adds when it needs barcode lookup and autocomplete. ${SITE_NAME} is that REST API, with ${FREE_TIER_LABEL}. USDA FoodData Central remains free reference data for US generic foods. Notes were reviewed on 27 November 2026.`,
       'The gaps show up in production consumer apps: international and long-tail branded coverage, barcode lookup UX, autocomplete endpoints, and support commitments. That is the layer a commercial food API adds.',
     ],
     matrix: [
@@ -260,7 +260,7 @@ export const COMPARISON_PAGES: ComparisonPage[] = [
       {
         dimension: 'Pricing',
         us: `${FREE_TIER_LABEL}, then ${ENTRY_PLAN_LABEL} - flat monthly, no per-request metering`,
-        them: 'Free, US government funded; DEMO_KEY or a free API key',
+        them: 'Free, US government funded; a free key allows 1,000 requests an hour, DEMO_KEY 30 an hour and 50 a day',
       },
     ],
     whenTheyFit: [
@@ -298,8 +298,8 @@ export const COMPARISON_PAGES: ComparisonPage[] = [
       { label: 'Solutions for healthcare', href: '/solutions/healthcare' },
     ],
     summary: 'Production app layer (typeahead, barcode, support) vs the free USDA reference API.',
-    asOf: 'July 2026',
-    dateModified: '2026-07-03',
+    asOf: '27 November 2026',
+    dateModified: '2026-11-27',
   },
   {
     slug: 'spoonacular-alternative',
@@ -315,7 +315,7 @@ export const COMPARISON_PAGES: ComparisonPage[] = [
       'nutrition data API comparison',
     ],
     intro: [
-      `A Spoonacular alternative for nutrition data, rather than recipe content, is ${SITE_NAME}: search, barcode lookup, and verified macros, with ${FREE_TIER_LABEL}. Notes were reviewed in July 2026. Spoonacular is a recipe-content platform priced on points.`,
+      `A Spoonacular alternative for nutrition data, rather than recipe content, is ${SITE_NAME}: search, barcode lookup, and verified macros, with ${FREE_TIER_LABEL}. Notes were reviewed on 27 November 2026. Spoonacular is a recipe-content platform priced on points.`,
       'Products that need recipe content should look at Spoonacular seriously. Products that need reliable food data underneath their own content usually want the infrastructure shape.',
     ],
     matrix: [
@@ -347,7 +347,7 @@ export const COMPARISON_PAGES: ComparisonPage[] = [
       {
         dimension: 'Pricing',
         us: `${FREE_TIER_LABEL}, then ${ENTRY_PLAN_LABEL} - flat monthly, no per-request metering`,
-        them: 'Freemium; paid usage metered in points per request',
+        them: 'Free is 50 points a day, then calls stop; Cook $29 a month for 1,500 points a day, Culinarian $79 for 4,500, Chef $149 for 10,000',
       },
     ],
     whenTheyFit: [
@@ -385,8 +385,8 @@ export const COMPARISON_PAGES: ComparisonPage[] = [
       { label: 'Solutions for meal planning apps', href: '/solutions/meal-planning-apps' },
     ],
     summary: 'Nutrition data infrastructure with flat pricing vs Spoonacular’s recipe content platform.',
-    asOf: 'July 2026',
-    dateModified: '2026-07-03',
+    asOf: '27 November 2026',
+    dateModified: '2026-11-27',
   },
   {
     slug: 'fatsecret-alternative',
@@ -402,14 +402,14 @@ export const COMPARISON_PAGES: ComparisonPage[] = [
       'nutrition API comparison',
     ],
     intro: [
-      `A FatSecret alternative that uses an API key, not OAuth request signing, is ${SITE_NAME}: verified macros per 100 g, barcode lookup, and ${FREE_TIER_LABEL}. Notes were reviewed in July 2026. FatSecret is a long-established catalog with OAuth request signing.`,
+      `A FatSecret alternative that uses an API key, not OAuth request signing, is ${SITE_NAME}: verified macros per 100 g, barcode lookup, and ${FREE_TIER_LABEL}. Notes were reviewed on 27 November 2026. FatSecret is a long-established catalog that authenticates with OAuth.`,
       'Both cover the core food-data job. The differences that usually decide it are auth model, how much you trust user-generated entries, and whether you want image recognition and regional catalogs or a simpler, predictable data layer.',
     ],
     matrix: [
       {
         dimension: 'Authentication',
         us: 'Single X-API-Key header',
-        them: 'OAuth request signing (per-request signature)',
+        them: 'OAuth 2.0 access tokens or OAuth 1.0 request signing',
       },
       {
         dimension: 'Primary focus',
@@ -429,12 +429,12 @@ export const COMPARISON_PAGES: ComparisonPage[] = [
       {
         dimension: 'Pricing & licensing',
         us: 'Flat self-serve plans; commercial use is a plan feature plus a request header',
-        them: 'Freemium; free tier typically carries attribution requirements, paid tier for scale',
+        them: 'Basic and Premier Free require attribution; paid Premier is white-label',
       },
       {
         dimension: 'Pricing',
         us: `${FREE_TIER_LABEL}, then ${ENTRY_PLAN_LABEL} - flat monthly, no per-request metering`,
-        them: 'Free basic tier; premium tiers by request volume',
+        them: 'Basic is free with self sign-up at 5,000 calls a day, US data only; Premier is quoted by the markets you need, not by call volume',
       },
     ],
     whenTheyFit: [
@@ -473,8 +473,8 @@ export const COMPARISON_PAGES: ComparisonPage[] = [
       { label: 'Nutritionix alternative', href: '/compare/nutritionix-alternative' },
     ],
     summary: 'Simple API-key REST access and verified macros vs FatSecret’s OAuth platform and image recognition.',
-    asOf: 'July 2026',
-    dateModified: '2026-07-10',
+    asOf: '27 November 2026',
+    dateModified: '2026-11-27',
   },
   {
     slug: 'open-food-facts-alternative',
@@ -490,7 +490,7 @@ export const COMPARISON_PAGES: ComparisonPage[] = [
       'food database API comparison',
     ],
     intro: [
-      `An Open Food Facts alternative for verified macros and ranked search is ${SITE_NAME}. Barcode lookup still falls back to Open Food Facts, and the free tier is ${FREE_TIER_LABEL}. Notes were reviewed in July 2026.`,
+      `An Open Food Facts alternative for verified macros and ranked search is ${SITE_NAME}. Barcode lookup still falls back to Open Food Facts, and the free tier is ${FREE_TIER_LABEL}. Notes were reviewed on 27 November 2026.`,
       'This page is about the cases where a raw open dataset is not enough: when you need verified curation, guaranteed per-100g macros, ranked search and autocomplete, and a support channel behind a production dependency.',
     ],
     matrix: [
@@ -522,7 +522,7 @@ export const COMPARISON_PAGES: ComparisonPage[] = [
       {
         dimension: 'Pricing',
         us: `${FREE_TIER_LABEL}, then ${ENTRY_PLAN_LABEL} - flat monthly, no per-request metering`,
-        them: 'Free and open data; no paid plan, quota or SLA',
+        them: 'Free and open data with no paid plan or SLA; reads are limited to 15 product lookups and 10 searches a minute per IP',
       },
     ],
     whenTheyFit: [
@@ -561,8 +561,8 @@ export const COMPARISON_PAGES: ComparisonPage[] = [
       { label: 'Spoonacular alternative', href: '/compare/spoonacular-alternative' },
     ],
     summary: 'Verified, normalized production layer (with OFF built in as fallback) vs the raw open crowdsourced dataset.',
-    asOf: 'July 2026',
-    dateModified: '2026-07-10',
+    asOf: '27 November 2026',
+    dateModified: '2026-11-27',
   },
 ]
 
