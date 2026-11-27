@@ -345,8 +345,8 @@ function ContactPageContent() {
                 <MarketingIconDisc icon={BuildingsIcon} tone="violet" />
                 <h2 className="mt-4 text-base font-semibold tracking-[-0.01em] text-mk-ink">Enterprise</h2>
                 <p className="mt-1 text-[15px] leading-relaxed text-mk-muted">
-                  Custom quotas, image-to-calorie API, credits-based usage, SLAs, white-label, and
-                  on-premise options for large teams.
+                  Priced by monthly users from $150, with calls and photo scans included. Photo-to-calorie
+                  API, white-label, and custom terms for larger teams.
                 </p>
                 <p className="mt-2 text-xs text-mk-muted">
                   Schedule a 30-minute call or email us with your expected volume.

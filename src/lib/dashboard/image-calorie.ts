@@ -31,6 +31,7 @@ export function meterLabel(meter: ImageCalorieMeter | null): string {
   if (meter === 'pilot') return 'Photo test'
   if (meter === 'credits') return 'Credits'
   if (meter === 'mcp') return 'MCP allowance'
+  if (meter === 'enterprise') return 'Enterprise'
   return 'Not available'
 }
 
@@ -52,6 +53,11 @@ function utcDay(iso: string | null | undefined, withYear: boolean): string {
 
 function n(value: number): string {
   return (Number.isFinite(value) && value > 0 ? Math.floor(value) : 0).toLocaleString('en-US')
+}
+
+export function centsText(cents: number): string {
+  const safe = Number.isFinite(cents) && cents > 0 ? Math.round(cents) : 0
+  return safe % 100 === 0 ? `$${(safe / 100).toLocaleString('en-US')}` : `$${(safe / 100).toFixed(2)}`
 }
 
 function percentOf(used: number, cap: number | null): number | null {
@@ -112,6 +118,33 @@ export function limitCards(access: ImageCalorieAccess): LimitCard[] {
       { key: 'left', label: 'Photos left', value: n(c.calls_left), hint: 'At the current balance', percent: null },
     ]
   }
+  if (access.meter === 'enterprise' && access.enterprise) {
+    const e = access.enterprise
+    const resets = utcDay(e.resets_on, false)
+    return [
+      {
+        key: 'month',
+        label: 'Photos this month',
+        value: ofCap(e.photos_used, e.photos_included),
+        hint: resets ? `Included in your plan. Resets ${resets}` : 'Included in your plan',
+        percent: percentOf(e.photos_used, e.photos_included),
+      },
+      {
+        key: 'extra',
+        label: 'Extra photos',
+        value: n(e.photos_extra),
+        hint: `${centsText(e.per_extra_photo_cents)} each on this month's bill`,
+        percent: null,
+      },
+      {
+        key: 'cap',
+        label: 'Safety limit',
+        value: n(e.photo_monthly_cap),
+        hint: 'Photo calls return 429 past this. Ask us to raise it',
+        percent: percentOf(e.photos_used, e.photo_monthly_cap),
+      },
+    ]
+  }
   if (access.meter === 'mcp' && access.mcp) {
     const m = access.mcp
     if (m.trial) {
@@ -153,11 +186,18 @@ export function endpointUrl(baseUrl: string, endpoint: string): string {
   return `${baseUrl.replace(/\/+$/, '')}${endpoint}`
 }
 
-export function codeSamples(url: string, fileField = 'file'): Record<CodeLanguage, string> {
+export function codeSamples(url: string, fileField = 'file', endUserHeader?: string): Record<CodeLanguage, string> {
+  const jsHeaders = endUserHeader
+    ? `{ 'X-API-Key': process.env.CALORIE_API_KEY, '${endUserHeader}': userId }`
+    : `{ 'X-API-Key': process.env.CALORIE_API_KEY }`
+  const pyHeaders = endUserHeader
+    ? `{"X-API-Key": os.environ["CALORIE_API_KEY"], "${endUserHeader}": user_id}`
+    : `{"X-API-Key": os.environ["CALORIE_API_KEY"]}`
   return {
     curl: [
       `curl -X POST "${url}" \\`,
       `  -H "X-API-Key: $CALORIE_API_KEY" \\`,
+      ...(endUserHeader ? [`  -H "${endUserHeader}: user_8f3a2c91" \\`] : []),
       `  -F "${fileField}=@lunch.jpg"`,
     ].join('\n'),
     javascript: [
@@ -166,7 +206,7 @@ export function codeSamples(url: string, fileField = 'file'): Record<CodeLanguag
       ``,
       `const res = await fetch('${url}', {`,
       `  method: 'POST',`,
-      `  headers: { 'X-API-Key': process.env.CALORIE_API_KEY },`,
+      `  headers: ${jsHeaders},`,
       `  body: form,`,
       `})`,
       `const data = await res.json()`,
@@ -179,7 +219,7 @@ export function codeSamples(url: string, fileField = 'file'): Record<CodeLanguag
       `with open("lunch.jpg", "rb") as photo:`,
       `    res = requests.post(`,
       `        "${url}",`,
-      `        headers={"X-API-Key": os.environ["CALORIE_API_KEY"]},`,
+      `        headers=${pyHeaders},`,
       `        files={"${fileField}": ("lunch.jpg", photo, "image/jpeg")},`,
       `        timeout=60,`,
       `    )`,
@@ -233,6 +273,22 @@ export function exampleResponse(access: ImageCalorieAccess): string {
       2
     )
   }
+  if (access.meter === 'enterprise') {
+    const e = access.enterprise
+    return JSON.stringify(
+      {
+        request_id: requestId,
+        photos_used: 13,
+        photos_included: e?.photos_included || 5000,
+        photos_extra: 0,
+        photo_monthly_cap: e?.photo_monthly_cap || 25000,
+        resets_on: e?.resets_on || '2026-12-01',
+        estimate: EXAMPLE_ESTIMATE,
+      },
+      null,
+      2
+    )
+  }
   if (access.meter === 'credits') {
     const cost = access.credits?.cost_per_call || 1
     return JSON.stringify(
@@ -258,6 +314,8 @@ export function responseNotes(access: ImageCalorieAccess): string[] {
     notes.push('calls_used includes the call you just made. resets_on is when it goes back to 0.')
   } else if (access.meter === 'credits') {
     notes.push('credits_remaining is your balance after this call.')
+  } else if (access.meter === 'enterprise') {
+    notes.push('photos_used includes the call you just made. photos_extra is how many are past the included photos this month.')
   }
   return notes
 }
@@ -279,6 +337,14 @@ export function countingRules(access: ImageCalorieAccess): string[] {
   } else if (access.meter === 'credits') {
     rules.push('Credits are charged only when an estimate is returned. Failed calls (400, 413, 502) are free.')
     rules.push('When the balance runs out, calls return 402 until credits are added.')
+  } else if (access.meter === 'enterprise') {
+    const e = access.enterprise
+    rules.push(
+      `${n(e?.photos_included ?? 5000)} photos a month are included. Each photo after that is ${centsText(e?.per_extra_photo_cents ?? 1)}, added to the month's bill.`
+    )
+    rules.push('Only calls that return an estimate count. A bad file (400), a file over the size limit (413) or a failed analysis (502) is free.')
+    rules.push(`Past the safety limit of ${n(e?.photo_monthly_cap ?? 25000)} photos a month, calls return 429 until the 1st or until we raise it.`)
+    rules.push('Send X-End-User-Id on photo calls too. Photos count toward that user.')
   } else if (access.meter === 'mcp') {
     rules.push('Calls here and photo calls from your MCP client draw from the same allowance.')
     rules.push('Only calls that return an estimate count toward the allowance.')
@@ -306,6 +372,11 @@ export function errorRows(meter: ImageCalorieMeter | null): ErrorRow[] {
     rows.push({ status: 402, code: 'insufficient_credits', meaning: 'Not enough credits for this call' })
   } else if (meter === 'mcp') {
     rows.push({ status: 429, code: 'image_calorie_mcp_photo_limit', meaning: 'MCP photo allowance reached' })
+  } else if (meter === 'enterprise') {
+    rows.push(
+      { status: 429, code: 'image_calorie_monthly_cap', meaning: 'Monthly photo safety limit reached. See resets_on' },
+      { status: 429, code: 'image_calorie_attempt_limit', meaning: 'Too many failed photo calls this month' }
+    )
   }
   rows.push(
     { status: 429, code: null, meaning: 'Per-minute rate limit. Retry after a minute' },

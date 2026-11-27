@@ -1,4 +1,13 @@
 import { apiClient } from '@/lib/api/client'
+import type { AdminEnterpriseBody, AdminEnterpriseConfigFields } from '@/lib/enterprise/admin'
+import {
+  normalizeEnterpriseMonth,
+  normalizeStatementList,
+  normalizeStatementRow,
+  type EnterpriseMonth,
+  type EnterpriseStatementRow,
+  type StatementStatus,
+} from '@/lib/enterprise/model'
 import type {
   SupportConversation,
   SupportConversationListPayload,
@@ -433,6 +442,77 @@ export interface ImageCaloriePilotStatus {
   platform_enabled: boolean
 }
 
+export interface AdminEnterpriseFlags {
+  billing: boolean
+  end_user_tracking: boolean
+  scrape_guard: boolean
+}
+
+export interface AdminEnterprisePricingValues {
+  per_extra_user_cents: number
+  per_1k_extra_calls_cents: number
+  per_extra_photo_cents: number
+  calls_per_extra_user: number
+  photos_included: number
+  photo_monthly_cap: number
+}
+
+export interface AdminEnterpriseConfig extends AdminEnterpriseConfigFields {
+  account_user_id: number
+  created_at: string | null
+  updated_at: string | null
+}
+
+export interface AdminEnterpriseCoverage {
+  distinct_month: number | null
+  month_limit: number | null
+  distinct_12m: number | null
+  limit_12m: number | null
+  stats_day: string | null
+}
+
+export interface AdminScrapeSlowdown {
+  account_user_id: number
+  reason?: string
+  kind?: string
+  until?: string
+  placed_at?: string
+}
+
+export interface AdminEnterpriseView {
+  user_id: number
+  email: string | null
+  plan_name: string | null
+  plan_is_enterprise: boolean
+  flags: AdminEnterpriseFlags
+  config: AdminEnterpriseConfig | null
+  effective_pricing: AdminEnterprisePricingValues
+  defaults: AdminEnterprisePricingValues
+  active: boolean
+  month: EnterpriseMonth | null
+  coverage: AdminEnterpriseCoverage
+  slowdown: AdminScrapeSlowdown | null
+}
+
+export interface AdminEnterpriseOverviewAccount {
+  account_user_id: number
+  email: string | null
+  plan_name: string | null
+  is_active: boolean
+  end_user_mode: string | null
+  month: EnterpriseMonth | null
+}
+
+export interface AdminEnterpriseCloseResult {
+  month: string
+  closed: Array<{ account_user_id: number; total_cents: number; tier_label: string }>
+  skipped: number[]
+}
+
+function normalizeAdminEnterpriseView(raw: AdminEnterpriseView): AdminEnterpriseView {
+  return { ...raw, month: normalizeEnterpriseMonth(raw.month) }
+}
+
 export interface AdminPlanFeature {
   id?: number
   plan_id?: number
@@ -858,6 +938,64 @@ class AdminAPI {
     body: { enabled: boolean; expires_on?: string; reason?: string }
   ): Promise<ImageCaloriePilotStatus> {
     return adminPut(`/users/${userId}/image-calorie-pilot`, body)
+  }
+
+  async getUserEnterprise(userId: number): Promise<AdminEnterpriseView> {
+    return normalizeAdminEnterpriseView(await adminGet<AdminEnterpriseView>(`/users/${userId}/enterprise`))
+  }
+
+  async setUserEnterprise(userId: number, body: AdminEnterpriseBody): Promise<AdminEnterpriseView> {
+    return normalizeAdminEnterpriseView(
+      await adminPut<AdminEnterpriseView>(`/users/${userId}/enterprise`, body)
+    )
+  }
+
+  async getEnterpriseOverview(): Promise<{
+    flags: AdminEnterpriseFlags
+    accounts: AdminEnterpriseOverviewAccount[]
+  }> {
+    const raw = await adminGet<{ flags: AdminEnterpriseFlags; accounts: AdminEnterpriseOverviewAccount[] }>(
+      '/enterprise/overview'
+    )
+    return {
+      flags: raw.flags,
+      accounts: (raw.accounts ?? []).map((a) => ({ ...a, month: normalizeEnterpriseMonth(a.month) })),
+    }
+  }
+
+  async getEnterpriseStatements(params?: {
+    month?: string
+    status?: StatementStatus
+    account_user_id?: number
+  }): Promise<EnterpriseStatementRow[]> {
+    return normalizeStatementList(await adminGet<unknown>('/enterprise/statements', params))
+  }
+
+  async setEnterpriseStatementStatus(
+    accountUserId: number,
+    month: string,
+    status: StatementStatus
+  ): Promise<EnterpriseStatementRow | null> {
+    return normalizeStatementRow(
+      await adminPatch<unknown>(`/enterprise/statements/${accountUserId}/${month}`, { status })
+    )
+  }
+
+  async closeEnterpriseMonth(month: string): Promise<AdminEnterpriseCloseResult> {
+    return adminPost('/enterprise/statements/close', { month })
+  }
+
+  async exportEnterpriseStatements(month?: string): Promise<Blob> {
+    const res = await apiClient.get<Blob>(`${BASE}/enterprise/statements/export.csv`, month ? { month } : undefined)
+    return res.data
+  }
+
+  async getScrapeSlowdowns(): Promise<{ slowdowns: AdminScrapeSlowdown[]; guard_enabled: boolean }> {
+    return adminGet('/security/slowdowns')
+  }
+
+  async liftScrapeSlowdown(userId: number): Promise<{ lifted: boolean }> {
+    return adminDelete(`/users/${userId}/slowdown`)
   }
 
   async getSystemMetrics(): Promise<AdminStats> {

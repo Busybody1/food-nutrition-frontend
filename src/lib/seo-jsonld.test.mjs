@@ -41,3 +41,15 @@ test('buildPricingProductJsonLdFromInput uses the billed offer price', () => {
   const core = data.offers.find((o) => o.name === 'Core');
   assert.equal(core.price, '99');
 });
+
+test('an offer can carry a description, such as the Enterprise starting price', () => {
+  const data = buildPricingProductJsonLdFromInput({
+    ...INPUT,
+    plans: [...INPUT.plans, { name: 'Enterprise', price: '150', description: 'From $150 a month, priced by monthly users' }],
+  });
+  const enterprise = data.offers.find((o) => o.name === 'Enterprise');
+  assert.equal(enterprise.price, '150');
+  assert.equal(enterprise.description, 'From $150 a month, priced by monthly users');
+  const core = data.offers.find((o) => o.name === 'Core');
+  assert.equal(core.description, undefined);
+});

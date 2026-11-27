@@ -10,6 +10,7 @@ import {
   type PricingPlan,
   type CompareRow,
 } from '@/lib/pricing/plan-display'
+import { DEFAULT_ENTERPRISE_PRICING, type EnterprisePricing } from '@/lib/enterprise/model'
 import { cn } from '@/lib/utils/cn'
 
 function CompareCellValue({ value }: { value: boolean | string }) {
@@ -46,8 +47,15 @@ const STICKY_HEAD_BG = 'bg-mk-stage'
 const STICKY_ZEBRA_BG = 'bg-[#FBFBFC]'
 const STICKY_EDGE_SHADOW = 'max-lg:shadow-[inset_-8px_0_8px_-8px_rgba(0,0,0,0.08)]'
 
-export function PricingComparison({ plans }: { plans: PricingPlan[] }) {
+export function PricingComparison({
+  plans,
+  enterprisePricing = DEFAULT_ENTERPRISE_PRICING,
+}: {
+  plans: PricingPlan[]
+  enterprisePricing?: EnterprisePricing
+}) {
   if (plans.length === 0) return null
+  const context = { enterprise: enterprisePricing }
 
   let lastSection: CompareRow['section'] | undefined
 
@@ -59,7 +67,7 @@ export function PricingComparison({ plans }: { plans: PricingPlan[] }) {
             <MarketingSectionHeader
               id="compare-plans-heading"
               title="Compare plans"
-              description="All paid tiers include per-account rate limits, monthly quotas, and a foods-per-query cap. Commercial apps need Plus or Enterprise. Image-to-calorie API and credits-based usage are available on Enterprise."
+              description="All paid tiers include per-account rate limits, monthly quotas, and a foods-per-query cap. Commercial apps need Plus or Enterprise. Enterprise is priced by monthly users, from $150, with photo scans included."
             />
           </Reveal>
 
@@ -138,7 +146,7 @@ export function PricingComparison({ plans }: { plans: PricingPlan[] }) {
                                   plan.is_recommended && 'bg-mk-stage/70'
                                 )}
                               >
-                                <CompareCellValue value={row.getValue(plan)} />
+                                <CompareCellValue value={row.getValue(plan, context)} />
                               </td>
                             ))}
                           </tr>

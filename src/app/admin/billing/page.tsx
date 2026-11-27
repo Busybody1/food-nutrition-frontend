@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { adminAPI } from '@/lib/api/admin'
 import { CreditCard, DollarSign, Receipt, Users } from 'lucide-react'
 import { AdminLineChart } from '@/components/admin/admin-charts'
+import { EnterpriseStatementsPanel } from '@/components/admin/enterprise-statements-panel'
 import { formatCount } from '@/lib/utils/format'
 import {
   AdminPage,
@@ -131,7 +132,7 @@ export default function AdminBillingPage() {
     <AdminPage>
       <AdminPageHeader
         title="Billing & revenue"
-        description="Read-only view of Stripe billing events and active subscriptions."
+        description="Stripe billing events, Enterprise statements and active subscriptions."
         actions={<AdminRefreshButton onClick={load} loading={loading} />}
       />
 
@@ -223,6 +224,8 @@ export default function AdminBillingPage() {
               </AdminPanelBody>
             </AdminPanel>
           </div>
+
+          <EnterpriseStatementsPanel />
 
           <AdminPanel>
             <AdminPanelHeader

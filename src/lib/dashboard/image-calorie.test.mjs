@@ -194,3 +194,50 @@ test('no em dashes in any copy', () => {
   ])
   for (const text of copy) assert.equal(text.includes('—'), false, text)
 })
+
+const enterprise = {
+  ...base,
+  meter: 'enterprise',
+  enterprise: {
+    photos_used: 5200,
+    photos_included: 5000,
+    photos_extra: 200,
+    photo_monthly_cap: 25000,
+    per_extra_photo_cents: 1,
+    resets_on: '2026-12-01',
+  },
+}
+
+test('enterprise limit cards show included, extra and the safety limit', () => {
+  assert.equal(meterLabel('enterprise'), 'Enterprise')
+  const cards = limitCards(enterprise)
+  assert.deepEqual(
+    cards.map((c) => [c.key, c.value]),
+    [
+      ['month', '5,200 of 5,000'],
+      ['extra', '200'],
+      ['cap', '25,000'],
+    ]
+  )
+  assert.equal(cards[0].percent, 100)
+  assert.match(cards[1].hint, /\$0\.01 each/)
+  assert.equal(usageMissing({ ...enterprise, enterprise: null }), true)
+})
+
+test('enterprise samples, example, rules and errors', () => {
+  const samples = codeSamples('https://api.example.com/api/v1/vision/calories', 'file', 'X-End-User-Id')
+  assert.match(samples.curl, /-H "X-End-User-Id: user_8f3a2c91"/)
+  assert.match(samples.javascript, /'X-End-User-Id': userId/)
+  assert.match(samples.python, /"X-End-User-Id": user_id/)
+  assert.doesNotMatch(codeSamples('https://x/api', 'file').curl, /X-End-User-Id/)
+  const example = JSON.parse(exampleResponse(enterprise))
+  assert.equal(example.photos_included, 5000)
+  assert.equal(example.photo_monthly_cap, 25000)
+  assert.match(countingRules(enterprise).join(' '), /Each photo after that is \$0\.01/)
+  assert.match(responseNotes(enterprise).join(' '), /photos_extra/)
+  const codes = errorRows('enterprise').map((r) => r.code)
+  assert.ok(codes.includes('image_calorie_monthly_cap'))
+  assert.ok(codes.includes('image_calorie_attempt_limit'))
+  const copy = [...countingRules(enterprise), ...limitCards(enterprise).flatMap((c) => [c.label, c.hint])]
+  for (const text of copy) assert.equal(text.includes('—'), false, text)
+})

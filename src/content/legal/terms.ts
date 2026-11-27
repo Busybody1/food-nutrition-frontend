@@ -11,7 +11,7 @@ import {
 
 const PRICING_URL = absoluteUrl('/pricing')
 
-export const TERMS_EFFECTIVE_DATE = 'May 22, 2026'
+export const TERMS_EFFECTIVE_DATE = 'November 27, 2026'
 
 export const termsSections: LegalSection[] = [
   {
@@ -275,7 +275,7 @@ export const termsSections: LegalSection[] = [
       { type: 'p', text: '10.3 Effect of Termination' },
       {
         type: 'p',
-        text: 'Upon termination, your right to access and use the Services immediately ceases. You must delete all local copies of API data obtained during your use of the Services, except as required by law. Sections 6, 7, 11, 12, and 13 survive termination.',
+        text: 'Upon termination, your right to access and use the Services immediately ceases. You must delete all local copies of API data obtained during your use of the Services, except as required by law and except past end-user records that your Enterprise plan and Section 4A of the Commercial API License allow to remain visible to the end user who logged them. Sections 6, 7, 11, 12, and 13 survive termination.',
       },
     ],
   },

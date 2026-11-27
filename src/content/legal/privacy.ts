@@ -6,7 +6,7 @@ import {
   SERVER_REGION,
 } from '@/lib/site'
 
-export const PRIVACY_EFFECTIVE_DATE = 'November 26, 2026'
+export const PRIVACY_EFFECTIVE_DATE = 'November 27, 2026'
 
 export const privacySections: LegalSection[] = [
   {
@@ -58,6 +58,11 @@ export const privacySections: LegalSection[] = [
       {
         type: 'p',
         text: 'For each API call we record the request path, so any catalog ID or barcode you send in the path is part of that record. We do not store the text of search queries. It is used to run the search and may appear briefly in a results cache that expires within minutes and in hosting logs kept for no more than a week. Each month we also record the catalog IDs of foods returned to your account, which we use to apply plan limits. If a barcode is not in our catalog, our servers look it up on Open Food Facts and send only the barcode digits, with no information about you or your users.',
+      },
+      { type: 'p', text: '2.4 Enterprise End-User IDs' },
+      {
+        type: 'p',
+        text: 'Enterprise customers send an anonymous ID for each person using their app, in the X-End-User-Id header, so we can count monthly users for billing and spot abuse. We never store the ID as sent. We store only a keyed hash of it, which is different for each customer, together with that ID\'s monthly call and photo counts and the days it was active. We do not accept emails, names or phone numbers as IDs. These records are deleted automatically after 13 months.',
       },
     ],
   },
@@ -153,6 +158,7 @@ export const privacySections: LegalSection[] = [
         items: [
           'API key and account data: retained for the duration of your account plus 90 days after deletion',
           'Request logs, including the monthly record of foods returned to your account: used for billing, security and debugging, and deleted automatically after 12 months',
+          'Enterprise end-user records (keyed hashes of end-user IDs with their monthly counts): deleted automatically after 13 months',
           'Billing records: retained for 7 years as required by applicable financial regulations',
           'Support communications: retained for 3 years',
         ],

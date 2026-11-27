@@ -3,7 +3,15 @@
 import { CheckCircle } from 'lucide-react'
 import { BuildingsIcon } from '@phosphor-icons/react/ssr'
 import type { PricingPlan } from '@/lib/pricing/plan-display'
-import { formatPlanPrice, isMcpPlan } from '@/lib/pricing/plan-display'
+import { isMcpPlan } from '@/lib/pricing/plan-display'
+import {
+  DEFAULT_ENTERPRISE_PRICING,
+  enterpriseHighlights,
+  fromPriceLabel,
+  overageLines,
+  tierTableRows,
+  type EnterprisePricing,
+} from '@/lib/enterprise/model'
 import { PricingMcpExclusionNote } from '@/components/marketing/pricing-mcp-note'
 import { MarketingIconDisc } from '@/components/marketing/marketing-shell'
 import { cn } from '@/lib/utils/cn'
@@ -12,12 +20,18 @@ export function PricingEnterpriseBand({
   plan,
   isCurrent,
   onSelect,
+  pricing = DEFAULT_ENTERPRISE_PRICING,
 }: {
   plan: PricingPlan
   isCurrent: boolean
   onSelect: () => void
+  pricing?: EnterprisePricing
 }) {
-  const { amount, suffix } = formatPlanPrice(plan)
+  const amount = fromPriceLabel(pricing)
+  const suffix = '/mo'
+  const highlights = enterpriseHighlights(pricing)
+  const rows = tierTableRows(pricing)
+  const overages = overageLines(pricing)
   const ctaLabel = isCurrent ? 'Current plan' : 'Schedule a call'
 
   return (
@@ -46,7 +60,7 @@ export function PricingEnterpriseBand({
         </div>
 
         <ul className="grid gap-2 sm:grid-cols-2">
-          {plan.highlights.map((item) => (
+          {highlights.map((item) => (
             <li key={item} className="flex items-start gap-2 text-sm text-mk-muted">
               <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-mk-green" aria-hidden />
               <span>{item}</span>
@@ -66,9 +80,43 @@ export function PricingEnterpriseBand({
             {ctaLabel}
           </button>
           <p className="text-center text-xs text-mk-muted lg:text-left">
-            Image-to-calorie API and credits-based usage included.
+            Photo-to-calorie API included. Billed monthly on what you use.
           </p>
         </div>
+      </div>
+
+      <div className="mt-8 grid gap-6 border-t border-mk-hair pt-6 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
+        <div className="min-w-0 overflow-x-auto">
+          <table className="w-full min-w-[460px] text-left text-sm">
+            <caption className="sr-only">Enterprise tiers</caption>
+            <thead>
+              <tr className="text-xs font-medium text-mk-muted">
+                <th scope="col" className="pb-2 pr-4 font-medium">Monthly users</th>
+                <th scope="col" className="pb-2 pr-4 font-medium">Price</th>
+                <th scope="col" className="pb-2 pr-4 font-medium">Calls included</th>
+                <th scope="col" className="pb-2 font-medium">Photos</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row) => (
+                <tr key={row.users} className="border-t border-mk-hair">
+                  <th scope="row" className="py-2.5 pr-4 font-medium text-mk-ink">{row.users}</th>
+                  <td className="whitespace-nowrap py-2.5 pr-4 tabular-nums text-mk-ink">{row.price}</td>
+                  <td className="whitespace-nowrap py-2.5 pr-4 tabular-nums text-mk-muted">{row.calls}</td>
+                  <td className="whitespace-nowrap py-2.5 tabular-nums text-mk-muted">{row.photos}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <ul className="space-y-2 text-sm text-mk-muted">
+          {overages.map((line) => (
+            <li key={line} className="flex items-start gap-2">
+              <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-brand" aria-hidden />
+              <span>{line}</span>
+            </li>
+          ))}
+        </ul>
       </div>
     </article>
   )

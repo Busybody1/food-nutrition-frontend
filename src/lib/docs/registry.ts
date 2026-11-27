@@ -113,8 +113,8 @@ export const DOCS_SECTIONS: DocsSectionMeta[] = [
       'commercial API use',
       'X-RateLimit headers',
     ],
-    summary: 'Plan limits, quotas, and commercial use.',
-    dateModified: '2026-11-26',
+    summary: 'Plan limits, quotas, paging, Enterprise end-user IDs, and commercial use.',
+    dateModified: '2026-11-27',
     group: 'Advanced',
   },
   {
@@ -130,7 +130,7 @@ export const DOCS_SECTIONS: DocsSectionMeta[] = [
       '429 rate limit',
     ],
     summary: 'Status codes, error payloads, and retry guidance.',
-    dateModified: '2026-09-29',
+    dateModified: '2026-11-27',
     group: 'Advanced',
   },
 ]

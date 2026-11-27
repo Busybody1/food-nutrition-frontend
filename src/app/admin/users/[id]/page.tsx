@@ -35,6 +35,7 @@ import { DeleteUserDialog } from '@/components/admin/delete-user-dialog'
 import { ResetUserPasswordDialog } from '@/components/admin/reset-user-password-dialog'
 import { TeamSharingPanel } from '@/components/admin/team-sharing-panel'
 import { ImageCaloriePilotPanel } from '@/components/admin/image-calorie-pilot-panel'
+import { EnterprisePanel } from '@/components/admin/enterprise-panel'
 import { useAdmin } from '@/lib/hooks/use-admin'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -623,6 +624,8 @@ export default function AdminUserDetailPage() {
       <TeamSharingPanel key={user.id} userId={user.id} />
 
       <ImageCaloriePilotPanel key={`pilot-${user.id}`} userId={user.id} refreshKey={pilotRefreshKey} />
+
+      <EnterprisePanel key={`enterprise-${user.id}`} userId={user.id} />
 
       <div className="dashboard-grid-halves">
         <AdminPanel>

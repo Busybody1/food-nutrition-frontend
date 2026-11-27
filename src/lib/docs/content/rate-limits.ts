@@ -14,7 +14,7 @@ export const RATE_LIMITS_CONTENT: DocsSectionContent = {
         { name: 'Basic', description: '30 requests/min' },
         { name: 'Core', description: '50 requests/min' },
         { name: 'Plus', description: '200 requests/min, with response caching' },
-        { name: 'Enterprise', description: '1,000 requests/min on the public Enterprise card. Higher caps are negotiated.' },
+        { name: 'Enterprise', description: '500 requests/min per account, plus 60 requests/min for each end user (see below).' },
       ],
     },
     { kind: 'h2', text: 'Rate-limit headers', id: 'headers' },
@@ -39,12 +39,48 @@ export const RATE_LIMITS_CONTENT: DocsSectionContent = {
         'Plus and Enterprise GET search/food responses may be cached for 5 minutes per account (Redis).',
       ],
     },
+    { kind: 'h2', text: 'Paging limit', id: 'paging-limit' },
+    {
+      kind: 'p',
+      text: 'Food lists return at most the first 1,000 results of a query. On /search/foods, /search/advanced, /catalog/foods and /foods, a call where skip plus limit goes past 1,000 returns 400 with code paging_limit. Narrow the query instead of paging further.',
+    },
+    { kind: 'h2', text: 'Enterprise: end-user IDs', id: 'end-user-ids' },
+    {
+      kind: 'p',
+      text: 'Enterprise is priced by monthly users, so Enterprise apps send the anonymous ID of the person behind each call in the X-End-User-Id header. A user counts toward the month once they make one successful call. We keep only a scrambled (keyed hash) version of the ID.',
+    },
+    {
+      kind: 'list',
+      items: [
+        'Use any stable ID from your own system: 8 to 64 characters from A-Z, a-z, 0-9 and . _ : -',
+        'Never send an email, name or phone number. Values with @ are refused.',
+        'Send the same ID for the same person every time, on every call, including photo calls.',
+        'Each end user can make up to 60 calls a minute. Other users of your app are not affected when one goes over.',
+        'While your account is in its integration period, calls without the header still work and are counted on your Enterprise dashboard. Once the header is required, they return 400.',
+      ],
+    },
+    {
+      kind: 'code',
+      title: 'Request with an end-user ID',
+      code: 'curl "https://calorieapiadmin.com/api/v1/search/foods?q=greek%20yogurt" \\\n  -H "X-API-Key: your_api_key_here" \\\n  -H "X-End-User-Id: user_8f3a2c91"',
+    },
+    {
+      kind: 'params',
+      title: 'End-user ID errors',
+      rows: [
+        { name: '400 end_user_id_required', description: 'The header is required on this account and was missing.' },
+        { name: '400 end_user_id_invalid', description: 'The ID breaks the format rules above.' },
+        { name: '403 end_user_blocked', description: 'This end user is blocked until 00:00 UTC after unusual activity. Other users keep working.' },
+        { name: '429 end_user_rate_limited', description: 'This end user is over 60 calls a minute. Retry after the Retry-After header.' },
+      ],
+    },
     { kind: 'h2', text: 'Limit-related status codes', id: 'status-codes' },
     {
       kind: 'params',
       title: 'Status codes',
       rows: [
-        { name: '429', description: 'Per-minute rate limit exceeded. Back off and retry after X-RateLimit-Reset.' },
+        { name: '400', description: 'paging_limit: skip plus limit goes past the first 1,000 results. Enterprise only: end_user_id_required or end_user_id_invalid.' },
+        { name: '429', description: 'Per-minute rate limit exceeded. Back off and retry after X-RateLimit-Reset. Enterprise end users over 60 calls a minute get end_user_rate_limited.' },
         { name: '402', description: 'Monthly quota exceeded. Upgrade your plan or wait for the billing cycle reset.' },
         { name: '403', description: 'Commercial use not allowed on your plan, the endpoint is not enabled for your plan, or a food-coverage limit was reached.' },
         { name: '423', description: 'Account temporarily on a security hold due to unusual activity (distinct from a ban; self-heals on expiry). Not retryable; contact support to restore access.' },

@@ -1,12 +1,15 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
+import Link from 'next/link'
 import {
   adminAPI,
+  type AdminScrapeSlowdown,
   SecurityHoldRow,
   SecurityIncident,
   SystemSettingRow,
 } from '@/lib/api/admin'
+import { incidentActionLabel, incidentKindLabel } from '@/lib/enterprise/admin'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
@@ -26,6 +29,7 @@ import {
   ScanSearch,
   Eye,
   Settings2,
+  Turtle,
   UserRound,
 } from 'lucide-react'
 import {
@@ -46,6 +50,7 @@ import {
   DashboardEmpty,
   DashboardAlert,
   DashboardPill,
+  InfoHint,
 } from '@/components/admin/admin-ui'
 
 const DETECTION_KEY = 'anomaly_detection_enabled'
@@ -56,26 +61,13 @@ function settingIsTrue(settings: SystemSettingRow[], key: string): boolean {
 }
 
 function KindBadge({ kind }: { kind: string }) {
-  if (kind === 'breadth_foods') {
-    return <DashboardPill tone="rose">Scrape breadth</DashboardPill>
-  }
-  if (kind === 'volume_hourly' || kind === 'volume_daily') {
-    return (
-      <DashboardPill tone="orange">
-        {kind === 'volume_hourly' ? 'Volume · hourly' : 'Volume · daily'}
-      </DashboardPill>
-    )
-  }
-  if (kind === 'manual') return <DashboardPill tone="neutral">Manual</DashboardPill>
-  return <DashboardPill tone="outline">{kind}</DashboardPill>
+  const { label, tone } = incidentKindLabel(kind)
+  return <DashboardPill tone={tone}>{label}</DashboardPill>
 }
 
 function ActionBadge({ action }: { action: string }) {
-  return action === 'held' ? (
-    <DashboardPill tone="rose">Held (423)</DashboardPill>
-  ) : (
-    <DashboardPill tone="orange">Alert only</DashboardPill>
-  )
+  const { label, tone } = incidentActionLabel(action)
+  return <DashboardPill tone={tone === 'neutral' ? 'orange' : tone}>{label}</DashboardPill>
 }
 
 function ResolvedBadge({ resolved }: { resolved: boolean }) {
@@ -99,6 +91,8 @@ function UserAvatar() {
 
 export default function AdminSecurityPage() {
   const [holds, setHolds] = useState<SecurityHoldRow[]>([])
+  const [slowdowns, setSlowdowns] = useState<AdminScrapeSlowdown[]>([])
+  const [guardEnabled, setGuardEnabled] = useState(false)
   const [incidents, setIncidents] = useState<SecurityIncident[]>([])
   const [settings, setSettings] = useState<SystemSettingRow[]>([])
   const [onlyUnresolved, setOnlyUnresolved] = useState(true)
@@ -117,12 +111,15 @@ export default function AdminSecurityPage() {
     setLoading(true)
     setError('')
     try {
-      const [holdsRes, incidentsRes, settingsRes] = await Promise.all([
+      const [holdsRes, incidentsRes, settingsRes, slowRes] = await Promise.all([
         adminAPI.getSecurityHolds(),
         adminAPI.getSecurityIncidents({ resolved: onlyUnresolved ? false : undefined, limit: 100 }),
         adminAPI.getSystemSettings(),
+        adminAPI.getScrapeSlowdowns().catch(() => ({ slowdowns: [], guard_enabled: false })),
       ])
       setHolds(holdsRes.holds)
+      setSlowdowns(slowRes.slowdowns)
+      setGuardEnabled(slowRes.guard_enabled)
       setIncidents(incidentsRes.incidents)
       setSettings(settingsRes)
     } catch (err) {
@@ -162,6 +159,18 @@ export default function AdminSecurityPage() {
       await load()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to release hold')
+    }
+  }
+
+  const liftSlowdown = async (userId: number) => {
+    setNotice('')
+    setError('')
+    try {
+      await adminAPI.liftScrapeSlowdown(userId)
+      setNotice(`Lifted the slow-down on user ${userId}.`)
+      await load()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to lift the slow-down')
     }
   }
 
@@ -336,6 +345,74 @@ export default function AdminSecurityPage() {
                         >
                           <Unlock className="h-4 w-4" strokeWidth={DASHBOARD_ICON_STROKE} aria-hidden />
                           Release
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </AdminTable>
+            </AdminTableWrap>
+          </AdminPanelBody>
+        )}
+      </AdminPanel>
+
+      <AdminPanel>
+        <AdminPanelHeader
+          title={`Slowed down (${slowdowns.length})`}
+          icon={Turtle}
+          actions={
+            <InfoHint
+              text={
+                guardEnabled
+                  ? 'Scrape guard v2 slows an account to 60 calls a minute and 10 foods per search for 24 hours when a signal trips and the scrape_guard_slowdown_enabled setting is on. Their app keeps working.'
+                  : 'Scrape guard v2 is off (SCRAPE_GUARD_V2_ENABLED). No slow-downs are placed.'
+              }
+            />
+          }
+        />
+        {slowdowns.length === 0 ? (
+          <DashboardEmpty
+            icon={Turtle}
+            title="No accounts slowed down"
+            description="Accounts the scrape guard slows down appear here until the slow-down ends or you lift it."
+          />
+        ) : (
+          <AdminPanelBody noPadding>
+            <AdminTableWrap>
+              <AdminTable>
+                <thead>
+                  <tr>
+                    <th>User</th>
+                    <th>Signal</th>
+                    <th>Reason</th>
+                    <th>Until</th>
+                    <th className="text-right">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {slowdowns.map((slow) => (
+                    <tr key={slow.account_user_id}>
+                      <td>
+                        <Link
+                          href={`/admin/users/${slow.account_user_id}`}
+                          className="font-medium text-dash-ink hover:text-dash-teal-strong hover:underline"
+                        >
+                          User {slow.account_user_id}
+                        </Link>
+                      </td>
+                      <td>{slow.kind ? <KindBadge kind={slow.kind} /> : '—'}</td>
+                      <td className="max-w-[320px] text-xs text-dash-muted">{slow.reason || '—'}</td>
+                      <td className="whitespace-nowrap text-xs tabular-nums text-dash-muted">
+                        {slow.until ? new Date(slow.until).toLocaleString() : '—'}
+                      </td>
+                      <td className="text-right">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="h-8"
+                          onClick={() => liftSlowdown(slow.account_user_id)}
+                        >
+                          Lift
                         </Button>
                       </td>
                     </tr>

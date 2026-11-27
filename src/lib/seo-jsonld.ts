@@ -1,5 +1,7 @@
 import { buildPricingProductJsonLdFromInput } from '@/lib/pricing-product-jsonld'
 import { fetchPublicPlans } from '@/lib/pricing/fetch-plans'
+import { fetchEnterprisePricing } from '@/lib/pricing/fetch-enterprise-tiers'
+import { DEFAULT_ENTERPRISE_PRICING, startingPriceCents } from '@/lib/enterprise/model'
 import { isEnterprisePlan } from '@/lib/pricing/plan-display'
 import {
   OG_IMAGE_URL,
@@ -16,26 +18,44 @@ import {
   buildBlogPostingJsonLdFromInput,
 } from '@/lib/blog-jsonld-format'
 
+function enterpriseOffer(fromCents: number): { name: string; price: string; description: string } {
+  const dollars = String(Math.round(fromCents) / 100)
+  return {
+    name: 'Enterprise',
+    price: dollars,
+    description: `From $${dollars} a month, priced by monthly users, with calls and photo scans included`,
+  }
+}
+
 const FALLBACK_PRICING_PLANS = [
   { name: 'Free', price: '0' },
   { name: 'Basic', price: '15' },
   { name: 'Core', price: '50' },
   { name: 'Plus', price: '150' },
-] as const
+  enterpriseOffer(startingPriceCents(DEFAULT_ENTERPRISE_PRICING)),
+]
 
 function plansToJsonLdOffers(
-  plans: Array<{ name: string; monthly_price: number }>
-): Array<{ name: string; price: string }> {
-  return plans
-    .filter((plan) => plan.monthly_price === 0 || !isEnterprisePlan(plan.name))
-    .map((plan) => ({
-      name: plan.name,
-      price: plan.monthly_price === 0 ? '0' : String(plan.monthly_price),
-    }))
+  plans: Array<{ name: string; monthly_price: number }>,
+  enterpriseFromCents: number
+): Array<{ name: string; price: string; description?: string }> {
+  const offers: Array<{ name: string; price: string; description?: string }> = []
+  let enterpriseAdded = false
+  for (const plan of plans) {
+    if (plan.monthly_price !== 0 && isEnterprisePlan(plan.name)) {
+      if (!enterpriseAdded && Number.isFinite(enterpriseFromCents)) {
+        offers.push(enterpriseOffer(enterpriseFromCents))
+        enterpriseAdded = true
+      }
+      continue
+    }
+    offers.push({ name: plan.name, price: plan.monthly_price === 0 ? '0' : String(plan.monthly_price) })
+  }
+  return offers
 }
 
 function buildPricingJsonLdInput(
-  plans: readonly { name: string; price: string }[]
+  plans: readonly { name: string; price: string; description?: string }[]
 ) {
   return {
     siteName: SITE_NAME,
@@ -56,8 +76,8 @@ export function buildPricingProductJsonLd() {
 
 export async function buildPricingProductJsonLdAsync() {
   try {
-    const plans = await fetchPublicPlans()
-    const offers = plansToJsonLdOffers(plans)
+    const [plans, enterprise] = await Promise.all([fetchPublicPlans(), fetchEnterprisePricing()])
+    const offers = plansToJsonLdOffers(plans, startingPriceCents(enterprise))
     if (offers.length > 0) {
       return buildPricingProductJsonLdFromInput(buildPricingJsonLdInput(offers))
     }

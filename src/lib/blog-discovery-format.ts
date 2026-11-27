@@ -216,7 +216,7 @@ ${buildPricingTableRows(pricingPlans)}
 Notes:
 - Commercial production use requires Plus or Enterprise. Send header X-API-Usage-Type: commercial when applicable.
 - Plus and Enterprise include Redis response caching (5 min) on GET search and food endpoints.
-- Enterprise: custom volume, image-to-calorie API, credits-based usage, 99.99% SLA, white-label, on-premise options - contact sales at ${site.siteUrl}/contact?inquiry=enterprise
+- Enterprise: priced by monthly users from $150 a month (up to 2,000 users $150, up to 5,000 $300, up to 10,000 $500, then $0.04 per extra user), 1M to 5M calls a month included, 5,000 photo scans a month included then $0.01 per photo, photo-to-calorie API, apps send X-End-User-Id - contact sales at ${site.siteUrl}/contact?inquiry=enterprise
 
 ## Base URL
 - API: configured per deployment (see developer docs)

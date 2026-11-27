@@ -14,6 +14,7 @@ import {
   KeyRound,
   ListChecks,
   RefreshCw,
+  ShieldCheck,
   TriangleAlert,
   type LucideIcon,
 } from 'lucide-react'
@@ -67,6 +68,8 @@ const CARD_ICONS: Record<string, LucideIcon> = {
   balance: Coins,
   cost: Camera,
   left: Images,
+  extra: Coins,
+  cap: ShieldCheck,
 }
 
 const PAGE_INFO =
@@ -155,7 +158,7 @@ export default function ImageToCaloriePage() {
 
   const cards = limitCards(access)
   const url = endpointUrl(API_BASE_URL, access.endpoint)
-  const samples = codeSamples(url, access.file_field)
+  const samples = codeSamples(url, access.file_field, access.meter === 'enterprise' ? 'X-End-User-Id' : undefined)
   const rows = errorRows(access.meter)
   const mcpKey = access.key_product === 'mcp'
 
@@ -205,7 +208,9 @@ export default function ImageToCaloriePage() {
               <p className="max-w-2xl text-[13px] leading-5 text-dash-body">
                 {mcpKey
                   ? 'Use a key from the MCP tab. It works for this endpoint. Send it in the X-API-Key header.'
-                  : 'Send one of your REST API keys in the X-API-Key header.'}{' '}
+                  : access.meter === 'enterprise'
+                    ? 'Send one of your REST API keys in the X-API-Key header, and the anonymous ID of the person using your app in X-End-User-Id.'
+                    : 'Send one of your REST API keys in the X-API-Key header.'}{' '}
                 A dashboard login cannot call this endpoint.
               </p>
               <Button asChild variant="outline" size="sm" className="h-9 gap-1.5">

@@ -319,6 +319,29 @@ export default function DocsPage() {
           </div>
         </section>
 
+        <section id="enterprise-end-users" className="mb-16 scroll-mt-24">
+          <h2 className={`${DOCS_H2_CLASS} mb-4`}>Enterprise: end-user IDs</h2>
+          <p className="text-mk-body mb-4 max-w-3xl">
+            Enterprise is priced by monthly users. Send the anonymous ID of the person using your app in the{' '}
+            <code className="docs-inline-code">X-End-User-Id</code> header on every call: 8 to 64 characters from
+            A-Z, a-z, 0-9 and <code className="docs-inline-code">. _ : -</code>, never an email, name or phone
+            number. We keep only a scrambled version of it.
+          </p>
+          <DocsCodeBlock
+            title="Request with an end-user ID"
+            code={`curl "${SEARCH_URL}?q=greek%20yogurt" \\\n  -H "X-API-Key: your_api_key_here" \\\n  -H "X-End-User-Id: user_8f3a2c91"`}
+            copyable
+          />
+          <p className="text-mk-body mt-4 max-w-3xl">
+            Food lists return at most the first 1,000 results: skip plus limit past 1,000 returns 400{' '}
+            <code className="docs-inline-code">paging_limit</code>. See{' '}
+            <Link href={`${docsSectionPath('rate-limits')}#end-user-ids`} className={INLINE_LINK_CLASS}>
+              rate limits
+            </Link>{' '}
+            for the end-user errors and per-user limits.
+          </p>
+        </section>
+
         <section id="guides" className="mb-16 scroll-mt-24">
           <h2 className={`${DOCS_H2_CLASS} mb-4`}>Integration Guides</h2>
           <p className="text-mk-body mb-8 max-w-3xl">

@@ -1,3 +1,5 @@
+import { formatCallsShort, type EnterprisePricing } from '@/lib/enterprise/model'
+
 export interface PricingPlan {
   id: number
   name: string
@@ -140,9 +142,9 @@ export function getPlanCardHighlights(
       break
     case 'enterprise':
     case 'custom':
-      items.push('Image-to-calorie API')
-      items.push('Credits-based usage')
-      items.push(`${keys(100)} · Phone & custom SLA`)
+      items.push('Priced by monthly users, from $150')
+      items.push('5,000 photo scans a month')
+      items.push(`${keys(100)} · 10 team members`)
       break
     default:
       items.push('Standard support')
@@ -161,17 +163,21 @@ export function getPlanDescription(name: string, fallback: string): string {
     basic: 'Small apps and early-stage startups',
     core: 'Growing products with higher volume',
     plus: 'Commercial apps at production scale',
-    enterprise: 'Custom volume, image-to-calorie API, and credits-based usage',
-    custom: 'Custom volume, image-to-calorie API, and credits-based usage',
+    enterprise: 'Priced by monthly users, with calls and photo scans included',
+    custom: 'Priced by monthly users, with calls and photo scans included',
   }
   return descriptions[name.toLowerCase()] ?? ''
 }
 
 type CompareCell = boolean | string
 
+export type CompareContext = {
+  enterprise: EnterprisePricing
+}
+
 export type CompareRow = {
   feature: string
-  getValue: (plan: PricingPlan) => CompareCell
+  getValue: (plan: PricingPlan, context: CompareContext) => CompareCell
   section?: 'limits' | 'features' | 'support'
 }
 
@@ -190,7 +196,11 @@ export const COMPARE_ROWS: CompareRow[] = [
   {
     feature: 'Monthly API calls',
     section: 'limits',
-    getValue: (p) => formatQuota(p.monthly_quota),
+    getValue: (p, ctx) => {
+      if (!isEnterprisePlan(p.name)) return formatQuota(p.monthly_quota)
+      const first = ctx.enterprise.tiers[0]
+      return first ? `From ${formatCallsShort(first.included_calls)}, by tier` : 'By tier'
+    },
   },
   {
     feature: 'Rate limit (per account, not IP)',
@@ -218,7 +228,13 @@ export const COMPARE_ROWS: CompareRow[] = [
     getValue: (p) => isEnterprisePlan(p.name),
   },
   {
-    feature: 'Credits-based usage',
+    feature: 'Photo scans included',
+    section: 'features',
+    getValue: (p, ctx) =>
+      isEnterprisePlan(p.name) ? `${ctx.enterprise.photos_included.toLocaleString('en-US')}/mo` : false,
+  },
+  {
+    feature: 'Priced by monthly users',
     section: 'features',
     getValue: (p) => isEnterprisePlan(p.name),
   },
@@ -347,5 +363,6 @@ export const PRICING_FOOTNOTES = [
   'Foods per query is the maximum number of foods returned on each search or catalog request. Requested limits above the cap are truncated.',
   'Commercial production use requires Plus or Enterprise. Send header X-API-Usage-Type: commercial when applicable.',
   'Plus and Enterprise include short-lived Redis caching on search and food GET endpoints to absorb traffic spikes.',
-  'Enterprise includes image-to-calorie API access and credits-based usage. Contact sales to enable.',
+  'Enterprise is priced by monthly users, from $150 a month. Each tier includes a monthly call allowance and 5,000 photo scans. More users or calls than the tier moves that month up a tier, nothing stops at month end.',
+  'Enterprise apps send an anonymous X-End-User-Id with each call so we can count monthly users. We store only a scrambled version of it.',
 ]

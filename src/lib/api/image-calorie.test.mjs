@@ -101,3 +101,29 @@ test('the api calls the users endpoint and normalizes', async () => {
   assert.deepEqual(calls, ['/api/v1/users/image-to-calorie'])
   assert.equal(access.meter, 'pilot')
 })
+
+test('an enterprise payload keeps its photo allowance block', () => {
+  const access = normalizeImageCalorieAccess({
+    ...pilotPayload,
+    meter: 'enterprise',
+    pilot: null,
+    enterprise: {
+      photos_used: 12,
+      photos_included: 5000,
+      photos_extra: 0,
+      photo_monthly_cap: 25000,
+      per_extra_photo_cents: 1,
+      resets_on: '2026-12-01',
+    },
+  })
+  assert.equal(access.meter, 'enterprise')
+  assert.equal(access.pilot, null)
+  assert.deepEqual(access.enterprise, {
+    photos_used: 12,
+    photos_included: 5000,
+    photos_extra: 0,
+    photo_monthly_cap: 25000,
+    per_extra_photo_cents: 1,
+    resets_on: '2026-12-01',
+  })
+})

@@ -459,7 +459,7 @@ export const COMPARISON_PAGES: ComparisonPage[] = [
       },
       {
         q: 'Does Calorie API offer image recognition like FatSecret?',
-        a: 'Yes on Enterprise: Calorie API supports an image-to-calorie API with credits-based usage. Self-serve plans remain a food-data API (search, barcode, details). Contact sales for Enterprise access.',
+        a: 'Yes on Enterprise: Calorie API has a photo-to-calorie API, with 5,000 photo scans a month included and then $0.01 per photo. Enterprise is priced by monthly users, from $150 a month. Self-serve plans remain a food-data API (search, barcode, details).',
       },
       {
         q: 'Do I have to display attribution?',

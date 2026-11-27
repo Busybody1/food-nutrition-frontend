@@ -1,4 +1,4 @@
-export type PricingPlanOffer = { name: string; price: string }
+export type PricingPlanOffer = { name: string; price: string; description?: string }
 
 export type PricingProductJsonLdInput = {
   siteName: string
@@ -17,11 +17,13 @@ function pricingOfferUrl(pricingUrl: string, planName: string): string {
 function buildDigitalProductOffer(
   input: PricingProductJsonLdInput,
   name: string,
-  price: string
+  price: string,
+  description?: string
 ) {
   return {
     '@type': 'Offer',
     name,
+    ...(description ? { description } : {}),
     price,
     priceCurrency: 'USD',
     availability: 'https://schema.org/InStock',
@@ -56,6 +58,8 @@ export function buildPricingProductJsonLdFromInput(input: PricingProductJsonLdIn
     brand: { '@type': 'Brand', name: input.siteName },
     applicationCategory: 'DeveloperApplication',
     operatingSystem: 'Any',
-    offers: input.plans.map(({ name, price }) => buildDigitalProductOffer(input, name, price)),
+    offers: input.plans.map(({ name, price, description }) =>
+      buildDigitalProductOffer(input, name, price, description)
+    ),
   }
 }

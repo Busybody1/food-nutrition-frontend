@@ -16,12 +16,15 @@ import {
   Settings,
   Users,
   Camera,
+  Building2,
   type LucideIcon,
 } from 'lucide-react'
 import { DashboardFeedbackForm } from '@/components/dashboard/DashboardFeedbackForm'
 import { SupportChatProvider, useSupportChat } from '@/components/support/SupportChatWidget'
 import { TeamProvider, useTeam } from '@/contexts/TeamContext'
 import { ImageCalorieProvider, useImageCalorie } from '@/contexts/ImageCalorieContext'
+import { EnterpriseProvider, useEnterprise } from '@/contexts/EnterpriseContext'
+import { ENTERPRISE_PATH, enterpriseNavItems, showEnterpriseNav } from '@/lib/enterprise/model'
 import { accountNavItems, TEAM_PATH } from '@/lib/dashboard/team'
 import { accessNavItems, IMAGE_CALORIE_PATH, showImageCalorieNav } from '@/lib/dashboard/image-calorie'
 import {
@@ -71,6 +74,7 @@ const NAV_GROUPS: { label: string; items: NavItem[] }[] = [
 
 const TEAM_NAV_ITEM: NavItem = { name: 'Team', href: TEAM_PATH, icon: Users }
 const IMAGE_CALORIE_NAV_ITEM: NavItem = { name: 'Image to calories', href: IMAGE_CALORIE_PATH, icon: Camera }
+const ENTERPRISE_NAV_ITEM: NavItem = { name: 'Enterprise', href: ENTERPRISE_PATH, icon: Building2 }
 
 const SECTION_TITLES: Record<string, string> = {
   '/dashboard': 'Overview',
@@ -78,6 +82,7 @@ const SECTION_TITLES: Record<string, string> = {
   '/dashboard/usage': 'Usage',
   '/dashboard/team': 'Team',
   [IMAGE_CALORIE_PATH]: 'Image to calories',
+  [ENTERPRISE_PATH]: 'Enterprise',
   '/dashboard/billing': 'Billing',
   '/dashboard/account': 'Account',
 }
@@ -88,10 +93,19 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
   const onKeys = Boolean(pathname?.startsWith('/dashboard/api-keys'))
   const { role } = useTeam()
   const { access } = useImageCalorie()
+  const { view: enterpriseView } = useEnterprise()
   const photoAccess = showImageCalorieNav(access)
+  const enterpriseOn = showEnterpriseNav(enterpriseView)
   const groups = NAV_GROUPS.map((group) => {
     if (group.label === 'Account') {
-      return { ...group, items: accountNavItems(group.items, role, TEAM_NAV_ITEM) }
+      return {
+        ...group,
+        items: enterpriseNavItems(
+          accountNavItems(group.items, role, TEAM_NAV_ITEM),
+          enterpriseOn,
+          ENTERPRISE_NAV_ITEM
+        ),
+      }
     }
     if (group.label === 'Access') {
       return { ...group, items: accessNavItems(group.items, photoAccess, IMAGE_CALORIE_NAV_ITEM) }
@@ -186,26 +200,28 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     <SupportChatProvider>
       <TeamProvider>
         <ImageCalorieProvider>
-          <DashboardFrame
-            brand={<SidebarBrand href="/dashboard" />}
-            renderNav={(onNavigate) => (
-              <Suspense fallback={null}>
-                <NavLinks onNavigate={onNavigate} />
-              </Suspense>
-            )}
-            footer={<UserFooter onLogout={handleLogout} />}
-            topbarLeft={
-              <Suspense fallback={null}>
-                <Breadcrumb />
-              </Suspense>
-            }
-            topbarRight={<TopbarActions />}
-          >
-            {children}
-            <div className="mx-auto w-full max-w-[1360px] px-4 pb-10 pt-0 sm:px-6 lg:px-8">
-              <DashboardFeedbackForm />
-            </div>
-          </DashboardFrame>
+          <EnterpriseProvider>
+            <DashboardFrame
+              brand={<SidebarBrand href="/dashboard" />}
+              renderNav={(onNavigate) => (
+                <Suspense fallback={null}>
+                  <NavLinks onNavigate={onNavigate} />
+                </Suspense>
+              )}
+              footer={<UserFooter onLogout={handleLogout} />}
+              topbarLeft={
+                <Suspense fallback={null}>
+                  <Breadcrumb />
+                </Suspense>
+              }
+              topbarRight={<TopbarActions />}
+            >
+              {children}
+              <div className="mx-auto w-full max-w-[1360px] px-4 pb-10 pt-0 sm:px-6 lg:px-8">
+                <DashboardFeedbackForm />
+              </div>
+            </DashboardFrame>
+          </EnterpriseProvider>
         </ImageCalorieProvider>
       </TeamProvider>
     </SupportChatProvider>

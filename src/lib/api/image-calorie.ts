@@ -1,4 +1,4 @@
-export type ImageCalorieMeter = 'pilot' | 'credits' | 'mcp'
+export type ImageCalorieMeter = 'pilot' | 'credits' | 'mcp' | 'enterprise'
 export type ImageCalorieKeyProduct = 'rest' | 'mcp'
 
 export interface ImageCaloriePilotUsage {
@@ -24,6 +24,15 @@ export interface ImageCalorieMcpUsage {
   trial: boolean
 }
 
+export interface ImageCalorieEnterpriseUsage {
+  photos_used: number
+  photos_included: number
+  photos_extra: number
+  photo_monthly_cap: number
+  per_extra_photo_cents: number
+  resets_on: string | null
+}
+
 export interface ImageCalorieAccess {
   available: boolean
   meter: ImageCalorieMeter | null
@@ -36,6 +45,7 @@ export interface ImageCalorieAccess {
   pilot: ImageCaloriePilotUsage | null
   credits: ImageCalorieCredits | null
   mcp: ImageCalorieMcpUsage | null
+  enterprise: ImageCalorieEnterpriseUsage | null
 }
 
 export const IMAGE_CALORIE_ENDPOINT = '/api/v1/vision/calories'
@@ -54,6 +64,7 @@ export const NO_IMAGE_CALORIE: ImageCalorieAccess = {
   pilot: null,
   credits: null,
   mcp: null,
+  enterprise: null,
 }
 
 type Json = Record<string, unknown>
@@ -78,7 +89,7 @@ function isoDate(value: unknown): string | null {
 }
 
 function meterOf(value: unknown): ImageCalorieMeter | null {
-  return value === 'pilot' || value === 'credits' || value === 'mcp' ? value : null
+  return value === 'pilot' || value === 'credits' || value === 'mcp' || value === 'enterprise' ? value : null
 }
 
 function normalizePilot(raw: unknown): ImageCaloriePilotUsage | null {
@@ -111,6 +122,20 @@ function normalizeMcp(raw: unknown): ImageCalorieMcpUsage | null {
   }
 }
 
+function normalizeEnterprise(raw: unknown): ImageCalorieEnterpriseUsage | null {
+  if (!isObject(raw)) return null
+  const used = count(raw.photos_used)
+  const included = count(raw.photos_included)
+  return {
+    photos_used: used,
+    photos_included: included,
+    photos_extra: Math.max(count(raw.photos_extra), used - included, 0),
+    photo_monthly_cap: count(raw.photo_monthly_cap),
+    per_extra_photo_cents: optionalCount(raw.per_extra_photo_cents) ?? 1,
+    resets_on: isoDate(raw.resets_on),
+  }
+}
+
 export function normalizeImageCalorieAccess(raw: unknown): ImageCalorieAccess {
   if (!isObject(raw) || raw.available !== true) return NO_IMAGE_CALORIE
   const meter = meterOf(raw.meter)
@@ -132,6 +157,7 @@ export function normalizeImageCalorieAccess(raw: unknown): ImageCalorieAccess {
     pilot: meter === 'pilot' ? normalizePilot(raw.pilot) : null,
     credits: meter === 'credits' ? normalizeCredits(raw.credits) : null,
     mcp: meter === 'mcp' ? normalizeMcp(raw.mcp) : null,
+    enterprise: meter === 'enterprise' ? normalizeEnterprise(raw.enterprise) : null,
   }
 }
 

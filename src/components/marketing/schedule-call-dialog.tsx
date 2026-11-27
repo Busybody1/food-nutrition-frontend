@@ -47,8 +47,8 @@ export function ScheduleCallDialog({
         <DialogHeader className="px-6 pb-2 pt-6 pr-12">
           <DialogTitle>Schedule an Enterprise call</DialogTitle>
           <DialogDescription>
-            Pick a 30-minute slot. We&apos;ll cover custom volume, image-to-calorie API access, and
-            credits-based usage.
+            Pick a 30-minute slot. We&apos;ll cover your monthly users, call volume, and photo-to-calorie
+            API access.
           </DialogDescription>
         </DialogHeader>
         {isOpen ? (

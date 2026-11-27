@@ -124,7 +124,7 @@ test('pill label and tone', () => {
 test('notes for each meter, expiry and the platform flag', () => {
   assert.deepEqual(pilotNotes(active), [])
   assert.deepEqual(pilotNotes({ ...base, meter: 'credits', plan_name: 'Enterprise' }), [
-    'This account is on Enterprise. That plan already includes photo analysis, billed in credits. The 100 call cap is not added.',
+    'This account is on Enterprise. That plan already includes photo analysis, counted in its Enterprise photo allowance (or credits while Enterprise billing is off). The 100 call cap is not added.',
   ])
   assert.match(pilotNotes({ ...base, meter: 'mcp' })[0], /MCP photo allowance of 150 a month and 20 a day/)
   assert.deepEqual(pilotNotes({ ...base, meter: 'mcp' }, false), [

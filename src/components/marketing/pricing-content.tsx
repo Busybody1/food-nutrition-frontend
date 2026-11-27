@@ -17,6 +17,7 @@ import { TrackedCtaLink } from '@/components/analytics/tracked-cta-link'
 import { getPublicPageSeo } from '@/lib/public-page-seo'
 import { fetchPublicPlans } from '@/lib/pricing/fetch-plans'
 import { isContactSalesPlan, isEnterprisePlan, type PricingPlan } from '@/lib/pricing/plan-display'
+import { DEFAULT_ENTERPRISE_PRICING, fromPriceLabel, type EnterprisePricing } from '@/lib/enterprise/model'
 import { isRestPaidPlan, restSubscribeLabel, restTrialChargeNote } from '@/lib/billing/trial-offer'
 import { useTrialOffer } from '@/lib/billing/use-trial-offer'
 import { cn } from '@/lib/utils/cn'
@@ -36,6 +37,7 @@ type PricingContentProps = {
 
   initialPlans: PricingPlan[]
   initialError: string | null
+  enterprisePricing?: EnterprisePricing
 }
 
 function selfServeGridClass(count: number): string {
@@ -48,7 +50,11 @@ function selfServeGridClass(count: number): string {
   return cn('grid w-full gap-4 md:gap-5', map[count] ?? 'sm:grid-cols-2 lg:grid-cols-3')
 }
 
-export function PricingContent({ initialPlans, initialError }: PricingContentProps) {
+export function PricingContent({
+  initialPlans,
+  initialError,
+  enterprisePricing = DEFAULT_ENTERPRISE_PRICING,
+}: PricingContentProps) {
   const { isAuthenticated, user } = useAuth()
   const { trialDays, offerPending } = useTrialOffer('rest')
   const chargeNote = restTrialChargeNote(offerPending ? null : trialDays)
@@ -200,7 +206,7 @@ export function PricingContent({ initialPlans, initialError }: PricingContentPro
         </p>
         <div className="mt-5">
           <MarketingTrustPills
-            items={['Live limits from your plan', 'Cancel anytime', 'Enterprise image + credits']}
+            items={['Live limits from your plan', 'Cancel anytime', `Enterprise ${fromPriceLabel(enterprisePricing).toLowerCase()}`]}
           />
         </div>
       </MarketingSheetHero>
@@ -276,6 +282,7 @@ export function PricingContent({ initialPlans, initialError }: PricingContentPro
                 <PricingEnterpriseBand
                   key={plan.id}
                   plan={plan}
+                  pricing={enterprisePricing}
                   isCurrent={currentSubscription?.plan_id === plan.id}
                   onSelect={() => handlePlanSelect(plan)}
                 />
@@ -287,7 +294,7 @@ export function PricingContent({ initialPlans, initialError }: PricingContentPro
 
       <StatsBand />
 
-      {!isLoading && <PricingComparison plans={plans} />}
+      {!isLoading && <PricingComparison plans={plans} enterprisePricing={enterprisePricing} />}
 
       <SubscribeModal
         isOpen={isModalOpen}

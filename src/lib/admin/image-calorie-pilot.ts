@@ -125,7 +125,7 @@ export function pilotNotes(status: PilotStatusFields, mcpSupported = true): stri
   }
   if (status.meter === 'credits') {
     notes.push(
-      `This account is on ${status.plan_name || 'its plan'}. That plan already includes photo analysis, billed in credits. The 100 call cap is not added.`
+      `This account is on ${status.plan_name || 'its plan'}. That plan already includes photo analysis, counted in its Enterprise photo allowance (or credits while Enterprise billing is off). The 100 call cap is not added.`
     )
   }
   if (status.meter === 'mcp') {

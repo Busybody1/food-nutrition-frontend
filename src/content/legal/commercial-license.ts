@@ -74,11 +74,48 @@ export const commercialLicenseSections: LegalSection[] = [
         items: [
           `Resell, sublicense, rent, or redistribute the API or Data as a standalone product or dataset;`,
           `Systematically extract, scrape, or reconstruct a substantial portion of the underlying database (for example, through exhaustive or enumerative querying) in order to build a competing or substitute dataset;`,
-          `Cache or store Data beyond the period permitted under Client's Plus Plan, or beyond 30 days, whichever is shorter, unless Client's plan expressly permits extended or unrestricted caching;`,
+          `Cache or store Data beyond the period permitted under Client's Plus Plan, or beyond 30 days, whichever is shorter, unless Client's plan expressly permits extended or unrestricted caching, or the Data is an End-User Record kept under Section 4A;`,
           `Remove, obscure, or alter proprietary notices contained in the Data, except where Client's Plus Plan expressly waives attribution;`,
           `Use the API in a manner that violates applicable law, infringes third-party rights, or exceeds the quota and rate limits of Client's Plus Plan;`,
           `Present the Data as independently verified for medical, allergen-safety, or other life-critical decisions without Client's own independent confirmation (see Section 6).`,
         ],
+      },
+    ],
+  },
+  {
+    id: 'end-user-records',
+    title: '4A. End-User Records (Enterprise)',
+    blocks: [
+      {
+        type: 'p',
+        text: `This Section applies only when Client's Enterprise plan expressly allows End-User Records, as shown on Client's Enterprise dashboard. An "End-User Record" is a meal or saved food that one of Client's end users chose to log or save in Client's product.`,
+      },
+      { type: 'p', text: '4A.1 What Client may keep' },
+      {
+        type: 'p',
+        text: `For each End-User Record, Client may keep Company's food ID, the food name, brand, serving, amount, and the nutrition values shown for that entry, for as long as that end user has an account with Client. This is an exception to the 30-day limit in Sections 3 and 4.`,
+      },
+      { type: 'p', text: '4A.2 Rules' },
+      {
+        type: 'ul',
+        items: [
+          `An End-User Record may be shown only to the end user who logged it and to people that end user chooses to share it with;`,
+          `Client shall not pool End-User Records into a shared food list, search, or autocomplete, and shall not export, resell, or use them to train or improve machine learning models;`,
+          `Client shall not store, as End-User Records, foods that no end user chose;`,
+          `Client shall keep Company's food ID on every stored End-User Record;`,
+          `When an end user deletes their account with Client, Client shall delete that end user's End-User Records;`,
+          `On request, no more than once a year or on reasonable suspicion of a breach, Client shall confirm in writing how End-User Records are stored and used.`,
+        ],
+      },
+      { type: 'p', text: '4A.3 After termination' },
+      {
+        type: 'p',
+        text: `On termination, past End-User Records may remain visible to the end user who logged them. Saved foods, and any Data used to log new entries, must be removed within 30 days under Section 8.3.`,
+      },
+      { type: 'p', text: '4A.4 Breach' },
+      {
+        type: 'p',
+        text: `A breach of this Section is a breach of Section 4, and Company may suspend or terminate Client's license under Section 8.4.`,
       },
     ],
   },
@@ -156,7 +193,7 @@ export const commercialLicenseSections: LegalSection[] = [
       { type: 'p', text: '8.3 Effect of Termination' },
       {
         type: 'p',
-        text: `Upon termination, Client's license to access and use the API and Data ends immediately, and Client shall, within 30 days, cease use of and delete or destroy any cached or stored Data, except as reasonably required for backup or archival purposes consistent with Section 4.`,
+        text: `Upon termination, Client's license to access and use the API and Data ends immediately, and Client shall, within 30 days, cease use of and delete or destroy any cached or stored Data, except as reasonably required for backup or archival purposes consistent with Section 4, and except past End-User Records that Section 4A.3 allows to remain visible to the end user who logged them.`,
       },
       { type: 'p', text: '8.4 Immediate Termination for Prohibited Extraction' },
       {
@@ -166,7 +203,7 @@ export const commercialLicenseSections: LegalSection[] = [
       { type: 'p', text: '8.5 Survival' },
       {
         type: 'p',
-        text: `Sections 4, 6, 8.4, 9, 10, and 13 survive termination.`,
+        text: `Sections 4, 4A, 6, 8.4, 9, 10, and 13 survive termination.`,
       },
     ],
   },
